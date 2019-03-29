@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 自定义的View属性-->
+    <declare-styleable name="View">
+        <attr name="bind_view_onClick" format="reference"/>
+        <attr name="bind_view_throttleFirst" format="integer"/>
+        <attr name="bind_view_onClick_closeSoftInput" format="boolean"/>
+        <attr name="bind_view_onLongClick" format="reference"/>
+        <attr name="bind_view_visibility" format="boolean"/>
+    </declare-styleable>
+    <!--自定义ImageView属性-->
+    <declare-styleable name="ImageView">
+        <attr name="bind_imageView_url" format="reference"/>
+        <attr name="bind_imageView_url_circle" format="reference"/>
+    </declare-styleable>
+    <!--底部导航选择属性-->
+    <declare-styleable name="BottomNavigationView">
+        <attr name="bind_onNavigationBottomSelectedChanged" format="reference"/>
+    </declare-styleable>
+    <!--RecycleView属性-->
+    <declare-styleable name="RecyclerView">
+        <attr name="bind_recyclerView_adapter" format="reference"/>
+        <attr name="bind_recyclerView_scrollStateChanges" format="reference"/>
+        <attr name="bind_recyclerView_scrollStateChanges_debounce" format="integer"/>
+    </declare-styleable>
+    <!--Toolbar属性-->
+    <declare-styleable name="Toolbar">
+        <attr name="bind_menuClick" format="reference" />
+    </declare-styleable>
+    <!--ViewPager属性-->
+    <declare-styleable name="ViewPager">
+        <attr name="bind_viewPager_fragmentManager" format="reference" />
+        <attr name="bind_viewPager_fragments" format="reference" />
+        <attr name="bind_viewPager_offScreenPageLimit" format="integer" />
+        <attr name="bind_viewPager_onPageSelectedChanged" format="reference" />
+    </declare-styleable>
+    <!--下拉刷新-->
+    <declare-styleable name="SwipeRefreshLayout">
+        <attr name="bind_swipeRefreshLayout_refreshing" format="boolean" />
+    </declare-styleable>
+    <!--TabLayout属性-->
+    <declare-styleable name="TabLayout">
+        <attr name="bind_tabLayout_viewPager" format="reference" />
+        <attr name="bind_tabLayout_onTabSelected" format="reference" />
+        <attr name="bind_tabLayout_onTabUnselected" format="reference" />
+        <attr name="bind_tabLayout_onTabReselected" format="reference" />
+    </declare-styleable>
+
+</resources>
