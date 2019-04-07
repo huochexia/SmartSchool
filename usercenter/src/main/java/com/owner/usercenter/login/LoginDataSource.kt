@@ -61,7 +61,7 @@ class LoginDataSourceRepository(
     remoteDataSource: ILoginRemoteDataSource,
     localDataSource: ILoginLocalDataSource
 ) : BaseRepositoryBoth<ILoginRemoteDataSource, ILoginLocalDataSource>(remoteDataSource, localDataSource) {
-
+    //虽然最后向下游传递的数据类型还是Either，但是如果成功了还需要多一步保存操作，所以这里进行了处理
     //如果有左值，则继续下传数据；如果是右值，则先保存信息，然后继续下传
     fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>> =
         remoteDataSource.login(username, password)

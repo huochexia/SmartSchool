@@ -18,6 +18,8 @@ package com.owner.usercenter.http.manager
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.RegisterUserReq
+import com.owner.usercenter.http.entities.RegisterUserResp
 import io.reactivex.Flowable
 
 /**
@@ -31,4 +33,9 @@ interface UserServiceManager {
      * 登录，上游数据是LoginResp。因为下游数据需要区分开正确的和错误的两种，所以在这里进行区分。
      */
     fun loginManager(username:String,password:String): Flowable<Either<Errors,LoginResp>>
+
+    /**
+     * 注册
+     */
+    fun RegisterManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
 }

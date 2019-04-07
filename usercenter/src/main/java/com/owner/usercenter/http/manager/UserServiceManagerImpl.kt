@@ -18,8 +18,9 @@ package com.owner.usercenter.http.manager
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.RegisterUserReq
+import com.owner.usercenter.http.entities.RegisterUserResp
 import com.owner.usercenter.http.service.UserApi
-import com.owner.usercenter.http.service.UserService
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 
@@ -39,6 +40,25 @@ class UserServiceManagerImpl(
         // 否则将错误赋值给函子的左值,右值为nothing。
         //这样将数据源得到数据转变为Either对象，输出给下游。
         return service.login(username, password)
+            .subscribeOn(Schedulers.io())
+            .map {
+                if (it.isSuccess()) {
+                    Either.right(it)
+                } else {
+                    Either.left(Errors.BmobError(it.code))
+                }
+            }
+    }
+
+    /*
+     注册
+     */
+    override fun RegisterManager(username: String, mobilephone: String): Flowable<Either<Errors, RegisterUserResp>> {
+        val newUser = RegisterUserReq(
+            username = username,
+            mobilePhoneNumber = mobilephone
+        )
+        return service.signUp(newUser)
             .subscribeOn(Schedulers.io())
             .map {
                 if (it.isSuccess()) {

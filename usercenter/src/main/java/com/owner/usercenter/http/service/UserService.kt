@@ -17,8 +17,12 @@ package com.owner.usercenter.http.service
 
 import com.owner.basemodule.network.RetrofitFactory
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.RegisterUserReq
+import com.owner.usercenter.http.entities.RegisterUserResp
 import io.reactivex.Flowable
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 /**
@@ -34,6 +38,11 @@ interface UserApi {
     fun login(@Query("username") username: String, @Query("password") password: String)
             : Flowable<LoginResp>
 
+    /*
+     *注册用户
+     */
+    @POST("/1/users")
+    fun signUp(@Body newUser: RegisterUserReq):Flowable<RegisterUserResp>
 }
 
 /**
