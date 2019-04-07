@@ -17,9 +17,13 @@ package com.owner.basemodule.base
 
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
+import cn.bmob.v3.Bmob
 import com.owner.basemodule.BuildConfig
 import com.owner.basemodule.kodein.httpClientModule
+import com.owner.basemodule.kodein.prefsModule
 import com.owner.basemodule.logger.initLogger
+import com.owner.basemodule.util.SingletonHolderNoArg
 import com.squareup.leakcanary.LeakCanary
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -34,20 +38,20 @@ import org.kodein.di.generic.singleton
  *@description:
  */
 class BaseApplication:Application(),KodeinAware {
+
     override val kodein: Kodein = Kodein.lazy {
         bind<Context>() with singleton { this@BaseApplication }
         import(androidModule(this@BaseApplication))
         import(androidXModule(this@BaseApplication))
 
-        import(httpClientModule)
+        import(prefsModule)
     }
 
     override fun onCreate() {
         super.onCreate()
-        INSTANCE = this
 
         //通过AppId连接Bmob云端
-//        Bmob.initialize(this, "640680c69663ae2d2c1df82566af1fdc")
+        Bmob.initialize(this, BMOB_APP_ID)
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
         initLeakCanary()
@@ -59,7 +63,12 @@ class BaseApplication:Application(),KodeinAware {
         }
         LeakCanary.install(this)
     }
-   companion object {
-       lateinit var INSTANCE :BaseApplication
+
+   companion object :SingletonHolderNoArg<BaseApplication>(::BaseApplication){
+       //Bmob库中smartSch库的Id
+       const val BMOB_APP_ID :String= "5dd5e130b5927179da0304501d5914a5"
+       const val BMOB_REST_API_KEY :String ="4dada1400b140cd29a9178cb0e89f36d"
+       const val BASE_URL = "https://api2.bmob.cn"
    }
 }
+

@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
+package com.owner.basemodule.base.viewmodel
 
+import com.owner.basemodule.base.mvi.IIntent
+import com.owner.basemodule.base.mvi.IViewModel
+import com.owner.basemodule.base.mvi.IViewState
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 /**
- * MVI架构中，视图层要实现的接口，它主要两个方法：一个是将用户意图（事件）传出；
- * 一个是将得到的状态进行渲染（显示给用户）
- * Created by Liuyong on 2019-03-20.It's smartschool
+ *ViewModel基础类，继承AutoDisposeViewModel,IViewModel接口。因为是抽象类，所以没有实现IViewModel接口方法，
+ * 由具体类去实现
+ * Created by Liuyong on 2019-03-21.It's smartschool
  *@description:
  */
-interface IView<T: IIntent,S: IViewState> {
+abstract class BaseViewModel<I: IIntent,S: IViewState> : AutoDisposeViewModel(),
+    IViewModel<I, S> {
+    //由具体类实现的方法，汇聚各种数据流
+    abstract fun compose():Observable<S>
 
-    fun intents():Observable<T>
-
-    fun render(state:S)
 }

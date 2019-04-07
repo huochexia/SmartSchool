@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
+package com.owner.basemodule.ext.reactivex
 
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
- * MVI架构中，视图层要实现的接口，它主要两个方法：一个是将用户意图（事件）传出；
- * 一个是将得到的状态进行渲染（显示给用户）
- * Created by Liuyong on 2019-03-20.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-05.It's smartschool
  *@description:
  */
-interface IView<T: IIntent,S: IViewState> {
-
-    fun intents():Observable<T>
-
-    fun render(state:S)
+fun <T> Observable<T>.execute(): Observable<T> {
+    return this.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

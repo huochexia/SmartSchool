@@ -33,7 +33,7 @@ abstract class BaseActivity<B : ViewDataBinding, I : IIntent, S : IViewState>
 
     private lateinit var binding: B
 
-    abstract var layoutId: Int
+    abstract val layoutId: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

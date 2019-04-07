@@ -22,6 +22,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io"}
         maven { url 'https://dl.bintray.com/kodein-framework/Kodein-DI/'}
+        //Bmob仓库配置
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master"}
     }
 

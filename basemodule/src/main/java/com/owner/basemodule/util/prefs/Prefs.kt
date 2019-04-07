@@ -15,57 +15,78 @@
  */
 package com.owner.basemodule.util.prefs
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * 本地共享资源存储
+ * 本地共享资源存储,SharedPreferences扩展
  * Created by Liuyong on 2019-03-25.It's smartschool
  *@description:
  */
+private inline fun <T> SharedPreferences.delegate(
+    key: String? = null,
+    defaultValue: T,
+    crossinline getter: SharedPreferences.(String, T) -> T,
+    crossinline setter: SharedPreferences.Editor.(String, T) -> SharedPreferences.Editor
+): ReadWriteProperty<Any, T> =
+    object : ReadWriteProperty<Any, T> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): T {
+            //如果key为null,则使用要定义的属性的名称
+            return getter(key ?: property.name, defaultValue)
+        }
 
-class PrefsDelegate<T>(
-    private val context: Context,
-    private val key: String,
-    private val default: T,
-    private val presFileName: String = "smart_school"
-) : ReadWriteProperty<Any?, T> {
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-       return getPreference(key)
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+            //调用SharedPreferences的edit()方法得到Editor
+            edit().setter(key ?: property.name, value).apply()
+        }
+
     }
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-         putPreference(key,value)
-    }
-
-    private val prefs: SharedPreferences by lazy {
-        context.getSharedPreferences(presFileName, Context.MODE_PRIVATE)
-    }
-
-    private fun getPreference(key: String): T {
-        return when (default) {
-            is String -> prefs.getString(key, default)
-            is Long -> prefs.getLong(key, default)
-            is Int -> prefs.getInt(key, default)
-            is Boolean -> prefs.getBoolean(key, default)
-            is Float -> prefs.getFloat(key, default)
-            else -> throw IllegalArgumentException("Unknown Type.")
-        } as T
-    }
-
-    private fun putPreference(key: String, value: T) {
-        with(prefs.edit()) {
-            when (value) {
-                is String -> putString(key,value)
-                is Long -> putLong(key,value)
-                is Float -> putFloat(key,value)
-                is Int -> putInt(key,value)
-                is Boolean -> putBoolean(key,value)
-                else -> throw java.lang.IllegalArgumentException("Unknown Type")
-            }
-        }.apply()
-    }
+/**
+ * Int数据读写的代理类
+ */
+fun SharedPreferences.int(key: String? = null, defValue: Int = 0): ReadWriteProperty<Any, Int> {
+    return delegate(key, defValue, SharedPreferences::getInt, SharedPreferences.Editor::putInt)
 }
+
+/**
+ * 得到Long类型数据读写的代理类
+ */
+fun SharedPreferences.long(key: String? = null, defValue: Long = 0): ReadWriteProperty<Any, Long> {
+    return delegate(key, defValue, SharedPreferences::getLong, SharedPreferences.Editor::putLong)
+}
+
+/**
+ * 得到Float类型数据读写的代理类
+ */
+fun SharedPreferences.float(key: String? = null, defValue: Float = 0f): ReadWriteProperty<Any, Float> {
+
+    return delegate(key,defValue,SharedPreferences::getFloat, SharedPreferences.Editor::putFloat)
+}
+/**
+ * 得到Boolean类型数据读写的代理类
+ */
+fun SharedPreferences.boolean(key:String?=null,defValue:Boolean = false):ReadWriteProperty<Any,Boolean>{
+
+    return delegate(key,defValue,SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)
+}
+
+/**
+ * 得到String类型数据读写的代理类
+ */
+fun SharedPreferences.string(key: String? = null, defValue: String = ""): ReadWriteProperty<Any,String> {
+
+    return delegate(key,defValue,SharedPreferences::getString, SharedPreferences.Editor::putString)
+}
+
+/**
+ * 得到Set<String>类型数据读写的代理类
+ */
+fun SharedPreferences.stringSet(
+    key: String? = null,
+    defValue: Set<String> = emptySet()
+): ReadWriteProperty<Any, Set<String>> {
+    return delegate(key,defValue,SharedPreferences::getStringSet,SharedPreferences.Editor::putStringSet)
+}
+

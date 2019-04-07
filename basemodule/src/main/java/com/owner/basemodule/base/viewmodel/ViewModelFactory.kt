@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.view.viewmodel
+package com.owner.basemodule.base.viewmodel
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -34,6 +34,7 @@ class BaseViewModelFactory<T>(val creator: () -> T) : ViewModelProvider.Factory 
 }
 
 /**
+ *
  * 扩展Fragment方法，获取ViewModel对象。默认参数值为null，用于ViewModel对象本身没有参数的情况。
  *
  */
@@ -41,17 +42,17 @@ inline fun <reified T : ViewModel> Fragment.getViewModel(noinline creator: (() -
     return if (creator == null){
         ViewModelProviders.of(this).get(T::class.java)
     }else{
-        ViewModelProviders.of(this,BaseViewModelFactory(creator)).get(T::class.java)
+        ViewModelProviders.of(this, BaseViewModelFactory(creator)).get(T::class.java)
     }
 }
 
 /**
  *扩展Activity方法，获取ViewModel对象
-        */
+ */
 inline fun <reified T:ViewModel> AppCompatActivity.getViewModel(noinline creator:(()->T)? = null):T{
     return if (creator == null) {
         ViewModelProviders.of(this).get(T::class.java)
     } else {
-        ViewModelProviders.of(this,BaseViewModelFactory(creator)).get(T::class.java)
+        ViewModelProviders.of(this, BaseViewModelFactory(creator)).get(T::class.java)
     }
 }

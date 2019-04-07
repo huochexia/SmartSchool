@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
-
-import io.reactivex.Observable
+package com.owner.basemodule.util
 
 /**
- * MVI架构中，视图层要实现的接口，它主要两个方法：一个是将用户意图（事件）传出；
- * 一个是将得到的状态进行渲染（显示给用户）
- * Created by Liuyong on 2019-03-20.It's smartschool
+ *在Kotlin中，通用的生成需要一个参数的单例，这样实现代码高效，安全。
+ * @creator 是函数，在这个函数中调动实例的构造方法
+ * Created by Liuyong on 2019-04-03.It's smartschool
  *@description:
  */
-interface IView<T: IIntent,S: IViewState> {
+class SingletonHolderSingleArg<out T, in A>(private val creator: (A) -> T) {
 
-    fun intents():Observable<T>
+    @Volatile
+    private var instance: T? = null
 
-    fun render(state:S)
+    fun getInstance(arg: A): T =
+        instance ?: synchronized(this) {
+            instance ?: creator(arg).apply {
+                instance = this
+            }
+        }
 }

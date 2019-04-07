@@ -30,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
- *
+ *  Kodein
  * Created by Liuyong on 2019-03-26.It's smartschool
  *@description:
  */

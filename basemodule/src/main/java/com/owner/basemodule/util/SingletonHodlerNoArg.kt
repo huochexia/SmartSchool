@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
-
-import io.reactivex.Observable
+package com.owner.basemodule.util
 
 /**
- * MVI架构中，视图层要实现的接口，它主要两个方法：一个是将用户意图（事件）传出；
- * 一个是将得到的状态进行渲染（显示给用户）
- * Created by Liuyong on 2019-03-20.It's smartschool
+ *通用的生成不带参数的单例
+ * Created by Liuyong on 2019-04-03.It's smartschool
  *@description:
  */
-interface IView<T: IIntent,S: IViewState> {
+open class SingletonHolderNoArg<out T>(private val creator: () -> T) {
 
-    fun intents():Observable<T>
+    @Volatile
+    private var instance: T? = null
 
-    fun render(state:S)
+    fun getInstance(): T =
+        instance ?: synchronized(this) {
+            instance ?:creator().apply {
+                instance = this
+            }
+        }
+
 }

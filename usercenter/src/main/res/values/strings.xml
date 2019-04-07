@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Usercenter</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="login_hint_password">Password</string>
+    <string name="login_hint_username">Username</string>
+    <string name="login_tips">智慧校园</string>
+    <string name="login_sign_in">登录</string>
 </resources>

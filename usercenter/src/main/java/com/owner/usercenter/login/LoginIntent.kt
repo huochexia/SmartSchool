@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.view.viewmodel
+package com.owner.usercenter.login
 
 import com.owner.basemodule.base.mvi.IIntent
-import com.owner.basemodule.base.mvi.IViewModel
-import com.owner.basemodule.base.mvi.IViewState
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 /**
- *ViewModel基础类，继承AutoDisposeViewModel,IViewModel接口。因为是抽象类，所以没有实现IViewModel接口方法，
- * 由具体类去实现
- * Created by Liuyong on 2019-03-21.It's smartschool
+ *  登录界面所有意图：初始化，登录，找回密码
+ * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-abstract class BaseViewModel<I: IIntent,S: IViewState> : AutoDisposeViewModel(),
-    IViewModel<I, S> {
-    //由具体类实现的方法，汇聚各种数据流
-    abstract fun compose():Observable<S>
+sealed class LoginIntent : IIntent {
+
+    object InitialIntent : LoginIntent()
+    //找回密码
+    object FindPassWordIntent : LoginIntent()
+    //选择是否自动登录
+    data class SetAutoLoginIntent(val isAutoLogin: Boolean?) : LoginIntent()
+
+    //点击按钮登录
+    data class LoginClicksIntent(
+        val username: String?,
+        val password: String?
+    ) : LoginIntent()
 
 }

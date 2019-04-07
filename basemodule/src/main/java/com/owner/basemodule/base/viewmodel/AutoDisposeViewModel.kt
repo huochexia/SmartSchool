@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.view.viewmodel
+package com.owner.basemodule.base.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
@@ -48,7 +48,8 @@ open class AutoDisposeViewModel : ViewModel(),
      */
     override fun lifecycle(): Observable<ViewModelEvent> = lifecycleEvents.hide()
 
-    override fun correspondingEvents(): CorrespondingEventsFunction<ViewModelEvent> = CORRESPONDING_EVENTS
+    override fun correspondingEvents(): CorrespondingEventsFunction<ViewModelEvent> =
+        CORRESPONDING_EVENTS
     /*返回当前生命周期事件状态*/
     override fun peekLifecycle(): ViewModelEvent? = lifecycleEvents.value
 

@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
+package com.owner.usercenter.login
 
-import io.reactivex.Observable
+import com.owner.basemodule.base.mvi.IAction
 
 /**
- * MVI架构中，视图层要实现的接口，它主要两个方法：一个是将用户意图（事件）传出；
- * 一个是将得到的状态进行渲染（显示给用户）
- * Created by Liuyong on 2019-03-20.It's smartschool
+ * 登录界面Action：初始，登录，找回密码，分别与意图对应
+ * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-interface IView<T: IIntent,S: IViewState> {
+sealed class LoginAction :IAction{
 
-    fun intents():Observable<T>
+    object InitialUiAction :LoginAction()
 
-    fun render(state:S)
+    data class SetAutoLoginAction(val isAutoLogin:Boolean?):LoginAction()
+
+    object FindPassWordAction : LoginAction()
+
+    data class ClickLoginAction(
+        val username:String?,
+        val password :String?
+    ):LoginAction()
+
+
 }
