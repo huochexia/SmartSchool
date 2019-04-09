@@ -28,9 +28,9 @@ class RegisterActionProcessHolder(
     private val repository: RegisterDataSourceRepository
 ) {
     private val initialUIActionTransformer =
-        ObservableTransformer<RegisterAction.initialRegisterAction, RegisterResult.initialRegisterResult> { action ->
+        ObservableTransformer<RegisterAction.InitialRegisterAction, RegisterResult.InitialRegisterResult> { action ->
             action.flatMap {
-                Observable.just(RegisterResult.initialRegisterResult)
+                Observable.just(RegisterResult.InitialRegisterResult)
             }
         }
     private val clickRegisterActionTransformer =
@@ -83,7 +83,7 @@ class RegisterActionProcessHolder(
         ObservableTransformer<RegisterAction, RegisterResult> { action ->
             action.publish { shared ->
                 Observable.merge(
-                    shared.ofType(RegisterAction.initialRegisterAction::class.java).compose(initialUIActionTransformer),
+                    shared.ofType(RegisterAction.InitialRegisterAction::class.java).compose(initialUIActionTransformer),
                     shared.ofType(RegisterAction.ClickRegisterAction::class.java).compose(clickRegisterActionTransformer)
                 )
             }

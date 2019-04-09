@@ -35,7 +35,7 @@ interface UserServiceManager {
     fun loginManager(username:String,password:String): Flowable<Either<Errors,LoginResp>>
 
     /**
-     * 注册
+     * 注册，将API返回的结果进行分类（成功或失败）处理，发送一个Either结果给下游
      */
     fun RegisterManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
 }

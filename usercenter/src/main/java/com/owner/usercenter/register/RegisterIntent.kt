@@ -26,7 +26,7 @@ sealed class RegisterIntent : IIntent {
     /*
      初始化意图，用于清空输入框
      */
-    object initialRegisterIntent:RegisterIntent()
+    object InitialRegisterIntent:RegisterIntent()
     /*
       点击注册按钮意图
      */

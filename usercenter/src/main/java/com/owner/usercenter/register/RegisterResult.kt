@@ -26,7 +26,7 @@ sealed class RegisterResult : IResult {
     /*
       初始化得到的结果
      */
-    object initialRegisterResult :RegisterResult()
+    object InitialRegisterResult :RegisterResult()
     /*
       点击注册按钮得到的结果
      */

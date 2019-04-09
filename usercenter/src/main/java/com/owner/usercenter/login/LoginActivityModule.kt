@@ -18,6 +18,7 @@ package com.owner.usercenter.login
 import androidx.appcompat.app.AppCompatActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.network.RetrofitFactory
+import com.owner.usercenter.http.manager.UserServiceManager
 import com.owner.usercenter.http.manager.UserServiceManagerImpl
 import com.owner.usercenter.http.service.UserApi
 import com.owner.usercenter.http.service.UserService
@@ -64,7 +65,7 @@ val loginKodeinModule = Kodein.Module(LOGIN_MODULE_TAG) {
         LoginRemoteDataSource(instance())
     }
     //给LoginRemoteDataSource提供类
-    bind<UserServiceManagerImpl>() with singleton {
+    bind<UserServiceManager>() with singleton {
         UserServiceManagerImpl(instance())
     }
     bind<UserApi>() with singleton {

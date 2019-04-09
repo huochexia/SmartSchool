@@ -15,10 +15,88 @@
  */
 package com.owner.usercenter.register
 
+import android.widget.Toast
+import com.jakewharton.rxbinding3.view.clicks
+import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.base.view.activity.BaseActivity
+import com.owner.usercenter.R
+import com.owner.usercenter.databinding.ActivityRegisterBinding
+import com.uber.autodispose.autoDisposable
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.activity_register.*
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
+
 /**
  *
  * Created by Liuyong on 2019-04-07.It's smartschool
  *@description:
  */
-class RegisterActivity {
+class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, RegisterViewState>() {
+
+    override val layoutId: Int
+        get() = R.layout.activity_register
+
+    override val kodein: Kodein = Kodein.lazy {
+        extend(parentKodein, copy = Copy.All)
+        import(registerKodeinModule)
+    }
+
+    private val registerIntentPublish = PublishSubject.create<RegisterIntent>()
+
+    val viewModel by instance<RegisterViewModel>()
+
+    override fun initView() {
+
+        //准备要发射的数据
+        initEvent()
+        //连接数据通道开端
+        viewModel.processIntents(intents())
+        //连接数据通道末端
+        viewModel.states()
+            .autoDisposable(scopeProvider)
+            .subscribe(this::render)
+
+    }
+
+    override fun intents(): Observable<RegisterIntent> {
+        return Observable.mergeArray(registerIntentPublish)
+    }
+
+    override fun render(state: RegisterViewState) {
+        state.errors?.apply {
+            when (this) {
+                is Errors.BmobError -> {
+                    Toast.makeText(this@RegisterActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                is Errors.SimpleMessageError -> {
+                    Toast.makeText(this@RegisterActivity,simpleMessage,Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        when (state.uiEvent) {
+            is RegisterViewState.RegisterUIEvent.initialUI -> {
+                tvMobilePhone.setText("")
+                tvNewUsername.setText("")
+            }
+            is RegisterViewState.RegisterUIEvent.showDialogBox -> {
+                //弹出一个对话框，询问是否继续添加新用户
+            }
+        }
+    }
+
+    private fun initEvent() {
+        btnRegister.clicks()
+            .map {
+                RegisterIntent.ClickRegisterIntent(
+                    username = tvNewUsername.text.toString(),
+                    mobilephone = tvMobilePhone.text.toString()
+                )
+            }
+            .autoDisposable(scopeProvider)
+            .subscribe(registerIntentPublish)
+
+    }
 }

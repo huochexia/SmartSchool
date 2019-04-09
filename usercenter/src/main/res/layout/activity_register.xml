@@ -85,7 +85,7 @@
                             android:paddingLeft="@dimen/activity_horizontal_margin"
                             android:paddingRight="@dimen/activity_horizontal_margin">
 
-                        <EditText
+                        <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/tvNewUsername"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -105,13 +105,13 @@
                             app:counterEnabled="true"
                             app:counterMaxLength="11">
 
-                        <EditText
+                        <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/tvMobilePhone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:drawableLeft="@mipmap/icon_phone"
                                 android:hint="@string/register_hint_mobliephone"
-                                android:inputType="textPassword"
+                                android:inputType="phone"
                                 android:maxLines="1"
                                 android:singleLine="true"/>
 

@@ -26,7 +26,7 @@ sealed class RegisterAction : IAction {
     /*
       初始化注册行为
      */
-    object initialRegisterAction : RegisterAction()
+    object InitialRegisterAction : RegisterAction()
 
     /*
       点击注册事件
