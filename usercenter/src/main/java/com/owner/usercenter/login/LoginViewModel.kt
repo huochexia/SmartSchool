@@ -104,6 +104,8 @@ class LoginViewModel(
                  */
                 is LoginResult.SetAutoLoginInfoResult ->
                     previousState.copy(
+                        isLoading = false,
+                        errors = null,
                         uiEvents = LoginViewState.LoginUiEvent.SetAutoLoginInfo(
                             isAutoLogin = result.isAutoLogin
                         )

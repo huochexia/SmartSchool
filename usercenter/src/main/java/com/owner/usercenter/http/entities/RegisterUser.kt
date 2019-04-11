@@ -32,7 +32,9 @@ data class RegisterUserReq(
  */
 data class RegisterUserResp(
     val code: Int = 0,
-    val error: String?
-){
-    fun isSuccess():Boolean = code==0
+    val error: String? = null,
+    val objectId: String? = null
+
+) {
+    fun isSuccess(): Boolean = code == 0 && objectId.isNullOrEmpty().not()
 }

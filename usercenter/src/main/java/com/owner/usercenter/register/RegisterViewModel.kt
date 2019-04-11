@@ -64,7 +64,7 @@ class RegisterViewModel(
                     previousState.copy(
                         isLoading = false,
                         errors = null,
-                        uiEvent = null
+                        uiEvent =RegisterViewState.RegisterUIEvent.initialUI
                     )
                 is RegisterResult.ClickRegisterResult -> when (result) {
                     is RegisterResult.ClickRegisterResult.Success -> previousState.copy(
@@ -83,11 +83,10 @@ class RegisterViewModel(
     }
 
     override fun compose(): Observable<RegisterViewState> {
-        return intentSubject
-            .map { actionFromIntent(it) }
+        return intentSubject.map { actionFromIntent(it) }
             .compose(actionProcessHolder.actionProcessor)
             .scan(RegisterViewState.idle(), reducer)
-            .replay(1)
+            .publish()
             .autoConnect(0)
     }
 }

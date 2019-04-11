@@ -15,6 +15,7 @@
  */
 package com.owner.usercenter.register
 
+import android.app.AlertDialog
 import android.widget.Toast
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
@@ -23,6 +24,7 @@ import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityRegisterBinding
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_register.*
 import org.kodein.di.Copy
@@ -56,8 +58,13 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
         viewModel.processIntents(intents())
         //连接数据通道末端
         viewModel.states()
+            .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe(this::render)
+            .subscribe({
+                render(it)
+            }, {
+                println("errros::" + it.message)
+            })
 
     }
 
@@ -72,7 +79,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
                     Toast.makeText(this@RegisterActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 }
                 is Errors.SimpleMessageError -> {
-                    Toast.makeText(this@RegisterActivity,simpleMessage,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, simpleMessage, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -82,7 +89,17 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
                 tvNewUsername.setText("")
             }
             is RegisterViewState.RegisterUIEvent.showDialogBox -> {
-                //弹出一个对话框，询问是否继续添加新用户
+                AlertDialog.Builder(this@RegisterActivity)
+                    .setMessage("是否继续注册新用户！")
+                    .setPositiveButton("是") { _, _ ->
+                        Observable.just(RegisterIntent.InitialRegisterIntent)
+                            .autoDisposable(scopeProvider)
+                            .subscribe(registerIntentPublish)
+                    }
+                    .setNegativeButton("否") { _, _ ->
+                        finish()
+                    }
+                    .show()
             }
         }
     }

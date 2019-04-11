@@ -40,14 +40,12 @@ class RegisterActionProcessHolder(
                 val (username, mobilephone) = it
                 when (username.isNullOrEmpty() || mobilephone.isNullOrEmpty()) {
                     true -> onRegisterParamEmptyResult()
-                    false -> repository.register(it.username!!, it.mobilephone!!)
+                    false -> repository.register(username, mobilephone)
                         .toObservable()
-                        .flatMap { either ->
-                            either.fold({
-                                onRegisterFailureResult(it)
-                            }, {
+                        .flatMap {
+                            it.fold(::onRegisterFailureResult) {
                                 onRegisterSuccessResult()
-                            })
+                            }
                         }
                 }
             }
