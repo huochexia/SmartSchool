@@ -48,6 +48,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
     //定义接收数据流的桥架，数据流由RxBinding定义的控件方法产生。
     private val loginIntentPublisher =
         PublishSubject.create<LoginIntent>()
+
     //定义ViewModel
     val viewModel: LoginViewModel by instance()
 
@@ -57,6 +58,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
     override fun initView() {
         //从本地获取自动登录状态，初始化界面
         viewModel.isAutoLogin.value = prefs.autoLogin
+
         //发送Intent
         viewModel.processIntents(intents())
         //接收最终状态
@@ -71,6 +73,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
      * 初始化未来的Event
      */
     private fun initEvent() {
+
         //登录按钮点击事件，转换成Intent
         btnLogin.clicks()
             .map {
@@ -92,10 +95,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
             .subscribe(loginIntentPublisher)
     }
 
-    override fun intents(): Observable<LoginIntent> {
-        //当前由用户产生的意图只有点击登录按钮
-        return Observable.mergeArray(loginIntentPublisher)
-    }
+    override fun intents(): Observable<LoginIntent> = Observable.mergeArray(
+        loginIntentPublisher
+    )
+
 
     override fun render(state: LoginViewState) {
         //对错误状态的渲染
@@ -105,7 +108,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
                     Toast.makeText(this@LoginActivity, simpleMessage, Toast.LENGTH_SHORT).show()
                 }
                 is Errors.BmobError -> {
-//                    toast { errorMessage }
                     Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 }
 
@@ -115,12 +117,17 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
         viewModel.isVisiblity.value = state.isLoading
         //渲染登录事件
         when (state.uiEvents) {
+
             is LoginViewState.LoginUiEvent.JumpMain -> {
                 Toast.makeText(this@LoginActivity, "登录成功！！", Toast.LENGTH_SHORT).show()
             }
             is LoginViewState.LoginUiEvent.SetAutoLoginInfo -> {
-                prefs.autoLogin = state.uiEvents.isAutoLogin!!
+                prefs.autoLogin = state.uiEvents.isAutoLogin!!.apply {
+                    if (!this) prefs.password = ""
+                }
+
             }
+            //如果是自动登录，则利用得到的用户名和密码，发出点击登录意图
             is LoginViewState.LoginUiEvent.TryAutoLogin -> {
                 val username = state.uiEvents.loginEntity.username
                 val password = state.uiEvents.loginEntity.password
@@ -129,7 +136,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
                 if (state.uiEvents.autoLogin) {
                     loginIntentPublisher.onNext(LoginIntent.LoginClicksIntent(username, password))
                 }
-
             }
             is LoginViewState.LoginUiEvent.JumpFindPassWord ->{
                 //TODO 跳到找回密码的Activity

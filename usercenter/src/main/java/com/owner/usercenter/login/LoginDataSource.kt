@@ -20,7 +20,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.base.repository.IRemoteDataSource
-import com.owner.usercenter.http.entities.LoginReq
+import com.owner.usercenter.http.entities.LoginUser
 import com.owner.usercenter.http.entities.LoginResp
 import com.owner.usercenter.http.manager.UserServiceManager
 import com.owner.usercenter.util.PrefsHelper
@@ -39,9 +39,9 @@ import io.reactivex.Single
  */
 interface ILoginLocalDataSource : ILocalDataSource {
 
-    fun savePrefsUser(username: String, password: String): Completable
+    fun savePrefsUser(user: LoginResp, password: String): Completable
     //获取用户登录信息，因为存在成功和失败（无信息）两种可能，所以返回类型为Either<Errors,LoginEntity>
-    fun fetchPresUser(): Flowable<Either<Errors, LoginReq>>
+    fun fetchPresUser(): Flowable<Either<Errors, LoginUser>>
 
     fun isAutoLogin(): Single<Boolean>
 }
@@ -50,6 +50,9 @@ interface ILoginLocalDataSource : ILocalDataSource {
  * 定义远程数据源的逻辑方法
  */
 interface ILoginRemoteDataSource : IRemoteDataSource {
+    //检查用户登录是否过期
+    fun check(sessionToken: String, objectId: String): Single<Either<Errors, Boolean>>
+
     //登录，因为存在成功和失败两种可能的结果，所以要返回Either<Errors,LoginUser>类型结果
     fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>>
 }
@@ -61,6 +64,12 @@ class LoginDataSourceRepository(
     remoteDataSource: ILoginRemoteDataSource,
     localDataSource: ILoginLocalDataSource
 ) : BaseRepositoryBoth<ILoginRemoteDataSource, ILoginLocalDataSource>(remoteDataSource, localDataSource) {
+
+    //检查用户登录是否过期
+    fun check(sessionToken: String, objectId: String): Single<Either<Errors, Boolean>> =
+        remoteDataSource.check(sessionToken, objectId)
+
+
     //虽然最后向下游传递的数据类型还是Either，但是如果成功了还需要多一步保存操作，所以这里进行了处理
     //如果有左值，则继续下传数据；如果是右值，则先保存信息，然后继续下传
     fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>> =
@@ -69,7 +78,7 @@ class LoginDataSourceRepository(
                 either.fold({
                     Flowable.just(either)
                 },{
-                    localDataSource.savePrefsUser(username, password)//保存信息
+                    localDataSource.savePrefsUser(it, password)//保存信息
                         .andThen(Flowable.just(either)) //然后再返回信息再次发出
                 })
             }
@@ -77,7 +86,7 @@ class LoginDataSourceRepository(
     /*
      *从本地共享文件中获取用户登录信息
      */
-    fun prefsUser(): Flowable<Either<Errors, LoginReq>> =
+    fun prefsUser(): Flowable<Either<Errors, LoginUser>> =
         localDataSource.fetchPresUser()
 
     /*
@@ -93,20 +102,22 @@ class LoginDataSourceRepository(
 class LoginLocalDataSource(
     private val prefs: PrefsHelper
 ) : ILoginLocalDataSource {
-    override fun savePrefsUser(username: String, password: String): Completable =
+    override fun savePrefsUser(user: LoginResp, password: String): Completable =
     //生成一个Completable数据流，它完成给prefs属性赋值的动作
         Completable.fromAction {
-            prefs.username = username
+            prefs.username = user.username!!
             prefs.password = password
+            prefs.objectId = user.objectId!!
+            prefs.sessionToken = user.sessionToken!!
         }
 
 
-    override fun fetchPresUser(): Flowable<Either<Errors, LoginReq>> =
+    override fun fetchPresUser(): Flowable<Either<Errors, LoginUser>> =
     //生成一个prefs数据流，然后将它的内容转换成Either<Errors,LoginEntity>类数据
         Flowable.just(prefs)
             .map {
                 when (it.username.isNotEmpty() && it.password.isNotEmpty()) {
-                    true -> Either.right(LoginReq(it.username, it.password))
+                    true -> Either.right(LoginUser(it.username, it.password, it.sessionToken, it.objectId))
                     false -> Either.left(Errors.EmptyResultsError)
                 }
             }
@@ -121,6 +132,11 @@ class LoginLocalDataSource(
  * 从数据源的管理类中获取数据。
  */
 class LoginRemoteDataSource(private val serviceManager: UserServiceManager) : ILoginRemoteDataSource {
+
+    override fun check(sessionToken: String, objectId: String): Single<Either<Errors, Boolean>> {
+        return serviceManager.checkLogin(sessionToken, objectId)
+    }
+
     override fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>> {
         return serviceManager.loginManager(username, password)
     }

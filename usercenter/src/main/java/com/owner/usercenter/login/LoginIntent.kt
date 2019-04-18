@@ -16,17 +16,23 @@
 package com.owner.usercenter.login
 
 import com.owner.basemodule.base.mvi.IIntent
+import com.owner.usercenter.http.entities.LoginUser
 
 /**
- *  登录界面所有意图：初始化，登录，找回密码
+ *  登录界面所有意图：检查用户是否过期，自动登录，找回密码，设置是否自动登录，点击登录
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
 sealed class LoginIntent : IIntent {
 
+    //初始化工作，主要是得到本地保存的用户信息，这个信息用于检查用户登录是否过期，
+    // 如果没过期可以用于自动登录
     object InitialIntent : LoginIntent()
+
+
     //找回密码
     object FindPassWordIntent : LoginIntent()
+
     //选择是否自动登录
     data class SetAutoLoginIntent(val isAutoLogin: Boolean?) : LoginIntent()
 

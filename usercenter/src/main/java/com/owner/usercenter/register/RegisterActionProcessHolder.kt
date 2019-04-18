@@ -16,6 +16,7 @@
 package com.owner.usercenter.register
 
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.ext.reactivex.execute
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 
@@ -32,6 +33,7 @@ class RegisterActionProcessHolder(
             action.flatMap {
                 Observable.just(RegisterResult.InitialRegisterResult)
             }
+                .execute()
         }
     private val clickRegisterActionTransformer =
         ObservableTransformer<RegisterAction.ClickRegisterAction, RegisterResult.ClickRegisterResult> { action ->
@@ -49,6 +51,7 @@ class RegisterActionProcessHolder(
                         }
                 }
             }
+                .execute()
 
         }
 

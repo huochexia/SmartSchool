@@ -85,8 +85,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
         }
         when (state.uiEvent) {
             is RegisterViewState.RegisterUIEvent.initialUI -> {
-                tvMobilePhone.setText("")
-                tvNewUsername.setText("")
+               //TODO:继续增加用户，刷新注册界面，重回最初状态
             }
             is RegisterViewState.RegisterUIEvent.showDialogBox -> {
                 AlertDialog.Builder(this@RegisterActivity)

@@ -18,8 +18,8 @@ package com.owner.usercenter.login
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.ext.reactivex.execute
-import com.owner.usercenter.http.entities.LoginReq
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.LoginUser
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.functions.BiFunction
@@ -32,24 +32,25 @@ import io.reactivex.functions.BiFunction
 class LoginActionProcessHolder(
     private val repository: LoginDataSourceRepository
 ) {
-    //初始界面，如果自动登录为true，则进行自动登录
-    private val initialUiActionTransformer =
-        ObservableTransformer<LoginAction.InitialUiAction, LoginResult.AutoLoginInfoResult> { actions ->
+    //初始化过程
+    private val initialActionTransformer =
+        ObservableTransformer<LoginAction.InitialAction, LoginResult.AutoLoginResult> { action ->
             Observable
                 .zip(repository.prefsUser().toObservable(),
                     repository.prefsAutoLogin().toObservable(),
-                    BiFunction { either: Either<Errors, LoginReq>, autoLogin: Boolean ->
+                    BiFunction { either: Either<Errors, LoginUser>, autoLogin: Boolean ->
                         either.fold({
-                            LoginResult.AutoLoginInfoResult.NoUserData
-                        }, { autoLoginInfo ->
-                            LoginResult.AutoLoginInfoResult.Success(autoLoginInfo, autoLogin)
+                            LoginResult.AutoLoginResult.NoUserData
+                        }, { user ->
+                            LoginResult.AutoLoginResult.Success(user, autoLogin)
                         })
                     })
-                .onErrorReturn(LoginResult.AutoLoginInfoResult::Failure)
+                .onErrorReturn(LoginResult.AutoLoginResult::Failure)
                 .execute()
-                .startWith(LoginResult.AutoLoginInfoResult.InFlight)
-
+                .startWith(LoginResult.AutoLoginResult.InFlight)
         }
+
+
     //设置是否自动登录
     private val setAutoLoginActionTransformer =
         ObservableTransformer<LoginAction.SetAutoLoginAction, LoginResult.SetAutoLoginInfoResult> { action ->
@@ -82,6 +83,7 @@ class LoginActionProcessHolder(
                 .execute()
                 .startWith(LoginResult.ClickLoginResult.InFlight)
         }
+
 
     /**
      * 自动用户名或密码为空时发出的结果
@@ -118,8 +120,8 @@ class LoginActionProcessHolder(
     internal val actionProcessor =
         ObservableTransformer<LoginAction, LoginResult> { actions ->
             actions.publish { shared ->
-                Observable.merge(
-                    shared.ofType(LoginAction.InitialUiAction::class.java).compose(initialUiActionTransformer),
+                Observable.mergeArray(
+                    shared.ofType(LoginAction.InitialAction::class.java).compose(initialActionTransformer),
                     shared.ofType(LoginAction.SetAutoLoginAction::class.java).compose(setAutoLoginActionTransformer),
                     shared.ofType(LoginAction.ClickLoginAction::class.java).compose(loginClickActionTransformer),
                     shared.ofType(LoginAction.FindPassWordAction::class.java).compose(findPassWordActionTransformer)

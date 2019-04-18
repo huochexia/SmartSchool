@@ -32,4 +32,8 @@ class PrefsHelper(prefs:SharedPreferences) {
 
     var password by prefs.string("password","")
 
+    var sessionToken by prefs.string("sessionToken","")
+
+    var objectId by prefs.string("objectId","")
+
 }

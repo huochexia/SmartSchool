@@ -20,7 +20,12 @@ package com.owner.usercenter.http.entities
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-data class LoginReq(val username:String,val password:String)
+data class LoginUser(
+    val username: String,
+    val password: String,
+    val sessionToken: String,
+    val objectId: String
+)
 
 /**
  * 响应登录
@@ -38,3 +43,8 @@ data class LoginResp(val code :Int = 0,
     // 所以当code不是0时，可以是404错误的body，此时需要提示用户错误信息。
     fun isSuccess() :Boolean = code == 0 && sessionToken.isNullOrEmpty().not()
 }
+
+/**
+ * 检查用户的登录是否过期响应体
+ */
+data class CheckLoginUser(val msg: String)

@@ -16,14 +16,10 @@
 package com.owner.usercenter.http.service
 
 import com.owner.basemodule.network.RetrofitFactory
-import com.owner.usercenter.http.entities.LoginResp
-import com.owner.usercenter.http.entities.RegisterUserReq
-import com.owner.usercenter.http.entities.RegisterUserResp
+import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import io.reactivex.Single
+import retrofit2.http.*
 
 /**
  *用户操作网络接口API，数据流的源
@@ -39,10 +35,29 @@ interface UserApi {
             : Flowable<LoginResp>
 
     /*
+     *检查用户的登录是否过期
+     */
+    @GET("1/checkSession/{objectID}")
+    fun check(
+        @Header("X-Bmob-Session-Token") sessionToken: String,
+        @Path("objectID") objectId: String
+    ):Single<CheckLoginUser>
+
+    /*
      *注册用户
      */
     @POST("/1/users")
     fun signUp(@Body newUser: RegisterUserReq):Flowable<RegisterUserResp>
+
+    /*
+     *重置密码
+     */
+    @PUT("/1/updateUserPassword/{objectId}")
+    fun resetPwd(
+        @Path("objectId") objectId: String,
+        @Header("X-Bmob-Session-Token") token: String,
+        @Body newPwd: ResetPwdReq
+    ): Flowable<ResetPwdResp>
 }
 
 /**

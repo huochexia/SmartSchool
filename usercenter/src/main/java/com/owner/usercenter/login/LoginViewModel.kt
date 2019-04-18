@@ -67,7 +67,7 @@ class LoginViewModel(
      */
     private fun actionFromIntent(intent: LoginIntent): LoginAction {
         return when (intent) {
-            is LoginIntent.InitialIntent -> LoginAction.InitialUiAction
+            is LoginIntent.InitialIntent -> LoginAction.InitialAction
             is LoginIntent.SetAutoLoginIntent -> LoginAction.SetAutoLoginAction(intent.isAutoLogin)
             is LoginIntent.LoginClicksIntent -> LoginAction.ClickLoginAction(intent.username, intent.password)
             is LoginIntent.FindPassWordIntent -> LoginAction.FindPassWordAction
@@ -81,60 +81,12 @@ class LoginViewModel(
     companion object {
         private val reducer = BiFunction { previousState: LoginViewState, result: LoginResult ->
             when (result) {
-                /*
-                    点击登录按钮时状态
-                 */
-                is LoginResult.ClickLoginResult -> when (result) {
-                    is LoginResult.ClickLoginResult.Success -> {
-                        previousState.copy(
-                            isLoading = false,
-                            errors = null,
-                            uiEvents = LoginViewState.LoginUiEvent.JumpMain(result.user)
-                        )
-                    }
-                    is LoginResult.ClickLoginResult.Failure -> previousState.copy(
-                        isLoading = false,
-                        errors = result.error,
-                        uiEvents = null
-                    )
-                    is LoginResult.ClickLoginResult.InFlight -> previousState.copy(isLoading = true)
-                }
-                /*
-                设置自动登录选择框状态
-                 */
-                is LoginResult.SetAutoLoginInfoResult ->
-                    previousState.copy(
-                        isLoading = false,
-                        errors = null,
-                        uiEvents = LoginViewState.LoginUiEvent.SetAutoLoginInfo(
-                            isAutoLogin = result.isAutoLogin
-                        )
-                    )
 
-                /*
-                进行自动登录时状态
-                 */
-                is LoginResult.AutoLoginInfoResult -> when (result) {
-                    is LoginResult.AutoLoginInfoResult.Success -> {
-                        previousState.copy(
-                            isLoading = false,
-                            uiEvents = LoginViewState.LoginUiEvent.TryAutoLogin(
-                                loginEntity = result.user,
-                                autoLogin = result.autoLogin
-                            )
-                        )
-                    }
-                    is LoginResult.AutoLoginInfoResult.Failure -> previousState.copy(
-                        isLoading = false,
-                        errors = result.error
-                    )
-                    is LoginResult.AutoLoginInfoResult.NoUserData -> {
-                        previousState.copy(isLoading = false)
-                    }
-                    is LoginResult.AutoLoginInfoResult.InFlight -> previousState.copy(
-                        isLoading = true
-                    )
-                }
+                is LoginResult.ClickLoginResult -> clickLoginReducer(result, previousState)
+
+                is LoginResult.SetAutoLoginInfoResult -> setAutoReducer(previousState, result)
+
+                is LoginResult.AutoLoginResult -> autoLoginReducer(result, previousState)
                 /*
                    执行找回密码
                  */
@@ -143,6 +95,79 @@ class LoginViewModel(
                 )
             }
         }
+
+        /**
+         *   设置自动登录选择框状态
+         */
+        private fun setAutoReducer(
+            previousState: LoginViewState,
+            result: LoginResult.SetAutoLoginInfoResult
+        ): LoginViewState {
+            return previousState.copy(
+                isLoading = false,
+                errors = null,
+                uiEvents = LoginViewState.LoginUiEvent.SetAutoLoginInfo(
+                    isAutoLogin = result.isAutoLogin
+                )
+            )
+        }
+
+        /**
+         *  进行自动登录时状态
+         */
+        private fun autoLoginReducer(
+            result: LoginResult.AutoLoginResult,
+            previousState: LoginViewState
+        ): LoginViewState {
+            return when (result) {
+                is LoginResult.AutoLoginResult.Success -> {
+                    previousState.copy(
+                        isLoading = false,
+                        errors = null,
+                        uiEvents = LoginViewState.LoginUiEvent.TryAutoLogin(
+                            loginEntity = result.user,
+                            autoLogin = result.autoLogin
+                        )
+                    )
+
+                }
+                is LoginResult.AutoLoginResult.Failure -> previousState.copy(
+                    isLoading = false,
+                    errors = result.error
+                )
+                is LoginResult.AutoLoginResult.NoUserData -> {
+                    previousState.copy(isLoading = false)
+                }
+                is LoginResult.AutoLoginResult.InFlight -> previousState.copy(
+                    isLoading = true
+                )
+            }
+        }
+
+        /**
+         * 点击登录按钮时状态
+         */
+        private fun clickLoginReducer(
+            result: LoginResult.ClickLoginResult,
+            previousState: LoginViewState
+        ): LoginViewState {
+            return when (result) {
+                is LoginResult.ClickLoginResult.Success -> {
+                    previousState.copy(
+                        isLoading = false,
+                        errors = null,
+                        uiEvents = LoginViewState.LoginUiEvent.JumpMain(result.user)
+                    )
+                }
+                is LoginResult.ClickLoginResult.Failure -> previousState.copy(
+                    isLoading = false,
+                    errors = result.error,
+                    uiEvents = null
+                )
+                is LoginResult.ClickLoginResult.InFlight -> previousState.copy(isLoading = true)
+            }
+        }
+
     }
 
     /*
@@ -160,7 +185,7 @@ class LoginViewModel(
     }
 
     /*
-     第六步： 外界通过这个方法获取最终状态，
+     第七步： 外界通过这个方法获取最终状态，
     */
     override fun states(): Observable<LoginViewState> = statesObservable
 

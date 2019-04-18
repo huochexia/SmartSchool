@@ -17,11 +17,11 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
-import com.owner.usercenter.http.entities.LoginResp
-import com.owner.usercenter.http.entities.RegisterUserReq
-import com.owner.usercenter.http.entities.RegisterUserResp
+import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
+import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -51,6 +51,21 @@ class UserServiceManagerImpl(
     }
 
     /*
+     检查用户登录是否过期
+     */
+    override fun checkLogin(sessionToken: String, objectId: String): Single<Either<Errors,Boolean>> {
+        return service.check(sessionToken,objectId)
+            .map {
+                if (it.msg == "ok"){
+                    Either.right(true)
+                }else{
+                    Either.left(Errors.SimpleMessageError("用户已过期，请重新登录！"))
+                }
+            }
+    }
+
+
+    /*
      注册
      */
     override fun RegisterManager(username: String, mobilephone: String): Flowable<Either<Errors, RegisterUserResp>> {
@@ -67,5 +82,25 @@ class UserServiceManagerImpl(
                     Either.left(Errors.BmobError(it.code))
                 }
             }
+    }
+    /*
+      重置密码
+     */
+    override fun ResetPwd(
+        newPwd: String,
+
+        prefs: PrefsHelper
+    ): Flowable<Either<Errors, ResetPwdResp>> {
+        val request = ResetPwdReq(prefs.password,newPwd)
+        return service.resetPwd(
+            prefs.objectId,
+            prefs.sessionToken, request
+        )
+            .subscribeOn(Schedulers.io())
+            .map {
+                Either.right(it)
+            }
+
+
     }
 }

@@ -17,10 +17,10 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
-import com.owner.usercenter.http.entities.LoginResp
-import com.owner.usercenter.http.entities.RegisterUserReq
-import com.owner.usercenter.http.entities.RegisterUserResp
+import com.owner.usercenter.http.entities.*
+import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 /**
  * 这是个中介接口，汇聚所有对用户的操作方法，分别对应UserService实例方法。
@@ -35,7 +35,18 @@ interface UserServiceManager {
     fun loginManager(username:String,password:String): Flowable<Either<Errors,LoginResp>>
 
     /**
+     * 检查用户是否过期
+     */
+    fun checkLogin(sessionToken:String,objectId:String):Single<Either<Errors,Boolean>>
+
+
+    /**
      * 注册，将API返回的结果进行分类（成功或失败）处理，发送一个Either结果给下游
      */
     fun RegisterManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
+
+    /**
+     * 重置密码
+     */
+    fun ResetPwd(newPwd:String,prefs:PrefsHelper):Flowable<Either<Errors,ResetPwdResp>>
 }

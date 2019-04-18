@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">Usercenter</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="login_hint_password">Password</string>
-    <string name="login_hint_username">Username</string>
+    <string name="login_hint_password">密码</string>
+    <string name="login_hint_username">用户名称</string>
     <string name="login_tips">智慧校园</string>
     <string name="login_sign_in">登录</string>
     <string name="register_user">注册</string>
     <string name="register_hint_mobliephone">请输入手机号</string>
     <string name="register_hint_username">请输入新用户名称</string>
     <string name="register_new_user_tips">增加新用户</string>
+    <string name="reset_pwd">重置</string>
+    <string name="reset_new_password">重新设置您的密码</string>
+    <string name="reset_again_password">请再次输入密码</string>
+    <string name="reset_password">请输入密码（6-20位字母或数字）</string>
 </resources>

@@ -16,7 +16,7 @@
 package com.owner.usercenter.login
 
 import com.owner.basemodule.base.mvi.IResult
-import com.owner.usercenter.http.entities.LoginReq
+import com.owner.usercenter.http.entities.LoginUser
 import com.owner.usercenter.http.entities.LoginResp
 
 /**
@@ -29,13 +29,31 @@ import com.owner.usercenter.http.entities.LoginResp
  */
 sealed class LoginResult : IResult {
 
-    //进行自动登录可能产生的结果
-    sealed class AutoLoginInfoResult : LoginResult() {
-        data class Success(val user: LoginReq, val autoLogin: Boolean) : AutoLoginInfoResult()
-        data class Failure(val error: Throwable) : AutoLoginInfoResult()
+//    //初始化结果
+//    sealed class InitialResult : LoginResult() {
+//
+//        data class Success(val user: LoginUser, val autoLogin: Boolean) : InitialResult()
+//        data class Failure(val error:Throwable):InitialResult()
+//        object NoUserData:InitialResult()
+//
+//    }
+//
+//    //检查用户登录结果
+//    sealed class CheckResult : LoginResult() {
+//        data class Success(val msg: Boolean) : CheckResult()
+//        data class Failure(val error: Throwable) : CheckResult()
+//
+//        object InFlight : CheckResult()
+//    }
 
-        object NoUserData : AutoLoginInfoResult()
-        object InFlight : AutoLoginInfoResult()
+
+    //进行自动登录可能产生的结果
+    sealed class AutoLoginResult : LoginResult() {
+        data class Success(val user: LoginUser,val autoLogin:Boolean) : AutoLoginResult()
+        data class Failure(val error: Throwable) : AutoLoginResult()
+
+        object NoUserData : AutoLoginResult()
+        object InFlight : AutoLoginResult()
     }
 
     //保存是否自动登录信息

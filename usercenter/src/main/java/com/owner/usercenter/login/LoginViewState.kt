@@ -16,8 +16,8 @@
 package com.owner.usercenter.login
 
 import com.owner.basemodule.base.mvi.IViewState
-import com.owner.usercenter.http.entities.LoginReq
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.LoginUser
 
 /**
  *登录界面ViewState。因为登录主要是对登录事件的处理，完成界面的导航，所以这里的状态主要是事件类
@@ -34,6 +34,8 @@ data class LoginViewState(
      */
     sealed class LoginUiEvent {
 
+        data class CheckEvent(val loginUser: LoginUser, val autoLogin: Boolean) : LoginUiEvent()
+
         data class JumpMain(val loginUser: LoginResp) : LoginUiEvent()
 
         data class SetAutoLoginInfo(val isAutoLogin: Boolean?) : LoginUiEvent()
@@ -41,10 +43,9 @@ data class LoginViewState(
         object JumpFindPassWord :LoginUiEvent()
 
         data class TryAutoLogin(
-            val loginEntity: LoginReq,
+            val loginEntity: LoginUser,
             val autoLogin: Boolean
         ) : LoginUiEvent()
-
     }
 
     companion object {
