@@ -19,7 +19,6 @@ import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
-import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -68,7 +67,10 @@ class UserServiceManagerImpl(
     /*
      注册
      */
-    override fun RegisterManager(username: String, mobilephone: String): Flowable<Either<Errors, RegisterUserResp>> {
+    override fun registerManager(
+        username: String,
+        mobilephone: String
+    ): Flowable<Either<Errors, RegisterUserResp>> {
         val newUser = RegisterUserReq(
             username = username,
             mobilePhoneNumber = mobilephone
@@ -86,19 +88,23 @@ class UserServiceManagerImpl(
     /*
       重置密码
      */
-    override fun ResetPwd(
-        newPwd: String,
-
-        prefs: PrefsHelper
+    override fun resetPwd(
+        sessionToken: String,
+        objectId: String,
+        oldPassword: String,
+        newPassword: String
     ): Flowable<Either<Errors, ResetPwdResp>> {
-        val request = ResetPwdReq(prefs.password,newPwd)
+        val request = ResetPwdReq(oldPassword, newPassword)
         return service.resetPwd(
-            prefs.objectId,
-            prefs.sessionToken, request
+            sessionToken, objectId, request
         )
             .subscribeOn(Schedulers.io())
             .map {
-                Either.right(it)
+                if (it.isSuccess()) {
+                    Either.right(it)
+                } else {
+                    Either.left(Errors.BmobError(it.code))
+                }
             }
 
 

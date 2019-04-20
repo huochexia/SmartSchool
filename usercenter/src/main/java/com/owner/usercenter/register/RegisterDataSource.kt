@@ -46,7 +46,7 @@ class RegisterRemoteDataSourec(
         username: String,
         mobilephone: String
     ): Flowable<Either<Errors, RegisterUserResp>> {
-        return serviceManager.RegisterManager(username, mobilephone)
+        return serviceManager.registerManager(username, mobilephone)
     }
 }
 

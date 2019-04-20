@@ -10,7 +10,8 @@
     <string name="register_hint_username">请输入新用户名称</string>
     <string name="register_new_user_tips">增加新用户</string>
     <string name="reset_pwd">重置</string>
-    <string name="reset_new_password">重新设置您的密码</string>
+    <string name="reset_password">重新设置您的密码</string>
     <string name="reset_again_password">请再次输入密码</string>
-    <string name="reset_password">请输入密码（6-20位字母或数字）</string>
+    <string name="reset_new_password">请输入新密码（6-20位字母或数字）</string>
+    <string name="reset_old_password">请输入旧密码</string>
 </resources>

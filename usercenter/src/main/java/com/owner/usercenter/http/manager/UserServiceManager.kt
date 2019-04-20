@@ -43,10 +43,10 @@ interface UserServiceManager {
     /**
      * 注册，将API返回的结果进行分类（成功或失败）处理，发送一个Either结果给下游
      */
-    fun RegisterManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
+    fun registerManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
 
     /**
      * 重置密码
      */
-    fun ResetPwd(newPwd:String,prefs:PrefsHelper):Flowable<Either<Errors,ResetPwdResp>>
+    fun resetPwd(sessionToken:String,objectId:String,oldPassword:String,newPassword:String):Flowable<Either<Errors,ResetPwdResp>>
 }

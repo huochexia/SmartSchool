@@ -54,8 +54,8 @@ interface UserApi {
      */
     @PUT("/1/updateUserPassword/{objectId}")
     fun resetPwd(
-        @Path("objectId") objectId: String,
         @Header("X-Bmob-Session-Token") token: String,
+        @Path("objectId") objectId: String,
         @Body newPwd: ResetPwdReq
     ): Flowable<ResetPwdResp>
 }
