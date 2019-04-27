@@ -21,7 +21,7 @@ package com.owner.usercenter.http.entities
  *@description:
  */
 data class LoginUser(
-    val username: String,
+    val mobilePhoneNumber: String,
     val password: String,
     val sessionToken: String,
     val objectId: String

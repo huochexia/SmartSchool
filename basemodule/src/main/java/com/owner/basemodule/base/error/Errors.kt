@@ -41,6 +41,7 @@ sealed class Errors : Throwable() {
         val errorMessage: String
             get() = when (code) {
                 101 -> "用户名或密码不正确"
+                10010 -> "手机号码发送信息受到限制"
                 202 -> "用户已存在"
                 203 -> "邮箱已存在"
                 205 -> "没有此用户"

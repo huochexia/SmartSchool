@@ -13,20 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
-
-import com.owner.basemodule.base.mvi.IIntent
+package com.owner.usercenter.http.entities
 
 /**
- *
+ *  修改密码
  * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-sealed class ResetIntent : IIntent {
 
-    data class ClickResetIntent(val oldPassword: String,
-                                val newPassword: String,
-                                val againPassword:String) : ResetIntent()
+data class ChangePwdReq(
+    val oldPassword: String,
+    val newPassword: String
+)
 
+data class ChangePwdResp(
+    val code: Int = 0,
+    val error: String?,
+    val msg: String?
+) {
+    fun isSuccess(): Boolean = code == 0
+}
 
+/**
+ * 重置密码
+ */
+data class ResetPasswordReq(
+    val password: String
+)
+
+data class ResetPasswordResp(
+    val code: Int = 0,
+    val error: String?,
+    val msg: String?
+) {
+    fun isSuccess() = code == 0
 }

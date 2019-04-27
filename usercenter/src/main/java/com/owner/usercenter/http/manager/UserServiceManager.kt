@@ -18,7 +18,6 @@ package com.owner.usercenter.http.manager
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.http.entities.*
-import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -32,7 +31,7 @@ interface UserServiceManager {
     /**
      * 登录，上游数据是LoginResp。因为下游数据需要区分开正确的和错误的两种，所以在这里进行区分。
      */
-    fun loginManager(username:String,password:String): Flowable<Either<Errors,LoginResp>>
+    fun loginManager(mobilephone:String,password:String): Flowable<Either<Errors,LoginResp>>
 
     /**
      * 检查用户是否过期
@@ -46,7 +45,20 @@ interface UserServiceManager {
     fun registerManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
 
     /**
+     * 更换密码
+     */
+    fun changePwd(sessionToken:String, objectId:String, oldPassword:String, newPassword:String):Flowable<Either<Errors,ChangePwdResp>>
+    /**
+     * 请求验证码
+     */
+    fun requestSmsCode(mobilephone: String):Single<RequestCodeResp>
+
+    /**
+     * 验证验证码
+     */
+    fun verifySmsCode(mobilephone: String,smsId:String):Single<VerifyCodeResp>
+    /**
      * 重置密码
      */
-    fun resetPwd(sessionToken:String,objectId:String,oldPassword:String,newPassword:String):Flowable<Either<Errors,ResetPwdResp>>
+    fun resetPwd(newPassword:String,smsCode:String):Single<ResetPasswordResp>
 }

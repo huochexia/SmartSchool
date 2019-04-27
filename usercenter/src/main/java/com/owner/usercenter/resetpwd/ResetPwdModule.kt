@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.resetpwd
 
 import androidx.appcompat.app.AppCompatActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -21,43 +21,38 @@ import com.owner.basemodule.network.RetrofitFactory
 import com.owner.usercenter.http.manager.UserServiceManager
 import com.owner.usercenter.http.manager.UserServiceManagerImpl
 import com.owner.usercenter.http.service.UserApi
-import com.owner.usercenter.util.PrefsHelper
 import org.kodein.di.Kodein
 import org.kodein.di.android.x.AndroidLifecycleScope
-import org.kodein.di.generic.*
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.scoped
+import org.kodein.di.generic.singleton
 
 /**
  *
- * Created by Liuyong on 2019-04-15.It's smartschool
+ * Created by Liuyong on 2019-04-23.It's smartschool
  *@description:
  */
 
-const val RESET_ACTIVITY_TAG = "RESET_ACTIVITY_TAG"
+const val RESETPWD_MODULE_TAG = "RESETPWD_MODULE_TAG"
 
-val resetModule = Kodein.Module(RESET_ACTIVITY_TAG) {
+val resetPwdModule = Kodein.Module(RESETPWD_MODULE_TAG) {
 
-    bind<ResetViewModel>() with scoped<AppCompatActivity>(AndroidLifecycleScope).singleton {
-        context.getViewModel { ResetViewModel(instance()) }
+    bind<ResetPwdViewModle>() with scoped<AppCompatActivity>(AndroidLifecycleScope).singleton {
+        context.getViewModel { ResetPwdViewModle(instance()) }
     }
-
-    bind<ResetActionProcessHolder>() with singleton {
-        ResetActionProcessHolder(instance(),instance())
+    bind<ResetPwdActionProcessHolder>() with singleton {
+        ResetPwdActionProcessHolder(instance())
     }
-
-    bind<ResetDataSourceRepository>() with singleton {
-        ResetDataSourceRepository(instance())
-    }
-    bind<PrefsHelper>() with provider {
-        PrefsHelper(instance())
+    bind<ResetPwdRepository>() with singleton {
+        ResetPwdRepository(instance())
     }
     bind<ResetRemoteDataSource>() with singleton {
         ResetRemoteDataSource(instance())
     }
-
     bind<UserServiceManager>() with singleton {
         UserServiceManagerImpl(instance())
     }
-
     bind<UserApi>() with singleton {
         RetrofitFactory.getInstance().create(UserApi::class.java)
     }

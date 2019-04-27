@@ -13,23 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.http.entities
+package com.owner.usercenter.resetpwd
+
+import com.owner.basemodule.base.mvi.IIntent
 
 /**
  *
- * Created by Liuyong on 2019-04-12.It's smartschool
+ * Created by Liuyong on 2019-04-23.It's smartschool
  *@description:
  */
-
-data class ResetPwdReq(
-    val oldPassword: String,
-    val newPassword: String
-)
-
-data class ResetPwdResp(
-    val code: Int = 0,
-    val error: String?,
-    val msg: String?
-) {
-    fun isSuccess(): Boolean = code == 0
-}
+data class ResetPwdIntent(val newPassword:String, val againPassword:String, val smsCode:String) :IIntent

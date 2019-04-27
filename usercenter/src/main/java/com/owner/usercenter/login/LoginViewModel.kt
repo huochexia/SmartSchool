@@ -69,7 +69,7 @@ class LoginViewModel(
         return when (intent) {
             is LoginIntent.InitialIntent -> LoginAction.InitialAction
             is LoginIntent.SetAutoLoginIntent -> LoginAction.SetAutoLoginAction(intent.isAutoLogin)
-            is LoginIntent.LoginClicksIntent -> LoginAction.ClickLoginAction(intent.username, intent.password)
+            is LoginIntent.LoginClicksIntent -> LoginAction.ClickLoginAction(intent.mobilePhone, intent.password)
             is LoginIntent.FindPassWordIntent -> LoginAction.FindPassWordAction
         }
     }

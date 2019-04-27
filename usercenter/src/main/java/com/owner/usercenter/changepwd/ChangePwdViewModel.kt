@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.changepwd
 
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.uber.autodispose.autoDisposable
@@ -26,32 +26,32 @@ import io.reactivex.subjects.PublishSubject
  * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-class ResetViewModel(
-    private val actionProcessHolder: ResetActionProcessHolder
-) : BaseViewModel<ResetIntent, ResetViewState>() {
+class ChangePwdViewModel(
+    private val actionProcessHolder: ChangePwdActionProcessHolder
+) : BaseViewModel<ChangePwdIntent, ChangePwdViewState>() {
 
-    private val intentPublish = PublishSubject.create<ResetIntent>()
+    private val intentPublish = PublishSubject.create<ChangePwdIntent>()
 
-    private val stateObservable: Observable<ResetViewState> = compose()
+    private val stateObservable: Observable<ChangePwdViewState> = compose()
 
-    override fun compose(): Observable<ResetViewState> {
+    override fun compose(): Observable<ChangePwdViewState> {
         return intentPublish.map { actionFromIntent(it) }
             .compose(actionProcessHolder.actionProcessor)
-            .scan(ResetViewState.idle(), reducer)
+            .scan(ChangePwdViewState.idle(), reducer)
             .replay(1)
             .autoConnect(0)
     }
 
-    override fun processIntents(intent: Observable<ResetIntent>) {
+    override fun processIntents(intent: Observable<ChangePwdIntent>) {
         intent.autoDisposable(this)
             .subscribe(intentPublish)
     }
 
-    override fun states(): Observable<ResetViewState> = stateObservable
+    override fun states(): Observable<ChangePwdViewState> = stateObservable
 
-    private fun actionFromIntent(intent: ResetIntent): ResetAction {
+    private fun actionFromIntent(intent: ChangePwdIntent): ChangePwdAction {
         return when (intent) {
-            is ResetIntent.ClickResetIntent -> ResetAction.ClickResetAction(
+            is ChangePwdIntent.ClickResetIntent -> ChangePwdAction.ClickResetAction(
                 intent.oldPassword,
                 intent.newPassword, intent.againPassword
             )
@@ -60,17 +60,17 @@ class ResetViewModel(
     }
 
     companion object {
-        private val reducer = BiFunction { previous: ResetViewState, result: ResetResult ->
+        private val reducer = BiFunction { previous: ChangePwdViewState, result: ChangePwdResult ->
 
             when (result) {
-                is ResetResult.ClickResetResult -> when (result) {
-                    is ResetResult.ClickResetResult.Failure -> previous.copy(
+                is ChangePwdResult.ClickResetResult -> when (result) {
+                    is ChangePwdResult.ClickResetResult.Failure -> previous.copy(
                         error = result.error,
                         uiEvent = null
                     )
-                    is ResetResult.ClickResetResult.Success -> previous.copy(
+                    is ChangePwdResult.ClickResetResult.Success -> previous.copy(
                         error = null,
-                        uiEvent = ResetViewState.ResetUiEvent.Success
+                        uiEvent = ChangePwdViewState.ResetUiEvent.Success
                     )
                 }
             }

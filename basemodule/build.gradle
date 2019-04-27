@@ -52,13 +52,16 @@ dependencies {
     api libs.recyclerview
     api libs.constraint
     api libs.kotlin_stdlib
+    api libs.coroutines_core
     api libs.kotlin_coroutines
 
     // jetpack
     api libs.arch_comp_extension
     api libs.arch_comp_java8
     api libs.arch_comp_livedata_rx
-
+    //anko
+    api libs.anko_commons
+    api libs.anko_appcompat
     api libs.arch_comp_room
     api libs.arch_comp_room_rxjava
     kapt libs.arch_comp_room_compiler

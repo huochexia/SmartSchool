@@ -13,20 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
-
-import com.owner.basemodule.base.mvi.IAction
+package com.owner.usercenter.http.entities
 
 /**
  *
- * Created by Liuyong on 2019-04-12.It's smartschool
+ * Created by Liuyong on 2019-04-20.It's smartschool
  *@description:
  */
-sealed class ResetAction : IAction {
+/*
+请求验证码
+ */
+data class RequestCodeReq(val mobilePhoneNumber: String)
 
-    data class ClickResetAction(val oldPassword: String,
-                                val newPassword: String,
-                                val againPassword:String) : ResetAction()
+data class RequestCodeResp(
+    val code: Int = 0,
+    val error: String?,
+    val smsId: String? //验证码的Id，不是验证码
+) {
+    fun isSuccess() = code == 0
+}
 
+/*
+验证验证码正确性
+ */
+data class VerifyCodeReq(
+    val mobilePhoneNumber: String
+)
 
+data class VerifyCodeResp(
+    val code: Int = 0,
+    val error: String?,
+    val msg: String?
+) {
+    fun isSuccess() = code == 0
 }

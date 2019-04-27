@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.login
+package com.owner.usercenter.changepwd
 
 import androidx.appcompat.app.AppCompatActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -27,46 +27,37 @@ import org.kodein.di.android.x.AndroidLifecycleScope
 import org.kodein.di.generic.*
 
 /**
- *依赖注入，注入登录所需要的实例类
- * Created by Liuyong on 2019-04-01.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-15.It's smartschool
  *@description:
  */
 
-const val LOGIN_MODULE_TAG = "LOGIN_MODULE_TAG"
+const val RESET_ACTIVITY_TAG = "RESET_ACTIVITY_TAG"
 
-val loginKodeinModule = Kodein.Module(LOGIN_MODULE_TAG) {
+val changePwdModule = Kodein.Module(RESET_ACTIVITY_TAG) {
 
-    bind<LoginViewModel>() with scoped<AppCompatActivity>(AndroidLifecycleScope).singleton {
-        context.getViewModel { LoginViewModel(instance()) }
+    bind<ChangePwdViewModel>() with scoped<AppCompatActivity>(AndroidLifecycleScope).singleton {
+        context.getViewModel { ChangePwdViewModel(instance()) }
     }
-    //给ViewModel提供类
-    bind<LoginActionProcessHolder>() with singleton {
-        LoginActionProcessHolder(instance())
+
+    bind<ChangePwdActionProcessHolder>() with singleton {
+        ChangePwdActionProcessHolder(instance(),instance())
     }
-    //给LoginActionProcessHolder提供类
-    bind<LoginDataSourceRepository>() with singleton {
-        LoginDataSourceRepository(
-            remoteDataSource = instance(),
-            localDataSource = instance()
-        )
+
+    bind<ChangePwdDataSourceRepository>() with singleton {
+        ChangePwdDataSourceRepository(instance())
     }
-    //给LoginDataSourceRepository提供类, 它需要的类由基础Module提供。
-    bind<LoginLocalDataSource>() with singleton {
-        LoginLocalDataSource(prefs = instance())
-    }
-    //给它提供实例的Module在应用程序的Kodein容器中
     bind<PrefsHelper>() with provider {
         PrefsHelper(instance())
     }
-
-    //给LoginDataSourceRepository提供类
-    bind<LoginRemoteDataSource>() with singleton {
-        LoginRemoteDataSource(instance())
+    bind<ChangePwdRemoteDataSource>() with singleton {
+        ChangePwdRemoteDataSource(instance())
     }
-    //给LoginRemoteDataSource提供类
+
     bind<UserServiceManager>() with singleton {
         UserServiceManagerImpl(instance())
     }
+
     bind<UserApi>() with singleton {
         RetrofitFactory.getInstance().create(UserApi::class.java)
     }

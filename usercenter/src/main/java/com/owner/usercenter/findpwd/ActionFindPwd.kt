@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.findpwd
 
-import com.owner.basemodule.base.mvi.IResult
+import com.owner.basemodule.base.mvi.IAction
 
 /**
  *
- * Created by Liuyong on 2019-04-12.It's smartschool
+ * Created by Liuyong on 2019-04-21.It's smartschool
  *@description:
  */
-sealed class ResetResult : IResult {
+sealed class ActionFindPwd:IAction {
 
-    sealed class ClickResetResult : ResetResult() {
-        object Success : ClickResetResult()
-        data class Failure(val error: Throwable?) : ClickResetResult()
-    }
+    data class ActionClickGetVerifyCode(val mobilephone:String):ActionFindPwd()
 
+    data class ActionClickNextBtn(val mobilephone: String,val smsCode:String):ActionFindPwd()
 }

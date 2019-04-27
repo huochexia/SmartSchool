@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.changepwd
 
 import android.widget.Toast
 import com.jakewharton.rxbinding3.view.clicks
@@ -25,7 +25,7 @@ import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.activity_reset_pwd.*
+import kotlinx.android.synthetic.main.activity_change_pwd.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -34,19 +34,19 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-class ResetPwdActivity : BaseActivity<ActivityResetPwdBinding, ResetIntent, ResetViewState>() {
+class ChangePwdActivity : BaseActivity<ActivityResetPwdBinding, ChangePwdIntent, ChangePwdViewState>() {
 
     override val layoutId: Int
-        get() = R.layout.activity_reset_pwd
+        get() = R.layout.activity_change_pwd
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
-        import(resetModule)
+        import(changePwdModule)
     }
 
-    private val resetIntentPublisher = PublishSubject.create<ResetIntent>()
+    private val resetIntentPublisher = PublishSubject.create<ChangePwdIntent>()
 
-    val viewModel: ResetViewModel by instance()
+    val viewModel: ChangePwdViewModel by instance()
 
     override fun initView() {
         initEvent()
@@ -59,14 +59,14 @@ class ResetPwdActivity : BaseActivity<ActivityResetPwdBinding, ResetIntent, Rese
             .subscribe({
                 render(it)
             }, {
-                Toast.makeText(this@ResetPwdActivity, it.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ChangePwdActivity, it.message, Toast.LENGTH_SHORT).show()
             })
     }
 
     fun initEvent() {
         btnReset.clicks()
             .map {
-                ResetIntent.ClickResetIntent(
+                ChangePwdIntent.ClickResetIntent(
                     oldPassword = tvOldPassword.text.toString(),
                     newPassword = tvNewPassword.text.toString(),
                     againPassword = tvAgainPassword.text.toString()
@@ -76,18 +76,18 @@ class ResetPwdActivity : BaseActivity<ActivityResetPwdBinding, ResetIntent, Rese
             .subscribe(resetIntentPublisher)
     }
 
-    override fun intents(): Observable<ResetIntent> {
+    override fun intents(): Observable<ChangePwdIntent> {
         return Observable.mergeArray(resetIntentPublisher)
     }
 
-    override fun render(state: ResetViewState) {
+    override fun render(state: ChangePwdViewState) {
         state.error?.apply {
             when (this) {
                 is Errors.SimpleMessageError -> {
-                    Toast.makeText(this@ResetPwdActivity, simpleMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ChangePwdActivity, simpleMessage, Toast.LENGTH_SHORT).show()
                 }
                 is Errors.BmobError -> {
-                    Toast.makeText(this@ResetPwdActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ChangePwdActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -95,9 +95,9 @@ class ResetPwdActivity : BaseActivity<ActivityResetPwdBinding, ResetIntent, Rese
 
         state.uiEvent?.apply {
             when (this) {
-                is ResetViewState.ResetUiEvent.Success -> {
+                is ChangePwdViewState.ResetUiEvent.Success -> {
 
-                    Toast.makeText(this@ResetPwdActivity, "更改成功！", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ChangePwdActivity, "更改成功！", Toast.LENGTH_SHORT).show()
                 }
 
             }

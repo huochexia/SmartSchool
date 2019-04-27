@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.changepwd
 
 import com.owner.basemodule.base.error.Errors
-import com.owner.usercenter.http.entities.ResetPwdResp
+import com.owner.usercenter.http.entities.ChangePwdResp
 import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -27,13 +27,13 @@ import java.lang.IllegalArgumentException
  * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-class ResetActionProcessHolder(
-    private val repository: ResetDataSourceRepository,
+class ChangePwdActionProcessHolder(
+    private val repository: ChangePwdDataSourceRepository,
     private val prefs:PrefsHelper
 ) {
 
     private val clickResetPwdTransformer =
-        ObservableTransformer<ResetAction.ClickResetAction, ResetResult.ClickResetResult> { action ->
+        ObservableTransformer<ChangePwdAction.ClickResetAction, ChangePwdResult.ClickResetResult> { action ->
 
             action.flatMap {
                 val (oldPassword,newPassword, againPassword) = it
@@ -54,32 +54,32 @@ class ResetActionProcessHolder(
 
         }
 
-    private fun onResetParamErrorResult(): Observable<ResetResult.ClickResetResult> {
+    private fun onResetParamErrorResult(): Observable<ChangePwdResult.ClickResetResult> {
         return Observable.just(Errors.SimpleMessageError("新旧密码不一致！"))
-            .map(ResetResult.ClickResetResult::Failure)
+            .map(ChangePwdResult.ClickResetResult::Failure)
     }
 
-    private fun onResetFailureResult(error: Throwable): Observable<ResetResult.ClickResetResult> {
-        return Observable.just(ResetResult.ClickResetResult.Failure(error))
+    private fun onResetFailureResult(error: Throwable): Observable<ChangePwdResult.ClickResetResult> {
+        return Observable.just(ChangePwdResult.ClickResetResult.Failure(error))
     }
 
-    private fun onResetSuccessResult(respone: ResetPwdResp): Observable<ResetResult.ClickResetResult> {
+    private fun onResetSuccessResult(respone: ChangePwdResp): Observable<ChangePwdResult.ClickResetResult> {
         return Observable.just(respone)
             .filter { it.msg == "ok" }
             .map {
-                ResetResult.ClickResetResult.Success
+                ChangePwdResult.ClickResetResult.Success
             }
     }
 
-    internal val actionProcessor = ObservableTransformer<ResetAction, ResetResult> { action ->
+    internal val actionProcessor = ObservableTransformer<ChangePwdAction, ChangePwdResult> { action ->
 
         action.publish { share ->
             Observable.mergeArray(
-                share.ofType(ResetAction.ClickResetAction::class.java).compose(clickResetPwdTransformer),
+                share.ofType(ChangePwdAction.ClickResetAction::class.java).compose(clickResetPwdTransformer),
                 share.filter {all->
-                    all !is ResetAction.ClickResetAction
+                    all !is ChangePwdAction.ClickResetAction
                 }.flatMap {
-                    Observable.error<ResetResult>(IllegalArgumentException("Unknown Action type!"))
+                    Observable.error<ChangePwdResult>(IllegalArgumentException("Unknown Action type!"))
                 }
             )
         }

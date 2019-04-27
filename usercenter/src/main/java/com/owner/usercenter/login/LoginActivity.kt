@@ -15,17 +15,20 @@
  */
 package com.owner.usercenter.login
 
+import android.content.Intent
 import android.widget.Toast
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityLoginBinding
+import com.owner.usercenter.findpwd.FindPwdActivity
 import com.owner.usercenter.util.PrefsHelper
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.startActivity
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -78,7 +81,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
         btnLogin.clicks()
             .map {
                 LoginIntent.LoginClicksIntent(
-                    username = tvUsername.text.toString(),
+                    mobilePhone = tvMobilePhone.text.toString(),
                     password = tvPassword.text.toString()
                 )
             }
@@ -90,6 +93,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
             .flatMap {
                 //isAutoLogin已经进行了双向绑定，所以这里得到的是新值
                 Observable.just(LoginIntent.SetAutoLoginIntent(viewModel.isAutoLogin.value))
+            }
+            .autoDisposable(scopeProvider)
+            .subscribe(loginIntentPublisher)
+        //忘记密码
+        tv_forget_password.clicks()
+            .map {
+                LoginIntent.FindPassWordIntent
             }
             .autoDisposable(scopeProvider)
             .subscribe(loginIntentPublisher)
@@ -129,16 +139,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
             }
             //如果是自动登录，则利用得到的用户名和密码，发出点击登录意图
             is LoginViewState.LoginUiEvent.TryAutoLogin -> {
-                val username = state.uiEvents.loginEntity.username
+                val username = state.uiEvents.loginEntity.mobilePhoneNumber
                 val password = state.uiEvents.loginEntity.password
-                tvUsername.setText(username.toCharArray(), 0, username.length)
+                tvMobilePhone.setText(username.toCharArray(), 0, username.length)
                 tvPassword.setText(password.toCharArray(), 0, password.length)
                 if (state.uiEvents.autoLogin) {
                     loginIntentPublisher.onNext(LoginIntent.LoginClicksIntent(username, password))
                 }
             }
             is LoginViewState.LoginUiEvent.JumpFindPassWord ->{
-                //TODO 跳到找回密码的Activity
+               startActivity<FindPwdActivity>()
             }
         }
     }

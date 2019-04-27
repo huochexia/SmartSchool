@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.login
+package com.owner.usercenter.changepwd
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.basemodule.base.mvi.IViewState
 
 /**
- * 登录界面Action：检查用户是否过期，登录，找回密码，设置是否自动登录
- * Created by Liuyong on 2019-04-01.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-sealed class LoginAction :IAction{
+data class ChangePwdViewState(
+    val error: Throwable?,
+    val uiEvent: ResetUiEvent?
+) : IViewState {
+    sealed class ResetUiEvent {
+        object Success : ResetUiEvent()
+    }
 
-    object InitialAction : LoginAction()
+    companion object {
 
-    data class SetAutoLoginAction(val isAutoLogin:Boolean?):LoginAction()
-
-    object FindPassWordAction : LoginAction()
-
-    data class ClickLoginAction(
-        val mobilePhone:String?,
-        val password :String?
-    ):LoginAction()
-
-
+        fun idle(): ChangePwdViewState = ChangePwdViewState(
+            error = null,
+            uiEvent = null
+        )
+    }
 }

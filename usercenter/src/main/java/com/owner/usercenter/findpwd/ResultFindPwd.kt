@@ -13,27 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.login
+package com.owner.usercenter.findpwd
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.basemodule.base.mvi.IResult
 
 /**
- * 登录界面Action：检查用户是否过期，登录，找回密码，设置是否自动登录
- * Created by Liuyong on 2019-04-01.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-21.It's smartschool
  *@description:
  */
-sealed class LoginAction :IAction{
+sealed class ResultFindPwd:IResult {
 
-    object InitialAction : LoginAction()
+    sealed class GetVerifyCode:ResultFindPwd(){
 
-    data class SetAutoLoginAction(val isAutoLogin:Boolean?):LoginAction()
+        data class Success(val smsCode:String):GetVerifyCode()
 
-    object FindPassWordAction : LoginAction()
-
-    data class ClickLoginAction(
-        val mobilePhone:String?,
-        val password :String?
-    ):LoginAction()
+        data class Failure(val error:Throwable):GetVerifyCode()
 
 
+    }
+
+    sealed class NextBtn:ResultFindPwd(){
+
+        data class Success(val msg:String):NextBtn()
+
+        data class Failure(val error:Throwable):NextBtn()
+
+
+    }
 }

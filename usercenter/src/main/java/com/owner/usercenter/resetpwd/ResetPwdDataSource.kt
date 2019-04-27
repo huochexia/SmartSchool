@@ -13,54 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.resetpwd
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.base.repository.IRemoteDataSource
-import com.owner.usercenter.http.entities.ResetPwdResp
+import com.owner.usercenter.http.entities.ResetPasswordResp
 import com.owner.usercenter.http.manager.UserServiceManager
-import io.reactivex.Flowable
+import io.reactivex.Single
 
 /**
  *
- * Created by Liuyong on 2019-04-12.It's smartschool
+ * Created by Liuyong on 2019-04-23.It's smartschool
  *@description:
  */
+
 interface IResetRemoteDataSource : IRemoteDataSource {
-    fun resetPwd(
-        sessionToken: String,
-        objectId: String,
-        oldPassword: String, newPassword: String
-    ): Flowable<Either<Errors, ResetPwdResp>>
+
+    fun resetPassword(newPassword: String, smsCode: String): Single<ResetPasswordResp>
 }
 
 class ResetRemoteDataSource(
-    private val serviceManager: UserServiceManager
+    val service: UserServiceManager
 ) : IResetRemoteDataSource {
-    override fun resetPwd(
-        sessionToken: String,
-        objectId: String,
-        oldPassword: String,
-        newPassword: String
-    ): Flowable<Either<Errors, ResetPwdResp>> =
-        serviceManager.resetPwd(sessionToken, objectId, oldPassword, newPassword)
-
-
+    override fun resetPassword(newPassword: String, smsCode: String): Single<ResetPasswordResp> {
+        return service.resetPwd(newPassword, smsCode)
+    }
 }
 
-
-class ResetDataSourceRepository(
-    remoteDataSource: IResetRemoteDataSource
+class ResetPwdRepository(
+    remoteDataSource: ResetRemoteDataSource
 ) : BaseRepositoryRemote<IResetRemoteDataSource>(remoteDataSource) {
 
-    fun resetPwd(
-        sessionToken: String,
-        objectId: String,
-        oldPassword: String,
-        newPassword: String
-    ): Flowable<Either<Errors, ResetPwdResp>> {
-        return remoteDataSource.resetPwd(sessionToken, objectId, oldPassword, newPassword)
+    fun resetPassword(newPassword: String, smsCode: String): Single<Either<Errors,ResetPasswordResp>> {
+
+        return remoteDataSource.resetPassword(newPassword,smsCode).map {
+            if (it.isSuccess()) {
+                Either.right(it)
+            }else{
+                Either.left(Errors.BmobError(it.code))
+            }
+        }
+
     }
 }

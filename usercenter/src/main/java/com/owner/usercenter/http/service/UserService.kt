@@ -15,7 +15,6 @@
  */
 package com.owner.usercenter.http.service
 
-import com.owner.basemodule.network.RetrofitFactory
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -31,7 +30,7 @@ interface UserApi {
      * 用户名(或手机号)和密码登录
      */
     @GET("1/login/")
-    fun login(@Query("username") username: String, @Query("password") password: String)
+    fun login(@Query("username") mobilePhoneNumber: String, @Query("password") password: String)
             : Flowable<LoginResp>
 
     /*
@@ -41,26 +40,40 @@ interface UserApi {
     fun check(
         @Header("X-Bmob-Session-Token") sessionToken: String,
         @Path("objectID") objectId: String
-    ):Single<CheckLoginUser>
+    ): Single<CheckLoginUser>
 
     /*
      *注册用户
      */
     @POST("/1/users")
-    fun signUp(@Body newUser: RegisterUserReq):Flowable<RegisterUserResp>
+    fun signUp(@Body newUser: RegisterUserReq): Flowable<RegisterUserResp>
 
     /*
-     *重置密码
+     *更换密码
      */
     @PUT("/1/updateUserPassword/{objectId}")
-    fun resetPwd(
+    fun changePwd(
         @Header("X-Bmob-Session-Token") token: String,
         @Path("objectId") objectId: String,
-        @Body newPwd: ResetPwdReq
-    ): Flowable<ResetPwdResp>
+        @Body newPwd: ChangePwdReq
+    ): Flowable<ChangePwdResp>
+
+    /*
+     * 请求短信验证码
+     */
+    @POST("/1/requestSmsCode")
+    fun requestSmsCode(@Body request: RequestCodeReq): Single<RequestCodeResp>
+
+    /*
+     * 验证短信验证码
+     */
+    @POST("/1/verifySmsCode/{smsCode}")
+    fun verifySmsCode(@Body verify: VerifyCodeReq, @Path("smsCode") smsCode: String): Single<VerifyCodeResp>
+
+    /*
+     * 重置密码
+     */
+    @PUT("/1/resetPasswordBySmsCode/{smsCode}")
+    fun resetPassword(@Body newPwd: ResetPasswordReq, @Path("smsCode") smsCode: String): Single<ResetPasswordResp>
 }
 
-/**
- * 用户操作网络接口的实例----单例模式。
- */
-object UserService : UserApi by RetrofitFactory.getInstance().create(UserApi::class.java)

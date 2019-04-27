@@ -13,28 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.reset
+package com.owner.usercenter.resetpwd
 
-import com.owner.basemodule.base.mvi.IViewState
+import com.owner.basemodule.base.mvi.IAction
 
 /**
  *
- * Created by Liuyong on 2019-04-12.It's smartschool
+ * Created by Liuyong on 2019-04-23.It's smartschool
  *@description:
  */
-data class ResetViewState(
-    val error: Throwable?,
-    val uiEvent: ResetUiEvent?
-) : IViewState {
-    sealed class ResetUiEvent {
-        object Success : ResetUiEvent()
-    }
-
-    companion object {
-
-        fun idle(): ResetViewState = ResetViewState(
-            error = null,
-            uiEvent = null
-        )
-    }
-}
+data class ResetPwdAction (
+    val newPassword: String,
+    val againPassword: String,
+    val smsCode: String
+): IAction

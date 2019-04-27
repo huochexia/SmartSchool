@@ -34,7 +34,7 @@ class LoginActionProcessHolder(
 ) {
     //初始化过程
     private val initialActionTransformer =
-        ObservableTransformer<LoginAction.InitialAction, LoginResult.AutoLoginResult> { action ->
+        ObservableTransformer<LoginAction.InitialAction, LoginResult.AutoLoginResult> {
             Observable
                 .zip(repository.prefsUser().toObservable(),
                     repository.prefsAutoLogin().toObservable(),
@@ -68,10 +68,10 @@ class LoginActionProcessHolder(
         ObservableTransformer<LoginAction.ClickLoginAction, LoginResult.ClickLoginResult> { actions ->
             actions
                 .flatMap { o ->
-                    val (username, password) = o
-                    when (username.isNullOrEmpty() || password.isNullOrEmpty()) {
+                    val (mobilePhone, password) = o
+                    when (mobilePhone.isNullOrEmpty() || password.isNullOrEmpty()) {
                         true -> onLoginParamEmptyResult()
-                        false -> repository.login(username, password)
+                        false -> repository.login(mobilePhone, password)
                             .toObservable()
                             .flatMap {
                                 it.fold(::onLoginFailureResult, ::onLoginSuccessResult)

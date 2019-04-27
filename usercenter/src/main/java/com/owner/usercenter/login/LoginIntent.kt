@@ -38,7 +38,7 @@ sealed class LoginIntent : IIntent {
 
     //点击按钮登录
     data class LoginClicksIntent(
-        val username: String?,
+        val mobilePhone: String?,
         val password: String?
     ) : LoginIntent()
 

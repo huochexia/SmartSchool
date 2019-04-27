@@ -34,11 +34,11 @@ class UserServiceManagerImpl(
     /*
       登录
      */
-    override fun loginManager (username: String, password: String): Flowable<Either<Errors, LoginResp>> {
+    override fun loginManager(mobilephone: String, password: String): Flowable<Either<Errors, LoginResp>> {
         // 如果登录成功，将LoginResp赋给Either函子的右值，左值为nothing，
         // 否则将错误赋值给函子的左值,右值为nothing。
         //这样将数据源得到数据转变为Either对象，输出给下游。
-        return service.login(username, password)
+        return service.login(mobilephone, password)
             .subscribeOn(Schedulers.io())
             .map {
                 if (it.isSuccess()) {
@@ -88,14 +88,14 @@ class UserServiceManagerImpl(
     /*
       重置密码
      */
-    override fun resetPwd(
+    override fun changePwd(
         sessionToken: String,
         objectId: String,
         oldPassword: String,
         newPassword: String
-    ): Flowable<Either<Errors, ResetPwdResp>> {
-        val request = ResetPwdReq(oldPassword, newPassword)
-        return service.resetPwd(
+    ): Flowable<Either<Errors, ChangePwdResp>> {
+        val request = ChangePwdReq(oldPassword, newPassword)
+        return service.changePwd(
             sessionToken, objectId, request
         )
             .subscribeOn(Schedulers.io())
@@ -108,5 +108,29 @@ class UserServiceManagerImpl(
             }
 
 
+    }
+
+    /*
+      请求验证码
+     */
+    override fun requestSmsCode(mobilephone: String): Single<RequestCodeResp> {
+        val entity = RequestCodeReq(mobilephone)
+        return service.requestSmsCode(entity)
+    }
+
+    /*
+      验证验证码
+     */
+    override fun verifySmsCode(mobilephone: String, smsId: String): Single<VerifyCodeResp> {
+        val entity = VerifyCodeReq(mobilephone)
+        return service.verifySmsCode(entity, smsId)
+    }
+
+    /*
+      重置密码
+     */
+    override fun resetPwd(newPassword: String, smsCode: String): Single<ResetPasswordResp> {
+        val entity = ResetPasswordReq(newPassword)
+        return service.resetPassword(entity,smsCode)
     }
 }

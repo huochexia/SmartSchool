@@ -84,16 +84,13 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
             }
         }
         when (state.uiEvent) {
-            is RegisterViewState.RegisterUIEvent.initialUI -> {
-               //TODO:继续增加用户，刷新注册界面，重回最初状态
-            }
+
             is RegisterViewState.RegisterUIEvent.showDialogBox -> {
                 AlertDialog.Builder(this@RegisterActivity)
                     .setMessage("是否继续注册新用户！")
                     .setPositiveButton("是") { _, _ ->
-                        Observable.just(RegisterIntent.InitialRegisterIntent)
-                            .autoDisposable(scopeProvider)
-                            .subscribe(registerIntentPublish)
+                        tvMobilePhone.setText("")
+                        tvNewUsername.setText("")
                     }
                     .setNegativeButton("否") { _, _ ->
                         finish()
