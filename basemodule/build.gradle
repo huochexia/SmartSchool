@@ -48,7 +48,7 @@ dependencies {
 //    api 'com.squareup.okio:okio:2.1.0'
     // support
     api libs.support_v7
-    api libs.design
+    api libs.material
     api libs.recyclerview
     api libs.constraint
     api libs.kotlin_stdlib
@@ -106,7 +106,8 @@ dependencies {
     // glide
     api libs.glide
     kapt libs.glide_compiler
-
+    api libs.multi_state_view
+    api files('libs/pinyin4j-2.5.0.jar')
     // logger
     api libs.timber
     //leakcanary

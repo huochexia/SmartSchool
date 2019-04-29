@@ -38,7 +38,8 @@ data class LoginResp(val code :Int = 0,
                      val objectId: String?,
                      val avatar:String?,
                      val emailVerified: Boolean,
-                     val mobilePhoneVerified: Boolean){
+                     val mobilePhoneVerified: Boolean,
+                     val letters:String=""){
     //因为自定义的拦截器中对404错误的响应结果时行了改写，将其body做为了成功200的body。
     // 所以当code不是0时，可以是404错误的body，此时需要提示用户错误信息。
     fun isSuccess() :Boolean = code == 0 && sessionToken.isNullOrEmpty().not()

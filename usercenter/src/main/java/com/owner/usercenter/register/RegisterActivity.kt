@@ -89,7 +89,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
                 AlertDialog.Builder(this@RegisterActivity)
                     .setMessage("是否继续注册新用户！")
                     .setPositiveButton("是") { _, _ ->
-                        tvMobilePhone.setText("")
+                        tvUserActor.setText("")
                         tvNewUsername.setText("")
                     }
                     .setNegativeButton("否") { _, _ ->
@@ -105,7 +105,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, R
             .map {
                 RegisterIntent.ClickRegisterIntent(
                     username = tvNewUsername.text.toString(),
-                    mobilephone = tvMobilePhone.text.toString()
+                    mobilephone = tvUserActor.text.toString()
                 )
             }
             .autoDisposable(scopeProvider)

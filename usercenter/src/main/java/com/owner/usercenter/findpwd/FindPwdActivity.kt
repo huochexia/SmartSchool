@@ -106,7 +106,7 @@ class FindPwdActivity :
                 }
             }
             .map {
-                IntentFindPwd.IntentClickGetVerifyCode(tvMobilePhone.text.toString())
+                IntentFindPwd.IntentClickGetVerifyCode(tvUserActor.text.toString())
 
             }
             .autoDisposable(scopeProvider)
@@ -115,7 +115,6 @@ class FindPwdActivity :
         btnNext.clicks()
             .map {
                 IntentFindPwd.IntentClickNextBtn(
-                    tvMobilePhone.text.toString(),
                     tvVerifyCode.text.toString()
                 )
             }
@@ -148,7 +147,7 @@ class FindPwdActivity :
                 }
                 is ViewStateFindPwd.FindPwdEvent.jumpReset -> {
                     val intent = Intent(this@FindPwdActivity, ResetPwdActivity::class.java)
-                    intent.putExtra("smsCode", tvVerifyCode.text.toString())
+                    intent.putExtra("smsCode", smsCode)
                     startActivity(intent)
                 }
             }

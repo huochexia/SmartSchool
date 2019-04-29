@@ -54,7 +54,7 @@ class ViewModelFindPwd(
     private fun actionFromIntent(intent: IntentFindPwd): ActionFindPwd {
         return when (intent) {
             is IntentFindPwd.IntentClickGetVerifyCode -> ActionFindPwd.ActionClickGetVerifyCode(intent.mobilephone)
-            is IntentFindPwd.IntentClickNextBtn -> ActionFindPwd.ActionClickNextBtn(intent.mobilephone, intent.smsCode)
+            is IntentFindPwd.IntentClickNextBtn -> ActionFindPwd.ActionClickNextBtn( intent.smsCode)
         }
     }
 
@@ -75,7 +75,7 @@ class ViewModelFindPwd(
                 is ResultFindPwd.NextBtn -> when (result) {
                     is ResultFindPwd.NextBtn.Success -> previous.copy(
                         error = null,
-                        uiEvent = ViewStateFindPwd.FindPwdEvent.jumpReset(result.msg)
+                        uiEvent = ViewStateFindPwd.FindPwdEvent.jumpReset(result.smsCode)
                     )
                     is ResultFindPwd.NextBtn.Failure -> previous.copy(
                         error = result.error

@@ -15,7 +15,6 @@
  */
 package com.owner.usercenter.login
 
-import android.content.Intent
 import android.widget.Toast
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
@@ -81,7 +80,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
         btnLogin.clicks()
             .map {
                 LoginIntent.LoginClicksIntent(
-                    mobilePhone = tvMobilePhone.text.toString(),
+                    mobilePhone = tvUserActor.text.toString(),
                     password = tvPassword.text.toString()
                 )
             }
@@ -141,7 +140,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewS
             is LoginViewState.LoginUiEvent.TryAutoLogin -> {
                 val username = state.uiEvents.loginEntity.mobilePhoneNumber
                 val password = state.uiEvents.loginEntity.password
-                tvMobilePhone.setText(username.toCharArray(), 0, username.length)
+                tvUserActor.setText(username.toCharArray(), 0, username.length)
                 tvPassword.setText(password.toCharArray(), 0, password.length)
                 if (state.uiEvents.autoLogin) {
                     loginIntentPublisher.onNext(LoginIntent.LoginClicksIntent(username, password))

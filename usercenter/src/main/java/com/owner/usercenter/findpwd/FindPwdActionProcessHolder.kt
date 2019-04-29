@@ -16,6 +16,7 @@
 package com.owner.usercenter.findpwd
 
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.ext.reactivex.execute
 import com.owner.usercenter.http.entities.RequestCodeResp
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -69,21 +70,12 @@ class FindPwdActionProcessHolder(
             action.flatMap {
                 when (it.smsCode.isNullOrEmpty()) {
                     true -> Observable.just(Errors.SimpleMessageError("没有验证码"))
-                        .map(ResultFindPwd.NextBtn::Failure)
-                    false -> repository.verifySmsCode(it.mobilephone, it.smsCode)
-                        .toObservable()
-                        .subscribeOn(Schedulers.io())
-                        .flatMap { either ->
-                            either.fold({ error ->
-                                Observable.just(ResultFindPwd.NextBtn.Failure(error))
-                            }, { resp ->
-                                Observable.just(ResultFindPwd.NextBtn.Success(resp.msg!!))
-                            })
-                        }
+                        .map { ResultFindPwd.NextBtn.Failure(it) }
+                    false -> Observable.just(ResultFindPwd.NextBtn.Success(it.smsCode))
                 }
             }
                 .onErrorReturn(ResultFindPwd.NextBtn::Failure)
-                .observeOn(AndroidSchedulers.mainThread())
+                .execute()
 
         }
 

@@ -46,5 +46,14 @@
         <attr name="bind_tabLayout_onTabUnselected" format="reference" />
         <attr name="bind_tabLayout_onTabReselected" format="reference" />
     </declare-styleable>
-
+    <!--WaveSideBar-->
+    <declare-styleable name="waveSideBar">
+        <attr name="textColor" format="color|reference"/>
+        <!--<attr name="backgroundColor" format="color|reference"/>-->
+        <attr name="chooseTextColor" format="color|reference"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="hintTextSize" format="dimension"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="circleRadius" format="dimension"/>
+    </declare-styleable>
 </resources>

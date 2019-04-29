@@ -10,7 +10,7 @@
 
         <item name="android:textColorSecondary">@color/primaryLightColor</item>
     </style>
-    <style name="Theme.MyApp"  parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.MyApp"  parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

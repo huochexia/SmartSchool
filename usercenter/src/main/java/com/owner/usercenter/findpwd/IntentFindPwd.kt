@@ -26,6 +26,6 @@ sealed class IntentFindPwd : IIntent {
     //点击获取验证码
     data class IntentClickGetVerifyCode(val mobilephone:String) :IntentFindPwd()
     //点击下一步按钮
-    data class IntentClickNextBtn(val mobilephone: String,val smsCode:String):IntentFindPwd()
+    data class IntentClickNextBtn(val smsCode:String):IntentFindPwd()
 
 }

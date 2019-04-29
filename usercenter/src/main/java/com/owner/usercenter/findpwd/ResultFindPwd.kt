@@ -33,12 +33,14 @@ sealed class ResultFindPwd:IResult {
 
     }
 
-    sealed class NextBtn:ResultFindPwd(){
+    sealed class NextBtn : ResultFindPwd() {
 
-        data class Success(val msg:String):NextBtn()
+        data class Success(val smsCode: String):NextBtn()
 
-        data class Failure(val error:Throwable):NextBtn()
-
-
+        data class Failure(val error: Throwable):NextBtn()
     }
+
+
+
+
 }

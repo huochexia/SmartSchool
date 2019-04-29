@@ -26,5 +26,5 @@ sealed class ActionFindPwd:IAction {
 
     data class ActionClickGetVerifyCode(val mobilephone:String):ActionFindPwd()
 
-    data class ActionClickNextBtn(val mobilephone: String,val smsCode:String):ActionFindPwd()
+    data class ActionClickNextBtn(val smsCode:String):ActionFindPwd()
 }
