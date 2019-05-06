@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.util
+package com.owner.basemodule.room.entities
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
- *在Kotlin中，通用的生成需要一个参数的单例，这样实现代码高效，安全。
- * @creator 是函数，在这个函数中调动实例的构造方法
- * Created by Liuyong on 2019-04-03.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-open class SingletonHolderSingleArg<out T, in A>(private val creator: (A) -> T) {
+@Entity
+data class User(
+    @PrimaryKey val objectId: String? = "",
+    @ColumnInfo val username: String? = "",
+    @ColumnInfo val mobilePhoneNumber: String? = "",
+    @ColumnInfo val avatar: String? = "",
+    @ColumnInfo val letters: String = ""
+)
 
-    @Volatile
-    private var instance: T? = null
-
-    fun getInstance(arg: A): T =
-        instance ?: synchronized(this) {
-            instance ?: creator(arg).apply {
-                instance = this
-            }
-        }
-}
+data class AllUserResp(val results: MutableList<User>)

@@ -50,6 +50,7 @@ android {
 
     }
 
+
 }
 
 dependencies {
@@ -61,5 +62,7 @@ dependencies {
     implementation libs.take_photo
     implementation libs.avatar_image
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+
 
 }

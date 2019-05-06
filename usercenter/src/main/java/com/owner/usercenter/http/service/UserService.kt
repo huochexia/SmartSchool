@@ -15,6 +15,7 @@
  */
 package com.owner.usercenter.http.service
 
+import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -75,5 +76,11 @@ interface UserApi {
      */
     @PUT("/1/resetPasswordBySmsCode/{smsCode}")
     fun resetPassword(@Body newPwd: ResetPasswordReq, @Path("smsCode") smsCode: String): Single<ResetPasswordResp>
+
+    /*
+     *查询所有用户
+     */
+    @GET("/1/users")
+    fun getAllUsers(): Flowable<AllUserResp>
 }
 

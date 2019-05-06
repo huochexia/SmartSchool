@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.util
+package com.owner.basemodule.base
 
 /**
- *在Kotlin中，通用的生成需要一个参数的单例，这样实现代码高效，安全。
- * @creator 是函数，在这个函数中调动实例的构造方法
- * Created by Liuyong on 2019-04-03.It's smartschool
+ *
+ * Created by Liuyong on 2019-05-01.It's smartschool
  *@description:
  */
-open class SingletonHolderSingleArg<out T, in A>(private val creator: (A) -> T) {
-
-    @Volatile
-    private var instance: T? = null
-
-    fun getInstance(arg: A): T =
-        instance ?: synchronized(this) {
-            instance ?: creator(arg).apply {
-                instance = this
-            }
-        }
-}
+//Bmob库中smartSch库的Id
+const val BMOB_APP_ID :String= "5dd5e130b5927179da0304501d5914a5"
+const val BMOB_REST_API_KEY :String ="4dada1400b140cd29a9178cb0e89f36d"
+const val BASE_URL = "https://api2.bmob.cn"
+//Room本地数据文件名称
+const val ROOM_DATABASE_FILE:String = "smartschool-db"

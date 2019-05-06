@@ -17,6 +17,7 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -61,4 +62,9 @@ interface UserServiceManager {
      * 重置密码
      */
     fun resetPwd(newPassword:String,smsCode:String):Single<ResetPasswordResp>
+
+    /**
+     * 获取所有用户信息
+     */
+    fun getAllUsers(): Flowable<AllUserResp>
 }

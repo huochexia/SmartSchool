@@ -39,6 +39,7 @@ android {
     dataBinding {
         enabled = true
     }
+
 }
 
 dependencies {
@@ -62,6 +63,7 @@ dependencies {
     //anko
     api libs.anko_commons
     api libs.anko_appcompat
+    //room
     api libs.arch_comp_room
     api libs.arch_comp_room_rxjava
     kapt libs.arch_comp_room_compiler
@@ -69,7 +71,7 @@ dependencies {
     api libs.arch_comp_navigation
     api libs.arch_comp_navigation_ui
     kapt libs.arch_comp_compiler
-
+    //paging
     api libs.arch_comp_paging
     api libs.arch_comp_paging_rxjava
 

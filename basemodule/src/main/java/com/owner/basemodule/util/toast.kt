@@ -15,21 +15,19 @@
  */
 package com.owner.basemodule.util
 
+import android.content.Context
+import android.widget.Toast
+import com.owner.basemodule.base.BaseApplication
+
 /**
- *在Kotlin中，通用的生成需要一个参数的单例，这样实现代码高效，安全。
- * @creator 是函数，在这个函数中调动实例的构造方法
- * Created by Liuyong on 2019-04-03.It's smartschool
+ *定义上下文的扩展方法
+ * Created by Liuyong on 2019-05-06.It's smartschool
  *@description:
  */
-open class SingletonHolderSingleArg<out T, in A>(private val creator: (A) -> T) {
+inline fun Context.toast(value: () -> String) =
+    Toast.makeText(this, value(), Toast.LENGTH_SHORT).show()
 
-    @Volatile
-    private var instance: T? = null
+fun Context.toast(value: String) = toast { value }
 
-    fun getInstance(arg: A): T =
-        instance ?: synchronized(this) {
-            instance ?: creator(arg).apply {
-                instance = this
-            }
-        }
-}
+inline fun toast(value: () -> String): Unit =
+    BaseApplication.getInstance().toast(value)

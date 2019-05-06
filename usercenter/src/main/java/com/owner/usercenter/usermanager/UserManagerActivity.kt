@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.util
-
-import android.widget.Toast
-import com.owner.basemodule.base.BaseApplication
+package com.owner.usercenter.usermanager
 
 /**
- *  通用工具
- * Created by Liuyong on 2019-04-06.It's smartschool
+ *
+ * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-/*
- * Toast
- */
-fun toast(value: String) = toast { value }
-
-inline fun toast(value: () -> String) =
-    Toast.makeText(BaseApplication.getInstance(), value(), Toast.LENGTH_SHORT).show()
+class UserManagerActivity {
+}

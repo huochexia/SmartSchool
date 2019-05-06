@@ -17,6 +17,7 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
 import io.reactivex.Flowable
@@ -132,5 +133,12 @@ class UserServiceManagerImpl(
     override fun resetPwd(newPassword: String, smsCode: String): Single<ResetPasswordResp> {
         val entity = ResetPasswordReq(newPassword)
         return service.resetPassword(entity,smsCode)
+    }
+
+    /*
+      获取所有用户
+     */
+    override fun getAllUsers(): Flowable<AllUserResp> {
+        return service.getAllUsers()
     }
 }
