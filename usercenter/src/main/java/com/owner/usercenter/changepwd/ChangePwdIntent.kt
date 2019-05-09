@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.changepwd
 
-import com.owner.basemodule.base.mvi.IIntent
+import com.owner.usercenter.mvi.IIntent
 
 /**
  *

@@ -15,14 +15,14 @@
  */
 package com.owner.usercenter.findpwd
 
-import com.owner.basemodule.base.mvi.IResult
+import com.owner.usercenter.mvi.IResult
 
 /**
  *
  * Created by Liuyong on 2019-04-21.It's smartschool
  *@description:
  */
-sealed class ResultFindPwd:IResult {
+sealed class ResultFindPwd: IResult {
 
     sealed class GetVerifyCode:ResultFindPwd(){
 

@@ -42,7 +42,8 @@ interface UserDao {
     fun getUser(userId: String): Flowable<User>
 
     //因为是可观察的查询，所以发生其他更改，如插入，删除时会发射通知，所以避免由于用户更新时发射通知
-    fun getDistinctUser(userId: String): Flowable<User> = getUser(userId).distinctUntilChanged()
+//    fun getDistinctUser(userId: String): Flowable<User> = getUser(userId).distinctUntilChanged()
 
-
+    @Query("SELECT * From user WHERE username LIKE '%' || :name || '%'")
+    fun search(name: String):Flowable<List<User>>
 }

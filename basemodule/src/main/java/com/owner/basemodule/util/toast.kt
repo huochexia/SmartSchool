@@ -20,7 +20,7 @@ import android.widget.Toast
 import com.owner.basemodule.base.BaseApplication
 
 /**
- *定义上下文的扩展方法
+ * 定义上下文的扩展方法
  * Created by Liuyong on 2019-05-06.It's smartschool
  *@description:
  */

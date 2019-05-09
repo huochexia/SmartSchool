@@ -15,10 +15,10 @@
  */
 package com.owner.basemodule.network
 
+import com.owner.basemodule.base.BASE_URL
+import com.owner.basemodule.base.BMOB_APP_ID
+import com.owner.basemodule.base.BMOB_REST_API_KEY
 import com.owner.basemodule.base.BaseApplication
-import com.owner.basemodule.base.BaseApplication.Companion.BASE_URL
-import com.owner.basemodule.base.BaseApplication.Companion.BMOB_APP_ID
-import com.owner.basemodule.base.BaseApplication.Companion.BMOB_REST_API_KEY
 import com.owner.basemodule.ext.ensureDis
 import com.owner.basemodule.util.SingletonHolderNoArg
 import okhttp3.Cache

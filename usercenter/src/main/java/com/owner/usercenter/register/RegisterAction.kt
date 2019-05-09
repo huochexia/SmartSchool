@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.register
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.usercenter.mvi.IAction
 
 /**
  *  注册新用户的行为：初始化行为，点击按钮行为

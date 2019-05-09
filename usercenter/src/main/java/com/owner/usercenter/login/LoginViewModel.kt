@@ -16,7 +16,7 @@
 package com.owner.usercenter.login
 
 import androidx.lifecycle.MutableLiveData
-import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -30,7 +30,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class LoginViewModel(
     private val processorHolder: LoginActionProcessHolder //第四步，获取网络数据生成Result
-) : BaseViewModel<LoginIntent, LoginViewState>() {
+) : MVIViewModel<LoginIntent, LoginViewState>() {
 
     //控件的可视性
     var isVisiblity = MutableLiveData<Boolean>()

@@ -23,6 +23,7 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityResetPwdBinding
 import com.owner.usercenter.login.LoginActivity
+import com.owner.usercenter.mvi.MVIActivity
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -37,7 +38,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-25.It's smartschool
  *@description:
  */
-class ResetPwdActivity : BaseActivity<ActivityResetPwdBinding, ResetPwdIntent, ResetPwdViewState>() {
+class ResetPwdActivity : MVIActivity<ActivityResetPwdBinding, ResetPwdIntent, ResetPwdViewState>() {
     override val layoutId: Int
         get() = R.layout.activity_reset_pwd
 

@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.usermanager.userlist
+package com.owner.usercenter.mvi
 
-import com.owner.basemodule.base.mvi.IResult
-import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.base.viewmodel.AutoDisposeViewModel
+import com.uber.autodispose.AutoDispose
+import io.reactivex.Observable
 
 /**
  *
- * Created by Liuyong on 2019-04-30.It's smartschool
+ * Created by Liuyong on 2019-05-09.It's smartschool
  *@description:
  */
-sealed class UserListResult : IResult {
+abstract class MVIViewModel<I:IIntent,S:IViewState>:AutoDisposeViewModel(),IViewModel<I,S> {
 
-    object initResult : UserListResult()
-
-    sealed class SearchUserResult : UserListResult() {
-        data class Success(val userList: MutableList<User>) : SearchUserResult()
-        data class Failure(val error: Throwable) : SearchUserResult()
-    }
+    abstract fun compose():Observable<S>
 }

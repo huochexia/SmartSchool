@@ -23,6 +23,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityResetPwdBinding
+import com.owner.usercenter.mvi.MVIActivity
 import com.owner.usercenter.resetpwd.ResetPwdActivity
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
@@ -42,7 +43,7 @@ import kotlin.coroutines.CoroutineContext
  */
 
 class FindPwdActivity :
-    BaseActivity<ActivityResetPwdBinding, IntentFindPwd, ViewStateFindPwd>(),
+    MVIActivity<ActivityResetPwdBinding, IntentFindPwd, ViewStateFindPwd>(),
     CoroutineScope {
 
     lateinit var job: Job

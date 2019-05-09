@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.view.activity
+package com.owner.usercenter.mvi
 
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.owner.basemodule.BR
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import com.owner.basemodule.base.view.activity.InjectionActivity
+import com.owner.usercenter.mvi.IIntent
+import com.owner.usercenter.mvi.IView
+import com.owner.usercenter.mvi.IViewState
 
 /**
- * 实现对Activity与布局绑定的基本内容，实现了CoroutineScope（协程），这里没有实现接口方法，交由子类完成。
+ * 实现对Activity与布局绑定的基本内容，以及MVI架构中IView接口，这里没有实现接口方法，交由子类完成。
  * Created by Liuyong on 2019-03-20.It's smartschool
  *@description:
  */
-abstract class BaseActivity<B : ViewDataBinding>
-    : InjectionActivity(), CoroutineScope by MainScope() {
+abstract class MVIActivity<B : ViewDataBinding, I : IIntent, S : IViewState>
+    : InjectionActivity(), com.owner.usercenter.mvi.IView<I, S> {
 
     private lateinit var binding: B
 
@@ -55,9 +57,9 @@ abstract class BaseActivity<B : ViewDataBinding>
         with(binding) {
             //因为本工程中Activity视图布局是与Activity对象进行绑定
             // 所以Activity基础类中实现了这个基本变量绑定
-            setVariable(BR.activity, this@BaseActivity)
+            setVariable(BR.activity, this@MVIActivity)
             //为LiveData对象实现生命周期绑定
-            lifecycleOwner = this@BaseActivity
+            lifecycleOwner = this@MVIActivity
         }
     }
 

@@ -16,6 +16,7 @@
 package com.owner.usercenter.findpwd
 
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -28,7 +29,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class ViewModelFindPwd(
     private val processor: FindPwdActionProcessHolder
-) : BaseViewModel<IntentFindPwd, ViewStateFindPwd>() {
+) : MVIViewModel<IntentFindPwd, ViewStateFindPwd>() {
 
     private val intentsPublisher = PublishSubject.create<IntentFindPwd>()
 

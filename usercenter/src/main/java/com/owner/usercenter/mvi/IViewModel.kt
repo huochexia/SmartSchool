@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.usermanager.useredit
+package com.owner.usercenter.mvi
+
+import io.reactivex.Observable
+
 
 /**
- *
- * Created by Liuyong on 2019-04-30.It's smartschool
+ * MVI架构中ViewModel要实现的接口，它主要两个方法，一个接收意图（事件）并处理它们；
+ * 一个是将处理意图（事件）得到的状态（model)返回。
+ * Created by Liuyong on 2019-03-20.It's smartschool
  *@description:
  */
-class UserEditFragment {
+interface IViewModel<I: IIntent,S: IViewState> {
+
+    fun processIntents(intent: Observable<I>)
+
+    fun states():Observable<S>
 }

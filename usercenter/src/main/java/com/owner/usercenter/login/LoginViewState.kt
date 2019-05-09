@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.login
 
-import com.owner.basemodule.base.mvi.IViewState
+import com.owner.usercenter.mvi.IViewState
 import com.owner.usercenter.http.entities.LoginResp
 import com.owner.usercenter.http.entities.LoginUser
 

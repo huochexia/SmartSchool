@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.register
 
-import com.owner.basemodule.base.mvi.IIntent
+import com.owner.usercenter.mvi.IIntent
 
 /**
  * 注册新用户时的意图：初始化意图，点击注册按钮意图

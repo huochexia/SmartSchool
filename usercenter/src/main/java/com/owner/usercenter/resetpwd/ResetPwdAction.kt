@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.resetpwd
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.usercenter.mvi.IAction
 
 /**
  *

@@ -15,11 +15,12 @@
  */
 package com.owner.usercenter.resetpwd
 
-import com.owner.basemodule.base.mvi.IIntent
+import com.owner.usercenter.mvi.IIntent
 
 /**
  *
  * Created by Liuyong on 2019-04-23.It's smartschool
  *@description:
  */
-data class ResetPwdIntent(val newPassword:String, val againPassword:String, val smsCode:String) :IIntent
+data class ResetPwdIntent(val newPassword:String, val againPassword:String, val smsCode:String) :
+    IIntent

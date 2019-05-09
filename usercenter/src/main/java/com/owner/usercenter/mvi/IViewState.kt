@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.usercenter.usermanager.userlist
-
-import com.owner.basemodule.base.mvi.IIntent
+package com.owner.usercenter.mvi
 
 /**
- *
- * Created by Liuyong on 2019-04-30.It's smartschool
+ *MVI架构中，顶层状态（Model）接口
+ * Created by Liuyong on 2019-03-20.It's smartschool
  *@description:
  */
-sealed class UserListIntent : IIntent {
-
-    object initIntent : UserListIntent() //初始化，用于获取所有用户
-
-    data class searchUserIntent(val username:String):UserListIntent() //通过用户名搜索用户
-
-}
+interface IViewState

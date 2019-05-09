@@ -17,6 +17,7 @@ package com.owner.usercenter.register
 
 import androidx.lifecycle.MutableLiveData
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -30,7 +31,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class RegisterViewModel(
     private val actionProcessHolder: RegisterActionProcessHolder
-) : BaseViewModel<RegisterIntent, RegisterViewState>() {
+) : MVIViewModel<RegisterIntent, RegisterViewState>() {
 
     var isVisiblity = MutableLiveData<Boolean>()
 

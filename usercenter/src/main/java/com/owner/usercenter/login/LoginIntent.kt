@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.login
 
-import com.owner.basemodule.base.mvi.IIntent
+import com.owner.usercenter.mvi.IIntent
 import com.owner.usercenter.http.entities.LoginUser
 
 /**

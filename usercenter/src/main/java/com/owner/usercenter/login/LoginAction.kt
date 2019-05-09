@@ -15,14 +15,14 @@
  */
 package com.owner.usercenter.login
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.usercenter.mvi.IAction
 
 /**
  * 登录界面Action：检查用户是否过期，登录，找回密码，设置是否自动登录
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-sealed class LoginAction :IAction{
+sealed class LoginAction : IAction {
 
     object InitialAction : LoginAction()
 

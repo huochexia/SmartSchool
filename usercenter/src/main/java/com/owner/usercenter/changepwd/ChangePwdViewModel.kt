@@ -16,6 +16,7 @@
 package com.owner.usercenter.changepwd
 
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -28,7 +29,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class ChangePwdViewModel(
     private val actionProcessHolder: ChangePwdActionProcessHolder
-) : BaseViewModel<ChangePwdIntent, ChangePwdViewState>() {
+) : MVIViewModel<ChangePwdIntent, ChangePwdViewState>() {
 
     private val intentPublish = PublishSubject.create<ChangePwdIntent>()
 

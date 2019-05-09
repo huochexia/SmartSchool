@@ -22,6 +22,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityRegisterBinding
+import com.owner.usercenter.mvi.MVIActivity
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -36,7 +37,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-07.It's smartschool
  *@description:
  */
-class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterIntent, RegisterViewState>() {
+class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, RegisterViewState>() {
 
     override val layoutId: Int
         get() = R.layout.activity_register

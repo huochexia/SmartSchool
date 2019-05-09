@@ -15,14 +15,14 @@
  */
 package com.owner.usercenter.findpwd
 
-import com.owner.basemodule.base.mvi.IAction
+import com.owner.usercenter.mvi.IAction
 
 /**
  *
  * Created by Liuyong on 2019-04-21.It's smartschool
  *@description:
  */
-sealed class ActionFindPwd:IAction {
+sealed class ActionFindPwd: IAction {
 
     data class ActionClickGetVerifyCode(val mobilephone:String):ActionFindPwd()
 

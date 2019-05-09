@@ -16,6 +16,7 @@
 package com.owner.usercenter.resetpwd
 
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -28,7 +29,7 @@ import io.reactivex.subjects.PublishSubject
  */
 class ResetPwdViewModle(
     private val processor: ResetPwdActionProcessHolder
-) : BaseViewModel<ResetPwdIntent, ResetPwdViewState>() {
+) : MVIViewModel<ResetPwdIntent, ResetPwdViewState>() {
 
     private val intentPublisher =
         PublishSubject.create<ResetPwdIntent>()

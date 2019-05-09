@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.owner.basemodule.base.mvi
+package com.owner.usercenter.mvi
 
 /**
- *MVI架构中，顶层状态（Model）接口
+ *MVI架构中，顶层Result接口
  * Created by Liuyong on 2019-03-20.It's smartschool
  *@description:
  */
-interface IViewState
+interface IResult

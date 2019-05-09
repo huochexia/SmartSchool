@@ -22,6 +22,7 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityLoginBinding
 import com.owner.usercenter.findpwd.FindPwdActivity
+import com.owner.usercenter.mvi.MVIActivity
 import com.owner.usercenter.util.PrefsHelper
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
@@ -37,7 +38,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-class LoginActivity : BaseActivity<ActivityLoginBinding, LoginIntent, LoginViewState>() {
+class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewState>() {
 
 
     override val layoutId: Int

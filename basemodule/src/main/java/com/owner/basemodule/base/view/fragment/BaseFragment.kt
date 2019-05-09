@@ -22,17 +22,16 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.owner.basemodule.BR
-import com.owner.basemodule.base.mvi.IIntent
-import com.owner.basemodule.base.mvi.IView
-import com.owner.basemodule.base.mvi.IViewState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 
 /**
- * 定义了数据绑定的基础内容,同时实现MVI架构中的MviView接口，该接口的方法由具体类实现
+ * 定义了数据绑定的基础内容,
  * Created by Liuyong on 2019-03-20.It's smartschool
  *@description:
  */
-abstract class BaseFragment<B : ViewDataBinding, I : IIntent, S : IViewState>
-    : InjectionFragment(), IView<I, S> {
+abstract class BaseFragment<B : ViewDataBinding>
+    : InjectionFragment() ,CoroutineScope by MainScope(){
 
     private var mRootView: View? = null
 

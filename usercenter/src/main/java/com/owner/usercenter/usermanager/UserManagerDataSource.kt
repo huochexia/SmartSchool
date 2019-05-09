@@ -39,6 +39,9 @@ interface ILocalUserManagerDataSource : ILocalDataSource {
 
     //插入所有列表
     fun saveAllUsers(either: Either<Errors, List<User>>): Completable
+
+    //按用户名查询用户
+    fun search(name: String): Flowable<List<User>>
 }
 
 class LocalUserManagerDataSource(
@@ -66,6 +69,9 @@ class LocalUserManagerDataSource(
             }
     }
 
+    override fun search(name: String): Flowable<List<User>> {
+        return database.userDao().search(name)
+    }
 }
 
 /**
@@ -108,5 +114,14 @@ class UserManagerRepository(
             localDataSource.saveAllUsers(either).andThen(Flowable.just(either))
         }
     }
+
+    //从本地列表中获得查询结果
+
+    fun getSearchUserList(username: String): Flowable<List<User>> {
+
+        return localDataSource.search(username)
+
+    }
 }
+
 

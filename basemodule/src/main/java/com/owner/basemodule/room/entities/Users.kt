@@ -26,7 +26,7 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class User(
-    @PrimaryKey val objectId: String? = "",
+    @PrimaryKey val objectId: String = "",
     @ColumnInfo val username: String? = "",
     @ColumnInfo val mobilePhoneNumber: String? = "",
     @ColumnInfo val avatar: String? = "",

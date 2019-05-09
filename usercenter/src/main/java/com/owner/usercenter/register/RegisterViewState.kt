@@ -15,7 +15,7 @@
  */
 package com.owner.usercenter.register
 
-import com.owner.basemodule.base.mvi.IViewState
+import com.owner.usercenter.mvi.IViewState
 
 /**
  * 注册结果对应的状态

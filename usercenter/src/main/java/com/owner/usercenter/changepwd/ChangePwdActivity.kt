@@ -21,6 +21,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityResetPwdBinding
+import com.owner.usercenter.mvi.MVIActivity
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,7 +35,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-12.It's smartschool
  *@description:
  */
-class ChangePwdActivity : BaseActivity<ActivityResetPwdBinding, ChangePwdIntent, ChangePwdViewState>() {
+class ChangePwdActivity : MVIActivity<ActivityResetPwdBinding, ChangePwdIntent, ChangePwdViewState>() {
 
     override val layoutId: Int
         get() = R.layout.activity_change_pwd
