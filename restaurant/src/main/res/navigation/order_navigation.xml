@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/order_navigation">
-
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/order_navigation"
+        app:startDestination="@id/order_Manager_Fragment">
+    <fragment
+            android:id="@+id/order_Manager_Fragment"
+            android:name="com.goldenstraw.restaurant.ui.OrderManagerFragment"
+            android:label="OrderManagerFragment"
+            tools:layout="@layout/fragment_goods_list">
+        <action
+                android:id="@+id/action_order_Manager_Fragment_to_goodsSearchFragment"
+                app:destination="@id/goodsSearchFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/goodsSearchFragment"
+            android:name="com.goldenstraw.restaurant.ui.GoodsSearchFragment"
+            android:label="GoodsSearchFragment"
+            tools:layout="@layout/fragment_search_goods" />
 </navigation>

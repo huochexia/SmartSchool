@@ -5,4 +5,5 @@
     <string name="monetary_unit">元</string>
     <string name="add_to_shopping_cart">加入购物车</string>
     <string name="search_goods_item">查找商品</string>
+    <string name="title_activity_order_manager">orderManagerActivity</string>
 </resources>

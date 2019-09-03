@@ -1,47 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <data>
+
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.ui.OrderManagerFragment" />
+    </data>
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:layout_marginEnd="4dp">
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rlw_goods_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="2">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlw_goods_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlw_goods_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="5">
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rlw_goods_item"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-        </LinearLayout>
-
+        <Button
+                android:id="@+id/btn_add_to_shopping_cart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_to_shopping_cart"
+                android:textSize="16dp" />
     </LinearLayout>
-    <Button
-            android:id="@+id/btn_add_to_shopping_cart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/add_to_shopping_cart"
-            android:textSize="16dp"/>
-</LinearLayout>
+</layout>
