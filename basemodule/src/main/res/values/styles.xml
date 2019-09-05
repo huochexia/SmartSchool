@@ -8,12 +8,14 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:textColorSecondary">@color/primaryLightColor</item>
     </style>
+    <!-- Material Component. -->
     <style name="Theme.MyApp"  parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:textColorSecondary">@color/primaryTextColor</item>
     </style>
 
     <!-- 多状态视图样式-->

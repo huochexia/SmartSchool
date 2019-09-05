@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -29,18 +30,39 @@
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rlw_goods_category"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/layout_goods_category" />
             </LinearLayout>
 
             <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="5">
+                    android:layout_weight="5"
+                    android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlw_goods_item"
+                <ImageView
+                        android:id="@+id/img_goods_category"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="100dp" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                    <androidx.core.widget.NestedScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rlw_goods_item"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                tools:listitem="@layout/layout_goods_item" />
+                    </androidx.core.widget.NestedScrollView>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
@@ -48,8 +70,8 @@
         <Button
                 android:id="@+id/btn_add_to_shopping_cart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="@string/add_to_shopping_cart"
-                android:textSize="16dp" />
+                android:textSize="20dp" />
     </LinearLayout>
 </layout>

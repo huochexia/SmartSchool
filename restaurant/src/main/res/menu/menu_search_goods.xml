@@ -7,5 +7,10 @@
             android:title="查找商品"
             app:actionViewClass="androidx.appcompat.widget.SearchView"
             app:showAsAction="always"/>
+    <item
+            android:id="@+id/action_shopping_cart"
+            android:title="@string/add_to_shopping_cart"
+            android:icon="@drawable/ic_shopping_cart"
+            app:showAsAction="always" />
 
 </menu>

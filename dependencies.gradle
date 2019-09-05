@@ -14,7 +14,7 @@ ext {
             kotlin_coroutines       : '1.0.0',
             anko_commons            : '0.10.1',
             support                 : '1.1.0-alpha04',
-            material                : '1.1.0-alpha04',
+            material                : '1.1.0-alpha10',
             arch_comp_lifecycle     : '2.1.0-alpha04',
             arch_comp_persistence   : '2.1.0-alpha07',
             arch_comp_navigation    : '1.0.0-alpha07',

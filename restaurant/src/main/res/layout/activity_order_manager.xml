@@ -19,8 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:title="查找商品"
-                app:titleTextColor="@android:color/white">
+                app:title="商品列表">
 
         </androidx.appcompat.widget.Toolbar>
 
