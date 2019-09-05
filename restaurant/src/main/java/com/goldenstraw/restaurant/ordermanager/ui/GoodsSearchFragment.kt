@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.ui
+package com.goldenstraw.restaurant.ordermanager.ui
 
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding

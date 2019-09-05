@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.ui
+package com.goldenstraw.restaurant.ordermanager.ui
 
 import android.graphics.Color
 import android.view.Menu

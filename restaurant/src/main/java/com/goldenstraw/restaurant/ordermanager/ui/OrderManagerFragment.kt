@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.ui
+package com.goldenstraw.restaurant.ordermanager.ui
 
 import android.view.Menu
 import android.view.MenuInflater

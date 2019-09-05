@@ -20,7 +20,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.owner.basemodule.base.ROOM_DATABASE_FILE
+import com.owner.basemodule.room.dao.GoodsManagerDao
 import com.owner.basemodule.room.dao.UserDao
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
 
 /**
@@ -28,11 +31,11 @@ import com.owner.basemodule.room.entities.User
  * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-@Database(version = 1, entities = [User::class])
+@Database(version = 1, entities = [User::class, Goods::class, GoodsCategory::class])
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun userDao(): UserDao
-
+    abstract fun userDao(): UserDao //用户管理
+    abstract fun goodsDao(): GoodsManagerDao //订单管理
 
     companion object {
         @Volatile
