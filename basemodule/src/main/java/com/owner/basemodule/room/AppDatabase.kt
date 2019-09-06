@@ -24,6 +24,7 @@ import com.owner.basemodule.room.dao.GoodsManagerDao
 import com.owner.basemodule.room.dao.UserDao
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.ShoppingCartGoods
 import com.owner.basemodule.room.entities.User
 
 /**
@@ -31,7 +32,8 @@ import com.owner.basemodule.room.entities.User
  * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-@Database(version = 1, entities = [User::class, Goods::class, GoodsCategory::class])
+@Database(version = 1, entities = [User::class, Goods::class,
+    GoodsCategory::class,ShoppingCartGoods::class])
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao //用户管理
