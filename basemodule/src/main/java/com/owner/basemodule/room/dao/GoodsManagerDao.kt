@@ -1,13 +1,12 @@
 package com.owner.basemodule.room.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.ShoppingCartGoods
+import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 /**
  * 本地数据库的商品管理,
@@ -37,21 +36,36 @@ interface GoodsManagerDao {
     @Query("SELECT * FROM GoodsCategory")
     fun loadCategory(): Flowable<List<CategoryAndAllGoods>>
 
+    //更新购物车商品的数量
+    @Query("UPDATE  shoppingcartgoods SET quantity = :orderQuantity")
+    fun updateOrderQuantity(orderQuantity: Float)
+
     /**
      *插入数据,也可以用于修改，因为具体修改哪个属性不能确定，所以采用覆盖式插入
      */
     //查入商品
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGoods(goods: Goods): Long
+    fun insertGoods(goods: Goods): Completable
 
     //查入类别
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCategory(category: GoodsCategory): Long
+    fun insertCategory(category: GoodsCategory): Completable
 
-    //加入购物车
+    //加入购物车,返回加入的行号列表，用于计算成功加入购物车的数量
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingCartGoods(shoppingCartGoods: ShoppingCartGoods): Long
+    fun insertShoppingCartGoods(shoppingCartGoods: ShoppingCartGoods): Single<MutableList<Long>>
 
+    /**
+     * 修改数据
+     */
+    @Update
+    fun updateGoods(goods: Goods): Completable
+
+    @Update
+    fun updateCategory(category: GoodsCategory): Completable
+
+    @Update
+    fun updateShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable
 
     /**
     删除数据
