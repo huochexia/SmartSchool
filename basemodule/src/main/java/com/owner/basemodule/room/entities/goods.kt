@@ -10,6 +10,7 @@ import androidx.room.*
  * 商品
  */
 @Entity(
+    indices = [Index("category_code")],
     foreignKeys = [ForeignKey(
         entity = GoodsCategory::class,
         parentColumns = ["code"],
@@ -18,8 +19,8 @@ import androidx.room.*
     )]
 )
 data class Goods(
-    @PrimaryKey(autoGenerate = true)
-    var goodsCode:Int =0,
+    @PrimaryKey
+    var goodsCode: String, //对应远程数据的objectId
     @ColumnInfo(name = "goods_name")
     var goodsName: String,
     @ColumnInfo(name = "unit_of_measurement")
@@ -27,18 +28,19 @@ data class Goods(
     @ColumnInfo(name = "unit_price")
     var unitPrice: Float,
     @ColumnInfo(name = "category_code")
-    var categoryCode: Int
-){
-      @Ignore
-      var isChecked:Boolean = false
+    var categoryCode: String
+) {
+    @Ignore
+    var isChecked: Boolean = false
 }
+
 /**
  * 商品分类
  */
 @Entity
 data class GoodsCategory(
-    @PrimaryKey(autoGenerate = true)
-    val code: Int =0,
+    @PrimaryKey
+    val code: String, //对应远程数据的objectId
     @ColumnInfo(name = "category_name")
     var categoryName: String
 )
@@ -49,8 +51,8 @@ data class GoodsCategory(
  */
 @Entity
 data class ShoppingCartGoods(
-    @PrimaryKey(autoGenerate = true)
-    var code: Int = 0,
+    @PrimaryKey
+    var code: String, //对应远程数据的objectId
     @ColumnInfo
     var quantity: Float = 0.0f,
     @Embedded

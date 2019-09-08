@@ -22,11 +22,11 @@ interface GoodsManagerDao {
      */
     //模糊查询商品
     @Query("SELECT * FROM GOODS WHERE goods_name LIKE '%' || :name || '%'")
-    fun searchGoods(name: String): Flowable<List<Goods>>
+    fun searchGoods(name: String): Flowable<MutableList<Goods>>
 
     //获取购物车中商品
     @Query("SELECT * FROM shoppingcartgoods")
-    fun getShoppingCartAllGoods(): Flowable<List<ShoppingCartGoods>>
+    fun getShoppingCartAllGoods(): Flowable<MutableList<ShoppingCartGoods>>
 
     //通过编号查类别
     @Query("SELECT * FROM goodscategory WHERE code = :code")
@@ -34,11 +34,11 @@ interface GoodsManagerDao {
 
     //关联查询，查类别的时候同时得到它的商品.
     @Query("SELECT * FROM GoodsCategory")
-    fun loadCategory(): Flowable<List<CategoryAndAllGoods>>
+    fun loadCategory(): Flowable<MutableList<CategoryAndAllGoods>>
 
     //更新购物车商品的数量
-    @Query("UPDATE  shoppingcartgoods SET quantity = :orderQuantity")
-    fun updateOrderQuantity(orderQuantity: Float)
+    @Query("UPDATE  shoppingcartgoods SET quantity = :orderQuantity WHERE goods_name = :name " )
+    fun updateOrderQuantity(name: String,orderQuantity: Float): Completable
 
     /**
      *插入数据,也可以用于修改，因为具体修改哪个属性不能确定，所以采用覆盖式插入
@@ -51,9 +51,9 @@ interface GoodsManagerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCategory(category: GoodsCategory): Completable
 
-    //加入购物车,返回加入的行号列表，用于计算成功加入购物车的数量
+    //加入购物车
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingCartGoods(shoppingCartGoods: ShoppingCartGoods): Single<MutableList<Long>>
+    fun insertShoppingCartGoods(shoppingCartGoods: ShoppingCartGoods): Completable
 
     /**
      * 修改数据
@@ -71,15 +71,15 @@ interface GoodsManagerDao {
     删除数据
      */
     //从购物车中删除商品
-    @Query("DELETE FROM shoppingcartgoods WHERE code = :code")
-    fun moveShoppingCart(code: Int)
+    @Delete
+    fun moveShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable
 
     //从商品列表中删除商品
-    @Query("DELETE FROM goods WHERE goodsCode = :code")
-    fun deleteGoods(code: Int)
+    @Delete
+    fun deleteGoods(goods: Goods): Completable
 
     //从类别列表中删除类别
-    @Query("DELETE FROM goodscategory WHERE code = :code")
-    fun deleteCategory(code: Int)
+    @Delete
+    fun deleteCategory(goodsCategory: GoodsCategory): Completable
 
 }

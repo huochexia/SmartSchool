@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.ordermanager.viewmodel
+package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 

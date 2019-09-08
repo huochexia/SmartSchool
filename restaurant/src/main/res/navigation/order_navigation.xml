@@ -6,7 +6,7 @@
         app:startDestination="@id/order_Manager_Fragment">
     <fragment
             android:id="@+id/order_Manager_Fragment"
-            android:name="com.goldenstraw.restaurant.ordermanager.ui.OrderManagerFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.GoodsManagerFragment"
             android:label="OrderManagerFragment"
             tools:layout="@layout/fragment_goods_list">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
             android:id="@+id/goodsSearchFragment"
-            android:name="com.goldenstraw.restaurant.ordermanager.ui.GoodsSearchFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.GoodsSearchFragment"
             android:label="GoodsSearchFragment"
             tools:layout="@layout/fragment_search_goods" />
 </navigation>

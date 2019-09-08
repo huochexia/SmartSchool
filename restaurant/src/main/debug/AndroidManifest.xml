@@ -18,7 +18,7 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.MyApp">
 
-        <activity android:name=".ordermanager.ui.OrderManagerActivity">
+        <activity android:name=".goodsmanager.ui.GoodsManagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

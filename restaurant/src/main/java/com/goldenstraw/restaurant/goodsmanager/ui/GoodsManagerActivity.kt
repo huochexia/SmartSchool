@@ -1,27 +1,25 @@
-package com.goldenstraw.restaurant.ordermanager.ui
+package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.graphics.Color
 import android.view.Menu
-import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.NavHostFragment
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
+import com.goldenstraw.restaurant.databinding.ActivityGoodsManagerBinding
 import com.owner.basemodule.base.view.activity.BaseActivity
-import kotlinx.android.synthetic.main.activity_order_manager.*
+import kotlinx.android.synthetic.main.activity_goods_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 
-class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
+class GoodsManagerActivity : BaseActivity<ActivityGoodsManagerBinding>() {
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
 
     override val layoutId: Int
-        get() = R.layout.activity_order_manager
+        get() = R.layout.activity_goods_manager
 
     override fun initView() {
         super.initView()
