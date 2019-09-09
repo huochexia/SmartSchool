@@ -58,7 +58,7 @@ class RetrofitFactory private constructor() {
         /*
          * 网络拦截器。因为所有REST API的一般错误状态是包含在body中的，所以将错误转换成为成功状态（Http状态码200），
          * 这样就可以统一管理body的内容，根据body中的code状态来处理
-         * 主要是针对Bmob的状态码400，当http返回状态码400，说明该请求是一般错误请求，可以认为它是成功的响应体，
+         * 主要是针对Bmob的状态码404，当http返回状态码404，说明该请求是一般错误请求，可以认为它是成功的响应体，
          * 然后分析它body中的错误code。
          *
          */
@@ -70,9 +70,9 @@ class RetrofitFactory private constructor() {
                 .addHeader("X-Bmob-REST-API-Key", BMOB_REST_API_KEY)
                 .addHeader("Content_Type", "application/json")
                 .build()
-            //处理响应结果，如果成功（400），则重新组织响应体，代码为200
+            //处理响应结果，如果成功（404），则重新组织响应体，代码为200
             val response = chain.proceed(request)
-            if ( response.code() == 400) {
+            if ( response.code() == 404) {
                 val mediaType = response.body()?.contentType()
                 val content = response.body()?.string()
                 response.newBuilder().code(200)

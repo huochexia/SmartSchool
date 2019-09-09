@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.network.entity
+package com.goldenstraw.restaurant.goodsmanager.http.entity
 
 import com.owner.basemodule.room.entities.ShoppingCartGoods
 import com.owner.basemodule.room.entities.User
