@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories
 
 import com.goldenstraw.restaurant.goodsmanager.http.entity.createObject
 import com.goldenstraw.restaurant.goodsmanager.http.manager.GoodsServiceManagerImpl
+import com.goldenstraw.restaurant.goodsmanager.http.manager.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
@@ -27,7 +28,7 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
  * 远程数据操作实现类
  */
 class RemoteGoodsDataSoureImpl(
-    private val service: GoodsServiceManagerImpl
+    private val service: IGoodsServiceManager
 ) : IRemoteGoodsDataSource {
 
     override fun addGoods(goods: Goods): Observable<createObject> {

@@ -47,12 +47,14 @@ class RetrofitFactory private constructor() {
 
     private val interceptor: Interceptor
     private val retrofit: Retrofit
-
-//    private val cacheFile by lazy {
-//        File(BaseApplication.getInstance().cacheDir, "webServiceApi").apply {
-//            ensureDis()
-//        }
-//    }
+    /*
+      okHttp3对象缓存文件
+     */
+    private val cacheFile by lazy {
+        File(BaseApplication.getInstance().cacheDir, "webServiceApi").apply {
+            ensureDis()
+        }
+    }
 
     init {
         /*
@@ -70,9 +72,9 @@ class RetrofitFactory private constructor() {
                 .addHeader("X-Bmob-REST-API-Key", BMOB_REST_API_KEY)
                 .addHeader("Content_Type", "application/json")
                 .build()
-            //处理响应结果，如果成功（404），则重新组织响应体，代码为200
+            //处理响应结果，如果网络访问成功，但是状态码为404，说明一般性错误，则重新组织响应体，状态码改为200
             val response = chain.proceed(request)
-            if ( response.code() == 404) {
+            if (response.code() == 404) {
                 val mediaType = response.body()?.contentType()
                 val content = response.body()?.string()
                 response.newBuilder().code(200)
@@ -109,7 +111,7 @@ class RetrofitFactory private constructor() {
         return OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addInterceptor(logInterceptor())
-
+            .cache(Cache(cacheFile, 100 * 1024 * 1024))
             .connectTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)

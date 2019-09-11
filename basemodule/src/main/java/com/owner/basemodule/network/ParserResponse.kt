@@ -2,9 +2,8 @@ package com.owner.basemodule.network
 
 import com.google.gson.JsonSyntaxException
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.functions.Function
-import org.reactivestreams.Subscriber
-import java.lang.RuntimeException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
@@ -74,18 +73,19 @@ fun <T> filterStauts(observable: Observable<HttpResult<T>>): Observable<T> {
 }
 
 /**
- *过滤网络层的错误, 实现onError（），
+ *过滤网络层的错误, 实现onError（）.使用这个自定义类，取代Observer<T>
  */
-abstract class FilterSubscriber<T> : Subscriber<T> {
+abstract class FilterObserver<T> : Observer<T> {
+
     lateinit var error: String
-    override fun onError(t: Throwable?) {
-        error = when (t) {
+    override fun onError(e: Throwable) {
+        error = when (e) {
             is TimeoutException -> "超时了"
             is SocketTimeoutException -> "超时了"
             is ConnectException -> "超时了"
             is JsonSyntaxException -> "Json格式错误"
-            else -> t?.message!!
+            else -> e?.message!!
         }
-
     }
+
 }

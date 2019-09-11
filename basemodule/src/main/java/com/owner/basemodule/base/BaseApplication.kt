@@ -33,13 +33,15 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 /**
- *
+ * 基础应用，实现KodeinAware接口
  * Created by Liuyong on 2019-03-26.It's smartschool
  *@description:
  */
 class BaseApplication:Application(),KodeinAware {
 
+    //依赖容器
     override val kodein: Kodein = Kodein.lazy {
+
         bind<Context>() with singleton { this@BaseApplication }
 
         bind<AppDatabase>() with singleton {
