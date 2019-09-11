@@ -19,7 +19,7 @@ import android.app.Application
 import android.content.Context
 import cn.bmob.v3.Bmob
 import com.owner.basemodule.BuildConfig
-import com.owner.basemodule.kodein.prefsModule
+import com.owner.basemodule.kodein.*
 import com.owner.basemodule.logger.initLogger
 import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.util.SingletonHolderNoArg
@@ -52,6 +52,8 @@ class BaseApplication:Application(),KodeinAware {
         import(androidXModule(this@BaseApplication))
 
         import(prefsModule)
+        import(httpFactoryModule)  //注入全局Retrofit工厂
+        import(roomDBModule) //注入全局Room数据库对象
     }
 
     override fun onCreate() {

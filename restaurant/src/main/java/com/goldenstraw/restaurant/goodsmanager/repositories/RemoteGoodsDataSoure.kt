@@ -27,7 +27,7 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
 /**
  * 远程数据操作实现类
  */
-class RemoteGoodsDataSoureImpl(
+class RemoteGoodsDataSourceImpl(
     private val service: IGoodsServiceManager
 ) : IRemoteGoodsDataSource {
 

@@ -25,13 +25,22 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="4dp"
-                    android:layout_weight="2">
+                    android:layout_weight="2"
+                    android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rlw_goods_category"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         tools:listitem="@layout/layout_goods_category" />
+                <Button
+                        android:id="@+id/btn_category_manager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="增加类别"
+                        android:textSize="18sp"
+                        />
             </LinearLayout>
 
             <LinearLayout
@@ -47,7 +56,8 @@
 
                 <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                     <androidx.core.widget.NestedScrollView
@@ -62,16 +72,18 @@
                     </androidx.core.widget.NestedScrollView>
 
                 </LinearLayout>
-
+                <Button
+                        android:id="@+id/btn_add_to_shopping_cart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_to_shopping_cart"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="4dp"/>
             </LinearLayout>
 
         </LinearLayout>
 
-        <Button
-                android:id="@+id/btn_add_to_shopping_cart"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="@string/add_to_shopping_cart"
-                android:textSize="20dp" />
+
     </LinearLayout>
 </layout>

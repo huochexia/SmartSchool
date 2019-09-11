@@ -21,7 +21,7 @@ package com.owner.basemodule.base.repository
  *@description:
  */
 /**
- * 同时处理来源远程数据和本地数据的基础数据仓库类
+ * 同时处理来源远程数据和本地数据的基础数据仓库类。业务类仓库要继承这个基础类
  */
 open class BaseRepositoryBoth<T : IRemoteDataSource, R : ILocalDataSource>(
     val remoteDataSource: T,
@@ -29,14 +29,14 @@ open class BaseRepositoryBoth<T : IRemoteDataSource, R : ILocalDataSource>(
 ) : IRepository
 
 /**
- * 处理来自本地数据源的基础数据仓库类
+ * 处理来自本地数据源的基础数据仓库类，业务类仓库要继承这个基础类
  */
 open class BaseRepositoryLocal<T : ILocalDataSource>(
     val localDataSource: T
 ) : IRepository
 
 /**
- * 处理来自远程数据源的基础数据仓库类
+ * 处理来自远程数据源的基础数据仓库类，业务类仓库要继承这个基础类
  */
 open class BaseRepositoryRemote<T : IRemoteDataSource>(
     val remoteDataSource: T

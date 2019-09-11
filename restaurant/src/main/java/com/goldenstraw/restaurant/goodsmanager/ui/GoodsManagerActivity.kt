@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.NavHostFragment
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityGoodsManagerBinding
+import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.owner.basemodule.base.view.activity.BaseActivity
 import kotlinx.android.synthetic.main.activity_goods_manager.*
 import org.kodein.di.Copy
@@ -16,6 +17,8 @@ class GoodsManagerActivity : BaseActivity<ActivityGoodsManagerBinding>() {
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
+
+
     }
 
     override val layoutId: Int
@@ -40,21 +43,21 @@ class GoodsManagerActivity : BaseActivity<ActivityGoodsManagerBinding>() {
         searchEdit.setTextColor(Color.BLACK)
 
         with(searchView) {
-            queryHint="输入商品名称查找"
-            setOnQueryTextListener(object:SearchView.OnQueryTextListener{
+            queryHint = "输入商品名称查找"
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     //查找框内容变化事件
-                   return false
+                    return false
                 }
             })
 
-           setOnSearchClickListener {
-               //开始搜索时的行为，如，搜索结果界面
-           }
+            setOnSearchClickListener {
+                //开始搜索时的行为，如，搜索结果界面
+            }
             setOnCloseListener {
                 //关闭搜索时事件
                 false
