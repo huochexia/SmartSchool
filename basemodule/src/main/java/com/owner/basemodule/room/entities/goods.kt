@@ -40,7 +40,7 @@ data class Goods(
 @Entity
 data class GoodsCategory(
     @PrimaryKey
-    val code: String, //对应远程数据的objectId
+    var code: String, //对应远程数据的objectId
     @ColumnInfo(name = "category_name")
     var categoryName: String
 )

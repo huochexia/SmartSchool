@@ -1,27 +1,30 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.createObject
-import com.goldenstraw.restaurant.goodsmanager.http.manager.GoodsServiceManagerImpl
+import com.goldenstraw.restaurant.goodsmanager.http.entity.newObject
 import com.goldenstraw.restaurant.goodsmanager.http.manager.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.basemodule.network.HttpResult
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 
 /**
  * 对商品的远程数据操作接口
  */
 interface IRemoteGoodsDataSource : IRemoteDataSource {
-    /*
-     *增加商品
+    /**
+     * 增加
      */
-    fun addGoods(goods: Goods): Observable<createObject>
+    fun addGoods(goods: Goods): Observable<HttpResult<newObject>>
 
-    /*
-     *增加类别
+    fun addCategory(category: GoodsCategory): Observable<HttpResult<newObject>>
+    /**
+     * 更新
      */
-    fun addCategory(category: GoodsCategory): Observable<createObject>
+    fun updateGoods(goods: Goods): Completable
+
+    fun updateCategory(category: GoodsCategory): Completable
 }
 
 /**
@@ -30,14 +33,26 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
 class RemoteGoodsDataSourceImpl(
     private val service: IGoodsServiceManager
 ) : IRemoteGoodsDataSource {
-
-    override fun addGoods(goods: Goods): Observable<createObject> {
+    /**
+     * 增加
+     */
+    override fun addGoods(goods: Goods): Observable<HttpResult<newObject>> {
         return service.addGoods(goods)
-            .subscribeOn(Schedulers.io())
     }
 
-    override fun addCategory(category: GoodsCategory): Observable<createObject> {
-        return service.addCategory(category).subscribeOn(Schedulers.io())
+    override fun addCategory(category: GoodsCategory): Observable<HttpResult<newObject>> {
+        return service.addCategory(category)
+    }
+
+    /**
+     * 更新
+     */
+    override fun updateGoods(goods: Goods): Completable {
+        return service.updateGoods(goods)
+    }
+
+    override fun updateCategory(category: GoodsCategory): Completable {
+        return service.updateCategory(category)
     }
 
 }
