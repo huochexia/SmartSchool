@@ -6,7 +6,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.ShoppingCartGoods
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Single
+import io.reactivex.Observable
 
 /**
  * 本地数据库的商品管理,
@@ -24,6 +24,10 @@ interface GoodsManagerDao {
     @Query("SELECT * FROM GOODS WHERE goods_name LIKE '%' || :name || '%'")
     fun searchGoods(name: String): Flowable<MutableList<Goods>>
 
+    //查询某类别的商品
+    @Query("SELECT * FROM GOODS WHERE category_code = :code")
+    fun queryGoodsFromCategory(code: String): Flowable<MutableList<Goods>>
+
     //获取购物车中商品
     @Query("SELECT * FROM shoppingcartgoods")
     fun getShoppingCartAllGoods(): Flowable<MutableList<ShoppingCartGoods>>
@@ -36,9 +40,10 @@ interface GoodsManagerDao {
     @Query("SELECT * FROM GoodsCategory")
     fun loadCategory(): Flowable<MutableList<CategoryAndAllGoods>>
 
+
     //更新购物车商品的数量
-    @Query("UPDATE  shoppingcartgoods SET quantity = :orderQuantity WHERE goods_name = :name " )
-    fun updateOrderQuantity(name: String,orderQuantity: Float): Completable
+    @Query("UPDATE  shoppingcartgoods SET quantity = :orderQuantity WHERE goods_name = :name ")
+    fun updateOrderQuantity(name: String, orderQuantity: Float): Completable
 
     /**
      *插入数据,也可以用于修改，因为具体修改哪个属性不能确定，所以采用覆盖式插入

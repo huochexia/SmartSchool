@@ -10,7 +10,6 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 
 
-
 /**
  * 本地数据管理部分，定义接口，继承基本接口，定义自己的方法
  */
@@ -25,6 +24,9 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     //通过名称的部分获取商品(模糊查询）
     fun getGoods(goodsName: String): Flowable<MutableList<Goods>>
+
+    //按类别获取商品
+    fun getGoodsFromCategory(category: GoodsCategory): Flowable<MutableList<Goods>>
 
     //修改购物车某商品的数量
     fun updateGoodsQuantity(goodsName: String, quantity: Float): Completable
@@ -58,7 +60,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
  * 具体商品操作实现类
  */
 
-class LocalGoodsDateSourceImpl (private val database: AppDatabase) : ILocalGoodsDataSource {
+class LocalGoodsDateSourceImpl(private val database: AppDatabase) : ILocalGoodsDataSource {
 
     override fun getCategoryAllGoods(): Flowable<MutableList<CategoryAndAllGoods>> {
         return database.goodsDao().loadCategory()
@@ -70,6 +72,10 @@ class LocalGoodsDateSourceImpl (private val database: AppDatabase) : ILocalGoods
 
     override fun getGoods(goodsName: String): Flowable<MutableList<Goods>> {
         return database.goodsDao().searchGoods(goodsName)
+    }
+
+    override fun getGoodsFromCategory(category: GoodsCategory): Flowable<MutableList<Goods>> {
+        return database.goodsDao().queryGoodsFromCategory(category.code)
     }
 
     override fun updateGoodsQuantity(goodsName: String, quantity: Float): Completable {
