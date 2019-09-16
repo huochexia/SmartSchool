@@ -19,6 +19,7 @@ import androidx.room.*
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 /**
  *
@@ -29,7 +30,7 @@ import io.reactivex.Flowable
 interface UserDao {
 
     @Query("SELECT * FROM user")
-    fun getAllUsers(): Flowable<List<User>>
+    fun getAllUsers(): Observable<List<User>>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -39,11 +40,11 @@ interface UserDao {
     fun update(user: User): Completable
 
     @Query("SELECT * FROM user WHERE objectId = :userId")
-    fun getUser(userId: String): Flowable<User>
+    fun getUser(userId: String): Observable<User>
 
     //因为是可观察的查询，所以发生其他更改，如插入，删除时会发射通知，所以避免由于用户更新时发射通知
 //    fun getDistinctUser(userId: String): Flowable<User> = getUser(userId).distinctUntilChanged()
 
     @Query("SELECT * From user WHERE username LIKE '%' || :name || '%'")
-    fun search(name: String):Flowable<List<User>>
+    fun search(name: String): Observable<List<User>>
 }

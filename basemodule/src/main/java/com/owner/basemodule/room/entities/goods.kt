@@ -50,11 +50,13 @@ data class GoodsCategory(
  * Created by Administrator on 2019/9/6 0006
  */
 @Entity
-data class ShoppingCartGoods(
+data class GoodsOfShoppingCart(
     @PrimaryKey
     var code: String, //对应远程数据的objectId
     @ColumnInfo
     var quantity: Float = 0.0f,
+    @ColumnInfo
+    var userName: String,//在网络上存储时需要这个来区分购物车内的商品归属
     @Embedded
     var goods: Goods
 

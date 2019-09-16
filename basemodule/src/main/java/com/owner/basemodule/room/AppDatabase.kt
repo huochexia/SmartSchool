@@ -22,10 +22,7 @@ import androidx.room.RoomDatabase
 import com.owner.basemodule.base.ROOM_DATABASE_FILE
 import com.owner.basemodule.room.dao.GoodsManagerDao
 import com.owner.basemodule.room.dao.UserDao
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.ShoppingCartGoods
-import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.room.entities.*
 
 /**
  *
@@ -33,7 +30,7 @@ import com.owner.basemodule.room.entities.User
  *@description:
  */
 @Database(version = 1, entities = [User::class, Goods::class,
-    GoodsCategory::class,ShoppingCartGoods::class])
+    GoodsCategory::class, GoodsOfShoppingCart::class])
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao //用户管理
