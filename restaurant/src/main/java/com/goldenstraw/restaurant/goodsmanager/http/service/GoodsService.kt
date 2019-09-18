@@ -56,7 +56,7 @@ interface GoodsApi {
 
     //2、得到某个类别的所有商品
     //where = {"categoryCode":"  "}
-    @GET("/1/classes/Goods")
+    @GET("/1/classes/Goods/")
     fun getGoodsList(@Query("where") map: Map<String, String>)
             : Observable<HttpResult<objectList<Goods>>>
 

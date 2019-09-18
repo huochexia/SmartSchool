@@ -17,6 +17,6 @@ data class newObject(
  * 获取对象列表
  */
 class objectList<T>(
-    var results: MutableList<T>
+    val results: MutableList<T>
 )
 
