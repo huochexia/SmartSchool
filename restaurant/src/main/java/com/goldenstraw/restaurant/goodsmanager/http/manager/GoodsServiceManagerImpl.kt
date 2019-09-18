@@ -17,14 +17,30 @@ import io.reactivex.Single
 class GoodsServiceManagerImpl(
     private val serverApi: GoodsApi
 ) : IGoodsServiceManager {
-    override fun getCategory(): Observable<objectList<GoodsCategory>> {
-        return filterStauts(serverApi.getAllCategory())
+
+    /**
+     * 删除
+     */
+
+    override fun deleteCategory(category: GoodsCategory): Completable {
+        return serverApi.deleteCategory(category.code)
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>> {
-        val map = HashMap<String, String>()
-        map.put("categoryCode", category.code)
-        return filterStauts(serverApi.getGoodsList(map))
+    override fun deleteGoods(goods: Goods): Completable {
+        return serverApi.deleteGoods(goods.goodsCode)
+    }
+
+    /**
+     * 获取
+     */
+    override fun getCategory(): Observable<HttpResult<objectList<GoodsCategory>>> {
+        return serverApi.getAllCategory()
+    }
+
+    override fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>> {
+
+        val condition = """{”categoryCode":"${category.code}"}"""
+        return serverApi.getGoodsList(condition)
     }
 
     /**

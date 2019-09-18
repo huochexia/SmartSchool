@@ -25,6 +25,7 @@ import com.owner.basemodule.room.entities.User
 import com.owner.usercenter.http.manager.UserServiceManager
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -35,13 +36,13 @@ import io.reactivex.schedulers.Schedulers
 
 interface ILocalUserManagerDataSource : ILocalDataSource {
     //得到用户列表
-    fun getAllUsersFromLocal(): Flowable<Either<Errors, List<User>>>
+    fun getAllUsersFromLocal(): Observable<Either<Errors, List<User>>>
 
     //插入所有列表
     fun saveAllUsers(either: Either<Errors, List<User>>): Completable
 
     //按用户名查询用户
-    fun search(name: String): Flowable<List<User>>
+    fun search(name: String): Observable<List<User>>
 }
 
 class LocalUserManagerDataSource(
@@ -58,7 +59,7 @@ class LocalUserManagerDataSource(
         })
     }
 
-    override fun getAllUsersFromLocal(): Flowable<Either<Errors, List<User>>> {
+    override fun getAllUsersFromLocal(): Observable<Either<Errors, List<User>>> {
         return database.userDao().getAllUsers()
             .subscribeOn(Schedulers.io())
             .map {
@@ -69,7 +70,7 @@ class LocalUserManagerDataSource(
             }
     }
 
-    override fun search(name: String): Flowable<List<User>> {
+    override fun search(name: String): Observable<List<User>> {
         return database.userDao().search(name)
     }
 }
@@ -117,7 +118,7 @@ class UserManagerRepository(
 
     //从本地列表中获得查询结果
 
-    fun getSearchUserList(username: String): Flowable<List<User>> {
+    fun getSearchUserList(username: String): Observable<List<User>> {
 
         return localDataSource.search(username)
 

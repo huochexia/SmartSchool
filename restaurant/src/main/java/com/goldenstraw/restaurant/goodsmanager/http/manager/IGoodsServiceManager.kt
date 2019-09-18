@@ -30,12 +30,23 @@ interface IGoodsServiceManager {
 
     //2、更新类别
     fun updateCategory(category: GoodsCategory): Completable
+
     /**
      * 查询
      */
     //1、获取所有类别
-    fun getCategory():Observable<objectList<GoodsCategory>>
+    fun getCategory(): Observable<HttpResult<objectList<GoodsCategory>>>
+
     //2、获取某个类别的商品列表
-    fun getGoodsOfCategory(category: GoodsCategory):Observable<objectList<Goods>>
+    fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>>
+
+    /**
+     * 删除
+     */
+    //1、删除类别
+    fun deleteCategory(category:GoodsCategory): Completable
+
+    //2、删除商品
+    fun deleteGoods(goods:Goods): Completable
 
 }

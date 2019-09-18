@@ -24,7 +24,7 @@ class GoodsRepository(
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
     fun addGoods(goods: Goods): Observable<newObject> {
-        return filterStauts(remote.addGoods(goods))
+        return filterStauts(remote.addGoods(goods).toObservable())
             .doAfterNext {
                 goods.categoryCode = it.objectId
                 local.addGoods(goods)  //这个地方出现异常会怎样？抛出吗？
@@ -36,7 +36,7 @@ class GoodsRepository(
     //2、增加商品类别到远程数据库，成功后得到新类别的objectId,赋与本地的新类别，然后保存本地库
 
     fun addGoodsCategory(category: GoodsCategory): Observable<newObject> {
-        return filterStauts(remote.addCategory(category))
+        return filterStauts(remote.addCategory(category).toObservable())
             .doAfterNext {
                 category.code = it.objectId
                 local.addCategory(category)
@@ -62,10 +62,12 @@ class GoodsRepository(
             }
     }
 
+
+
     /*
       按类别查询商品,此处只从本地数据源中获取。
      */
-    fun queryGoods(category: GoodsCategory): Flowable<MutableList<Goods>> {
+    fun queryGoods(category: GoodsCategory): Observable<MutableList<Goods>> {
 
         return local.getGoodsFromCategory(category)
 
@@ -74,7 +76,7 @@ class GoodsRepository(
     /*
       获得所有类别及其所拥入商品
      */
-    fun getCategory(): Flowable<MutableList<CategoryAndAllGoods>> {
+    fun getCategory(): Observable<MutableList<CategoryAndAllGoods>> {
         return local.getCategoryAllGoods()
     }
 }

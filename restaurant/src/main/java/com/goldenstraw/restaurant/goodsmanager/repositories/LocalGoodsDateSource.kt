@@ -5,9 +5,10 @@ import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.dao.CategoryAndAllGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.ShoppingCartGoods
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 
 /**
@@ -17,16 +18,16 @@ import io.reactivex.Flowable
 interface ILocalGoodsDataSource : ILocalDataSource {
 
     //获取类别及其所拥有的商品列表
-    fun getCategoryAllGoods(): Flowable<MutableList<CategoryAndAllGoods>>
+    fun getCategoryAllGoods(): Observable<MutableList<CategoryAndAllGoods>>
 
     //获取购物车中所有商品
-    fun getShoppingCartAllGoods(): Flowable<MutableList<ShoppingCartGoods>>
+    fun getShoppingCartAllGoods(): Observable<MutableList<GoodsOfShoppingCart>>
 
     //通过名称的部分获取商品(模糊查询）
-    fun getGoods(goodsName: String): Flowable<MutableList<Goods>>
+    fun getGoods(goodsName: String): Observable<MutableList<Goods>>
 
     //按类别获取商品
-    fun getGoodsFromCategory(category: GoodsCategory): Flowable<MutableList<Goods>>
+    fun getGoodsFromCategory(category: GoodsCategory): Observable<MutableList<Goods>>
 
     //修改购物车某商品的数量
     fun updateGoodsQuantity(goodsName: String, quantity: Float): Completable
@@ -44,7 +45,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun deleteCategory(category: GoodsCategory): Completable
 
     //从购物车中删除商品
-    fun removeShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable
+    fun removeShoppingCart(shoppingCartGoods: GoodsOfShoppingCart): Completable
 
     //增加商品类别
     fun addCategory(goodsCategory: GoodsCategory): Completable
@@ -53,7 +54,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun addGoods(goods: Goods): Completable
 
     //加入购物车
-    fun addGoodsToShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable
+    fun addGoodsToShoppingCart(shoppingCartGoods: GoodsOfShoppingCart): Completable
 }
 
 /**
@@ -62,19 +63,19 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
 class LocalGoodsDateSourceImpl(private val database: AppDatabase) : ILocalGoodsDataSource {
 
-    override fun getCategoryAllGoods(): Flowable<MutableList<CategoryAndAllGoods>> {
+    override fun getCategoryAllGoods(): Observable<MutableList<CategoryAndAllGoods>> {
         return database.goodsDao().loadCategory()
     }
 
-    override fun getShoppingCartAllGoods(): Flowable<MutableList<ShoppingCartGoods>> {
+    override fun getShoppingCartAllGoods(): Observable<MutableList<GoodsOfShoppingCart>> {
         return database.goodsDao().getShoppingCartAllGoods()
     }
 
-    override fun getGoods(goodsName: String): Flowable<MutableList<Goods>> {
+    override fun getGoods(goodsName: String): Observable<MutableList<Goods>> {
         return database.goodsDao().searchGoods(goodsName)
     }
 
-    override fun getGoodsFromCategory(category: GoodsCategory): Flowable<MutableList<Goods>> {
+    override fun getGoodsFromCategory(category: GoodsCategory): Observable<MutableList<Goods>> {
         return database.goodsDao().queryGoodsFromCategory(category.code)
     }
 
@@ -98,7 +99,7 @@ class LocalGoodsDateSourceImpl(private val database: AppDatabase) : ILocalGoodsD
         return database.goodsDao().deleteCategory(category)
     }
 
-    override fun removeShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable {
+    override fun removeShoppingCart(shoppingCartGoods: GoodsOfShoppingCart): Completable {
         return database.goodsDao().moveShoppingCart(shoppingCartGoods)
     }
 
@@ -110,7 +111,7 @@ class LocalGoodsDateSourceImpl(private val database: AppDatabase) : ILocalGoodsD
         return database.goodsDao().insertGoods(goods)
     }
 
-    override fun addGoodsToShoppingCart(shoppingCartGoods: ShoppingCartGoods): Completable {
+    override fun addGoodsToShoppingCart(shoppingCartGoods: GoodsOfShoppingCart): Completable {
         return database.goodsDao().insertShoppingCartGoods(shoppingCartGoods)
     }
 
