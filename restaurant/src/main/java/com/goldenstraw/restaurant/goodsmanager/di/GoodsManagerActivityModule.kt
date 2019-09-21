@@ -5,6 +5,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.LocalGoodsDateSourceImpl
 import com.goldenstraw.restaurant.goodsmanager.repositories.RemoteGoodsDataSourceImpl
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.network.RetrofitFactory
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -22,6 +23,7 @@ const val GOODS_MANAGER_ACTIVITY_TAG = "GOODS_MANAGER_ACTIVITY_TAG"
 
 
 val goodsDataSourceModule = Kodein.Module(GOODS_MANAGER_ACTIVITY_TAG) {
+
 
     //绑定商品数据源，对商品的操作，都是从这个类开始。
     bind<GoodsRepository>() with singleton { GoodsRepository(instance(), instance()) }
