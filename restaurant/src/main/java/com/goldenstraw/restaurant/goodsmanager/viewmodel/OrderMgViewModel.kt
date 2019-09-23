@@ -32,4 +32,7 @@ class OrderMgViewModel(
             }
         return categoryList
     }
+    /*
+     *从本地数据库中
+     */
 }
