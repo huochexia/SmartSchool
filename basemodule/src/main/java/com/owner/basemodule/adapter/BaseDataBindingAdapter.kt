@@ -7,8 +7,9 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
 open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
+    private val layoutId:Int,//item的layoutId
     private val dataSource: () -> List<T>,
-    private val dataBinding: DB,
+    private val dataBinding: (View)-> DB,
     private val callback: (T, DB, Int) -> Unit = { _, _, _ -> }
 ) : RecyclerView.Adapter<BaseDataBindingViewHolder<T, DB>>() {
 
@@ -16,9 +17,9 @@ open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
         parent: ViewGroup,
         viewType: Int
     ): BaseDataBindingViewHolder<T, DB> = BaseDataBindingViewHolder(
+        LayoutInflater.from(parent.context).inflate(layoutId,parent,false),
         dataBinding,
-        callback,
-        viewType
+        callback
     )
 
     override fun getItemCount(): Int = dataSource().size

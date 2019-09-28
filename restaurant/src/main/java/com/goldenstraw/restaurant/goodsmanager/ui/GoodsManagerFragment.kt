@@ -2,7 +2,6 @@ package com.goldenstraw.restaurant.goodsmanager.ui
 
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
-import com.goldenstraw.restaurant.goodsmanager.adapter.GoodsAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
@@ -29,11 +28,5 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     //掌握的还不太理想，所以暂是不考虑使用。
     private val viewModel: OrderMgViewModel = getViewModel { OrderMgViewModel(repository) }
 
-    val adapter = GoodsAdapter(
-        { viewModel.goodsList },
-        binding,
-        { goods, binding, position ->
 
-        }
-    )
 }

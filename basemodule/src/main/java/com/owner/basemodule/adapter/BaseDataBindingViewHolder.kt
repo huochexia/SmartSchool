@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
  * 2、将对数据与视图的绑定工作定义为回调方法。
  */
 open class BaseDataBindingViewHolder<T : Any, DB : ViewDataBinding>(
-    dataBinding: DB,
-    private val callback: (T, DB, Int) -> Unit = { _, _, _ -> },
-    viewType:Int
-) : RecyclerView.ViewHolder(dataBinding.root) {
+    view:View,
+    dataBinding: (View)->DB,
+    private val callback: (T, DB, Int) -> Unit = { _, _, _ -> }
+) : RecyclerView.ViewHolder(view) {
 
     private var binding: DB? = null
 
     init {
-        binding = dataBinding
+        binding = dataBinding(view)
     }
 
     fun bindToData(data: T, position: Int) {
