@@ -15,10 +15,31 @@
  */
 package com.owner.basemodule.base.viewmodel
 
+import androidx.databinding.Observable
+import androidx.databinding.PropertyChangeRegistry
+
 
 /**
  *ViewModel基础类，继承AutoDisposeViewModel
  * Created by Liuyong on 2019-03-21.It's smartschool
  *@description:
  */
-open class BaseViewModel: AutoDisposeViewModel()
+open class BaseViewModel : AutoDisposeViewModel(), Observable {
+
+    private val callbacks = PropertyChangeRegistry()
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+        callbacks.add(callback)
+    }
+
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+        callbacks.remove(callback)
+    }
+
+    fun notifyAllChanged() {
+        callbacks.notifyCallbacks(this, 0, null)
+    }
+
+    fun notifyPropertyChanged(fieldId: Int) {
+        callbacks.notifyCallbacks(this, fieldId, null)
+    }
+}

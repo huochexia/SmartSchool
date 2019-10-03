@@ -7,8 +7,8 @@
     <data>
 
         <variable
-                name="categoryVM"
-                type="com.goldenstraw.restaurant.goodsmanager.viewmodel.CategoryViewModel" />
+                name="category"
+                type="com.owner.basemodule.room.entities.GoodsCategory" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -23,7 +23,7 @@
                     android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{categoryVM.category.categoryName}"
+                    android:text="@{category.categoryName}"
                     android:textSize="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

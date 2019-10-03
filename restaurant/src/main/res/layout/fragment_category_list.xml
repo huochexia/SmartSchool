@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.CategoryManagerFragment" />
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.kennyc.view.MultiStateView
+                android:id="@+id/mMultiStateCategoryView"
+                style="@style/MultiStateStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:msv_viewState="@{fragment.viewModel.categoryState}">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:bind_recyclerView_adapter="@{fragment.viewModel.categoryAdapter}"
+                    tools:listitem="@layout/layout_goods_category" />
+        </com.kennyc.view.MultiStateView>
+
+        <Button
+                android:id="@+id/btn_category_manager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="增加类别"
+                android:textSize="18sp" />
+    </LinearLayout>
+</layout>

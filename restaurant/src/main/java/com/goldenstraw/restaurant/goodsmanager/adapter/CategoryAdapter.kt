@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
 import com.owner.basemodule.room.entities.GoodsCategory
 
+
+
 class CategoryAdapter(
-    private val categoryList: List<GoodsCategory>
+    var categoryList: List<GoodsCategory>
 ) : RecyclerView.Adapter<CategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder.create(LayoutInflater.from(parent.context), parent)
@@ -18,4 +20,6 @@ class CategoryAdapter(
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         holder.bindToData(categoryList[position])
     }
+
+
 }

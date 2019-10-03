@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -24,28 +25,6 @@
             <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="2"
-                    android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlw_goods_category"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        tools:listitem="@layout/layout_goods_category" />
-                <Button
-                        android:id="@+id/btn_category_manager"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="增加类别"
-                        android:textSize="18sp"
-                        />
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:layout_weight="5"
                     android:orientation="vertical">
 
@@ -53,34 +32,45 @@
                         android:id="@+id/img_goods_category"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:src="@mipmap/category_banner"/>
+                        android:src="@mipmap/category_banner" />
 
-                <LinearLayout
+                <com.kennyc.view.MultiStateView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        style="@style/MultiStateStyle"
+                        app:msv_viewState="@{fragment.viewModel.goodsState}">
 
-                    <androidx.core.widget.NestedScrollView
+                    <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/rlw_goods_item"
+                        <androidx.core.widget.NestedScrollView
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                tools:listitem="@layout/layout_goods_item" />
-                    </androidx.core.widget.NestedScrollView>
+                                android:layout_height="match_parent">
 
-                </LinearLayout>
+                            <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rlw_goods_item"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    app:bind_recyclerView_adapter="@{fragment.viewModel.goodsAdapter}"
+                                    tools:listitem="@layout/layout_goods_item" />
+                        </androidx.core.widget.NestedScrollView>
+
+                    </LinearLayout>
+                </com.kennyc.view.MultiStateView>
+
+
                 <Button
                         android:id="@+id/btn_add_to_shopping_cart"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/add_to_shopping_cart"
-                        android:textSize="18sp"
+                        android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
-                        android:layout_marginStart="4dp"/>
+                        android:text="@string/add_to_shopping_cart"
+                        android:textSize="18sp" />
             </LinearLayout>
 
         </LinearLayout>

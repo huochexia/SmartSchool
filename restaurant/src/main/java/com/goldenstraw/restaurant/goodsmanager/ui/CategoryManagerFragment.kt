@@ -1,7 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
+import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
@@ -11,26 +11,19 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
-class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
+class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
 
     override val layoutId: Int
-        get() = R.layout.fragment_goods_list
-
+        get() = R.layout.fragment_category_list
     override val kodein: Kodein = Kodein.lazy {
-
         extend(parentKodein, copy = Copy.All)
-
         import(goodsDataSourceModule)
     }
-    //通过Kodein容器检索对象
-    private val repository: GoodsRepository by instance()
-    //使用同一个Activity范围下的共享ViewModel
-    var viewModel: OrderMgViewModel?
-
-    init {
-        viewModel = activity?.getViewModel {
-            OrderMgViewModel(repository)
-        }
+    private val repository by instance<GoodsRepository>()
+    /*
+      使用同一个Activity范围下的共享ViewModel
+     */
+    val viewModel = activity?.getViewModel {
+        OrderMgViewModel(repository)
     }
-
 }

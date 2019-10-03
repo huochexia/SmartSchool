@@ -9,7 +9,7 @@ import com.owner.basemodule.room.entities.Goods
 import java.util.zip.Inflater
 
 class GoodsViewHolder(
-    private val mBinding: LayoutGoodsItemBinding
+    val mBinding: LayoutGoodsItemBinding
 ) : RecyclerView.ViewHolder(mBinding.root) {
 
     companion object {
@@ -21,11 +21,6 @@ class GoodsViewHolder(
 
     fun bindToData(goods: Goods) {
 
-        if (mBinding.goodsVM == null) {
-            mBinding.goodsVM = GoodsViewModel(goods)
-        } else {
-            mBinding.goodsVM.goods = goods
-        }
-
+        mBinding.goods = goods
     }
 }

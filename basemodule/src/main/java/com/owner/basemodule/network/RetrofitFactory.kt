@@ -50,11 +50,11 @@ class RetrofitFactory private constructor() {
     /*
       okHttp3对象缓存文件
      */
-    private val cacheFile by lazy {
-        File(BaseApplication.getInstance().cacheDir, "webServiceApi").apply {
-            ensureDis()
-        }
-    }
+//    private val cacheFile by lazy {
+//        File(BaseApplication.getInstance().cacheDir, "webServiceApi").apply {
+//            ensureDis()
+//        }
+//    }
 
     init {
         /*
@@ -111,7 +111,6 @@ class RetrofitFactory private constructor() {
         return OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addInterceptor(logInterceptor())
-            .cache(Cache(cacheFile, 100 * 1024 * 1024))
             .connectTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIME_OUT_SECONDS, TimeUnit.SECONDS)

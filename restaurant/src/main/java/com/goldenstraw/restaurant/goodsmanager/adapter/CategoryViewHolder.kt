@@ -30,12 +30,7 @@ class CategoryViewHolder(
     }
 
     fun bindToData(category: GoodsCategory) {
-        if (mBinding.categoryVM == null) {
-            mBinding.categoryVM = CategoryViewModel(category)
-        } else {
-            mBinding.categoryVM.category = category
-        }
-
+        mBinding.category = category
         mBinding.executePendingBindings()
     }
 }

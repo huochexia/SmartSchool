@@ -7,8 +7,8 @@
 
     <data>
         <variable
-                name="goodsVM"
-                type="com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsViewModel" />
+                name="goods"
+                type="com.owner.basemodule.room.entities.Goods" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:textSize="18sp"
-                    android:text="@{goodsVM.goods.goodsName}"
+                    android:text="@{goods.goodsName}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cb_goods"
                     app:layout_constraintTop_toTopOf="parent"
@@ -69,7 +69,7 @@
                     android:id="@+id/tv_goods_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{goodsVM.goods.unitOfMeasurement}"
+                    android:text="@{goods.unitOfMeasurement}"
                     app:layout_constraintBottom_toBottomOf="@+id/textView2"
                     app:layout_constraintStart_toEndOf="@+id/textView2"
                     app:layout_constraintTop_toTopOf="@+id/textView2"
@@ -89,7 +89,7 @@
                     android:id="@+id/tv_goods_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{goodsVM.goods.unitPrice}"
+                    android:text="@{String.valueOf(goods.unitPrice)}"
                     app:layout_constraintBottom_toBottomOf="@+id/textView4"
                     app:layout_constraintStart_toEndOf="@+id/textView4"
                     tools:text="10.5" />

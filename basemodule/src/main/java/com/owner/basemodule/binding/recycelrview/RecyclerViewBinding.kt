@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding3.recyclerview.scrollStateChanges
+import com.kennyc.view.MultiStateView
 import java.util.concurrent.TimeUnit
 
 /**
@@ -54,12 +55,20 @@ fun setRecyclerViewAdapter(
 )
 fun setScrollStateChanges(
     recyclerView: RecyclerView,
-    listener:(Int)->Int,
-    debounce:Long = 500
-){
+    listener: (Int) -> Int,
+    debounce: Long = 500
+) {
     recyclerView.scrollStateChanges()
-        .debounce(debounce,TimeUnit.MILLISECONDS)
-        .subscribe{
+        .debounce(debounce, TimeUnit.MILLISECONDS)
+        .subscribe {
             listener(it)
         }
+}
+
+/**
+ * 多状态属性设置
+ */
+@BindingAdapter("msv_viewState")
+fun setViewState(viewState: MultiStateView, state: Int) {
+    viewState.viewState = state
 }

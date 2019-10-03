@@ -4,31 +4,37 @@ import android.graphics.Color
 import android.view.Menu
 import android.widget.EditText
 import androidx.appcompat.widget.SearchView
-import androidx.navigation.fragment.NavHostFragment
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.ActivityGoodsManagerBinding
-import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
+import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
 import com.owner.basemodule.base.view.activity.BaseActivity
-import kotlinx.android.synthetic.main.activity_goods_manager.*
+import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 
-class GoodsManagerActivity : BaseActivity<ActivityGoodsManagerBinding>() {
+class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
+
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
-
-
     }
 
     override val layoutId: Int
-        get() = R.layout.activity_goods_manager
+        get() = R.layout.activity_order_manager
+
 
     override fun initView() {
         super.initView()
+
         setSupportActionBar(toolbar)//没有这个显示不了菜单
-        val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.order_Manager_Fragment) as NavHostFragment? ?: return
+//        val host: NavHostFragment = supportFragmentManager
+//            .findFragmentById(R.id.order_Manager_Fragment) as NavHostFragment? ?: return
+        val categoryFragment = CategoryManagerFragment()
+        val goodsFragment = GoodsManagerFragment()
+        val trans = supportFragmentManager.beginTransaction()
+        trans.replace(R.id.fragment_category_container, categoryFragment)
+        trans.replace(R.id.fragment_goods_container, goodsFragment)
+        trans.commit()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
