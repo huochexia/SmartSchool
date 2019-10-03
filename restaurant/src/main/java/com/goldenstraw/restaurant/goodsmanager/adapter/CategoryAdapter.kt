@@ -9,7 +9,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 
 
 class CategoryAdapter(
-    var categoryList: List<GoodsCategory>
+    var categoryList: List<String>
 ) : RecyclerView.Adapter<CategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder.create(LayoutInflater.from(parent.context), parent)
