@@ -22,33 +22,34 @@ import io.reactivex.schedulers.Schedulers
 class OrderMgViewModel(
     private val repository: GoodsRepository
 ) : BaseViewModel() {
-    lateinit var categoryAndAllGoodsList: MutableList<CategoryAndAllGoods>
+    var categoryAndAllGoodsList = mutableListOf<CategoryAndAllGoods>()
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
     var categoryAdapter: CategoryAdapter
     var goodsAdapter: GoodsAdapter
 
     @get:Bindable
     var categoryState = MultiStateView.VIEW_STATE_EMPTY
-    set(value) {
-        field = value
-        notifyPropertyChanged(BR.categoryState)
-    }
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.categoryState)
+        }
     @get:Bindable
     var goodsState = MultiStateView.VIEW_STATE_ERROR
-    set(value) {
-        field =value
-        notifyPropertyChanged(BR.goodsState)
-    }
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.goodsState)
+        }
 
     init {
-        toast { "kllklkklkklklj" }
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
         getCategoryAndAllGoods()
         val categoryList = getCategory()
         categoryAdapter = CategoryAdapter(getCategory())
         //将类别列表的第一项做为选择的默认类别，显示它的所有商品
-        val defaultCategory = categoryList[0]
-        var goodsList = getGoodsList(defaultCategory)
+        var goodsList = mutableListOf<Goods>()
+        if (categoryList.isNotEmpty()) {
+            goodsList = getGoodsList(categoryList[0])
+        }
         if (goodsList.isNullOrEmpty()) {
             goodsState = MultiStateView.VIEW_STATE_EMPTY
         }

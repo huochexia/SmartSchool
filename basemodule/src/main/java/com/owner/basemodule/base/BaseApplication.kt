@@ -44,12 +44,12 @@ class BaseApplication:Application(),KodeinAware {
 
         bind<Context>() with singleton { this@BaseApplication }
 
-        bind<AppDatabase>() with singleton {
-            AppDatabase.getInstance(instance())
-        }
+//        bind<AppDatabase>() with singleton {
+//            AppDatabase.getInstance(instance())
+//        }
 
-        import(androidModule(this@BaseApplication))
-        import(androidXModule(this@BaseApplication))
+//        import(androidModule(this@BaseApplication))
+//        import(androidXModule(this@BaseApplication))
 
         import(prefsModule)
         import(httpFactoryModule)  //注入全局Retrofit工厂

@@ -6,17 +6,25 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
+import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
+import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
+import com.owner.basemodule.base.viewmodel.getViewModel
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
+    lateinit var viewModel: OrderMgViewModel
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
+        import(goodsDataSourceModule)
     }
+    val repository: GoodsRepository by instance()
 
     override val layoutId: Int
         get() = R.layout.activity_order_manager
@@ -28,6 +36,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         setSupportActionBar(toolbar)//没有这个显示不了菜单
 //        val host: NavHostFragment = supportFragmentManager
 //            .findFragmentById(R.id.order_Manager_Fragment) as NavHostFragment? ?: return
+        viewModel = getViewModel { OrderMgViewModel(repository) }
         val categoryFragment = CategoryManagerFragment()
         val goodsFragment = GoodsManagerFragment()
         val trans = supportFragmentManager.beginTransaction()
