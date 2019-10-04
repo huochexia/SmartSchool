@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
@@ -28,13 +29,14 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     //通过Kodein容器检索对象
     private val repository: GoodsRepository by instance()
     //使用同一个Activity范围下的共享ViewModel
-    var viewModel: OrderMgViewModel?
+    var viewModel: OrderMgViewModel? = null
 
-    init {
-
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         viewModel = activity?.getViewModel {
             OrderMgViewModel(repository)
         }
     }
+
 
 }

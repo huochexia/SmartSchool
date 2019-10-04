@@ -1,16 +1,16 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.Bindable
+import androidx.databinding.ObservableField
 import androidx.databinding.library.baseAdapters.BR
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.adapter.CategoryAdapter
 import com.goldenstraw.restaurant.goodsmanager.adapter.GoodsAdapter
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.room.dao.CategoryAndAllGoods
 import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -22,24 +22,16 @@ import io.reactivex.schedulers.Schedulers
 class OrderMgViewModel(
     private val repository: GoodsRepository
 ) : BaseViewModel() {
+
     var categoryAndAllGoodsList = hashMapOf<String, List<Goods>>()
+    private val state = MutableLiveData<Boolean>()
 
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
-    lateinit var categoryAdapter: CategoryAdapter
-    lateinit var goodsAdapter: GoodsAdapter
+    var categoryAdapter: CategoryAdapter? = null
+    var goodsAdapter: GoodsAdapter? = null
 
-    @get:Bindable
-    var categoryState = MultiStateView.VIEW_STATE_EMPTY
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.categoryState)
-        }
-    @get:Bindable
-    var goodsState = MultiStateView.VIEW_STATE_ERROR
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.goodsState)
-        }
+    val categoryState = ObservableField<Int>()
+    val goodsState = ObservableField<Int>()
 
     /**
      * 初始化工作，获取数据，创建列表适配器
@@ -52,6 +44,7 @@ class OrderMgViewModel(
     /*
      *从本地数据库中获取所有类别及其商品,将数据转变成HashMap对象，key是类别名称，value是商品列表
      */
+
     fun getCategoryAndAllGoods() {
         repository.getCategory()
             .map {
@@ -67,28 +60,29 @@ class OrderMgViewModel(
             .subscribe(
                 {
                     if (it.isNullOrEmpty()) {
-                        categoryState = MultiStateView.VIEW_STATE_EMPTY
-                        goodsState = MultiStateView.VIEW_STATE_EMPTY
-
+                        categoryState.set(MultiStateView.VIEW_STATE_EMPTY)
+                        goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
                     } else {
-                        categoryState = MultiStateView.VIEW_STATE_CONTENT
-                        goodsState = MultiStateView.VIEW_STATE_CONTENT
+                        categoryState.set(MultiStateView.VIEW_STATE_CONTENT)
+                        goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
                         categoryAndAllGoodsList = it //得到全部数据
                         val categoryList = getCategory() //提取类别
                         categoryAdapter = CategoryAdapter(getCategory())
                         //将类别列表的第一项做为选择的默认类别，显示它的所有商品
                         var goodsList = getGoodsList(categoryList[0])
-
+                        if (goodsList.isEmpty())
+                            goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
                         goodsAdapter = GoodsAdapter(goodsList)
                     }
                 }, {
-                    categoryState = MultiStateView.VIEW_STATE_ERROR
-                    goodsState = MultiStateView.VIEW_STATE_ERROR
+                    categoryState.set(MultiStateView.VIEW_STATE_ERROR)
+                    goodsState.set(MultiStateView.VIEW_STATE_ERROR)
                 }, {
+
                 },
                 {
-                    categoryState = MultiStateView.VIEW_STATE_LOADING
-                    goodsState = MultiStateView.VIEW_STATE_LOADING
+                    categoryState.set(MultiStateView.VIEW_STATE_LOADING)
+                    goodsState.set(MultiStateView.VIEW_STATE_LOADING)
                 })
     }
 
@@ -111,5 +105,16 @@ class OrderMgViewModel(
         var goodsList = mutableListOf<Goods>()
         goodsList.addAll(categoryAndAllGoodsList[categroy]!!)
         return goodsList
+    }
+
+    /*
+       状态管理
+     */
+    fun getState(): LiveData<Boolean> {
+        return state
+    }
+
+    fun setAddCategoryDialogState(isShownDialog: Boolean) {
+        state.value = isShownDialog
     }
 }

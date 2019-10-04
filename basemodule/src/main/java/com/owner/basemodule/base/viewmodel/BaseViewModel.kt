@@ -26,7 +26,10 @@ import androidx.databinding.PropertyChangeRegistry
  */
 open class BaseViewModel : AutoDisposeViewModel(), Observable {
 
-    private val callbacks = PropertyChangeRegistry()
+    private val callbacks by lazy {
+        PropertyChangeRegistry()
+    }
+
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         callbacks.add(callback)
     }
