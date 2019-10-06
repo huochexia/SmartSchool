@@ -1,6 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.newObject
+import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
 import com.goldenstraw.restaurant.goodsmanager.http.entity.objectList
 import com.owner.basemodule.network.HttpResult
 import com.owner.basemodule.room.entities.Goods
@@ -19,11 +19,11 @@ interface GoodsApi {
      */
     //1、增加商品,需要加入成功后返回的objectId。因为商品属性中的goodsCode，就是网络数据的objectId
     @POST("/1/classes/Goods")
-    fun createGoods(@Body goods: Goods): Single<HttpResult<newObject>>
+    fun createGoods(@Body goods: Goods): Single<NewObject>
 
     //2、增加类别
     @POST("/1/classes/GoodsCategory")
-    fun createGoodsCategory(@Body goodsCategory: GoodsCategory): Single<HttpResult<newObject>>
+    fun createGoodsCategory(@Body goodsCategory: GoodsCategory): Single<NewObject>
 
     /**
     UPDATE

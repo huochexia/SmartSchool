@@ -1,6 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.newObject
+import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
 import com.goldenstraw.restaurant.goodsmanager.http.entity.objectList
 import com.owner.basemodule.network.HttpResult
 import com.owner.basemodule.room.entities.Goods
@@ -17,10 +17,10 @@ interface IGoodsServiceManager {
      * 增加
      */
     //1、增加商品
-    fun addGoods(goods: Goods): Single<HttpResult<newObject>>
+    fun addGoods(goods: Goods): Single<NewObject>
 
     //2、增加类别
-    fun addCategory(category: GoodsCategory): Single<HttpResult<newObject>>
+    fun addCategory(category: GoodsCategory): Single<NewObject>
 
     /**
      * 更新

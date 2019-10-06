@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
     private val layoutId:Int,//item的layoutId
     private val dataSource: () -> List<T>,
-    private val dataBinding: (View)-> DB,
+    private val bindBinding: (View)-> DB,
     private val callback: (T, DB, Int) -> Unit = { _, _, _ -> }
 ) : RecyclerView.Adapter<BaseDataBindingViewHolder<T, DB>>() {
 
@@ -18,7 +18,7 @@ open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
         viewType: Int
     ): BaseDataBindingViewHolder<T, DB> = BaseDataBindingViewHolder(
         LayoutInflater.from(parent.context).inflate(layoutId,parent,false),
-        dataBinding,
+        bindBinding,
         callback
     )
 

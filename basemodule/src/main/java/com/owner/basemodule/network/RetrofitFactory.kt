@@ -72,9 +72,9 @@ class RetrofitFactory private constructor() {
                 .addHeader("X-Bmob-REST-API-Key", BMOB_REST_API_KEY)
                 .addHeader("Content_Type", "application/json")
                 .build()
-            //处理响应结果，如果网络访问成功，但是状态码为404，说明一般性错误，则重新组织响应体，状态码改为200
+            //处理响应结果，如果网络访问成功，但是状态码为400，说明一般性错误，则重新组织响应体，状态码改为200
             val response = chain.proceed(request)
-            if (response.code() == 404) {
+            if (!response.isSuccessful) {
                 val mediaType = response.body()?.contentType()
                 val content = response.body()?.string()
                 response.newBuilder().code(200)

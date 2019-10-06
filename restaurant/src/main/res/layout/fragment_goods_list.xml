@@ -35,10 +35,10 @@
                         android:src="@mipmap/category_banner" />
 
                 <com.kennyc.view.MultiStateView
+                        style="@style/MultiStateStyle"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        style="@style/MultiStateStyle"
                         app:msv_viewState="@{fragment.viewModel.goodsState}">
 
                     <LinearLayout
@@ -55,7 +55,7 @@
                                     android:id="@+id/rlw_goods_item"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    app:bind_recyclerView_adapter="@{fragment.viewModel.goodsAdapter}"
+                                    app:bind_recyclerView_adapter="@{fragment.adapter}"
                                     tools:listitem="@layout/layout_goods_item" />
                         </androidx.core.widget.NestedScrollView>
 

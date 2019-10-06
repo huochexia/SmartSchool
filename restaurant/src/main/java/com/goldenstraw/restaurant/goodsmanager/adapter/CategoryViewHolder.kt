@@ -29,7 +29,7 @@ class CategoryViewHolder(
         }
     }
 
-    fun bindToData(category: String) {
+    fun bindToData(category: GoodsCategory) {
         mBinding.category = category
         mBinding.executePendingBindings()
     }

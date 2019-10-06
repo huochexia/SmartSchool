@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
+import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
+import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.BaseViewModelFactory
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.room.entities.GoodsCategory
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -28,12 +31,21 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
       使用同一个Activity范围下的共享ViewModel
      */
     var viewModel: OrderMgViewModel? = null
-
+    var adapter: BaseDataBindingAdapter<GoodsCategory, LayoutGoodsCategoryBinding>? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
+        super.onActivityCreated(savedInstanceState)
         viewModel = activity?.getViewModel {
             OrderMgViewModel(repository)
         }
-        super.onActivityCreated(savedInstanceState)
+        adapter = BaseDataBindingAdapter(
+            layoutId = R.layout.layout_goods_category,
+            bindBinding = { LayoutGoodsCategoryBinding.bind(it) },
+            dataSource = { viewModel!!.categoryList },
+            callback = { category, binding, _ ->
+                binding.category = category
+            }
+
+        )
     }
 }

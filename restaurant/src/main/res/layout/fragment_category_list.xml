@@ -27,7 +27,8 @@
             <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:bind_recyclerView_adapter="@{fragment.viewModel.categoryAdapter}"
+                    app:bind_recyclerView_adapter="@{fragment.adapter}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/layout_goods_category" />
         </com.kennyc.view.MultiStateView>
 

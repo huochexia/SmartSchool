@@ -41,6 +41,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         viewModel = getViewModel { OrderMgViewModel(repository) }
         viewModel.getState().observe(this, Observer { showAddCategoryDialog() })
 
+
         val categoryFragment = CategoryManagerFragment()
         val goodsFragment = GoodsManagerFragment()
         val trans = supportFragmentManager.beginTransaction()
@@ -65,6 +66,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
                 var content = editText.text.toString()
+                viewModel.addCategoryToRepository(content)
                 dialog.dismiss()
             }.create()
         dialog.show()

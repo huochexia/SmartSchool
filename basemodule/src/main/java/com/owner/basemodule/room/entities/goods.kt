@@ -20,7 +20,7 @@ import androidx.room.*
 )
 data class Goods(
     @PrimaryKey
-    var goodsCode: String, //对应远程数据的objectId
+    var goodsCode: String="", //对应远程数据的objectId
     @ColumnInfo(name = "goods_name")
     var goodsName: String,
     @ColumnInfo(name = "unit_of_measurement")
@@ -40,7 +40,7 @@ data class Goods(
 @Entity
 data class GoodsCategory(
     @PrimaryKey
-    var code: String, //对应远程数据的objectId
+    var code: String="", //对应远程数据的objectId
     @ColumnInfo(name = "category_name")
     var categoryName: String
 )
@@ -52,7 +52,7 @@ data class GoodsCategory(
 @Entity
 data class GoodsOfShoppingCart(
     @PrimaryKey
-    var code: String, //对应远程数据的objectId
+    var code: String="", //对应远程数据的objectId
     @ColumnInfo
     var quantity: Int= 0,//购物车中商品数量，整数购入
     @ColumnInfo

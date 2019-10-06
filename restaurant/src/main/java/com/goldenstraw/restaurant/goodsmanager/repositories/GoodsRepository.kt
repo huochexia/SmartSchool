@@ -1,13 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.newObject
+import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.filterStauts
 import com.owner.basemodule.room.dao.CategoryAndAllGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Observable
 
 /**
@@ -23,8 +21,8 @@ class GoodsRepository(
      */
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
-    fun addGoods(goods: Goods): Observable<newObject> {
-        return filterStauts(remote.addGoods(goods).toObservable())
+    fun addGoods(goods: Goods): Observable<NewObject> {
+        return remote.addGoods(goods).toObservable()
             .doAfterNext {
                 goods.categoryCode = it.objectId
                 local.addGoods(goods)  //这个地方出现异常会怎样？抛出吗？
@@ -33,13 +31,14 @@ class GoodsRepository(
     }
 
 
-    //2、增加商品类别到远程数据库，成功后得到新类别的objectId,赋与本地的新类别，然后保存本地库
+    //2、增加商品类别到远程数据库，传入类别名称，成功后得到新类别的objectId,使用objectId,创建新类别，然后保存本地库
 
-    fun addGoodsCategory(category: GoodsCategory): Observable<newObject> {
-        return filterStauts(remote.addCategory(category).toObservable())
-            .doAfterNext {
+    fun addGoodsCategory(category: GoodsCategory): Observable<GoodsCategory> {
+        return remote.addCategory(category).toObservable()
+            .map {
                 category.code = it.objectId
                 local.addCategory(category)
+                category
             }
     }
 
@@ -61,7 +60,6 @@ class GoodsRepository(
                 local.updateGoodsCategory(category)
             }
     }
-
 
 
     /*

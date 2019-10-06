@@ -1,10 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.newObject
+import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
 import com.goldenstraw.restaurant.goodsmanager.http.entity.objectList
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
 import com.owner.basemodule.network.HttpResult
-import com.owner.basemodule.network.filterStauts
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
@@ -46,11 +45,11 @@ class GoodsServiceManagerImpl(
     /**
      * 增加
      */
-    override fun addGoods(goods: Goods): Single<HttpResult<newObject>> {
+    override fun addGoods(goods: Goods): Single<NewObject> {
         return serverApi.createGoods(goods)
     }
 
-    override fun addCategory(category: GoodsCategory): Single<HttpResult<newObject>> {
+    override fun addCategory(category: GoodsCategory): Single<NewObject> {
         return serverApi.createGoodsCategory(category)
     }
 
