@@ -23,6 +23,10 @@ interface GoodsManagerDao {
     @Query("SELECT * FROM GOODS WHERE goods_name LIKE '%' || :name || '%'")
     fun searchGoods(name: String): Observable<MutableList<Goods>>
 
+    //获取所有类别
+    @Query("SELECT * FROM GOODSCATEGORY")
+    fun queryAllCategory(): Observable<MutableList<GoodsCategory>>
+
     //查询某类别的商品
     @Query("SELECT * FROM GOODS WHERE category_code = :code")
     fun queryGoodsFromCategory(code: String): Observable<MutableList<Goods>>

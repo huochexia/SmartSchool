@@ -26,6 +26,9 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     //通过名称的部分获取商品(模糊查询）
     fun getGoods(goodsName: String): Observable<MutableList<Goods>>
 
+    //获取所有类别
+    fun getAllCategory(): Observable<MutableList<GoodsCategory>>
+
     //按类别获取商品
     fun getGoodsFromCategory(category: GoodsCategory): Observable<MutableList<Goods>>
 
@@ -73,6 +76,10 @@ class LocalGoodsDateSourceImpl(private val database: AppDatabase) : ILocalGoodsD
 
     override fun getGoods(goodsName: String): Observable<MutableList<Goods>> {
         return database.goodsDao().searchGoods(goodsName)
+    }
+
+    override fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
+        return database.goodsDao().queryAllCategory()
     }
 
     override fun getGoodsFromCategory(category: GoodsCategory): Observable<MutableList<Goods>> {

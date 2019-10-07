@@ -23,15 +23,17 @@ class OrderMgViewModel(
     private val repository: GoodsRepository
 ) : BaseViewModel() {
 
-    var categoryAndAllGoodsList = hashMapOf<GoodsCategory, List<Goods>>()
-    private val state = MutableLiveData<Boolean>()
+//    var categoryAndAllGoodsList = hashMapOf<GoodsCategory, List<Goods>>()
+
 
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
     var categoryList = mutableListOf<GoodsCategory>()
-
     var goodsList = mutableListOf<Goods>()
     val categoryState = ObservableField<Int>()
     val goodsState = ObservableField<Int>()
+    //可观察数据
+    private val isRefresh = MutableLiveData<Boolean>() //刷新列表
+    private val state = MutableLiveData<Boolean>()  //弹出对话框
 
     /**
      * 初始化工作，获取数据，创建列表适配器
@@ -42,18 +44,10 @@ class OrderMgViewModel(
     }
 
     /*
-     *从本地数据库中获取所有类别及其商品,将数据转变成HashMap对象，key是类别名称，value是商品列表
+     *从本地数据库中获取所有类别,然后默认显示类别列表第一项的所有商品。
      */
-
-    fun getCategoryAndAllGoods() {
-        repository.getCategory()
-            .map {
-                var categoryAllGoods: HashMap<GoodsCategory, List<Goods>> = hashMapOf()
-                for (item in it) {
-                    categoryAllGoods[item.category] = item.goods
-                }
-                categoryAllGoods
-            }
+    private fun getCategoryAndAllGoods() {
+        repository.getAllCategory()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
@@ -64,44 +58,48 @@ class OrderMgViewModel(
                         goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
                     } else {
                         categoryState.set(MultiStateView.VIEW_STATE_CONTENT)
-                        goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
-                        categoryAndAllGoodsList = it //得到全部数据
-                        getCategory()
+                        getCategory(it)
                         //将类别列表的第一项做为选择的默认类别，显示它的所有商品
-                        goodsList = getGoodsList(categoryList[0])
-                        if (goodsList.isEmpty())
-                            goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
+                        repository.queryGoods(categoryList[0])
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .autoDisposable(this)
+                            .subscribe({ goodslist ->
+                                if (goodslist.isNullOrEmpty())
+                                    goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
+                                else {
+                                    goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
+                                    getGoodsList(goodsList)
+                                }
+                            }, {
+                                goodsState.set(MultiStateView.VIEW_STATE_ERROR)
+                            }, {}, {
+                                goodsState.set(MultiStateView.VIEW_STATE_LOADING)
+                            })
                     }
-                    //无论是否有数据，都应该创建适配器，为了以后的增加
                 }, {
                     categoryState.set(MultiStateView.VIEW_STATE_ERROR)
-                    goodsState.set(MultiStateView.VIEW_STATE_ERROR)
-                }, {
-
-                },
+                }, {},
                 {
                     categoryState.set(MultiStateView.VIEW_STATE_LOADING)
-                    goodsState.set(MultiStateView.VIEW_STATE_LOADING)
                 })
     }
 
     /*
      *从CategoryAndAllGoods表中得到所有Category
      */
-    private fun getCategory(): MutableList<GoodsCategory> {
-        categoryAndAllGoodsList.keys.forEach {
-            categoryList.add(it)
-        }
-        return categoryList
+    private fun getCategory(list: MutableList<GoodsCategory>) {
+        categoryList.clear()
+        categoryList.addAll(list)
     }
 
     /*
      * 从CategroyAndAllGoods列表中，根据category得到其下所有商品列表
      */
-    fun getGoodsList(categroy: GoodsCategory)
-            : MutableList<Goods> {
-        goodsList.addAll(categoryAndAllGoodsList[categroy]!!)
-        return goodsList
+    private fun getGoodsList(list: MutableList<Goods>) {
+        goodsList.clear()
+        goodsList.addAll(list)
+
     }
 
     /*
@@ -116,6 +114,17 @@ class OrderMgViewModel(
     }
 
     /*
+       通知列表刷新
+     */
+    fun getIsRefresh(): LiveData<Boolean> {
+        return isRefresh
+    }
+
+    fun setRefresh(isRefresh: Boolean) {
+        this.isRefresh.value = isRefresh
+    }
+
+    /*
       保存新增类别到数据库中
      */
     fun addCategoryToRepository(category: String) {
@@ -126,6 +135,7 @@ class OrderMgViewModel(
             .autoDisposable(this)
             .subscribe({
                 categoryList.add(it)
+                setRefresh(true)
             }, {
 
             })

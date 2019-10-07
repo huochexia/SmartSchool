@@ -65,7 +65,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
-                var content = editText.text.toString()
+                var content = editText.text.toString().trim()
                 viewModel.addCategoryToRepository(content)
                 dialog.dismiss()
             }.create()

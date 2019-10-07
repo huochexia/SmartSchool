@@ -1,12 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
+import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.room.dao.CategoryAndAllGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -21,10 +23,10 @@ class GoodsRepository(
      */
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
-    fun addGoods(goods: Goods): Observable<NewObject> {
+    fun addGoods(goods: Goods): Observable<CreateObject> {
         return remote.addGoods(goods).toObservable()
             .doAfterNext {
-                goods.categoryCode = it.objectId
+                goods.categoryCode = it.objectId!!
                 local.addGoods(goods)  //这个地方出现异常会怎样？抛出吗？
             }
 
@@ -36,8 +38,9 @@ class GoodsRepository(
     fun addGoodsCategory(category: GoodsCategory): Observable<GoodsCategory> {
         return remote.addCategory(category).toObservable()
             .map {
-                category.code = it.objectId
-                local.addCategory(category)
+                category.code = it.objectId!!
+                local.addCategory(category).subscribeOn(Schedulers.io())
+                    .subscribe()
                 category
             }
     }
@@ -61,6 +64,13 @@ class GoodsRepository(
             }
     }
 
+    /*
+      获取所有商品类别, 这里应该考虑从远程获取，然后保存于本地，最后从本地获得结果。
+      先暂时实现从本地直接获取
+     */
+    fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
+        return local.getAllCategory()
+    }
 
     /*
       按类别查询商品,此处只从本地数据源中获取。

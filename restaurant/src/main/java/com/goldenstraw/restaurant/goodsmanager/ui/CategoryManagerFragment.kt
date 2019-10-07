@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.goldenstraw.restaurant.R
@@ -32,8 +33,8 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
      */
     var viewModel: OrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<GoodsCategory, LayoutGoodsCategoryBinding>? = null
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity?.getViewModel {
             OrderMgViewModel(repository)
@@ -45,7 +46,10 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             callback = { category, binding, _ ->
                 binding.category = category
             }
-
         )
+        viewModel!!.getIsRefresh().observe(this, Observer {
+            if (it)
+                adapter!!.forceUpdate()
+        })
     }
 }

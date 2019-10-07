@@ -1,7 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.goldenstraw.restaurant.goodsmanager.http.entity.NewObject
-import com.goldenstraw.restaurant.goodsmanager.http.entity.objectList
+import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.objectList
 import com.goldenstraw.restaurant.goodsmanager.http.manager.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.HttpResult
@@ -18,9 +18,9 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 增加
      */
-    fun addGoods(goods: Goods): Single<NewObject>
+    fun addGoods(goods: Goods): Single<CreateObject>
 
-    fun addCategory(category: GoodsCategory): Single<NewObject>
+    fun addCategory(category: GoodsCategory): Single<CreateObject>
     /**
      * 更新
      */
@@ -72,11 +72,11 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 增加
      */
-    override fun addGoods(goods: Goods): Single<NewObject> {
+    override fun addGoods(goods: Goods): Single<CreateObject> {
         return service.addGoods(goods)
     }
 
-    override fun addCategory(category: GoodsCategory): Single<NewObject> {
+    override fun addCategory(category: GoodsCategory): Single<CreateObject> {
         return service.addCategory(category)
     }
 
