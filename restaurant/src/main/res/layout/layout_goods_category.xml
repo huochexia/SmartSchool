@@ -15,22 +15,36 @@
                 type="com.owner.basemodule.functional.Consumer" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp">
+            android:layout_height="60dp"
+            android:background="@color/common_gray">
 
         <TextView
                 android:id="@+id/textView3"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/category_bg_selector"
-                android:gravity="center"
                 android:onClick="@{()->goodsEvent.accept(category)}"
                 android:text="@{category.categoryName}"
                 android:textColor="@drawable/category_text_selector"
-                android:textSize="26dp"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="商品类别名" />
-    </LinearLayout>
+
+        <View
+                android:id="@+id/view"
+                android:layout_width="10dp"
+                android:layout_height="30dp"
+                android:background="@color/common_red"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </layout>
