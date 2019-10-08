@@ -34,19 +34,20 @@ class OrderMgViewModel(
     //可观察数据
     private val isRefresh = MutableLiveData<Boolean>() //刷新列表
     private val state = MutableLiveData<Boolean>()  //弹出对话框
+    var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
 
     /**
      * 初始化工作，获取数据，创建列表适配器
      */
     init {
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
-        getCategoryAndAllGoods()
+        getAllCategory()
     }
 
     /*
      *从本地数据库中获取所有类别,然后默认显示类别列表第一项的所有商品。
      */
-    private fun getCategoryAndAllGoods() {
+    private fun getAllCategory() {
         repository.getAllCategory()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -59,23 +60,7 @@ class OrderMgViewModel(
                     } else {
                         categoryState.set(MultiStateView.VIEW_STATE_CONTENT)
                         getCategory(it)
-                        //将类别列表的第一项做为选择的默认类别，显示它的所有商品
-                        repository.queryGoods(categoryList[0])
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .autoDisposable(this)
-                            .subscribe({ goodslist ->
-                                if (goodslist.isNullOrEmpty())
-                                    goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
-                                else {
-                                    goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
-                                    getGoodsList(goodsList)
-                                }
-                            }, {
-                                goodsState.set(MultiStateView.VIEW_STATE_ERROR)
-                            }, {}, {
-                                goodsState.set(MultiStateView.VIEW_STATE_LOADING)
-                            })
+                        selected.value = it.first()
                     }
                 }, {
                     categoryState.set(MultiStateView.VIEW_STATE_ERROR)
@@ -96,6 +81,26 @@ class OrderMgViewModel(
     /*
      * 从CategroyAndAllGoods列表中，根据category得到其下所有商品列表
      */
+    fun getGoodsFromCategory(category: GoodsCategory) {
+        //将类别列表的第一项做为选择的默认类别，显示它的所有商品
+        repository.queryGoods(category)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({ goodsList ->
+                if (goodsList.isNullOrEmpty())
+                    goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
+                else {
+                    goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    getGoodsList(goodsList)
+                }
+            }, {
+                goodsState.set(MultiStateView.VIEW_STATE_ERROR)
+            }, {}, {
+                goodsState.set(MultiStateView.VIEW_STATE_LOADING)
+            })
+    }
+
     private fun getGoodsList(list: MutableList<Goods>) {
         goodsList.clear()
         goodsList.addAll(list)
@@ -140,4 +145,6 @@ class OrderMgViewModel(
 
             })
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.goldenstraw.restaurant.R
@@ -52,6 +53,9 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 binding.goods = category
             }
         )
+        viewModel!!.selected.observe(this, Observer {
+            viewModel!!.getGoodsFromCategory(it)
+        })
     }
 
 

@@ -14,6 +14,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.BaseViewModelFactory
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsCategory
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -44,7 +45,15 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             bindBinding = { LayoutGoodsCategoryBinding.bind(it) },
             dataSource = { viewModel!!.categoryList },
             callback = { category, binding, _ ->
-                binding.category = category
+                binding.apply {
+                    this.category = category
+                    goodsEvent = object : Consumer<GoodsCategory> {
+                        override fun accept(t: GoodsCategory) {
+                            viewModel!!.selected.value = t
+                        }
+
+                    }
+                }
             }
         )
         viewModel!!.getIsRefresh().observe(this, Observer {
@@ -52,4 +61,6 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 adapter!!.forceUpdate()
         })
     }
+
+
 }

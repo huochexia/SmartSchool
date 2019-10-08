@@ -27,10 +27,10 @@ package com.owner.basemodule.functional
  * 功能相同
  */
 interface Consumer<T> {
-    fun accept(t:T)
+    fun accept(t: T)
 }
 
 /**
  *  提供者：表示无参数，有返回值的表达式的别名，
  */
-typealias Supplier<T> = ()->T
+typealias Supplier<T> = () -> T
