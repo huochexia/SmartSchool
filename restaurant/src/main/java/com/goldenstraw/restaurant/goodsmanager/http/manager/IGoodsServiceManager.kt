@@ -34,11 +34,11 @@ interface IGoodsServiceManager {
     /**
      * 查询
      */
-    //1、获取所有类别
-    fun getCategory(): Observable<HttpResult<objectList<GoodsCategory>>>
+    //1、获取所有类别,这里应该剥离出所需要的数据
+    fun getCategory(): Observable<objectList<GoodsCategory>>
 
     //2、获取某个类别的商品列表
-    fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>>
+    fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>>
 
     /**
      * 删除

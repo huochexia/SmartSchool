@@ -48,13 +48,18 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
             dataSource = { viewModel!!.goodsList },
-            bindBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { category, binding, _ ->
-                binding.goods = category
+            dataBinding = { LayoutGoodsItemBinding.bind(it) },
+            callback = { goods, binding, _ ->
+                binding.goods = goods
             }
         )
         viewModel!!.selected.observe(this, Observer {
             viewModel!!.getGoodsFromCategory(it)
+            adapter!!.forceUpdate()
+        })
+        viewModel!!.isGoodsListRefresh.observe(this, Observer {
+            if (it)
+                adapter!!.forceUpdate()
         })
     }
 

@@ -96,6 +96,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                     categoryCode = category.code,
                     unitPrice = 0.0f
                 )
+                viewModel.addGoodsToRepository(goods)
                 dialog.dismiss()
             }.create()
         dialog.show()

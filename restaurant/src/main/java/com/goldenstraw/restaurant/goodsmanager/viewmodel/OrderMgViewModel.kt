@@ -32,7 +32,8 @@ class OrderMgViewModel(
     val categoryState = ObservableField<Int>()
     val goodsState = ObservableField<Int>()
     //可观察数据
-    private val isRefresh = MutableLiveData<Boolean>() //刷新列表
+    private val isRefresh = MutableLiveData<Boolean>() //刷新类别列表
+    var isGoodsListRefresh = MutableLiveData<Boolean>()//刷新商品列表
     private val state = MutableLiveData<Boolean>()  //弹出对话框
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
 
@@ -141,6 +142,22 @@ class OrderMgViewModel(
             .subscribe({
                 categoryList.add(it)
                 setRefresh(true)
+            }, {
+
+            })
+    }
+
+    /*
+    保存新增加商品到数据库中
+     */
+    fun addGoodsToRepository(goods: Goods) {
+        repository.addGoods(goods)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                goodsList.add(it)
+                isGoodsListRefresh.value = true
             }, {
 
             })

@@ -30,9 +30,9 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 获取
      */
-    fun getAllCategory(): Observable<HttpResult<objectList<GoodsCategory>>>
+    fun getAllCategory(): Observable<objectList<GoodsCategory>>
 
-    fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>>
+    fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>>
     /**
      * 删除
      */
@@ -50,11 +50,11 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 获取
      */
-    override fun getAllCategory(): Observable<HttpResult<objectList<GoodsCategory>>> {
+    override fun getAllCategory(): Observable<objectList<GoodsCategory>> {
         return service.getCategory()
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>> {
+    override fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>> {
         return service.getGoodsOfCategory(category)
     }
 

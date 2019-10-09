@@ -1,9 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.objectList
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
-import com.owner.basemodule.network.HttpResult
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
@@ -30,16 +28,22 @@ class GoodsServiceManagerImpl(
     }
 
     /**
-     * 获取
+     * 获取,分离有用数据。
      */
-    override fun getCategory(): Observable<HttpResult<objectList<GoodsCategory>>> {
-        return serverApi.getAllCategory()
+    override fun getCategory(): Observable<objectList<GoodsCategory>> {
+        return serverApi.getAllCategory().map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<HttpResult<objectList<Goods>>> {
+    override fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>> {
 
         val condition = """{”categoryCode":"${category.code}"}"""
-        return serverApi.getGoodsList(condition)
+        return filterStauts(serverApi.getGoodsList(condition))
+
     }
 
     /**

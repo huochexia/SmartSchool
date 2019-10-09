@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
                 name="category"
                 type="com.owner.basemodule.room.entities.GoodsCategory" />
@@ -13,6 +15,10 @@
         <variable
                 name="goodsEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
+                name="tag"
+                type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +46,7 @@
                 android:layout_width="10dp"
                 android:layout_height="30dp"
                 android:background="@color/common_red"
-                android:visibility="visible"
+                android:visibility="@{tag?View.VISIBLE:View.INVISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

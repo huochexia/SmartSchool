@@ -77,39 +77,40 @@ class ApiException(status: Int) : RuntimeException(getErrorDesc(status)) {
             return StatusUtils.judgeStatus(status).desc
         }
     }
+}
 
-    /**
-     * 5、状态过滤器类
-     */
-    class StautsFilter<T> : Function<HttpResult<T>, T> {
-        override fun apply(t: HttpResult<T>): T {
-            if (!t.isSuccess())
-                throw ApiException(t.code)
-            return t.results as T
-        }
-    }
-
-    /**
-     * 6、将响应数据中的数据提取出来
-     */
-    fun <T> filterStauts(observable: Observable<HttpResult<T>>): Observable<T> {
-        return observable.map {
-            StautsFilter<T>().apply(it)
-        }
-    }
-
-    fun <T> filterStauts(single: Single<HttpResult<T>>): Single<T> {
-        return single.map {
-            StautsFilter<T>().apply(it)
-        }
-    }
-
-    fun <T> filterStatus(flowable: Flowable<HttpResult<T>>): Flowable<T> {
-        return flowable.map {
-            StautsFilter<T>().apply(it)
-        }
+/**
+ * 5、状态过滤器类
+ */
+class StautsFilter<T> : Function<HttpResult<T>, T> {
+    override fun apply(t: HttpResult<T>): T {
+        if (!t.isSuccess())
+            throw ApiException(t.code)
+        return t.results as T
     }
 }
+
+/**
+ * 6、将响应数据中的数据提取出来
+ */
+fun <T> filterStauts(observable: Observable<HttpResult<T>>): Observable<T> {
+    return observable.map {
+        StautsFilter<T>().apply(it)
+    }
+}
+
+//fun <T> filterStauts(single: Single<HttpResult<T>>): Single<T> {
+//    return single.map {
+//        StautsFilter<T>().apply(it)
+//    }
+//}
+//
+//fun <T> filterStatus(flowable: Flowable<HttpResult<T>>): Flowable<T> {
+//    return flowable.map {
+//        StautsFilter<T>().apply(it)
+//    }
+//}
+
 
 /**
  *7、过滤网络层的错误, 实现onError（）.使用这个自定义类，取代Observer<T>

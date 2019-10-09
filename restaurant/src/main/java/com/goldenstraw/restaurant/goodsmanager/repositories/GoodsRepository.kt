@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories
 
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.dao.CategoryAndAllGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
@@ -23,11 +24,16 @@ class GoodsRepository(
      */
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
-    fun addGoods(goods: Goods): Observable<CreateObject> {
+    fun addGoods(goods: Goods): Observable<Goods> {
         return remote.addGoods(goods).toObservable()
-            .doAfterNext {
-                goods.categoryCode = it.objectId!!
-                local.addGoods(goods)  //这个地方出现异常会怎样？抛出吗？
+            .map {
+                if (!it.isSuccess()) {
+                    throw ApiException(it.code)
+                }
+                goods.goodsCode = it.objectId!!
+                local.addGoods(goods).subscribeOn(Schedulers.io())
+                    .subscribe()
+                goods
             }
 
     }
@@ -38,6 +44,9 @@ class GoodsRepository(
     fun addGoodsCategory(category: GoodsCategory): Observable<GoodsCategory> {
         return remote.addCategory(category).toObservable()
             .map {
+                if (!it.isSuccess()) {
+                    throw ApiException(it.code)
+                }
                 category.code = it.objectId!!
                 local.addCategory(category).subscribeOn(Schedulers.io())
                     .subscribe()

@@ -42,7 +42,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_category,
-            bindBinding = { LayoutGoodsCategoryBinding.bind(it) },
+            dataBinding = { LayoutGoodsCategoryBinding.bind(it) },
             dataSource = { viewModel!!.categoryList },
             callback = { category, binding, _ ->
                 binding.apply {
@@ -51,7 +51,6 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                         override fun accept(t: GoodsCategory) {
                             viewModel!!.selected.value = t
                         }
-
                     }
                 }
             }

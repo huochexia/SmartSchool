@@ -41,25 +41,26 @@
                         android:layout_weight="1"
                         app:msv_viewState="@{fragment.viewModel.goodsState}">
 
-                    <LinearLayout
+                    <!--                    <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="0dp"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:orientation="vertical">-->
+
+                    <androidx.core.widget.NestedScrollView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent">
 
-                        <androidx.core.widget.NestedScrollView
+                        <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rlw_goods_item"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="match_parent"
+                                app:bind_recyclerView_adapter="@{fragment.adapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_goods_item" />
+                    </androidx.core.widget.NestedScrollView>
 
-                            <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/rlw_goods_item"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    app:bind_recyclerView_adapter="@{fragment.adapter}"
-                                    tools:listitem="@layout/layout_goods_item" />
-                        </androidx.core.widget.NestedScrollView>
-
-                    </LinearLayout>
+                    <!--                    </LinearLayout>-->
                 </com.kennyc.view.MultiStateView>
 
 
