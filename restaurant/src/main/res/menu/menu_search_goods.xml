@@ -6,11 +6,15 @@
             android:id="@+id/action_search"
             android:title="查找商品"
             app:actionViewClass="androidx.appcompat.widget.SearchView"
-            app:showAsAction="always"/>
+            app:showAsAction="always" />
     <item
             android:id="@+id/action_shopping_cart"
-            android:title="@string/add_to_shopping_cart"
             android:icon="@drawable/ic_shopping_cart"
+            android:title="@string/add_to_shopping_cart"
             app:showAsAction="always" />
+    <item
+            android:id="@+id/action_add_goods_item"
+            android:title="增加商品"
+            app:showAsAction="never" />
 
 </menu>

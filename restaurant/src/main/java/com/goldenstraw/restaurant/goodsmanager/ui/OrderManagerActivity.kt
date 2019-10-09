@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.graphics.Color
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
@@ -13,6 +14,9 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -34,14 +38,11 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
     override fun initView() {
         super.initView()
-
         setSupportActionBar(toolbar)//没有这个显示不了菜单
 //        val host: NavHostFragment = supportFragmentManager
 //            .findFragmentById(R.id.order_Manager_Fragment) as NavHostFragment? ?: return
         viewModel = getViewModel { OrderMgViewModel(repository) }
         viewModel.getState().observe(this, Observer { showAddCategoryDialog() })
-
-
         val categoryFragment = CategoryManagerFragment()
         val goodsFragment = GoodsManagerFragment()
         val trans = supportFragmentManager.beginTransaction()
@@ -72,10 +73,55 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         dialog.show()
     }
 
+    /**
+     * 显示增加商品的对话框
+     */
+    private fun showAddGoodsDialog(category: GoodsCategory) {
+        val view = layoutInflater.inflate(R.layout.add_goods_dialog_view, null)
+        val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
+        val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
+        val dialog = AlertDialog.Builder(this)
+            .setIcon(R.mipmap.add_icon)
+            .setTitle("增加商品----" + category.categoryName)
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, which ->
+                var name = goodsName.text.toString().trim()
+                var unit = unitOfMeasure.text.toString().trim()
+                var goods = Goods(
+                    goodsName = name,
+                    unitOfMeasurement = unit,
+                    categoryCode = category.code,
+                    unitPrice = 0.0f
+                )
+                dialog.dismiss()
+            }.create()
+        dialog.show()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search_goods, menu)
         searchGoods(menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_shopping_cart -> {
+                toast { "待开发。。。。。" }
+            }
+            R.id.action_add_goods_item -> {
+                if (viewModel.selected.value == null)
+                    toast { "请先确定商品所属类别" }
+                else
+                    showAddGoodsDialog(viewModel.selected.value!!)
+            }
+            else -> super.onOptionsItemSelected(item)
+
+        }
+        return true
     }
 
     /**
