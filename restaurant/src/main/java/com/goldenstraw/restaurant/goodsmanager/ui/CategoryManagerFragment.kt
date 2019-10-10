@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
@@ -44,15 +45,27 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             layoutId = R.layout.layout_goods_category,
             dataBinding = { LayoutGoodsCategoryBinding.bind(it) },
             dataSource = { viewModel!!.categoryList },
-            callback = { category, binding, _ ->
+            callback = { goodsCategory, binding, _ ->
                 binding.apply {
-                    this.category = category
+                    category = goodsCategory
                     goodsEvent = object : Consumer<GoodsCategory> {
                         override fun accept(t: GoodsCategory) {
                             viewModel!!.selected.value = t
+                            viewModel!!.categoryList.forEach {
+                                it.isSelected = false
+                            }
+                            t.isSelected = true
+                            adapter!!.forceUpdate()
                         }
                     }
+                    tvCategoryName.isSelected = goodsCategory.isSelected
+                    if (goodsCategory.isSelected) {
+                        view.visibility = View.VISIBLE
+                    } else {
+                        view.visibility = View.INVISIBLE
+                    }
                 }
+
             }
         )
         viewModel!!.getIsRefresh().observe(this, Observer {
@@ -60,6 +73,5 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 adapter!!.forceUpdate()
         })
     }
-
 
 }

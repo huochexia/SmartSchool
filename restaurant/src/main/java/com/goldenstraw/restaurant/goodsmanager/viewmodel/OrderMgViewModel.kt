@@ -3,12 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.goldenstraw.restaurant.goodsmanager.adapter.CategoryAdapter
-import com.goldenstraw.restaurant.goodsmanager.adapter.GoodsAdapter
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.uber.autodispose.autoDisposable
