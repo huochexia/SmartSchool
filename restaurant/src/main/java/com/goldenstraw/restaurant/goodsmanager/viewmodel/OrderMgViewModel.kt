@@ -58,6 +58,7 @@ class OrderMgViewModel(
                     } else {
                         categoryState.set(MultiStateView.VIEW_STATE_CONTENT)
                         getCategory(it)
+                        it.first().isSelected = true
                         selected.value = it.first()
                     }
                 }, {

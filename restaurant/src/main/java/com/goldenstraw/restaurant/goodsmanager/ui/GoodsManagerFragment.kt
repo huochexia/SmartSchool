@@ -13,6 +13,7 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
+import kotlinx.android.synthetic.main.fragment_goods_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -59,8 +60,11 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
             adapter!!.forceUpdate()
         })
         viewModel!!.isGoodsListRefresh.observe(this, Observer {
-            if (it)
+            if (it) {
                 adapter!!.forceUpdate()
+                rlw_goods_item.smoothScrollToPosition(adapter!!.itemCount)
+            }
+
         })
     }
 
