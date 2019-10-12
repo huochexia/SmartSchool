@@ -14,8 +14,8 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
@@ -91,9 +91,10 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 var name = goodsName.text.toString().trim()
                 var unit = unitOfMeasure.text.toString().trim()
                 var goods = Goods(
+                    objectId = "",
                     goodsName = name,
                     unitOfMeasurement = unit,
-                    categoryCode = category.code,
+                    categoryCode = category.objectId,
                     unitPrice = 0.0f
                 )
                 viewModel.addGoodsToRepository(goods)

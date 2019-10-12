@@ -1,15 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.ApiException
-import com.owner.basemodule.room.dao.CategoryAndAllGoods
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.functions.Function
-import io.reactivex.schedulers.Schedulers
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -30,9 +26,7 @@ class GoodsRepository(
                 if (!it.isSuccess()) {
                     throw ApiException(it.code)
                 }
-                goods.goodsCode = it.objectId!!
-                local.addGoods(goods).subscribeOn(Schedulers.io())
-                    .subscribe()
+                goods.objectId = it.objectId!!
                 goods
             }
 
@@ -47,9 +41,7 @@ class GoodsRepository(
                 if (!it.isSuccess()) {
                     throw ApiException(it.code)
                 }
-                category.code = it.objectId!!
-                local.addCategory(category).subscribeOn(Schedulers.io())
-                    .subscribe()
+                category.objectId = it.objectId!!
                 category
             }
     }
@@ -60,17 +52,13 @@ class GoodsRepository(
     //1、更新远程数据后，更新本地数据
     fun updateGoods(goods: Goods): Completable {
         return remote.updateGoods(goods)
-            .doOnComplete {
-                local.updateGoods(goods)
-            }
+
     }
 
     //2、更新类别
     fun updateCategory(category: GoodsCategory): Completable {
         return remote.updateCategory(category)
-            .doOnComplete {
-                local.updateGoodsCategory(category)
-            }
+
     }
 
     /*
@@ -78,7 +66,7 @@ class GoodsRepository(
       先暂时实现从本地直接获取
      */
     fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
-        return local.getAllCategory()
+        return remote.getAllCategory()
     }
 
     /*
@@ -86,14 +74,9 @@ class GoodsRepository(
      */
     fun queryGoods(category: GoodsCategory): Observable<MutableList<Goods>> {
 
-        return local.getGoodsFromCategory(category)
+        return remote.getGoodsOfCategory(category)
 
     }
 
-    /*
-      获得所有类别及其所拥入商品
-     */
-    fun getCategory(): Observable<MutableList<CategoryAndAllGoods>> {
-        return local.getCategoryAllGoods()
-    }
+
 }

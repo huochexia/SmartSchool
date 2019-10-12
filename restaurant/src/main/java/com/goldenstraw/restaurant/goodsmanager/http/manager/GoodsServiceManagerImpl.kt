@@ -1,9 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
-import com.owner.basemodule.network.*
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.CreateObject
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -20,17 +21,17 @@ class GoodsServiceManagerImpl(
      */
 
     override fun deleteCategory(category: GoodsCategory): Completable {
-        return serverApi.deleteCategory(category.code)
+        return serverApi.deleteCategory(category.objectId)
     }
 
     override fun deleteGoods(goods: Goods): Completable {
-        return serverApi.deleteGoods(goods.goodsCode)
+        return serverApi.deleteGoods(goods.objectId)
     }
 
     /**
      * 获取,分离有用数据。
      */
-    override fun getCategory(): Observable<objectList<GoodsCategory>> {
+    override fun getCategory(): Observable<MutableList<GoodsCategory>> {
         return serverApi.getAllCategory().map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)
@@ -39,10 +40,15 @@ class GoodsServiceManagerImpl(
         }
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>> {
+    override fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>> {
 
-        val condition = """{”categoryCode":"${category.code}"}"""
-        return filterStauts(serverApi.getGoodsList(condition))
+        val condition = """{"categoryCode":"${category.objectId}"}"""
+        return serverApi.getGoodsList(condition).map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
 
     }
 
@@ -61,10 +67,10 @@ class GoodsServiceManagerImpl(
      * 更新
      */
     override fun updateGoods(goods: Goods): Completable {
-        return serverApi.updateGoods(goods, goods.goodsCode)
+        return serverApi.updateGoods(goods, goods.objectId)
     }
 
     override fun updateCategory(category: GoodsCategory): Completable {
-        return serverApi.updateCategory(category, category.code)
+        return serverApi.updateCategory(category, category.objectId)
     }
 }

@@ -3,9 +3,8 @@ package com.goldenstraw.restaurant.goodsmanager.di
 import com.goldenstraw.restaurant.goodsmanager.http.manager.GoodsServiceManagerImpl
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.repositories.LocalGoodsDateSourceImpl
+import com.goldenstraw.restaurant.goodsmanager.repositories.LocalGoodsDataSourceImpl
 import com.goldenstraw.restaurant.goodsmanager.repositories.RemoteGoodsDataSourceImpl
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.network.RetrofitFactory
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -29,7 +28,7 @@ val goodsDataSourceModule = Kodein.Module(GOODS_MANAGER_ACTIVITY_TAG) {
     bind<GoodsRepository>() with singleton { GoodsRepository(instance(), instance()) }
 
     //绑定本地数据源实现类,它需要的参数（AppDatabase）是全局的，所以由上一级容器提供
-    bind<LocalGoodsDateSourceImpl>() with singleton { LocalGoodsDateSourceImpl(instance()) }
+    bind<LocalGoodsDataSourceImpl>() with singleton { LocalGoodsDataSourceImpl(instance()) }
 
     //绑定远程数据源实现类
     bind<RemoteGoodsDataSourceImpl>() with singleton { RemoteGoodsDataSourceImpl(instance()) }

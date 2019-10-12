@@ -38,7 +38,12 @@ data class DeleteObject(
 /**
  * 获取对象列表
  */
-class objectList<T>(
-    val results: MutableList<T>
-)
+class ObjectList<T>(
+    val code: Int = 0,
+    val error: String?,
+    val results: MutableList<T>?
+) {
+    fun isSuccess(): Boolean = code == 0
+}
+
 

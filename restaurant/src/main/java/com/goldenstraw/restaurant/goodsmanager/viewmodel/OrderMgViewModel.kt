@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -80,7 +80,7 @@ class OrderMgViewModel(
     /*
      * 从CategroyAndAllGoods列表中，根据category得到其下所有商品列表
      */
-    fun getGoodsFromCategory(category: GoodsCategory) {
+    fun getGoodsOfCategory(category: GoodsCategory) {
         //将类别列表的第一项做为选择的默认类别，显示它的所有商品
         repository.queryGoods(category)
             .subscribeOn(Schedulers.io())
@@ -132,7 +132,8 @@ class OrderMgViewModel(
       保存新增类别到数据库中
      */
     fun addCategoryToRepository(category: String) {
-        val newCategory = GoodsCategory(categoryName = category)
+        val newCategory =
+            GoodsCategory(categoryName = category)
         repository.addGoodsCategory(newCategory)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

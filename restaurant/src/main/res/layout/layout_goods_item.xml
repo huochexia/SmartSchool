@@ -9,7 +9,7 @@
 
         <variable
                 name="goods"
-                type="com.owner.basemodule.room.entities.Goods" />
+                type="com.goldenstraw.restaurant.goodsmanager.http.entities.Goods" />
 
         <variable
                 name="checkEvent"

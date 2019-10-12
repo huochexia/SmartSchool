@@ -12,7 +12,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
 import kotlinx.android.synthetic.main.fragment_goods_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -56,7 +56,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
             }
         )
         viewModel!!.selected.observe(this, Observer {
-            viewModel!!.getGoodsFromCategory(it)
+            viewModel!!.getGoodsOfCategory(it)
             adapter!!.forceUpdate()
         })
         viewModel!!.isGoodsListRefresh.observe(this, Observer {

@@ -1,10 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
 import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.objectList
-import com.owner.basemodule.network.HttpResult
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.network.ObjectList
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -52,12 +51,12 @@ interface GoodsApi {
      */
     //1、获得所有类别
     @GET("/1/classes/GoodsCategory/")
-    fun getAllCategory(): Observable<HttpResult<objectList<GoodsCategory>>>
+    fun getAllCategory(): Observable<ObjectList<GoodsCategory>>
 
     //2、得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
     fun getGoodsList(@Query("where") condition: String)
-            : Observable<HttpResult<objectList<Goods>>>
+            : Observable<ObjectList<Goods>>
 
 }

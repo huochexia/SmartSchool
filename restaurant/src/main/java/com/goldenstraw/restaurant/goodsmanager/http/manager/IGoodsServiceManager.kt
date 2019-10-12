@@ -1,10 +1,8 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
 import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.objectList
-import com.owner.basemodule.network.HttpResult
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -35,18 +33,18 @@ interface IGoodsServiceManager {
      * 查询
      */
     //1、获取所有类别,这里应该剥离出所需要的数据
-    fun getCategory(): Observable<objectList<GoodsCategory>>
+    fun getCategory(): Observable<MutableList<GoodsCategory>>
 
     //2、获取某个类别的商品列表
-    fun getGoodsOfCategory(category: GoodsCategory): Observable<objectList<Goods>>
+    fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
 
     /**
      * 删除
      */
     //1、删除类别
-    fun deleteCategory(category:GoodsCategory): Completable
+    fun deleteCategory(category: GoodsCategory): Completable
 
     //2、删除商品
-    fun deleteGoods(goods:Goods): Completable
+    fun deleteGoods(goods: Goods): Completable
 
 }

@@ -3,8 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.ui
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
@@ -13,10 +11,9 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
-import com.owner.basemodule.base.viewmodel.BaseViewModelFactory
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance

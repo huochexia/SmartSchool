@@ -10,7 +10,7 @@
 
         <variable
                 name="category"
-                type="com.owner.basemodule.room.entities.GoodsCategory" />
+                type="com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory" />
 
         <variable
                 name="goodsEvent"
