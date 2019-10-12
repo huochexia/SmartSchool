@@ -31,3 +31,29 @@ data class GoodsOfShoppingCart(
     @Ignore
     var isChecked: Boolean = false
 )
+
+@Entity
+data class Goods(
+    @PrimaryKey
+    val objectId: String,
+    @ColumnInfo
+    var goodsName: String,
+    @ColumnInfo
+    var unitOfMeasurement: String,
+    @ColumnInfo
+    var unitPrice: Float = 0.0f,
+    @ColumnInfo
+    var categoryCode: String,
+    @ColumnInfo
+    var isChecked: Boolean = false
+)
+
+@Entity
+data class GoodsCategory(
+    @PrimaryKey
+    var objectId: String, //对应远程数据的objectId
+    @ColumnInfo
+    var categoryName: String,
+    @ColumnInfo
+    var isSelected: Boolean = false
+)

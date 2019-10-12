@@ -2,8 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.repositories
 
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.ApiException
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
-import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 
@@ -20,14 +22,19 @@ class GoodsRepository(
      */
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
-    fun addGoods(goods: Goods): Observable<Goods> {
+    fun addGoods(goods: NewGoods): Observable<Goods> {
         return remote.addGoods(goods).toObservable()
             .map {
                 if (!it.isSuccess()) {
                     throw ApiException(it.code)
                 }
-                goods.objectId = it.objectId!!
-                goods
+                val newGoods = Goods(
+                    objectId = it.objectId!!,
+                    goodsName = goods.goodsName,
+                    unitOfMeasurement = goods.unitOfMeasurement,
+                    categoryCode = goods.categoryCode
+                )
+                newGoods
             }
 
     }
@@ -35,14 +42,14 @@ class GoodsRepository(
 
     //2、增加商品类别到远程数据库，传入类别名称，成功后得到新类别的objectId,使用objectId,创建新类别，然后保存本地库
 
-    fun addGoodsCategory(category: GoodsCategory): Observable<GoodsCategory> {
+    fun addGoodsCategory(category: NewCategory): Observable<GoodsCategory> {
         return remote.addCategory(category).toObservable()
             .map {
                 if (!it.isSuccess()) {
                     throw ApiException(it.code)
                 }
-                category.objectId = it.objectId!!
-                category
+                val newCategory = GoodsCategory(it.objectId!!, categoryName = category.categoryName)
+                newCategory
             }
     }
 

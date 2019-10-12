@@ -9,7 +9,7 @@
 
         <variable
                 name="goods"
-                type="com.goldenstraw.restaurant.goodsmanager.http.entities.Goods" />
+                type="com.owner.basemodule.room.entities.Goods" />
 
         <variable
                 name="checkEvent"
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             app:cardBackgroundColor="#00F5F2F2"
-            app:cardCornerRadius="2dp">
+            app:cardCornerRadius="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

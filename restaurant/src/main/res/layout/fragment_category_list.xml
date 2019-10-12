@@ -18,10 +18,13 @@
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="商品类别"
+                android:text="类别"
+                android:drawableRight="@drawable/ic_add_black_24dp"
                 android:textSize="18sp"
+                android:textColor="@color/secondaryTextColor"
                 android:gravity="center"
-                android:background="@color/gray_ccc"/>
+                android:background="@color/secondaryLightColor"
+                android:onClick="@{()->fragment.viewModel.setAddCategoryDialogState(true)}"/>
         <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -43,12 +46,6 @@
                     tools:listitem="@layout/layout_goods_category" />
         </com.kennyc.view.MultiStateView>
 
-        <Button
-                android:id="@+id/btn_category_manager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="@{()->fragment.viewModel.setAddCategoryDialogState(true)}"
-                android:text="增加类别"
-                android:textSize="18sp" />
+
     </LinearLayout>
 </layout>

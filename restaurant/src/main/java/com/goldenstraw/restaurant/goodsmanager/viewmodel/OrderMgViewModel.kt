@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
-import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -26,6 +28,7 @@ class OrderMgViewModel(
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
     var categoryList = mutableListOf<GoodsCategory>()
     var goodsList = mutableListOf<Goods>()
+    var searchGoodsResultList = mutableListOf<Goods>() //根据商品名称搜索结果列表
     val categoryState = ObservableField<Int>()
     val goodsState = ObservableField<Int>()
     //可观察数据
@@ -63,7 +66,9 @@ class OrderMgViewModel(
                     }
                 }, {
                     categoryState.set(MultiStateView.VIEW_STATE_ERROR)
-                }, {},
+                }, {
+                    //在这里同步数据库
+                },
                 {
                     categoryState.set(MultiStateView.VIEW_STATE_LOADING)
                 })
@@ -95,7 +100,9 @@ class OrderMgViewModel(
                 }
             }, {
                 goodsState.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {}, {
+            }, {
+                //在这里同步数据库
+            }, {
                 goodsState.set(MultiStateView.VIEW_STATE_LOADING)
             })
     }
@@ -104,6 +111,18 @@ class OrderMgViewModel(
         goodsList.clear()
         goodsList.addAll(list)
 
+    }
+
+    /*
+    根据商品名称进行模糊查询
+     */
+    fun searchGoodsFromName(name: String) {
+
+    }
+
+    private fun getSearchResultList(results: MutableList<Goods>) {
+        searchGoodsResultList.clear()
+        searchGoodsResultList.addAll(results)
     }
 
     /*
@@ -132,8 +151,7 @@ class OrderMgViewModel(
       保存新增类别到数据库中
      */
     fun addCategoryToRepository(category: String) {
-        val newCategory =
-            GoodsCategory(categoryName = category)
+        val newCategory = NewCategory(category)
         repository.addGoodsCategory(newCategory)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -149,7 +167,7 @@ class OrderMgViewModel(
     /*
     保存新增加商品到数据库中
      */
-    fun addGoodsToRepository(goods: Goods) {
+    fun addGoodsToRepository(goods: NewGoods) {
         repository.addGoods(goods)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

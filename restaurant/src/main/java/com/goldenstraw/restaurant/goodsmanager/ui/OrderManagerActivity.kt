@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui
 import android.graphics.Color
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
@@ -14,8 +15,8 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
-import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
@@ -45,9 +46,11 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         viewModel.getState().observe(this, Observer { showAddCategoryDialog() })
         val categoryFragment = CategoryManagerFragment()
         val goodsFragment = GoodsManagerFragment()
+        val searchFragment = GoodsSearchFragment()
         val trans = supportFragmentManager.beginTransaction()
         trans.replace(R.id.fragment_category_container, categoryFragment)
         trans.replace(R.id.fragment_goods_container, goodsFragment)
+        trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
 
     }
@@ -67,8 +70,12 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
                 var content = editText.text.toString().trim()
-                viewModel.addCategoryToRepository(content)
-                dialog.dismiss()
+                if (content.isNullOrEmpty()) {
+                    toast { "请填写必须内容！！" }
+                } else {
+                    viewModel.addCategoryToRepository(content)
+                    dialog.dismiss()
+                }
             }.create()
         dialog.show()
     }
@@ -87,18 +94,20 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
-                var name = goodsName.text.toString().trim()
-                var unit = unitOfMeasure.text.toString().trim()
-                var goods = Goods(
-                    objectId = "",
-                    goodsName = name,
-                    unitOfMeasurement = unit,
-                    categoryCode = category.objectId,
-                    unitPrice = 0.0f
-                )
-                viewModel.addGoodsToRepository(goods)
-                dialog.dismiss()
+            .setPositiveButton("确定") { dialog, _ ->
+                val name = goodsName.text.toString().trim()
+                val unit = unitOfMeasure.text.toString().trim()
+                if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
+                    toast { "请填写必须内容！！" }
+                } else {
+                    val goods = NewGoods(
+                        goodsName = name,
+                        unitOfMeasurement = unit,
+                        categoryCode = category.objectId
+                    )
+                    viewModel.addGoodsToRepository(goods)
+                    dialog.dismiss()
+                }
             }.create()
         dialog.show()
     }
@@ -144,14 +153,22 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     //查找框内容变化事件
-                    return false
+                    //调用ViewModel当中的查询
+                    newText?.let {
+                        viewModel.searchGoodsFromName(it)
+                    }
+                    return true
                 }
             })
             setOnSearchClickListener {
                 //开始搜索时的行为，如，搜索结果界面
+                list_fragment.visibility = View.GONE
+                search_fragment.visibility = View.VISIBLE
             }
             setOnCloseListener {
                 //关闭搜索时事件
+                list_fragment.visibility = View.VISIBLE
+                search_fragment.visibility = View.GONE
                 false
             }
         }

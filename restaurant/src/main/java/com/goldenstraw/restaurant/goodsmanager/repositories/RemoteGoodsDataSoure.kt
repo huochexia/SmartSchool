@@ -3,8 +3,10 @@ package com.goldenstraw.restaurant.goodsmanager.repositories
 import com.goldenstraw.restaurant.goodsmanager.http.manager.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.CreateObject
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
-import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -16,9 +18,9 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 增加
      */
-    fun addGoods(goods: Goods): Single<CreateObject>
+    fun addGoods(goods: NewGoods): Single<CreateObject>
 
-    fun addCategory(category: GoodsCategory): Single<CreateObject>
+    fun addCategory(category: NewCategory): Single<CreateObject>
     /**
      * 更新
      */
@@ -70,11 +72,11 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 增加
      */
-    override fun addGoods(goods: Goods): Single<CreateObject> {
+    override fun addGoods(goods: NewGoods): Single<CreateObject> {
         return service.addGoods(goods)
     }
 
-    override fun addCategory(category: GoodsCategory): Single<CreateObject> {
+    override fun addCategory(category: NewCategory): Single<CreateObject> {
         return service.addCategory(category)
     }
 

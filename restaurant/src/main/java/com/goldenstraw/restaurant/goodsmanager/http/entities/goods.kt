@@ -5,26 +5,25 @@ package com.goldenstraw.restaurant.goodsmanager.http.entities
  * Created by Administrator on 2019/9/6 0006
  */
 /**
- * 商品
+ * 商品:NewGoods是发送到网络的对象，没有objectId。因为objectId是网络数据保留属性，所以不能定义
+ *     Goods是从网络获得的对象，有网络自动生成的objectId
  */
-
-data class Goods(
-    var objectId: String="", //对应远程数据的objectId
-    var goodsName: String,
-    var unitOfMeasurement: String,
-    var unitPrice: Float,
-    var categoryCode: String,
-    var isChecked: Boolean = false
+data class NewGoods(
+    val goodsName: String,
+    val unitOfMeasurement: String,
+    val categoryCode: String
 )
+
+
 
 /**
- * 商品分类
+ * 商品分类：NewCategory是发送到网络的对象
+ *         GoodsCategory是网络返回的对象
  */
-
-data class GoodsCategory(
-    var objectId: String="", //对应远程数据的objectId
-    var categoryName: String,
-    var isSelected: Boolean = false
+data class NewCategory(
+    val categoryName: String
 )
+
+
 
 

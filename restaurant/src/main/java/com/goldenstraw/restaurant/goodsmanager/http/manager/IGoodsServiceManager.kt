@@ -1,8 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
 import com.owner.basemodule.network.CreateObject
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Goods
-import com.goldenstraw.restaurant.goodsmanager.http.entities.GoodsCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -15,10 +17,10 @@ interface IGoodsServiceManager {
      * 增加
      */
     //1、增加商品
-    fun addGoods(goods: Goods): Single<CreateObject>
+    fun addGoods(goods: NewGoods): Single<CreateObject>
 
     //2、增加类别
-    fun addCategory(category: GoodsCategory): Single<CreateObject>
+    fun addCategory(category: NewCategory): Single<CreateObject>
 
     /**
      * 更新
