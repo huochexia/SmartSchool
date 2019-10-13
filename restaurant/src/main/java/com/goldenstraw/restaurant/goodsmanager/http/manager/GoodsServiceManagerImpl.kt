@@ -54,6 +54,15 @@ class GoodsServiceManagerImpl(
 
     }
 
+    override fun getAllGoods(): Observable<MutableList<Goods>> {
+        return serverApi.getAllGoods().map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
+    }
+
     /**
      * 增加
      */
@@ -68,11 +77,11 @@ class GoodsServiceManagerImpl(
     /**
      * 更新
      */
-    override fun updateGoods(goods: Goods): Completable {
-        return serverApi.updateGoods(goods, goods.objectId)
+    override fun updateGoods(goods: NewGoods,objectId:String): Completable {
+        return serverApi.updateGoods(goods, objectId)
     }
 
-    override fun updateCategory(category: GoodsCategory): Completable {
-        return serverApi.updateCategory(category, category.objectId)
+    override fun updateCategory(category: NewCategory,objectId: String): Completable {
+        return serverApi.updateCategory(category, objectId)
     }
 }

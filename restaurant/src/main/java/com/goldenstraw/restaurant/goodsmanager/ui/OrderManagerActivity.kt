@@ -52,6 +52,10 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         trans.replace(R.id.fragment_goods_container, goodsFragment)
         trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
+        /*
+        暂时在这里实现网络数据与本地数据的同步
+         */
+        viewModel.syncAllData()
 
     }
 

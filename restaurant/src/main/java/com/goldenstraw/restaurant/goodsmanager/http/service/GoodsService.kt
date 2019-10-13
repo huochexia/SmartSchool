@@ -31,11 +31,11 @@ interface GoodsApi {
      */
     //1、更新商品
     @PUT("/1/classes/Goods/{objectId}")
-    fun updateGoods(@Body goods: Goods, @Path("objectId") code: String): Completable
+    fun updateGoods(@Body goods: NewGoods, @Path("objectId") code: String): Completable
 
     //2、更新类别
     @PUT("/1/classes/GoodsCategory/{objectId}")
-    fun updateCategory(@Body category: GoodsCategory, @Path("objectId") code: String): Completable
+    fun updateCategory(@Body category: NewCategory, @Path("objectId") code: String): Completable
 
     /**
     DELETE
@@ -60,5 +60,9 @@ interface GoodsApi {
     @GET("/1/classes/Goods")
     fun getGoodsList(@Query("where") condition: String)
             : Observable<ObjectList<Goods>>
+
+    //3、获取所有商品信息
+    @GET("/1/classes/Goods/")
+    fun getAllGoods(): Observable<ObjectList<Goods>>
 
 }

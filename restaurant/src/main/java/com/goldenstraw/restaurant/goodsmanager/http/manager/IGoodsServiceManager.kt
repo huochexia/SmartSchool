@@ -26,10 +26,10 @@ interface IGoodsServiceManager {
      * 更新
      */
     //1、更新商品
-    fun updateGoods(goods: Goods): Completable
+    fun updateGoods(goods: NewGoods,objectId:String): Completable
 
     //2、更新类别
-    fun updateCategory(category: GoodsCategory): Completable
+    fun updateCategory(category: NewCategory,objectId:String): Completable
 
     /**
      * 查询
@@ -39,7 +39,8 @@ interface IGoodsServiceManager {
 
     //2、获取某个类别的商品列表
     fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
-
+    //3、获取所有商品信息
+    fun getAllGoods():Observable<MutableList<Goods>>
     /**
      * 删除
      */

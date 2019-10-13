@@ -11,6 +11,8 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.uber.autodispose.autoDisposable
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -21,8 +23,6 @@ import io.reactivex.schedulers.Schedulers
 class OrderMgViewModel(
     private val repository: GoodsRepository
 ) : BaseViewModel() {
-
-//    var categoryAndAllGoodsList = hashMapOf<GoodsCategory, List<Goods>>()
 
 
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
@@ -49,7 +49,7 @@ class OrderMgViewModel(
      *从本地数据库中获取所有类别,然后默认显示类别列表第一项的所有商品。
      */
     private fun getAllCategory() {
-        repository.getAllCategory()
+        repository.getAllCategoryFromLocal()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
@@ -75,11 +75,12 @@ class OrderMgViewModel(
     }
 
     /*
-     *从CategoryAndAllGoods表中得到所有Category
+     *从本地得到所有Category
      */
     private fun getCategory(list: MutableList<GoodsCategory>) {
         categoryList.clear()
         categoryList.addAll(list)
+
     }
 
     /*
@@ -87,16 +88,17 @@ class OrderMgViewModel(
      */
     fun getGoodsOfCategory(category: GoodsCategory) {
         //将类别列表的第一项做为选择的默认类别，显示它的所有商品
-        repository.queryGoods(category)
+        repository.queryGoodsFromLocal(category)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
-            .subscribe({ goodsList ->
-                if (goodsList.isNullOrEmpty())
+            .subscribe({ list ->
+                if (list.isNullOrEmpty()) {
                     goodsState.set(MultiStateView.VIEW_STATE_EMPTY)
-                else {
+                    goodsList.clear()//清空前面选择时得到的内容
+                } else {
                     goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
-                    getGoodsList(goodsList)
+                    getGoodsList(list)
                 }
             }, {
                 goodsState.set(MultiStateView.VIEW_STATE_ERROR)
@@ -110,7 +112,6 @@ class OrderMgViewModel(
     private fun getGoodsList(list: MutableList<Goods>) {
         goodsList.clear()
         goodsList.addAll(list)
-
     }
 
     /*
@@ -123,6 +124,32 @@ class OrderMgViewModel(
     private fun getSearchResultList(results: MutableList<Goods>) {
         searchGoodsResultList.clear()
         searchGoodsResultList.addAll(results)
+    }
+
+    /**
+     * 删除商品信息或类别
+     */
+    fun deleteGoods(goods: Goods): Completable {
+        return repository.deleteGoodsFromLocal(goods)
+            .andThen(repository.deleteGoodsFromRemote(goods))
+    }
+
+    fun deleteCategory(category: GoodsCategory): Completable {
+        return repository.deleteCategoryFromLocal(category)
+            .andThen(repository.deleteCategoryFromRemote(category))
+    }
+
+    /**
+     * 修改信息
+     */
+    fun updateGoods(goods: Goods): Completable {
+        return repository.updateGoods(goods)
+            .andThen(repository.insertGoodsToLocal(goods))
+    }
+
+    fun updateCategory(category: GoodsCategory): Completable {
+        return repository.updateCategory(category)
+            .andThen(repository.insertCategoryToLocal(category))
     }
 
     /*
@@ -159,6 +186,9 @@ class OrderMgViewModel(
             .subscribe({
                 categoryList.add(it)
                 setRefresh(true)
+                repository.insertCategoryToLocal(it).subscribeOn(Schedulers.newThread())
+                    .autoDisposable(this)
+                    .subscribe()
             }, {
 
             })
@@ -173,6 +203,10 @@ class OrderMgViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
             .subscribe({
+                repository.insertGoodsToLocal(it).subscribeOn(Schedulers.newThread())
+                    .autoDisposable(this)
+                    .subscribe()
+                goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
                 goodsList.add(it)
                 isGoodsListRefresh.value = true
             }, {
@@ -180,5 +214,31 @@ class OrderMgViewModel(
             })
     }
 
+    /**
+     * 同步类别和商品信息
+     */
+    fun syncAllData() {
+        repository.clearAllData().subscribeOn(Schedulers.newThread())
+            .autoDisposable(this).subscribe({
+                repository.getAllCategoryFromNetwork()
+                    .subscribeOn(Schedulers.io())
+                    .autoDisposable(this)
+                    .subscribe {
+                        repository.addCategoryListToLocal(it)
+                            .autoDisposable(this)
+                            .subscribe({}, {})
+                    }
+                repository.getAllGoodsFromNetwork()
+                    .subscribeOn(Schedulers.io())
+                    .autoDisposable(this)
+                    .subscribe {
+                        repository.addGoodsListToLocal(it)
+                            .autoDisposable(this)
+                            .subscribe({}, {})
+
+                    }
+            }, {})
+
+    }
 
 }

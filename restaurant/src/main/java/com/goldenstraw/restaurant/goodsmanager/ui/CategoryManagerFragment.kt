@@ -1,8 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
@@ -10,10 +16,20 @@ import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
+import com.owner.basemodule.adapter.SimpleItemTouchHelperCallback
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.util.toast
+import com.yanzhenjie.recyclerview.OnItemMenuClickListener
+import com.yanzhenjie.recyclerview.SwipeMenuCreator
+import com.yanzhenjie.recyclerview.SwipeMenuItem
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_category_list.*
+import kotlinx.android.synthetic.main.fragment_goods_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -62,13 +78,132 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                         view.visibility = View.INVISIBLE
                     }
                 }
-
             }
+
         )
+
         viewModel!!.getIsRefresh().observe(this, Observer {
             if (it)
                 adapter!!.forceUpdate()
         })
+        initSwipeMenu()
     }
 
+    /**
+     * 初始化Item侧滑菜单
+     */
+    private fun initSwipeMenu() {
+        /*
+        1、生成子菜单，这里将子菜单设置在右侧
+         */
+        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
+            val deleteItem = SwipeMenuItem(context)
+                .setBackground(R.color.colorAccent)
+                .setText("删除")
+                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setWidth(120)
+            leftMenu.addMenuItem(deleteItem)
+            val updateItem = SwipeMenuItem(context)
+                .setBackground(R.color.secondaryColor)
+                .setText("修改")
+                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setWidth(120)
+            rightMenu.addMenuItem(updateItem)
+        }
+        /*
+         2、关联RecyclerView，设置侧滑菜单
+         */
+        recyclerView.setSwipeMenuCreator(mSwipeMenuCreator)
+        /*
+        3、定义子菜单点击事件
+         */
+        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
+            menuBridge.closeMenu()
+            when (menuBridge.direction) {//判断 1是左侧，-1是右侧的菜单
+                -1 -> {
+                    when (menuBridge.position) {
+                        0 -> {
+                            val category = viewModel!!.categoryList[adapterPosition]
+                            updateDialog(category)
+                        }
+                    }
+                }
+                1 -> {
+                    when (menuBridge.position) {
+                        0 -> if (viewModel!!.goodsList.isEmpty()) {
+                            deleteDialog(adapterPosition)
+                        } else {
+                            Toast.makeText(
+                                context, "类别中有商品不能删除！！",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                }
+            }
+
+        }
+        /*
+        4、给RecyclerView添加监听器
+         */
+        recyclerView.setOnItemMenuClickListener(mItemMenuClickListener)
+    }
+
+    /**
+     * 删除对话框
+     */
+    @SuppressLint("AutoDispose")
+    private fun deleteDialog(position: Int) {
+        val dialog = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_alert_name)
+            .setTitle("确定删除")
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+
+                viewModel!!.deleteCategory(viewModel!!.categoryList[position])
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                    }, {
+                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
+                    })
+                viewModel!!.categoryList.removeAt(position)
+                adapter!!.forceUpdate()
+                dialog.dismiss()
+            }.create()
+        dialog.show()
+    }
+
+    /**
+     * 修改对话框
+     */
+    @SuppressLint("AutoDispose")
+    private fun updateDialog(category: GoodsCategory) {
+        val view = layoutInflater.inflate(R.layout.add_dialog_view, null)
+        val name = view.findViewById<EditText>(R.id.dialog_edit)
+        name.setText(category.categoryName)
+        val dialog = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_update_name)
+            .setTitle("修改类别信息")
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                val name = name.text.toString().trim()
+                if (name.isNullOrEmpty()) {
+                    toast { "请填写必须内容！！" }
+                } else {
+                    category.categoryName = name
+                    viewModel!!.updateCategory(category).subscribeOn(Schedulers.computation())
+                        .subscribe()
+                    adapter!!.forceUpdate()
+                    dialog.dismiss()
+                }
+            }.create()
+        dialog.show()
+    }
 }

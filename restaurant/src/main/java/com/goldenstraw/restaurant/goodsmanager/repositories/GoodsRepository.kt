@@ -6,8 +6,10 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -53,37 +55,98 @@ class GoodsRepository(
             }
     }
 
+    /*
+      将全部商品加入到本地
+     */
+    fun addGoodsListToLocal(list: MutableList<Goods>): Completable {
+        return local.addGoodsAll(list)
+    }
+
+    fun insertGoodsToLocal(goods: Goods): Completable {
+        return local.insertNewGoodsToLocal(goods)
+    }
+
+    /*
+      将所有商品类别加入本地
+     */
+    fun addCategoryListToLocal(list: MutableList<GoodsCategory>): Completable {
+        return local.addCategoryAll(list)
+    }
+
+    fun insertCategoryToLocal(category: GoodsCategory): Completable {
+        return local.insertCategoryToLocal(category)
+    }
+
     /**
      * 更新
      */
-    //1、更新远程数据后，更新本地数据
+    //1、更新远程数据
     fun updateGoods(goods: Goods): Completable {
-        return remote.updateGoods(goods)
+        val updateGoods = NewGoods(
+            goodsName = goods.goodsName,
+            unitOfMeasurement = goods.unitOfMeasurement,
+            categoryCode = goods.categoryCode
+        )
+        return remote.updateGoods(updateGoods, goods.objectId)
 
     }
 
     //2、更新类别
     fun updateCategory(category: GoodsCategory): Completable {
-        return remote.updateCategory(category)
-
+        val updateCategory = NewCategory(
+            categoryName = category.categoryName
+        )
+        return remote.updateCategory(updateCategory, category.objectId)
     }
 
     /*
       获取所有商品类别, 这里应该考虑从远程获取，然后保存于本地，最后从本地获得结果。
       先暂时实现从本地直接获取
      */
-    fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
+    fun getAllCategoryFromLocal(): Observable<MutableList<GoodsCategory>> {
+        return local.getAllCategory()
+    }
+
+    fun getAllCategoryFromNetwork(): Observable<MutableList<GoodsCategory>> {
         return remote.getAllCategory()
+    }
+
+    fun getAllGoodsFromNetwork(): Observable<MutableList<Goods>> {
+        return remote.getAllGoods()
     }
 
     /*
       按类别查询商品,此处只从本地数据源中获取。
      */
-    fun queryGoods(category: GoodsCategory): Observable<MutableList<Goods>> {
+    fun queryGoodsFromLocal(category: GoodsCategory): Observable<MutableList<Goods>> {
 
-        return remote.getGoodsOfCategory(category)
+        return local.getGoodsOfCategory(category.objectId)
 
     }
 
+    /**
+     * 删除
+     */
+    fun deleteGoodsFromLocal(goods: Goods): Completable {
+        return local.deleteGoodsFromLocal(goods)
+    }
 
+    fun deleteCategoryFromLocal(categroy: GoodsCategory): Completable {
+        return local.deleteCategoryFromLocal(categroy)
+    }
+
+    fun deleteGoodsFromRemote(goods: Goods): Completable {
+        return remote.deleteGoods(goods)
+    }
+
+    fun deleteCategoryFromRemote(category: GoodsCategory): Completable {
+        return remote.deleteCategory(category)
+    }
+
+    /**
+     * 清空本地内容，主要是为了同步做准备。
+     */
+    fun clearAllData(): Completable {
+        return local.clearGoodsAll().andThen(local.clearCategoryAll())
+    }
 }

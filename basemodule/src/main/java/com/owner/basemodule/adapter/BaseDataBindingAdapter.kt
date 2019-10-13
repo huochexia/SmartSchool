@@ -6,11 +6,20 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * RecyclerView的基本适配器：
+ * @dataSource 数据源
+ * @dataBinding item的绑定实现类
+ * @callback   绑定数据和方法
+ * @onMove   拖拽事件方法
+ * @onItemDismiss  侧滑事件方法
+ */
 open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
     private val layoutId: Int,//item的layoutId
     private val dataSource: () -> List<T>,
     private val dataBinding: (View) -> DB,
     private val callback: (T, DB, Int) -> Unit = { _, _, _ -> }
+
 ) : RecyclerView.Adapter<BaseDataBindingViewHolder<T, DB>>() {
 
     override fun onCreateViewHolder(
@@ -32,4 +41,5 @@ open class BaseDataBindingAdapter<T : Any, DB : ViewDataBinding>(
     fun forceUpdate() {
         notifyDataSetChanged()
     }
+
 }

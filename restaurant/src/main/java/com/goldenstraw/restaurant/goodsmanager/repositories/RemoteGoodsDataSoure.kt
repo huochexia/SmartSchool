@@ -24,15 +24,17 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 更新
      */
-    fun updateGoods(goods: Goods): Completable
+    fun updateGoods(goods: NewGoods, objectId: String): Completable
 
-    fun updateCategory(category: GoodsCategory): Completable
+    fun updateCategory(category: NewCategory, objectId: String): Completable
     /**
      * 获取
      */
     fun getAllCategory(): Observable<MutableList<GoodsCategory>>
 
     fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
+
+    fun getAllGoods(): Observable<MutableList<Goods>>
     /**
      * 删除
      */
@@ -56,6 +58,10 @@ class RemoteGoodsDataSourceImpl(
 
     override fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>> {
         return service.getGoodsOfCategory(category)
+    }
+
+    override fun getAllGoods(): Observable<MutableList<Goods>> {
+        return service.getAllGoods()
     }
 
     /**
@@ -83,12 +89,12 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 更新
      */
-    override fun updateGoods(goods: Goods): Completable {
-        return service.updateGoods(goods)
+    override fun updateGoods(goods: NewGoods, objectId: String): Completable {
+        return service.updateGoods(goods, objectId)
     }
 
-    override fun updateCategory(category: GoodsCategory): Completable {
-        return service.updateCategory(category)
+    override fun updateCategory(category: NewCategory, objectId: String): Completable {
+        return service.updateCategory(category, objectId)
     }
 
 }

@@ -3,7 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.ui
 import android.os.Bundle
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
-import com.goldenstraw.restaurant.databinding.FragmentSearchGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
