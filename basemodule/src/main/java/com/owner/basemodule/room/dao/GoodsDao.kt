@@ -3,6 +3,7 @@ package com.owner.basemodule.room.dao
 import androidx.room.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
 
@@ -16,6 +17,9 @@ interface GoodsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertGoodsCategoryList(categoryList: MutableList<GoodsCategory>): Completable
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertShoppingCartGoodsList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
 
     /*
       增加一个，也可以用于修改
@@ -46,6 +50,12 @@ interface GoodsDao {
 
     @Delete
     fun deleteCategory(category: GoodsCategory): Completable
+
+    @Delete
+    fun deleteShoppingCartList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
+
+    @Delete
+    fun deleteShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
 
     @Query("DELETE FROM goods")
     fun clearGoods(): Completable

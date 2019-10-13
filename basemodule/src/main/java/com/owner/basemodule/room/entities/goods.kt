@@ -15,11 +15,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class GoodsOfShoppingCart(
     @PrimaryKey
-    var code: String = "",
+    val code: String,
     @ColumnInfo
     var quantity: Int = 0,//购物车中商品数量，整数购入
     @ColumnInfo
-    var userName: String,//在网络上存储时需要这个来区分购物车内的商品归属
+    var district: String?,//在网络上存储时需要这个来区分购物车内的商品归属
     @ColumnInfo
     var goodsName: String,
     @ColumnInfo

@@ -29,7 +29,13 @@ import com.owner.basemodule.room.entities.*
  * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-@Database(version = 1, entities = [User::class, Goods::class, GoodsCategory::class])
+@Database(
+    version = 1,
+    entities = [User::class,
+        Goods::class,
+        GoodsCategory::class,
+        GoodsOfShoppingCart::class]
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao //用户管理
