@@ -124,6 +124,13 @@ class GoodsRepository(
 
     }
 
+    /*
+      根据名字模糊查找商品
+     */
+    fun findByName(name: String): Observable<MutableList<Goods>> {
+        return local.findByName(name)
+    }
+
     /**
      * 删除
      */

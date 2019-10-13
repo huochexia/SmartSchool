@@ -35,6 +35,9 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
     fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
+    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%'")
+    fun findByName(name: String): Observable<MutableList<Goods>>
+
     /**
      * 删除
      */

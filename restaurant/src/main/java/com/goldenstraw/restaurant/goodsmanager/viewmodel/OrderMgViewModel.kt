@@ -15,6 +15,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -118,7 +119,15 @@ class OrderMgViewModel(
     根据商品名称进行模糊查询
      */
     fun searchGoodsFromName(name: String) {
-
+        repository.findByName(name)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                searchGoodsResultList.clear()
+                searchGoodsResultList.addAll(it)
+                isRefresh.value = true
+            }, {}, {})
     }
 
     private fun getSearchResultList(results: MutableList<Goods>) {

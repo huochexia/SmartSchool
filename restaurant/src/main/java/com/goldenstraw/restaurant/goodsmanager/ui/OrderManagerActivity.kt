@@ -159,7 +159,11 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                     //查找框内容变化事件
                     //调用ViewModel当中的查询
                     newText?.let {
-                        viewModel.searchGoodsFromName(it)
+                        if (it.isNullOrEmpty()) {
+                            viewModel.searchGoodsResultList.clear()
+                        } else {
+                            viewModel.searchGoodsFromName(it.trim())
+                        }
                     }
                     return true
                 }

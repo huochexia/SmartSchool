@@ -30,6 +30,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun getAllCategory(): Observable<MutableList<GoodsCategory>>
 
     fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
+
+    fun findByName(name: String): Observable<MutableList<Goods>>
     /**
      * 删除
      */
@@ -81,6 +83,10 @@ class LocalGoodsDataSourceImpl(
 
         return database.goodsDao().getAllGoodsOfCategory(code)
 
+    }
+
+    override fun findByName(name: String): Observable<MutableList<Goods>> {
+        return database.goodsDao().findByName(name)
     }
 
     /**

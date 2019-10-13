@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -48,5 +49,10 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
             }
         )
+        viewModel!!.getIsRefresh().observe(this, Observer {
+            if (it) {
+                adapter!!.forceUpdate()
+            }
+        })
     }
 }
