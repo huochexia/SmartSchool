@@ -1,15 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories
 
-import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.ApiException
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.uber.autodispose.autoDisposable
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -77,6 +76,15 @@ class GoodsRepository(
         return local.insertCategoryToLocal(category)
     }
 
+    /*
+     *将所选择商品保存在本地购物车当中
+     *
+     */
+    fun addGoodsToShoppingCart(goodsList: MutableList<GoodsOfShoppingCart>): Completable {
+        return local.addShoppingCartAll(goodsList)
+    }
+
+
     /**
      * 更新
      */
@@ -97,6 +105,11 @@ class GoodsRepository(
             categoryName = category.categoryName
         )
         return remote.updateCategory(updateCategory, category.objectId)
+    }
+
+    //3、更新购物车内的商品
+    fun updateShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable {
+        return local.insertShoppingCart(shoppingCart)
     }
 
     /*

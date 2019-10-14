@@ -21,6 +21,9 @@ interface GoodsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertShoppingCartGoodsList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
+
     /*
       增加一个，也可以用于修改
      */

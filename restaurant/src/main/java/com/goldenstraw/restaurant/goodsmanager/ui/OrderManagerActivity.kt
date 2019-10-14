@@ -11,11 +11,11 @@ import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
@@ -40,8 +40,6 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
     override fun initView() {
         super.initView()
         setSupportActionBar(toolbar)//没有这个显示不了菜单
-//        val host: NavHostFragment = supportFragmentManager
-//            .findFragmentById(R.id.order_Manager_Fragment) as NavHostFragment? ?: return
         viewModel = getViewModel { OrderMgViewModel(repository) }
         viewModel.getState().observe(this, Observer { showAddCategoryDialog() })
         val categoryFragment = CategoryManagerFragment()

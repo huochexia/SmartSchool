@@ -1,12 +1,13 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.CreateObject
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -74,14 +75,16 @@ class GoodsServiceManagerImpl(
         return serverApi.createGoodsCategory(category)
     }
 
+
+
     /**
      * 更新
      */
-    override fun updateGoods(goods: NewGoods,objectId:String): Completable {
+    override fun updateGoods(goods: NewGoods, objectId: String): Completable {
         return serverApi.updateGoods(goods, objectId)
     }
 
-    override fun updateCategory(category: NewCategory,objectId: String): Completable {
+    override fun updateCategory(category: NewCategory, objectId: String): Completable {
         return serverApi.updateCategory(category, objectId)
     }
 }

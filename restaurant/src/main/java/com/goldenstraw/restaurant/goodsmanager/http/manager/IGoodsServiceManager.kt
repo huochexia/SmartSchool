@@ -1,10 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager
 
-import com.owner.basemodule.network.CreateObject
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -22,14 +23,16 @@ interface IGoodsServiceManager {
     //2、增加类别
     fun addCategory(category: NewCategory): Single<CreateObject>
 
+
+
     /**
      * 更新
      */
     //1、更新商品
-    fun updateGoods(goods: NewGoods,objectId:String): Completable
+    fun updateGoods(goods: NewGoods, objectId: String): Completable
 
     //2、更新类别
-    fun updateCategory(category: NewCategory,objectId:String): Completable
+    fun updateCategory(category: NewCategory, objectId: String): Completable
 
     /**
      * 查询
@@ -39,8 +42,10 @@ interface IGoodsServiceManager {
 
     //2、获取某个类别的商品列表
     fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
+
     //3、获取所有商品信息
-    fun getAllGoods():Observable<MutableList<Goods>>
+    fun getAllGoods(): Observable<MutableList<Goods>>
+
     /**
      * 删除
      */

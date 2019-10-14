@@ -1,11 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.ObjectList
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -25,6 +26,8 @@ interface GoodsApi {
     //2、增加类别
     @POST("/1/classes/GoodsCategory")
     fun createGoodsCategory(@Body goodsCategory: NewCategory): Single<CreateObject>
+
+
 
     /**
     UPDATE

@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class GoodsOfShoppingCart(
     @PrimaryKey
-    val code: String,
+    var code: String,
     @ColumnInfo
     var quantity: Int = 0,//购物车中商品数量，整数购入
     @ColumnInfo
@@ -27,10 +27,12 @@ data class GoodsOfShoppingCart(
     @ColumnInfo
     var unitPrice: Float,
     @ColumnInfo
-    var categoryName: String,
+    var categoryName: String
+
+){
     @Ignore
     var isChecked: Boolean = false
-)
+}
 
 @Entity
 data class Goods(
