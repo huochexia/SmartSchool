@@ -6,6 +6,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface GoodsDao {
@@ -44,6 +45,9 @@ interface GoodsDao {
 
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%'")
     fun findByName(name: String): Observable<MutableList<Goods>>
+
+    @Query("SELECT COUNT() FROM GoodsOfShoppingCart")
+    fun getShoppingCartOfCount(): Single<Int>
 
     /**
      * 删除

@@ -11,7 +11,6 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -19,9 +18,7 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
-import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
@@ -58,7 +55,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
             layoutId = R.layout.layout_goods_item,
             dataSource = { viewModel!!.goodsList },
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, _ ->
+            callback = { goods, binding, position ->
                 binding.goods = goods
                 binding.checkEvent = object : Consumer<Goods> {
                     override fun accept(t: Goods) {
@@ -67,6 +64,12 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
                 }
                 binding.cbGoods.isChecked = goods.isChecked
+                binding.addSub
+                    .setCurrentNumber(goods.quantity)
+                    .setPosition(position)
+                    .setOnChangeValueListener { value, position ->
+                        goods.quantity = value
+                    }
             }
         )
         viewModel!!.selected.observe(this, Observer {

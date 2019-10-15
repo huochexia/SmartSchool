@@ -17,9 +17,9 @@ data class GoodsOfShoppingCart(
     @PrimaryKey
     var code: String,
     @ColumnInfo
-    var quantity: Int = 0,//购物车中商品数量，整数购入
+    var quantity: Int,//购物车中商品数量，整数购入
     @ColumnInfo
-    var district: String?,//在网络上存储时需要这个来区分购物车内的商品归属
+    var district: String? = null,//在网络上存储时需要这个来区分购物车内的商品归属
     @ColumnInfo
     var goodsName: String,
     @ColumnInfo
@@ -29,7 +29,7 @@ data class GoodsOfShoppingCart(
     @ColumnInfo
     var categoryName: String
 
-){
+) {
     @Ignore
     var isChecked: Boolean = false
 }
@@ -48,7 +48,10 @@ data class Goods(
     var categoryCode: String,
     @ColumnInfo
     var isChecked: Boolean = false
-)
+) {
+    @Ignore
+    var quantity: Int = 1
+}
 
 @Entity
 data class GoodsCategory(

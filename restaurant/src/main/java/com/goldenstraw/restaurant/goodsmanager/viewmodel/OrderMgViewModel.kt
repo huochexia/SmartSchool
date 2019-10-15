@@ -3,19 +3,18 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -37,6 +36,7 @@ class OrderMgViewModel(
     var isGoodsListRefresh = MutableLiveData<Boolean>()//刷新商品列表
     private val state = MutableLiveData<Boolean>()  //弹出对话框
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
+    var shoppingCartOfQuantity = MutableLiveData<Int>()
 
     /**
      * 初始化工作，获取数据，创建列表适配器
@@ -44,6 +44,7 @@ class OrderMgViewModel(
     init {
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
         getAllCategory()
+        shoppingCartOfQuantity.value = 0
     }
 
     /*
@@ -218,6 +219,40 @@ class OrderMgViewModel(
                 goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
                 goodsList.add(it)
                 isGoodsListRefresh.value = true
+            }, {
+
+            })
+    }
+
+    /**
+     * 将所选择商品加入购物车
+     */
+    fun addGoodsToShoppingCart() {
+        val selectedGoods = mutableListOf<GoodsOfShoppingCart>()
+        goodsList.forEach {
+            if (it.isChecked) {
+                var goods = GoodsOfShoppingCart(
+                    code = it.objectId,
+                    quantity = it.quantity,
+                    categoryName = it.categoryCode,
+                    goodsName = it.goodsName,
+                    unitPrice = it.unitPrice,
+                    unitOfMeasurement = it.unitOfMeasurement
+                )
+                selectedGoods.add(goods)
+            }
+        }
+        repository.addGoodsToShoppingCart(selectedGoods)
+            .subscribeOn(Schedulers.io())
+            .autoDisposable(this)
+            .subscribe({
+                repository.getShoppingCartOfCount()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(this)
+                    .subscribe({
+                        shoppingCartOfQuantity.value = it
+                    }, {})
+
             }, {
 
             })

@@ -7,6 +7,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 /**
  * Created by Administrator on 2019/10/12 0012
@@ -37,6 +38,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
     fun findByName(name: String): Observable<MutableList<Goods>>
+
+    fun getShoppingCartCount(): Single<Int>
     /**
      * 删除
      */
@@ -104,6 +107,10 @@ class LocalGoodsDataSourceImpl(
 
     override fun findByName(name: String): Observable<MutableList<Goods>> {
         return database.goodsDao().findByName(name)
+    }
+
+    override fun getShoppingCartCount(): Single<Int> {
+        return database.goodsDao().getShoppingCartOfCount()
     }
 
     /**

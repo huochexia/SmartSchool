@@ -9,6 +9,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -84,6 +85,10 @@ class GoodsRepository(
         return local.addShoppingCartAll(goodsList)
     }
 
+    /*
+     *获取购物车内商品数量
+     */
+    fun getShoppingCartOfCount(): Single<Int> = local.getShoppingCartCount()
 
     /**
      * 更新
