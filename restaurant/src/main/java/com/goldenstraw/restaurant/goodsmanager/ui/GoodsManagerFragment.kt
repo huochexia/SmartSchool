@@ -191,4 +191,22 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
             }.create()
         dialog.show()
     }
+
+    /**
+     * 加入购物车
+     */
+    fun addGoodsToShoppingCart() {
+        viewModel!!.addGoodsToShoppingCart(viewModel!!.goodsList)
+        //还原商品信息
+        var selectedList = mutableListOf<Goods>()
+        viewModel!!.goodsList.forEach {
+            if (it.isChecked) {
+                it.isChecked = false
+                it.quantity = 1
+                selectedList.add(it)
+            }
+        }
+        viewModel!!.goodsList.removeAll(selectedList)
+        adapter!!.forceUpdate()
+    }
 }

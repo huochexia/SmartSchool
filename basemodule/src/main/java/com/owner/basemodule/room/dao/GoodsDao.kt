@@ -49,6 +49,9 @@ interface GoodsDao {
     @Query("SELECT COUNT() FROM GoodsOfShoppingCart")
     fun getShoppingCartOfCount(): Single<Int>
 
+    @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY goodsName")
+    fun getAllShoppingCart(): Observable<MutableList<GoodsOfShoppingCart>>
+
     /**
      * 删除
      */

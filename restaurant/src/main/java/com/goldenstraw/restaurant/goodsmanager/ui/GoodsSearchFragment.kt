@@ -55,4 +55,22 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
             }
         })
     }
+
+    /**
+     * 加入购物车
+     */
+    fun addGoodsToShoppingCart() {
+        viewModel!!.addGoodsToShoppingCart(viewModel!!.searchGoodsResultList)
+        //还原商品信息
+        val selectedList = mutableListOf<Goods>()
+        viewModel!!.searchGoodsResultList.forEach {
+            if (it.isChecked) {
+                it.isChecked = false
+                it.quantity = 1
+                selectedList.add(it)
+            }
+        }
+        viewModel!!.searchGoodsResultList.removeAll(selectedList)
+        adapter!!.forceUpdate()
+    }
 }

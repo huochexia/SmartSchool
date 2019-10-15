@@ -25,11 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".goodsmanager.ui.ShoppingCartManagerActivity" />
 
-
-<!--        <provider-->
-<!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
-<!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->
+        <!--        <provider-->
+        <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
+        <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->
     </application>
 
 </manifest>

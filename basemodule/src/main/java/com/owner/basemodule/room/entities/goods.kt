@@ -1,9 +1,6 @@
 package com.owner.basemodule.room.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 /**
  * Created by Administrator on 2019/10/12 0012
@@ -17,17 +14,19 @@ data class GoodsOfShoppingCart(
     @PrimaryKey
     var code: String,
     @ColumnInfo
-    var quantity: Int,//购物车中商品数量，整数购入
-    @ColumnInfo
-    var district: String? = null,//在网络上存储时需要这个来区分购物车内的商品归属
+    var district: Int = -1,//在网络上存储时需要这个来区分购物车内的商品归属
     @ColumnInfo
     var goodsName: String,
     @ColumnInfo
     var unitOfMeasurement: String,
     @ColumnInfo
-    var unitPrice: Float,
+    var unitPrice: Float = 0.0f,
     @ColumnInfo
-    var categoryName: String
+    var categoryCode: String,
+    @ColumnInfo
+    var quantity: Int,
+    @ColumnInfo
+    var note: String = ""
 
 ) {
     @Ignore

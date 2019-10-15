@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.Menu
 import android.view.MenuItem
@@ -19,6 +20,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
+import org.jetbrains.anko.startActivity
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -123,7 +125,9 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_shopping_cart -> {
-                toast { "待开发。。。。。" }
+                var intent = Intent()
+                intent.setClass(this,ShoppingCartManagerActivity::class.java)
+                startActivity(intent)
             }
             R.id.action_add_goods_item -> {
                 if (viewModel.selected.value == null)

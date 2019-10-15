@@ -44,7 +44,13 @@ class OrderMgViewModel(
     init {
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
         getAllCategory()
-        shoppingCartOfQuantity.value = 0
+        repository.getShoppingCartOfCount()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                shoppingCartOfQuantity.value = it
+            }, {})
     }
 
     /*
@@ -227,14 +233,14 @@ class OrderMgViewModel(
     /**
      * 将所选择商品加入购物车
      */
-    fun addGoodsToShoppingCart() {
+    fun addGoodsToShoppingCart(list: MutableList<Goods>) {
         val selectedGoods = mutableListOf<GoodsOfShoppingCart>()
-        goodsList.forEach {
+        list.forEach {
             if (it.isChecked) {
                 var goods = GoodsOfShoppingCart(
                     code = it.objectId,
                     quantity = it.quantity,
-                    categoryName = it.categoryCode,
+                    categoryCode = it.categoryCode,
                     goodsName = it.goodsName,
                     unitPrice = it.unitPrice,
                     unitOfMeasurement = it.unitOfMeasurement
@@ -246,6 +252,7 @@ class OrderMgViewModel(
             .subscribeOn(Schedulers.io())
             .autoDisposable(this)
             .subscribe({
+                //添加成功后获取购物车中的商品数量
                 repository.getShoppingCartOfCount()
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(this)
