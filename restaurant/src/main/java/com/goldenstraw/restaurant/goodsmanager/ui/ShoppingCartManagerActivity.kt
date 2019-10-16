@@ -6,9 +6,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityShoppingCartManagerBinding
-import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
-import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
 import com.goldenstraw.restaurant.goodsmanager.repositories.ShoppingCartRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
@@ -16,19 +14,20 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
-import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_shopping_cart_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+
 
 class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBinding>() {
 
@@ -54,7 +53,14 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
             callback = { value, binding, _ ->
                 with(binding) {
                     goods = value
+                    checkEvent = object : Consumer<GoodsOfShoppingCart> {
+                        override fun accept(t: GoodsOfShoppingCart) {
+                            t.isChecked = !t.isChecked
+                            cbGoods.isChecked = t.isChecked
+                        }
 
+                    }
+                    cbGoods.isChecked = value.isChecked
                 }
             }
         )
@@ -157,6 +163,57 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 }
             }.create()
         dialog.show()
+    }
+
+    /**
+     * 弹出选择购物区域对话框
+     */
+    fun popUpSelectDistrict() {
+        var district = 0
+        val dialog = AlertDialog.Builder(this)
+            .setIcon(R.mipmap.add_icon)
+            .setTitle("请选择购物校区")
+            .setSingleChoiceItems(R.array.district, 0) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        district = 0
+                    }
+                    1 -> {
+                        district = 1
+                    }
+                }
+            }
+            .setNegativeButton("取消") { dialog, which ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, which ->
+                val selected = mutableListOf<GoodsOfShoppingCart>()
+                viewModel!!.goodsList.forEach {
+                    if (it.isChecked) {
+                        it.district = district
+                        selected.add(it)
+                        
+                    }
+                }
+
+                dialog.dismiss()
+            }.create()
+        dialog.show()
+    }
+
+    /**
+     * 全选事件
+     */
+    fun allSelect() {
+        if (cb_all.isChecked)
+            viewModel!!.goodsList.forEach {
+                it.isChecked = true
+            }
+        else
+            viewModel!!.goodsList.forEach {
+                it.isChecked = false
+            }
+        adapter!!.forceUpdate()
     }
 
     private fun deleteGoodsOfShoppingCartList(list: MutableList<GoodsOfShoppingCart>) {

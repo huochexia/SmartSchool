@@ -26,12 +26,10 @@ data class GoodsOfShoppingCart(
     @ColumnInfo
     var quantity: Int,
     @ColumnInfo
-    var note: String = ""
-
-) {
-    @Ignore
+    var note: String = "",
+    @ColumnInfo
     var isChecked: Boolean = false
-}
+)
 
 @Entity
 data class Goods(
