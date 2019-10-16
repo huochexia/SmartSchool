@@ -44,14 +44,10 @@ class OrderMgViewModel(
     init {
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
         getAllCategory()
-        repository.getShoppingCartOfCount()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                shoppingCartOfQuantity.value = it
-            }, {})
+//        getCountOfShoppingCart()
     }
+
+
 
     /*
      *从本地数据库中获取所有类别,然后默认显示类别列表第一项的所有商品。
@@ -253,18 +249,24 @@ class OrderMgViewModel(
             .autoDisposable(this)
             .subscribe({
                 //添加成功后获取购物车中的商品数量
-                repository.getShoppingCartOfCount()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(this)
-                    .subscribe({
-                        shoppingCartOfQuantity.value = it
-                    }, {})
+                getCountOfShoppingCart()
 
             }, {
 
             })
     }
-
+    /**
+     * 获取购物车中商品数量
+     */
+    fun getCountOfShoppingCart() {
+        repository.getShoppingCartOfCount()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                shoppingCartOfQuantity.value = it
+            }, {})
+    }
     /**
      * 同步类别和商品信息
      */

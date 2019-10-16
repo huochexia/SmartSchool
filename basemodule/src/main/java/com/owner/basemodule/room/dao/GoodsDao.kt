@@ -64,9 +64,6 @@ interface GoodsDao {
     @Delete
     fun deleteShoppingCartList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
 
-    @Delete
-    fun deleteShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
-
     @Query("DELETE FROM goods")
     fun clearGoods(): Completable
 

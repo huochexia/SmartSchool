@@ -168,6 +168,10 @@ class GoodsRepository(
         return remote.deleteCategory(category)
     }
 
+    fun deletShoppingCartList(goodslist: MutableList<GoodsOfShoppingCart>): Completable {
+        return local.deleteShoppingCartList(goodslist)
+    }
+
     /**
      * 清空本地内容，主要是为了同步做准备。
      */

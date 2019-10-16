@@ -81,6 +81,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 adapter!!.forceUpdate()
             }
         })
+        viewModel!!.getCountOfShoppingCart()
         initSwipeMenu()
     }
 

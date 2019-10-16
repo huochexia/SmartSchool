@@ -12,6 +12,7 @@ import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
@@ -50,4 +51,17 @@ class ShoppingCartMgViewModel(
             })
     }
 
+    /**
+     * 删除购物车商品
+     */
+    fun deleteGoodsOfShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable {
+        return repository.local.deleteShoppingCartList(list)
+    }
+
+    /**
+     * 修改购物画商品
+     */
+    fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
+        return repository.local.updateGoodsOfShoppingCart(goods)
+    }
 }

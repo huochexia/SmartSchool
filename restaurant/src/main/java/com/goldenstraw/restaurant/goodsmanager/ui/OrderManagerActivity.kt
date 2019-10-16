@@ -21,6 +21,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -126,8 +127,8 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         when (item?.itemId) {
             R.id.action_shopping_cart -> {
                 var intent = Intent()
-                intent.setClass(this,ShoppingCartManagerActivity::class.java)
-                startActivity(intent)
+                intent.setClass(this, ShoppingCartManagerActivity::class.java)
+                startActivityForResult(intent, 1)
             }
             R.id.action_add_goods_item -> {
                 if (viewModel.selected.value == null)
@@ -185,4 +186,11 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
     }
 
+    /**
+     * 通过返回结果刷新购物车商品数量
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        viewModel.shoppingCartOfQuantity.value = data?.getIntExtra("quantity", 0)
+    }
 }

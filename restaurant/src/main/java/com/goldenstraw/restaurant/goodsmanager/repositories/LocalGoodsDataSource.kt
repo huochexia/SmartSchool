@@ -47,8 +47,6 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun deleteShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable
 
-    fun deletShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
-
     fun deleteCategoryFromLocal(category: GoodsCategory): Completable
     fun clearGoodsAll(): Completable
     fun clearCategoryAll(): Completable
@@ -124,9 +122,7 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().deleteGoods(goods)
     }
 
-    override fun deletShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable {
-        return database.goodsDao().deleteShoppingCart(shoppingCart)
-    }
+
 
     override fun deleteShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable {
         return database.goodsDao().deleteShoppingCartList(list)
