@@ -21,9 +21,11 @@ import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_shopping_cart_manager.*
+import org.jetbrains.anko.Android
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -185,27 +187,44 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                viewModel!!.goodsList.forEach { goods ->
-                    if (goods.isChecked) {
-                        goods.district = district
-                        viewModel!!.commitGoodsOfShoppingCart(goods)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .autoDisposable(scopeProvider)
-                            .subscribe({
-                                //1、从视图列表中删除
-                                deleteGoodsOfShoppingCart(goods)
-                                viewModel!!.goodsList.remove(goods)
-                                adapter!!.forceUpdate()
-                            }, {
-                                toast { "提交失败：" + it.message }
-                            })
-                    }
-                }
-
+                commitAllGoodsOfShoppingCart(district)
+                cb_all.isChecked = false
                 dialog.dismiss()
             }.create()
         dialog.show()
+    }
+
+    /**
+     * 提交所有选择的购物车商品到网络数据库
+     */
+    private fun commitAllGoodsOfShoppingCart(district: Int) {
+        val selectedList = mutableListOf<GoodsOfShoppingCart>()
+        viewModel!!.goodsList.forEach { goods ->
+            if (goods.isChecked) {
+                goods.district = district
+                selectedList.add(goods)
+            }
+        }
+        Observable.fromIterable(selectedList)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({ goods ->
+                viewModel!!.commitGoodsOfShoppingCart(goods)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(scopeProvider)
+                    .subscribe({
+                    }, {
+                        toast { it.message.toString() }
+                    })
+            }, {
+                toast { it.message.toString() }
+            }, {
+                deleteGoodsOfShoppingCartList(selectedList)
+                viewModel!!.goodsList.removeAll(selectedList)
+                adapter!!.forceUpdate()
+            })
     }
 
     /**
