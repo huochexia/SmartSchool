@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories
+package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
@@ -89,6 +89,7 @@ class GoodsRepository(
      *获取购物车内商品数量
      */
     fun getShoppingCartOfCount(): Single<Int> = local.getShoppingCartCount()
+
 
     /**
      * 更新

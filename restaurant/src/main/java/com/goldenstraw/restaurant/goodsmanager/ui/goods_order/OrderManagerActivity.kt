@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui
+package com.goldenstraw.restaurant.goodsmanager.ui.goods_order
 
 import android.content.Intent
 import android.graphics.Color
@@ -13,22 +13,21 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
-import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.ShoppingCartManagerActivity
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
-    lateinit var viewModel: OrderMgViewModel
+    lateinit var viewModelGoodsTo: GoodsToOrderMgViewModel
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
@@ -43,11 +42,14 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
     override fun initView() {
         super.initView()
         setSupportActionBar(toolbar)//没有这个显示不了菜单
-        viewModel = getViewModel { OrderMgViewModel(repository) }
-        viewModel.getState().observe(this, Observer { showAddCategoryDialog() })
-        val categoryFragment = CategoryManagerFragment()
-        val goodsFragment = GoodsManagerFragment()
-        val searchFragment = GoodsSearchFragment()
+        viewModelGoodsTo = getViewModel { GoodsToOrderMgViewModel(repository) }
+        viewModelGoodsTo.getState().observe(this, Observer { showAddCategoryDialog() })
+        val categoryFragment =
+            CategoryManagerFragment()
+        val goodsFragment =
+            GoodsManagerFragment()
+        val searchFragment =
+            GoodsSearchFragment()
         val trans = supportFragmentManager.beginTransaction()
         trans.replace(R.id.fragment_category_container, categoryFragment)
         trans.replace(R.id.fragment_goods_container, goodsFragment)
@@ -56,7 +58,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         /*
         暂时在这里实现网络数据与本地数据的同步
          */
-        viewModel.syncAllData()
+        viewModelGoodsTo.syncAllData()
 
     }
 
@@ -78,7 +80,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 if (content.isNullOrEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
-                    viewModel.addCategoryToRepository(content)
+                    viewModelGoodsTo.addCategoryToRepository(content)
                     dialog.dismiss()
                 }
             }.create()
@@ -110,7 +112,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                         unitOfMeasurement = unit,
                         categoryCode = category.objectId
                     )
-                    viewModel.addGoodsToRepository(goods)
+                    viewModelGoodsTo.addGoodsToRepository(goods)
                     dialog.dismiss()
                 }
             }.create()
@@ -131,10 +133,10 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 startActivityForResult(intent, 1)
             }
             R.id.action_add_goods_item -> {
-                if (viewModel.selected.value == null)
+                if (viewModelGoodsTo.selected.value == null)
                     toast { "请先确定商品所属类别" }
                 else
-                    showAddGoodsDialog(viewModel.selected.value!!)
+                    showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
             }
             else -> super.onOptionsItemSelected(item)
 
@@ -163,9 +165,9 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                     //调用ViewModel当中的查询
                     newText?.let {
                         if (it.isEmpty()) {
-                            viewModel.searchGoodsResultList.clear()
+                            viewModelGoodsTo.searchGoodsResultList.clear()
                         } else {
-                            viewModel.searchGoodsFromName(it.trim())
+                            viewModelGoodsTo.searchGoodsFromName(it.trim())
                         }
                     }
                     return true
@@ -191,6 +193,6 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        viewModel.shoppingCartOfQuantity.value = data?.getIntExtra("quantity", 0)
+        viewModelGoodsTo.shoppingCartOfQuantity.value = data?.getIntExtra("quantity", 0)
     }
 }

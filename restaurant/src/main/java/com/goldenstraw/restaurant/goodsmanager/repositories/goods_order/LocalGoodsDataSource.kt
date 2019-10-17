@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories
+package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase

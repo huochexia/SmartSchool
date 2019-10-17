@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.http.manager
+package com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods

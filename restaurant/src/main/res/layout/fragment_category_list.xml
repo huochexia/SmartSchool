@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.CategoryManagerFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.goods_order.CategoryManagerFragment" />
     </data>
 
     <LinearLayout
@@ -24,7 +24,7 @@
                 android:textColor="@color/secondaryTextColor"
                 android:gravity="center"
                 android:background="@color/secondaryLightColor"
-                android:onClick="@{()->fragment.viewModel.setAddCategoryDialogState(true)}"/>
+                android:onClick="@{()->fragment.viewModelGoodsTo.setAddCategoryDialogState(true)}"/>
         <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:msv_viewState="@{fragment.viewModel.categoryState}">
+                app:msv_viewState="@{fragment.viewModelGoodsTo.categoryState}">
 
             <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/recyclerView"

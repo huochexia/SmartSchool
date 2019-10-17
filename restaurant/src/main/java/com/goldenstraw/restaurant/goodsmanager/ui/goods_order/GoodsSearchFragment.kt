@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui
+package com.goldenstraw.restaurant.goodsmanager.ui.goods_order
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -6,8 +6,8 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
-import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.OrderMgViewModel
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -25,18 +25,18 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_search_goods
     private val repository: GoodsRepository by instance()
-    var viewModel: OrderMgViewModel? = null
+    var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = activity?.getViewModel {
-            OrderMgViewModel(repository)
+        viewModelGoodsTo = activity?.getViewModel {
+            GoodsToOrderMgViewModel(repository)
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
-            dataSource = { viewModel!!.searchGoodsResultList },
+            dataSource = { viewModelGoodsTo!!.searchGoodsResultList },
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
             callback = { goods, binding, _ ->
                 binding.goods = goods
@@ -49,7 +49,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
             }
         )
-        viewModel!!.getIsRefresh().observe(this, Observer {
+        viewModelGoodsTo!!.getIsRefresh().observe(this, Observer {
             if (it) {
                 adapter!!.forceUpdate()
             }
@@ -60,17 +60,17 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModel!!.addGoodsToShoppingCart(viewModel!!.searchGoodsResultList)
+        viewModelGoodsTo!!.addGoodsToShoppingCart(viewModelGoodsTo!!.searchGoodsResultList)
         //还原商品信息
         val selectedList = mutableListOf<Goods>()
-        viewModel!!.searchGoodsResultList.forEach {
+        viewModelGoodsTo!!.searchGoodsResultList.forEach {
             if (it.isChecked) {
                 it.isChecked = false
                 it.quantity = 1
                 selectedList.add(it)
             }
         }
-        viewModel!!.searchGoodsResultList.removeAll(selectedList)
+        viewModelGoodsTo!!.searchGoodsResultList.removeAll(selectedList)
         adapter!!.forceUpdate()
     }
 }

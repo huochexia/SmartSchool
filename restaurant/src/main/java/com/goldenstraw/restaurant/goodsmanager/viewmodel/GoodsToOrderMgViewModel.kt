@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
-import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.Goods
@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * 订单管理的ViewModel
  */
-class OrderMgViewModel(
+class GoodsToOrderMgViewModel(
     private val repository: GoodsRepository
 ) : BaseViewModel() {
 

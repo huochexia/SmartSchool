@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories
+package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
@@ -11,6 +11,8 @@ interface ILocalShoppingCartDataSource : ILocalDataSource {
     fun getAllGoods(): Observable<MutableList<GoodsOfShoppingCart>>
 
     fun deleteShoppingCartList(goodslist: MutableList<GoodsOfShoppingCart>): Completable
+
+    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 }
@@ -30,6 +32,10 @@ class LocalShoppingCartDataSourceImpl(
 
     override fun deleteShoppingCartList(goodslist: MutableList<GoodsOfShoppingCart>): Completable {
         return database.goodsDao().deleteShoppingCartList(goodslist)
+    }
+
+    override fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
+        return database.goodsDao().deleteGoodsOfShoppingCart(goods)
     }
 
     override fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {

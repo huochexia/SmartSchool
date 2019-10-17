@@ -6,7 +6,7 @@
 
         <variable
                 name="activity"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.OrderManagerActivity" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.goods_order.OrderManagerActivity" />
     </data>
 
     <LinearLayout

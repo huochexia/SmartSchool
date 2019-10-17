@@ -8,7 +8,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityShoppingCartManagerBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
-import com.goldenstraw.restaurant.goodsmanager.repositories.ShoppingCartRepository
+import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -16,11 +16,11 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_shopping_cart_manager.*
@@ -121,9 +121,7 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                var list = mutableListOf<GoodsOfShoppingCart>()
-                list.add(viewModel!!.goodsList[adapterPosition])
-                deleteGoodsOfShoppingCartList(list)
+                deleteGoodsOfShoppingCart(viewModel!!.goodsList[adapterPosition])
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -187,12 +185,21 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                val selected = mutableListOf<GoodsOfShoppingCart>()
-                viewModel!!.goodsList.forEach {
-                    if (it.isChecked) {
-                        it.district = district
-                        selected.add(it)
-                        
+                viewModel!!.goodsList.forEach { goods ->
+                    if (goods.isChecked) {
+                        goods.district = district
+                        viewModel!!.commitGoodsOfShoppingCart(goods)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .autoDisposable(scopeProvider)
+                            .subscribe({
+                                //1、从视图列表中删除
+                                deleteGoodsOfShoppingCart(goods)
+                                viewModel!!.goodsList.remove(goods)
+                                adapter!!.forceUpdate()
+                            }, {
+                                toast { "提交失败：" + it.message }
+                            })
                     }
                 }
 
@@ -229,6 +236,10 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 adapter!!.forceUpdate()
             }, {})
 
+    }
+
+    private fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart) {
+        viewModel!!.deleteGoodsOfShoppingCart(goods)
     }
 
     /**

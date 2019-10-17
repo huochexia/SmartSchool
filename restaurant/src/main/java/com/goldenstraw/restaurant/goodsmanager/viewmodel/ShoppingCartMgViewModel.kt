@@ -1,21 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import android.view.ViewGroup
 import androidx.databinding.ObservableField
-import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.repositories.ShoppingCartRepository
+import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_goods_list.*
 
 class ShoppingCartMgViewModel(
     private val repository: ShoppingCartRepository
@@ -58,10 +51,25 @@ class ShoppingCartMgViewModel(
         return repository.local.deleteShoppingCartList(list)
     }
 
+    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart) {
+        repository.local.deleteGoodsOfShoppingCart(goods)
+            .subscribeOn(Schedulers.computation())
+            .autoDisposable(this)
+            .subscribe({},{})
+    }
+
     /**
      * 修改购物画商品
      */
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
         return repository.local.updateGoodsOfShoppingCart(goods)
     }
+
+    /**
+     * 将购物车内商品信息提交网络
+     */
+    fun commitGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
+        return repository.remote.insertGoodsOfShoppingCart(goods)
+    }
+
 }

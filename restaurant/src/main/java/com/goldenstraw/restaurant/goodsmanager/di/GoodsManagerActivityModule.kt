@@ -1,10 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.di
 
-import com.goldenstraw.restaurant.goodsmanager.http.manager.GoodsServiceManagerImpl
+import com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order.GoodsServiceManagerImpl
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
-import com.goldenstraw.restaurant.goodsmanager.repositories.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.repositories.LocalGoodsDataSourceImpl
-import com.goldenstraw.restaurant.goodsmanager.repositories.RemoteGoodsDataSourceImpl
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.LocalGoodsDataSourceImpl
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.RemoteGoodsDataSourceImpl
 import com.owner.basemodule.network.RetrofitFactory
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -25,16 +25,33 @@ val goodsDataSourceModule = Kodein.Module(GOODS_MANAGER_ACTIVITY_TAG) {
 
 
     //绑定商品数据源，对商品的操作，都是从这个类开始。
-    bind<GoodsRepository>() with singleton { GoodsRepository(instance(), instance()) }
+    bind<GoodsRepository>() with singleton {
+        GoodsRepository(
+            instance(),
+            instance()
+        )
+    }
 
     //绑定本地数据源实现类,它需要的参数（AppDatabase）是全局的，所以由上一级容器提供
-    bind<LocalGoodsDataSourceImpl>() with singleton { LocalGoodsDataSourceImpl(instance()) }
+    bind<LocalGoodsDataSourceImpl>() with singleton {
+        LocalGoodsDataSourceImpl(
+            instance()
+        )
+    }
 
     //绑定远程数据源实现类
-    bind<RemoteGoodsDataSourceImpl>() with singleton { RemoteGoodsDataSourceImpl(instance()) }
+    bind<RemoteGoodsDataSourceImpl>() with singleton {
+        RemoteGoodsDataSourceImpl(
+            instance()
+        )
+    }
 
     //绑定GoodsServiceManagerImpl实例，它需要的GoodsApi由其它容器提供
-    bind<GoodsServiceManagerImpl>() with singleton { GoodsServiceManagerImpl(instance()) }
+    bind<GoodsServiceManagerImpl>() with singleton {
+        GoodsServiceManagerImpl(
+            instance()
+        )
+    }
 
     //绑定GoodsApi
     bind<GoodsApi>() with singleton { instance<RetrofitFactory>().create(GoodsApi::class.java) }

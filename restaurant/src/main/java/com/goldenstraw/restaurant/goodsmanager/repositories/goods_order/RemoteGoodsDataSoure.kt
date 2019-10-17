@@ -1,6 +1,6 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories
+package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
-import com.goldenstraw.restaurant.goodsmanager.http.manager.IGoodsServiceManager
+import com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.CreateObject
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
