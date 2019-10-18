@@ -99,7 +99,8 @@ class GoodsRepository(
         val updateGoods = NewGoods(
             goodsName = goods.goodsName,
             unitOfMeasurement = goods.unitOfMeasurement,
-            categoryCode = goods.categoryCode
+            categoryCode = goods.categoryCode,
+            unitPrice = goods.unitPrice
         )
         return remote.updateGoods(updateGoods, goods.objectId)
 

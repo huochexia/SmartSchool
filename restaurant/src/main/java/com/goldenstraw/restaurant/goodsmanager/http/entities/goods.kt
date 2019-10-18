@@ -11,7 +11,8 @@ package com.goldenstraw.restaurant.goodsmanager.http.entities
 data class NewGoods(
     val goodsName: String,
     val unitOfMeasurement: String,
-    val categoryCode: String
+    val categoryCode: String,
+    val unitPrice:Float=0.0f
 )
 
 

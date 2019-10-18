@@ -94,6 +94,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         val view = layoutInflater.inflate(R.layout.add_goods_dialog_view, null)
         val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
+        val unitPrice = view.findViewById<EditText>(R.id.et_unit_price)
         val dialog = AlertDialog.Builder(this)
             .setIcon(R.mipmap.add_icon)
             .setTitle("增加商品----" + category.categoryName)
@@ -104,13 +105,16 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val name = goodsName.text.toString().trim()
                 val unit = unitOfMeasure.text.toString().trim()
+                val price = unitPrice.text.toString().trim().toFloat()
+
                 if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
                     val goods = NewGoods(
                         goodsName = name,
                         unitOfMeasurement = unit,
-                        categoryCode = category.objectId
+                        categoryCode = category.objectId,
+                        unitPrice = price
                     )
                     viewModelGoodsTo.addGoodsToRepository(goods)
                     dialog.dismiss()
