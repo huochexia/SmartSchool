@@ -52,6 +52,7 @@ dependencies {
     api libs.material
     api libs.recyclerview
     api libs.constraint
+    api 'androidx.viewpager2:viewpager2:1.0.0-beta05'
     api libs.kotlin_stdlib
     api libs.coroutines_core
     api libs.kotlin_coroutines
