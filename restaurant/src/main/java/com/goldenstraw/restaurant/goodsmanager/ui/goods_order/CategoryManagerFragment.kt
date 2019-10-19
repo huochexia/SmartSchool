@@ -194,7 +194,8 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                     toast { "请填写必须内容！！" }
                 } else {
                     category.categoryName = name
-                    viewModelGoodsTo!!.updateCategory(category).subscribeOn(Schedulers.computation())
+                    viewModelGoodsTo!!.updateCategory(category)
+                        .subscribeOn(Schedulers.computation())
                         .subscribe()
                     adapter!!.forceUpdate()
                     dialog.dismiss()

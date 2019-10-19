@@ -24,7 +24,6 @@ interface IGoodsServiceManager {
     fun addCategory(category: NewCategory): Single<CreateObject>
 
 
-
     /**
      * 更新
      */

@@ -123,7 +123,6 @@ class LocalGoodsDataSourceImpl(
     }
 
 
-
     override fun deleteShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable {
         return database.goodsDao().deleteShoppingCartList(list)
     }

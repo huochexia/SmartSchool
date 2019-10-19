@@ -48,7 +48,6 @@ class GoodsToOrderMgViewModel(
     }
 
 
-
     /*
      *从本地数据库中获取所有类别,然后默认显示类别列表第一项的所有商品。
      */
@@ -255,6 +254,7 @@ class GoodsToOrderMgViewModel(
 
             })
     }
+
     /**
      * 获取购物车中商品数量
      */
@@ -267,6 +267,7 @@ class GoodsToOrderMgViewModel(
                 shoppingCartOfQuantity.value = it
             }, {})
     }
+
     /**
      * 同步类别和商品信息
      */

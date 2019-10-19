@@ -14,19 +14,35 @@ object TimeConverter {
     /**
      * 2019-03-26T08:51:43Z -> 2 days ago
      */
-    fun tramsTimeAgo(time:String?):String =
-            transTimeStamp(time).let{
-                DateUtils.getRelativeTimeSpanString(it).toString()
-            }
+    fun tramsTimeAgo(time: String?): String =
+        transTimeStamp(time).let {
+            DateUtils.getRelativeTimeSpanString(it).toString()
+        }
 
     /**
      * 2019-03-26T08:51:43Z -> time stamp
      */
-    fun transTimeStamp(time:String?):Long =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CHINA)
-                .let {
-                    it.timeZone = TimeZone.getTimeZone("GMT+1")
-                    it.parse(time).time
-                }
+    fun transTimeStamp(time: String?): Long =
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CHINA)
+            .let {
+                it.timeZone = TimeZone.getTimeZone("GMT+1")
+                it.parse(time).time
+            }
 
+    /**
+     * 获取系统当前日期字符串
+     */
+    fun getCurrentDateString(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val curDate = Date(System.currentTimeMillis())//获取当日期
+        return formatter.format(curDate)
+    }
+
+    /**
+     * 将日期转换成字符串形式
+     */
+    fun getDateString(date: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        return formatter.format(date)
+    }
 }

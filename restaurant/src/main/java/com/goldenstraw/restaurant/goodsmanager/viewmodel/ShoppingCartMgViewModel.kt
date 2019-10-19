@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
@@ -55,7 +56,7 @@ class ShoppingCartMgViewModel(
         repository.local.deleteGoodsOfShoppingCart(goods)
             .subscribeOn(Schedulers.computation())
             .autoDisposable(this)
-            .subscribe({},{})
+            .subscribe({}, {})
     }
 
     /**
@@ -68,8 +69,8 @@ class ShoppingCartMgViewModel(
     /**
      * 将购物车内商品信息提交网络
      */
-    fun commitGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
-        return repository.remote.insertGoodsOfShoppingCart(goods)
+    fun commitGoodsOfShoppingCart(orderItem: NewOrderItem): Completable {
+        return repository.remote.insertGoodsOfShoppingCart(orderItem)
     }
 
 }

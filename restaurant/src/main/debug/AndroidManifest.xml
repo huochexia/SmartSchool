@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".goodsmanager.ui.ShoppingCartManagerActivity" />
+        <activity android:name=".goodsmanager.ui.place_order.VeriflerAndPlaceOrderActivity"/>
 
         <!--        <provider-->
         <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->

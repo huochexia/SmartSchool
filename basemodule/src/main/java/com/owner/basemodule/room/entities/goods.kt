@@ -14,8 +14,6 @@ data class GoodsOfShoppingCart(
     @PrimaryKey
     var code: String,
     @ColumnInfo
-    var district: Int = -1,//在网络上存储时需要这个来区分购物车内的商品归属
-    @ColumnInfo
     var goodsName: String,
     @ColumnInfo
     var unitOfMeasurement: String,

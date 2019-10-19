@@ -1,0 +1,3 @@
+package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
+
+interface IVerifyAndPlaceOrderManager

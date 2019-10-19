@@ -8,6 +8,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityShoppingCartManagerBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
 import com.kennyc.view.MultiStateView
@@ -16,6 +17,7 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
@@ -187,7 +189,25 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                commitAllGoodsOfShoppingCart(district)
+                val selectedList = mutableListOf<GoodsOfShoppingCart>()
+                val orderItemList = mutableListOf<NewOrderItem>()
+                viewModel!!.goodsList.forEach { goods ->
+                    if (goods.isChecked) {
+                        val order = NewOrderItem(
+                            district = district,
+                            goodsName = goods.goodsName,
+                            categoryCode = goods.categoryCode,
+                            unitOfMeasurement = goods.unitOfMeasurement,
+                            unitPrice = goods.unitPrice,
+                            note = goods.note,
+                            orderDate = TimeConverter.getCurrentDateString(),
+                            quantity = goods.quantity
+                        )
+                        orderItemList.add(order)
+                        selectedList.add(goods)
+                    }
+                }
+                commitAllGoodsOfShoppingCart(selectedList, orderItemList)
                 cb_all.isChecked = false
                 dialog.dismiss()
             }.create()
@@ -197,20 +217,16 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
     /**
      * 提交所有选择的购物车商品到网络数据库
      */
-    private fun commitAllGoodsOfShoppingCart(district: Int) {
-        val selectedList = mutableListOf<GoodsOfShoppingCart>()
-        viewModel!!.goodsList.forEach { goods ->
-            if (goods.isChecked) {
-                goods.district = district
-                selectedList.add(goods)
-            }
-        }
-        Observable.fromIterable(selectedList)
+    private fun commitAllGoodsOfShoppingCart(
+        selectedList: MutableList<GoodsOfShoppingCart>,
+        orderItemList: MutableList<NewOrderItem>
+    ) {
+        Observable.fromIterable(orderItemList)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe({ goods ->
-                viewModel!!.commitGoodsOfShoppingCart(goods)
+            .subscribe({ order ->
+                viewModel!!.commitGoodsOfShoppingCart(order)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)

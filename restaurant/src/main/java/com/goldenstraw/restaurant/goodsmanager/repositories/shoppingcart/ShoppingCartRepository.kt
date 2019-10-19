@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ILocalShoppingCartDataSource
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.IRemoteShoppingCartDataSource
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
@@ -19,12 +20,16 @@ class ShoppingCartRepository(
         return local.getAllGoods()
     }
 
-    fun addGoodsOfShoppingCartToRemote(goods: GoodsOfShoppingCart): Completable {
-
-        return remote.insertGoodsOfShoppingCart(goods)
-    }
-
     fun deleteGoodsOfShoppingCartFromLocal(goods: GoodsOfShoppingCart): Completable {
         return local.deleteGoodsOfShoppingCart(goods)
+    }
+
+    /*
+     将本地购物车中商品提交成订单
+     */
+
+    fun addGoodsOfShoppingCartToRemote(orderItem: NewOrderItem): Completable {
+
+        return remote.insertGoodsOfShoppingCart(orderItem)
     }
 }

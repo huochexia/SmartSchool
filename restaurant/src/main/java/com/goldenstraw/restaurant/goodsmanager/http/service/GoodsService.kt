@@ -28,7 +28,6 @@ interface GoodsApi {
     fun createGoodsCategory(@Body goodsCategory: NewCategory): Single<CreateObject>
 
 
-
     /**
     UPDATE
      */
