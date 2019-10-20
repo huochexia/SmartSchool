@@ -29,8 +29,8 @@ import io.reactivex.Observable
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM user")
-    fun getAllUsers(): Observable<List<User>>
+    @Query("SELECT * FROM User")
+    fun getAllUsers(): Observable<MutableList<User>>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

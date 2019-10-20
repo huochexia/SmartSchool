@@ -27,4 +27,10 @@ interface VerifyAndPlaceOrderApi {
      */
     @POST("/1/batch/")
     fun batchAddOrderToSupplier(@Body orders: BatchOrdersRequest<ObjectSupplier>): Completable
+
+    /**
+     * 从用户表中获取供应商信息
+     */
+    @GET("/1/users")
+    fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
 }

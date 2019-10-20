@@ -2,12 +2,15 @@ package com.goldenstraw.restaurant.goodsmanager.ui.place_order
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentPlaceOrderBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderCategoryCardBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
+import com.goldenstraw.restaurant.goodsmanager.adapter.SupplierSpinnerAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
@@ -43,14 +46,8 @@ class VerifyAndPlaceOrderFragment(
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapterItem: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
 
-    private val _informationState = ObservableField<Int>()
-
     var informationState = ObservableField<Int>()
-        get() = _informationState
 
-    fun setInformationState(state: Int) {
-        _informationState.set(state)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -75,9 +72,9 @@ class VerifyAndPlaceOrderFragment(
             }
         )
         if (orderList.isEmpty()) {
-            setInformationState(MultiStateView.VIEW_STATE_EMPTY)
+            informationState.set(MultiStateView.VIEW_STATE_EMPTY)
         } else {
-            setInformationState(MultiStateView.VIEW_STATE_CONTENT)
+            informationState.set(MultiStateView.VIEW_STATE_CONTENT)
         }
     }
 
@@ -85,10 +82,8 @@ class VerifyAndPlaceOrderFragment(
      * 创建供应商单选对话框
      */
     fun popUpSelectSupplierDialog() {
-        val supplierName = arrayListOf<String>()
-        viewModel!!.suppliers.forEach {
-            supplierName.add(it.username.toString())
-        }
+        val supplier = ""
+
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.mipmap.add_icon)
             .setTitle("请选择供应商")
@@ -96,7 +91,7 @@ class VerifyAndPlaceOrderFragment(
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                sendOrderToSupplier()
+                sendOrderToSupplier(supplier)
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -107,29 +102,30 @@ class VerifyAndPlaceOrderFragment(
      * 将订单发送给对应的供应商，刷新列表
      */
 
-    private fun sendOrderToSupplier() {
+    private fun sendOrderToSupplier(supplier: String) {
         //1、创建一个已选择的列表
         val selectedList = mutableListOf<OrderItem>()
         orderList.forEach {
             if (it.isSelected) {
-                it.supplier = "张三"
+                it.supplier = supplier
                 selectedList.add(it)
             }
         }
-        viewModel!!.transOrdersToBatchRequestObject(selectedList).subscribeOn(Schedulers.io())
+        viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier)
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe({
+            .subscribe({ it ->
                 viewModel!!.sendToOrderToSupplier(it).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({
 
-                    }, {
-
+                    }, { error ->
+                        Toast.makeText(context, "批量修改" + error.message, Toast.LENGTH_SHORT).show()
                     })
-            }, {
-
+            }, { mess ->
+                Toast.makeText(context, mess.message, Toast.LENGTH_SHORT).show()
             }, {
                 orderList.removeAll(selectedList)
                 adapterItem!!.forceUpdate()

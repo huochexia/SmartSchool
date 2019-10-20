@@ -7,6 +7,7 @@ import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class VerifyAndPlaceOrderViewModel(
@@ -16,7 +17,9 @@ class VerifyAndPlaceOrderViewModel(
     val suppliers = mutableListOf<User>() //供应商列表
 
     init {
-        getAllSupplier().subscribeOn(Schedulers.io())
+        getAllSupplier()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
             .subscribe({
                 suppliers.clear()
@@ -43,11 +46,12 @@ class VerifyAndPlaceOrderViewModel(
      * 然后以40个为一组，组成一个列表，最后将这个列表赋值给BatchOrdersRequest
      */
     fun transOrdersToBatchRequestObject(
-        list: MutableList<OrderItem>
+        list: MutableList<OrderItem>,
+        supplier: String
     ): Observable<BatchOrdersRequest<ObjectSupplier>> {
         return Observable.fromIterable(list)
             .map {
-                val updateSupplier = ObjectSupplier("张三")
+                val updateSupplier = ObjectSupplier(supplier)
                 val batchItem = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",

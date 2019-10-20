@@ -16,7 +16,7 @@ class LocalPlaceOrderDataSourceImpl(
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
 
-        return database.userDao().getUserOfRole("供应商")
+        return database.userDao().getAllUsers()
     }
 
 }

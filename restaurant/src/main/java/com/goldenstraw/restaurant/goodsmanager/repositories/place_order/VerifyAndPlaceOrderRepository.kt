@@ -29,7 +29,7 @@ class VerifyAndPlaceOrderRepository(
      * 获取所有供应商
      */
     fun getAllSupplier(): Observable<MutableList<User>> {
-        return local.getAllSupplier()
+        return remote.getAllSupplier()
     }
 
     /**
