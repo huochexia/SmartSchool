@@ -95,6 +95,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
         val unitPrice = view.findViewById<EditText>(R.id.et_unit_price)
+        unitPrice.visibility = View.VISIBLE
         val dialog = AlertDialog.Builder(this)
             .setIcon(R.mipmap.add_icon)
             .setTitle("增加商品----" + category.categoryName)
@@ -106,19 +107,27 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 val name = goodsName.text.toString().trim()
                 val unit = unitOfMeasure.text.toString().trim()
                 val price = unitPrice.text.toString().trim().toFloat()
-
-                if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
-                    toast { "请填写必须内容！！" }
-                } else {
-                    val goods = NewGoods(
-                        goodsName = name,
-                        unitOfMeasurement = unit,
-                        categoryCode = category.objectId,
-                        unitPrice = price
-                    )
-                    viewModelGoodsTo.addGoodsToRepository(goods)
-                    dialog.dismiss()
+                if (name.isNullOrEmpty()) {
+                    toast { "请填写商品名称！！" }
+                    return@setPositiveButton
                 }
+                if (unit.isNullOrEmpty()) {
+                    toast { "请填写计量单位！！" }
+                    return@setPositiveButton
+                }
+                if (price == 0.0f) {
+                    toast { "请填写商品单价！！" }
+                    return@setPositiveButton
+                }
+                val goods = NewGoods(
+                    goodsName = name,
+                    unitOfMeasurement = unit,
+                    categoryCode = category.objectId,
+                    unitPrice = price
+                )
+                viewModelGoodsTo.addGoodsToRepository(goods)
+                dialog.dismiss()
+
             }.create()
         dialog.show()
     }

@@ -234,7 +234,7 @@ class GoodsToOrderMgViewModel(
             if (it.isChecked) {
                 var goods = GoodsOfShoppingCart(
                     code = it.objectId,
-                    quantity = it.quantity,
+                    quantity = it.quantity.toFloat(),
                     categoryCode = it.categoryCode,
                     goodsName = it.goodsName,
                     unitPrice = it.unitPrice,
@@ -249,7 +249,6 @@ class GoodsToOrderMgViewModel(
             .subscribe({
                 //添加成功后获取购物车中的商品数量
                 getCountOfShoppingCart()
-
             }, {
 
             })
@@ -290,6 +289,16 @@ class GoodsToOrderMgViewModel(
                             .autoDisposable(this)
                             .subscribe({}, {})
 
+                    }
+                repository.getAllSupplierFromRemote()
+                    .subscribeOn(Schedulers.io())
+                    .autoDisposable(this)
+                    .subscribe {
+                        repository.addSupplierTolocal(it)
+                            .autoDisposable(this)
+                            .subscribe({
+
+                            }, {})
                     }
             }, {})
 

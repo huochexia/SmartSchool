@@ -16,12 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="请输入计量单位" />
+
     <EditText
             android:id="@+id/et_unit_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:hint="请输入商品单价"
             android:inputType="numberDecimal"
             android:text="0.0"
-            android:hint="请输入商品单价" />
+            android:visibility="gone" />
 
 </LinearLayout>

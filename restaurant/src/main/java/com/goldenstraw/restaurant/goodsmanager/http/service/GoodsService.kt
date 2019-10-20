@@ -7,6 +7,7 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -67,4 +68,9 @@ interface GoodsApi {
     @GET("/1/classes/Goods/")
     fun getAllGoods(): Observable<ObjectList<Goods>>
 
+    /**
+     * 从用户表中获取供应商信息
+     */
+    @GET("/1/users")
+    fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
 }

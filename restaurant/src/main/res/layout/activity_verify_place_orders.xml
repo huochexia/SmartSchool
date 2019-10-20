@@ -21,16 +21,30 @@
                 android:background="?attr/colorPrimary"
                 app:title="审核、发送订单" />
 
-        <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-
-        <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/mViewpager"
+        <com.kennyc.view.MultiStateView
+                style="@style/MultiStateStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal" />
+                app:msv_viewState="@{activity.state}">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tab_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+                <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/mViewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal" />
+            </LinearLayout>
+        </com.kennyc.view.MultiStateView>
+
     </LinearLayout>
 </layout>

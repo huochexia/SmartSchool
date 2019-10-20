@@ -18,11 +18,11 @@ data class GoodsOfShoppingCart(
     @ColumnInfo
     var unitOfMeasurement: String,
     @ColumnInfo
-    var unitPrice: Float = 0.0f,
+    var unitPrice: Float,
     @ColumnInfo
     var categoryCode: String,
     @ColumnInfo
-    var quantity: Int,
+    var quantity: Float,
     @ColumnInfo
     var note: String = "",
     @ColumnInfo
@@ -38,7 +38,7 @@ data class Goods(
     @ColumnInfo
     var unitOfMeasurement: String,
     @ColumnInfo
-    var unitPrice: Float = 0.0f,
+    var unitPrice: Float,
     @ColumnInfo
     var categoryCode: String,
     @ColumnInfo

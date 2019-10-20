@@ -7,6 +7,7 @@ import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -34,7 +35,8 @@ class GoodsRepository(
                     objectId = it.objectId!!,
                     goodsName = goods.goodsName,
                     unitOfMeasurement = goods.unitOfMeasurement,
-                    categoryCode = goods.categoryCode
+                    categoryCode = goods.categoryCode,
+                    unitPrice = goods.unitPrice
                 )
                 newGoods
             }
@@ -66,6 +68,10 @@ class GoodsRepository(
         return local.insertNewGoodsToLocal(goods)
     }
 
+    fun insertSupplierToLocal(userList: MutableList<User>): Completable {
+        return local.insertSupplierToLocal(userList)
+    }
+
     /*
       将所有商品类别加入本地
      */
@@ -84,7 +90,9 @@ class GoodsRepository(
     fun addGoodsToShoppingCart(goodsList: MutableList<GoodsOfShoppingCart>): Completable {
         return local.addShoppingCartAll(goodsList)
     }
-
+    fun addSupplierTolocal(userList: MutableList<User>):Completable{
+        return local.insertSupplierToLocal(userList)
+    }
     /*
      *获取购物车内商品数量
      */
@@ -135,6 +143,10 @@ class GoodsRepository(
         return remote.getAllGoods()
     }
 
+    fun getAllSupplierFromRemote(): Observable<MutableList<User>> {
+        return remote.getAllSupplier()
+    }
+
     /*
       按类别查询商品,此处只从本地数据源中获取。
      */
@@ -178,6 +190,6 @@ class GoodsRepository(
      * 清空本地内容，主要是为了同步做准备。
      */
     fun clearAllData(): Completable {
-        return local.clearGoodsAll().andThen(local.clearCategoryAll())
+        return local.clearGoodsAll().andThen(local.clearCategoryAll()).andThen(local.clearUserAll())
     }
 }

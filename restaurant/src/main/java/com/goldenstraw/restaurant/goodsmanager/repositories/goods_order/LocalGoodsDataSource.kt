@@ -5,6 +5,7 @@ import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -30,6 +31,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun insertNewGoodsToLocal(goods: Goods): Completable
 
     fun insertCategoryToLocal(category: GoodsCategory): Completable
+
+    fun insertSupplierToLocal(supplier: MutableList<User>): Completable
     /**
      * 获取
      */
@@ -50,6 +53,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun deleteCategoryFromLocal(category: GoodsCategory): Completable
     fun clearGoodsAll(): Completable
     fun clearCategoryAll(): Completable
+    fun clearUserAll(): Completable
 }
 
 class LocalGoodsDataSourceImpl(
@@ -86,6 +90,10 @@ class LocalGoodsDataSourceImpl(
 
     override fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable {
         return database.goodsDao().insertShoppingCart(shoppingCart)
+    }
+
+    override fun insertSupplierToLocal(supplier: MutableList<User>): Completable {
+        return database.userDao().insertUsers(supplier)
     }
 
     /**
@@ -133,6 +141,10 @@ class LocalGoodsDataSourceImpl(
 
     override fun clearGoodsAll(): Completable {
         return database.goodsDao().clearGoods()
+    }
+
+    override fun clearUserAll(): Completable {
+        return database.userDao().clearUser()
     }
 
 }

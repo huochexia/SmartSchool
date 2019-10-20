@@ -42,9 +42,15 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE objectId = :userId")
     fun getUser(userId: String): Observable<User>
 
+    //获取某个角色的用户
+    @Query("SELECT * FROM user WHERE role = :rolename")
+    fun getUserOfRole(rolename: String): Observable<MutableList<User>>
     //因为是可观察的查询，所以发生其他更改，如插入，删除时会发射通知，所以避免由于用户更新时发射通知
 //    fun getDistinctUser(userId: String): Flowable<User> = getUser(userId).distinctUntilChanged()
 
     @Query("SELECT * From user WHERE username LIKE '%' || :name || '%'")
     fun search(name: String): Observable<List<User>>
+
+    @Query("DELETE FROM User")
+    fun clearUser(): Completable
 }

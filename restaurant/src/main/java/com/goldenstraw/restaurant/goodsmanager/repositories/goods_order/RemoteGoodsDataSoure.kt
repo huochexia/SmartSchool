@@ -7,6 +7,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -35,6 +36,8 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
 
     fun getAllGoods(): Observable<MutableList<Goods>>
+
+    fun getAllSupplier():Observable<MutableList<User>>
     /**
      * 删除
      */
@@ -64,6 +67,9 @@ class RemoteGoodsDataSourceImpl(
         return service.getAllGoods()
     }
 
+    override fun getAllSupplier(): Observable<MutableList<User>> {
+        return service.getAllSupplier()
+    }
     /**
      * 删除
      */

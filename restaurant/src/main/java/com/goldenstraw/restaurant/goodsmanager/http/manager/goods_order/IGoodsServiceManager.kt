@@ -3,9 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -44,6 +42,9 @@ interface IGoodsServiceManager {
 
     //3、获取所有商品信息
     fun getAllGoods(): Observable<MutableList<Goods>>
+
+    //4、获取所有供应商
+    fun getAllSupplier(): Observable<MutableList<User>>
 
     /**
      * 删除

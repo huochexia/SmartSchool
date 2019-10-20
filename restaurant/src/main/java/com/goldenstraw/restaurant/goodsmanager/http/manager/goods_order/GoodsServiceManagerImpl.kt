@@ -7,6 +7,8 @@ import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.Roles
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -56,6 +58,16 @@ class GoodsServiceManagerImpl(
 
     override fun getAllGoods(): Observable<MutableList<Goods>> {
         return serverApi.getAllGoods().map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
+    }
+
+    override fun getAllSupplier(): Observable<MutableList<User>> {
+        val where = """{"role":"供应商"}"""
+        return serverApi.getAllSupplier(where).map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)
             }

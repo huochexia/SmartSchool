@@ -153,7 +153,7 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
                 if (quantity.isNullOrEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
-                    goods.quantity = quantity.toInt()
+                    goods.quantity = quantity.toFloat()
                     goods.note = note
                     viewModel!!.updateGoodsOfShoppingCart(goods)
                         .subscribeOn(Schedulers.io())
@@ -190,24 +190,12 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
             }
             .setPositiveButton("确定") { dialog, which ->
                 val selectedList = mutableListOf<GoodsOfShoppingCart>()
-                val orderItemList = mutableListOf<NewOrderItem>()
                 viewModel!!.goodsList.forEach { goods ->
                     if (goods.isChecked) {
-                        val order = NewOrderItem(
-                            district = district,
-                            goodsName = goods.goodsName,
-                            categoryCode = goods.categoryCode,
-                            unitOfMeasurement = goods.unitOfMeasurement,
-                            unitPrice = goods.unitPrice,
-                            note = goods.note,
-                            orderDate = TimeConverter.getCurrentDateString(),
-                            quantity = goods.quantity
-                        )
-                        orderItemList.add(order)
                         selectedList.add(goods)
                     }
                 }
-                commitAllGoodsOfShoppingCart(selectedList, orderItemList)
+                commitAllGoodsOfShoppingCart(selectedList, district)
                 cb_all.isChecked = false
                 dialog.dismiss()
             }.create()
@@ -219,27 +207,28 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
      */
     private fun commitAllGoodsOfShoppingCart(
         selectedList: MutableList<GoodsOfShoppingCart>,
-        orderItemList: MutableList<NewOrderItem>
+        district: Int
     ) {
-        Observable.fromIterable(orderItemList)
+        viewModel!!.transGoodsOfShoppingCartToNewOrderItem(selectedList, district)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe({ order ->
-                viewModel!!.commitGoodsOfShoppingCart(order)
-                    .subscribeOn(Schedulers.newThread())
+            .subscribe({
+                viewModel!!.createNewOrderItem(it)
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({
+
                     }, {
-                        toast { it.message.toString() }
+                        toast { "批量处理购物车商品：" + it.message.toString() }
                     })
+
             }, {
-                toast { it.message.toString() }
+                toast { "提交购物车商品：" + it.message.toString() }
             }, {
+                //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
                 deleteGoodsOfShoppingCartList(selectedList)
-                viewModel!!.goodsList.removeAll(selectedList)
-                adapter!!.forceUpdate()
             })
     }
 
@@ -266,10 +255,12 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
             .subscribe({
                 viewModel!!.goodsList.removeAll(list)
                 if (viewModel!!.goodsList.isEmpty()) {
-                    viewModel!!.state.set(MultiStateView.VIEW_STATE_ERROR)
+                    viewModel!!.state.set(MultiStateView.VIEW_STATE_EMPTY)
                 }
                 adapter!!.forceUpdate()
-            }, {})
+            }, {
+                toast { "删除购物车内商品：" + it.message.toString() }
+            })
 
     }
 

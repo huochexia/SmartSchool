@@ -16,6 +16,7 @@
 package com.owner.basemodule.room.entities
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -26,11 +27,19 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class User(
-    @PrimaryKey val objectId: String = "",
+    @PrimaryKey val objectId: String,
     @ColumnInfo val username: String? = "",
     @ColumnInfo val mobilePhoneNumber: String? = "",
     @ColumnInfo val avatar: String? = "",
-    @ColumnInfo val letters: String = ""
+    @ColumnInfo val letters: String = "",
+    @ColumnInfo val role: String = ""
+
 )
 
 data class AllUserResp(val results: MutableList<User>)
+
+@Entity
+data class Roles(
+    @PrimaryKey val objectId: String,
+    @ColumnInfo val role: String
+)
