@@ -6,7 +6,7 @@
 
         <variable
                 name="activity"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VeriflerAndPlaceOrderActivity" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
     </data>
 
     <LinearLayout
@@ -24,22 +24,11 @@
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content" />
 
-            <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_item_xinshinanlu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="新石南路校区" />
-
-            <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_item_xishan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="西山校区" />
-        </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/mViewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal" />

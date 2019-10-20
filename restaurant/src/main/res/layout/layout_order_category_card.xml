@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderFragment" />
 
     </data>
 
@@ -17,26 +20,38 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-            <CheckBox
-                    android:id="@+id/cb_all_category"
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:id="@+id/ll_check"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/common_margin_small"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <CheckBox
+                        android:id="@+id/cb_all_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/common_margin_small"
+
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
+
+
             <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ll_check">
 
                 <com.yanzhenjie.recyclerview.SwipeRecyclerView
                         android:id="@+id/rlw_order_item"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        app:bind_recyclerView_adapter="@{fragment.adapterItem}"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/cb_all_category"
+                        app:layout_constraintTop_toBottomOf="@id/ll_check"
                         tools:listitem="@layout/layout_shopping_cart_item" />
             </androidx.core.widget.NestedScrollView>
 

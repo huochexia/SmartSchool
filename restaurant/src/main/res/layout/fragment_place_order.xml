@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifleAndPlaceOrderFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderFragment" />
     </data>
 
     <LinearLayout
@@ -18,11 +19,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/rlw_place_order"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    />
+                    app:bind_recyclerView_adapter="@{fragment.adapterItem}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/layout_order_item" />
         </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
