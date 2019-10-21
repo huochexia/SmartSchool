@@ -21,8 +21,8 @@ class VerifyAndPlaceOrderRepository(
     /**
      *获取某个日期商品订单
      */
-    fun getAllOrderOfDate(date: String,state:String): Observable<MutableList<OrderItem>> {
-        return remote.getAllOrderOfDate(date,state)
+    fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
+        return remote.getAllOrderOfDate(date)
     }
 
     /**

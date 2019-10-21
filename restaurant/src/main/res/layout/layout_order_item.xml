@@ -7,6 +7,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
                 name="orderitem"
                 type="com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem" />
@@ -15,105 +17,126 @@
                 name="checkEvent"
                 type="com.owner.basemodule.functional.Consumer" />
 
-        <variable
-                name="longClickEvent"
-                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#00F5F2F2"
-            app:cardCornerRadius="1dp">
+            android:orientation="horizontal">
 
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+        <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:layout_weight="8">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    >
+                    android:orientation="vertical">
 
-                <CheckBox
-                        android:id="@+id/cb_goods"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:onClick="@{()->checkEvent.accept(orderitem)}"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <CheckBox
+                            android:id="@+id/cb_goods"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:onClick="@{()->checkEvent.accept(orderitem)}"
+                            android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/tv_goods_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{orderitem.goodsName}"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/cb_goods"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="商品名称" />
+
+                    <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="56dp"
+                            android:text="@string/goods_of_quantity"
+                            android:textSize="18sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/tv_goods_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:text="@{String.valueOf(orderitem.quantity)}"
+                            android:textSize="18sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="100" />
+
+                    <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="56dp"
+                            android:text="@string/goods_unit_of_measure"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                            android:id="@+id/tv_orderitem_quantity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:text="@{String.valueOf(orderitem.unitOfMeasurement)}"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            tools:text="斤" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
-                        android:id="@+id/tv_goods_name"
+                        android:id="@+id/tv_note"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@{orderitem.goodsName}"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/cb_goods"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="商品名称" />
+                        android:layout_marginStart="16dp"
+                        android:text="@{orderitem.note}"
+                        android:textColor="@color/secondaryDarkColor" />
 
-                <TextView
-                        android:id="@+id/textView4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="56dp"
-                        android:text="@string/goods_of_quantity"
-                        android:textSize="18sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
-                <TextView
-                        android:id="@+id/tv_goods_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="@{String.valueOf(orderitem.quantity)}"
-                        android:textSize="18sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="100" />
 
-                <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="56dp"
-                        android:text="@string/goods_unit_of_measure"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.cardview.widget.CardView>
 
-                <TextView
-                        android:id="@+id/tv_orderitem_quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="@{String.valueOf(orderitem.unitOfMeasurement)}"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:text="斤" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_weight="2">
 
             <TextView
-                    android:id="@+id/tv_note"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@{orderitem.note}"
-                    android:textColor="@color/secondaryDarkColor" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    app:bind_state_text="@{orderitem.state}" />
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
+    </LinearLayout>
 
-
-    </androidx.cardview.widget.CardView>
 </layout>
 
 

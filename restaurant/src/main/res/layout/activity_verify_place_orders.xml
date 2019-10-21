@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,42 +10,68 @@
                 type="com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:title="审核、发送订单" />
-
-        <com.kennyc.view.MultiStateView
-                style="@style/MultiStateStyle"
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:msv_viewState="@{activity.state}">
+                android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:title="审核、发送订单" />
+
+            <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize">
+
+                <TextView
+                        android:id="@+id/tv_show_district"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/secondaryDarkColor"
+                        android:textSize="22sp"
+                        tools:text="新石南路校区" />
+            </androidx.cardview.widget.CardView>
+
+            <com.kennyc.view.MultiStateView
+                    style="@style/MultiStateStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    app:msv_viewState="@{activity.state}">
 
-                <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_layout"
+                <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/secondaryLightColor"/>
+                        android:layout_height="match_parent">
 
-                <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/mViewpager"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal" />
-            </LinearLayout>
-        </com.kennyc.view.MultiStateView>
+                    <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                            android:id="@+id/rlw_orders_of_district"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:bind_recyclerView_adapter="@{activity.adapter}"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                </androidx.core.widget.NestedScrollView>
 
-    </LinearLayout>
+            </com.kennyc.view.MultiStateView>
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_send_to_supplier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:onClick="@{()->activity.popUpSelectSupplierDialog()}"
+                android:src="@drawable/ic_order_upload_black_24dp"
+               />
+    </RelativeLayout>
+
 </layout>

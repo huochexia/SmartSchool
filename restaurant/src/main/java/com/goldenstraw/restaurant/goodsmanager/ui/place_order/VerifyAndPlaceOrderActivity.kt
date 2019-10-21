@@ -1,21 +1,25 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.place_order
 
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.ObservableField
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
+import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
-import com.google.android.material.tabs.TabLayoutMediator
 import com.kennyc.view.MultiStateView
+import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
@@ -28,6 +32,7 @@ import org.kodein.di.generic.instance
 
 
 class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding>() {
+
     override val layoutId: Int
         get() = R.layout.activity_verify_place_orders
     override val kodein: Kodein = Kodein.lazy {
@@ -37,25 +42,68 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
     val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    private val orderList = mutableListOf<OrderItem>() //区域0的订单
+
+    var showList = mutableListOf<OrderItem>() //用于显示的列表
+    private val ordersOfXingShiNan = mutableListOf<OrderItem>() //新石南路的订单
+    private val ordersOfXiShan = mutableListOf<OrderItem>()  //西山校区
+    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
 
     val state = ObservableField<Int>()
-    lateinit var fragment1: VerifyAndPlaceOrderFragment
-    lateinit var fragment2: VerifyAndPlaceOrderFragment
+
     override fun initView() {
         super.initView()
         setSupportActionBar(toolbar)//没有这个显示不了菜单
         viewModel = getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        getAllOrderOfDate(TimeConverter.getCurrentDateString())
+        adapter = BaseDataBindingAdapter(
+            layoutId = R.layout.layout_order_item,
+            dataSource = { showList },
+            dataBinding = { LayoutOrderItemBinding.bind(it) },
+            callback = { order, binding, position ->
+                binding.orderitem = order
+                binding.checkEvent = object : Consumer<OrderItem> {
+                    override fun accept(t: OrderItem) {
+                        t.isSelected = !t.isSelected
+                        order.isSelected = t.isSelected
+                    }
+                }
+                binding.cbGoods.isChecked = order.isSelected
 
-        viewModel!!.isPopUpSupplierDialog.observe(this, Observer {
-            if (it)
-                popUpSelectSupplierDialog()
-        })
+            }
+        )
+        getAllOrderOfDate(TimeConverter.getCurrentDateString())
+        tv_show_district.text = "选择校区"
+        fab_send_to_supplier.hide()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_select_district, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.select_xinshinan_district -> {
+                tv_show_district.text = "新石南路校区"
+                showList.clear()
+                showList.addAll(ordersOfXingShiNan)
+                if (showList.isNotEmpty())
+                    fab_send_to_supplier.show()
+                adapter!!.forceUpdate()
+            }
+            R.id.select_xishan_district -> {
+
+                tv_show_district.text = "西山校区"
+                showList.clear()
+                showList.addAll(ordersOfXiShan)
+                if (showList.isNotEmpty())
+                    fab_send_to_supplier.show()
+                adapter!!.forceUpdate()
+            }
+        }
+        return true
+    }
 
     /**
      * 获取订单信息
@@ -67,9 +115,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
-                orderList.clear()
-                orderList.addAll(it)
-                createFragmentList(orderList)
+                groupByDistrictOrders(it)
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
             }, {
                 toast { it.message.toString() }
@@ -82,49 +128,23 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
     }
 
     /**
-     * 创建不同订单对应的Fragment
+     * 将所有订单进行分组
      */
-    private fun createFragmentList(orderList: List<OrderItem>) {
-        val list0 = mutableListOf<OrderItem>()
-        val list1 = mutableListOf<OrderItem>()
+    private fun groupByDistrictOrders(orderList: MutableList<OrderItem>) {
+        ordersOfXiShan.clear()
+        ordersOfXingShiNan.clear()
         orderList.forEach {
             when (it.district) {
-                0 -> {
-                    list0.add(it)
-                }
-                1 -> {
-                    list1.add(it)
-                }
+                0 -> ordersOfXingShiNan.add(it)
+                1 -> ordersOfXiShan.add(it)
             }
         }
-        val fragments = mutableListOf<VerifyAndPlaceOrderFragment>()
-        fragment1 = VerifyAndPlaceOrderFragment(list0)
-        fragment2 = VerifyAndPlaceOrderFragment(list1)
-        fragments.add(fragment1)
-        fragments.add(fragment2)
-        mViewpager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount(): Int = fragments.size
-            override fun createFragment(position: Int): Fragment {
-                return fragments[position]
-            }
-        }
-        TabLayoutMediator(tab_layout, mViewpager) { tab, position ->
-            when (position) {
-                0 -> {
-                    tab.text = "新石南路校区"
-                }
-
-                1 -> {
-                    tab.text = "西山校区"
-                }
-            }
-        }.attach()
     }
 
     /**
      * 创建供应商单选对话框
      */
-    private fun popUpSelectSupplierDialog() {
+    fun popUpSelectSupplierDialog() {
         val supplierList = mutableListOf<String>()
         viewModel!!.suppliers.forEach {
             supplierList.add(it.username.toString())
@@ -144,11 +164,50 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                viewModel!!.selectedSupplier = supplier
-                viewModel!!.isRefresh.value = true
+                sendOrderToSupplier(supplier)
+                if (showList.isEmpty()) {
+                    fab_send_to_supplier.hide()
+                }
                 dialog.dismiss()
             }.create()
         dialog.show()
+
+    }
+
+    /**
+     * 将订单发送给对应的供应商，刷新列表
+     */
+
+    private fun sendOrderToSupplier(supplier: String) {
+        //1、创建一个已选择的列表
+        val selectedList = mutableListOf<OrderItem>()
+        showList.forEach {
+            if (it.isSelected) {
+                it.supplier = supplier
+                selectedList.add(it)
+            }
+        }
+        viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({ it ->
+                viewModel!!.sendToOrderToSupplier(it).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(scopeProvider)
+                    .subscribe({
+
+                    }, { error ->
+                        toast { "批量修改" + error.message }
+                    })
+            }, { mess ->
+                toast { mess.message.toString() }
+            }, {
+                showList.removeAll(selectedList)
+                ordersOfXingShiNan.removeAll(selectedList)
+                ordersOfXiShan.removeAll(selectedList)
+                adapter!!.forceUpdate()
+            })
 
     }
 }

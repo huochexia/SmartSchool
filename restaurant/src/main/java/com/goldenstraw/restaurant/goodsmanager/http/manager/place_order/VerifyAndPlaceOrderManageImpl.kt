@@ -24,10 +24,10 @@ class VerifyAndPlaceOrderManageImpl(
      * {"$and":[{"wins":{"$gt":150}},{"wins":{"$lt":5}}]}
      */
     override fun getAllOrderOfDate(
-        date: String,
-        state: String
+        date: String
+
     ): Observable<MutableList<OrderItem>> {
-        val condition = """{"$and":[{"orderDate":"$date"},{"state":{"$state"}]}"""
+        val condition = """{"orderDate":"$date"}"""
         return service.getAllOrderOfDate(condition).map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)

@@ -38,7 +38,7 @@ class VerifyAndPlaceOrderViewModel(
      * 获取拟购单
      */
     fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
-        return repository.getAllOrderOfDate(date,"0")
+        return repository.getAllOrderOfDate(date)
     }
 
     /**
@@ -58,7 +58,7 @@ class VerifyAndPlaceOrderViewModel(
     ): Observable<BatchOrdersRequest<ObjectSupplier>> {
         return Observable.fromIterable(list)
             .map {
-                val updateSupplier = ObjectSupplier(supplier, state = "1")
+                val updateSupplier = ObjectSupplier(supplier, state = 1)
                 val batchItem = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",
