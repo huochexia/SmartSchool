@@ -1,16 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.place_order
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
+import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentPlaceOrderBinding
-import com.goldenstraw.restaurant.databinding.LayoutOrderCategoryCardBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
-import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
-import com.goldenstraw.restaurant.goodsmanager.adapter.SupplierSpinnerAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
@@ -20,9 +16,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
@@ -37,6 +31,7 @@ class VerifyAndPlaceOrderFragment(
 ) : BaseFragment<FragmentPlaceOrderBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_place_order
+
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
         import(verifyandplaceorderdatasource)
@@ -45,7 +40,6 @@ class VerifyAndPlaceOrderFragment(
     val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapterItem: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
-
     var informationState = ObservableField<Int>()
 
 
@@ -76,26 +70,15 @@ class VerifyAndPlaceOrderFragment(
         } else {
             informationState.set(MultiStateView.VIEW_STATE_CONTENT)
         }
+
+        viewModel!!.isRefresh.observe(this, Observer {
+            if (it)
+                sendOrderToSupplier(viewModel!!.selectedSupplier)
+        })
     }
 
-    /**
-     * 创建供应商单选对话框
-     */
     fun popUpSelectSupplierDialog() {
-        val supplier = ""
-
-        val dialog = AlertDialog.Builder(context)
-            .setIcon(R.mipmap.add_icon)
-            .setTitle("请选择供应商")
-            .setNegativeButton("取消") { dialog, which ->
-                dialog.dismiss()
-            }
-            .setPositiveButton("确定") { dialog, which ->
-                sendOrderToSupplier(supplier)
-                dialog.dismiss()
-            }.create()
-        dialog.show()
-
+        viewModel!!.isPopUpSupplierDialog.value = true
     }
 
     /**

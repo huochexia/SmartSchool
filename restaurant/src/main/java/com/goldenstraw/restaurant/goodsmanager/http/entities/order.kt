@@ -32,7 +32,7 @@ data class OrderItem(
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var note: String,//备注
     var supplier: String? = null, //供货商
-    var state: String, //0：新订单，1：验货单，2：结帐单
+    var state: String, //0：拟购单，1：订货单，2：验货单，3：对帐单
     var isSelected: Boolean = false
 )
 
@@ -47,7 +47,8 @@ data class ObjectState(
 批量修改供应商
  */
 data class ObjectSupplier(
-    var supplier: String
+    var supplier: String,
+    var state: String
 )
 
 /**

@@ -11,9 +11,9 @@ import io.reactivex.Observable
 interface IVerifyAndPlaceOrderManager {
 
     /**
-     * 获取某个日期的订单
+     * 获取某个日期的拟购单
      */
-    fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>>
+    fun getAllOrderOfDate(date: String,state:String): Observable<MutableList<OrderItem>>
 
     /**
      * 批量发送订单给供应商

@@ -18,7 +18,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     /*
     获取某个日期的商品订单
      */
-    fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>>
+    fun getAllOrderOfDate(date: String,state:String): Observable<MutableList<OrderItem>>
 
     /*
     将订单发送给供应商
@@ -36,8 +36,8 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.sendOrdersToSupplier(orders)
     }
 
-    override fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
-        return manager.getAllOrderOfDate(date)
+    override fun getAllOrderOfDate(date: String,state:String): Observable<MutableList<OrderItem>> {
+        return manager.getAllOrderOfDate(date,state)
     }
     override fun getAllSupplier(): Observable<MutableList<User>> {
         return manager.getAllSupplier()

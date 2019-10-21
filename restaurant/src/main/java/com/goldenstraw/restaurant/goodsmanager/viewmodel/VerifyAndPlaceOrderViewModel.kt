@@ -1,6 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import androidx.lifecycle.MutableLiveData
+import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
+import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.User
@@ -15,6 +19,9 @@ class VerifyAndPlaceOrderViewModel(
 ) : BaseViewModel() {
 
     val suppliers = mutableListOf<User>() //供应商列表
+    val isPopUpSupplierDialog = MutableLiveData<Boolean>()//观察是否弹出选择供应列表对话框
+    val isRefresh = MutableLiveData<Boolean>() //Fragment用于观察是否刷新列表
+    var selectedSupplier = ""
 
     init {
         getAllSupplier()
@@ -28,10 +35,10 @@ class VerifyAndPlaceOrderViewModel(
     }
 
     /**
-     * 获取订单
+     * 获取拟购单
      */
     fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
-        return repository.getAllOrderOfDate(date)
+        return repository.getAllOrderOfDate(date,"0")
     }
 
     /**
@@ -51,7 +58,7 @@ class VerifyAndPlaceOrderViewModel(
     ): Observable<BatchOrdersRequest<ObjectSupplier>> {
         return Observable.fromIterable(list)
             .map {
-                val updateSupplier = ObjectSupplier(supplier)
+                val updateSupplier = ObjectSupplier(supplier, state = "1")
                 val batchItem = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",
@@ -72,4 +79,5 @@ class VerifyAndPlaceOrderViewModel(
     fun sendToOrderToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable {
         return repository.sendOrdersToSupplier(orders)
     }
+
 }
