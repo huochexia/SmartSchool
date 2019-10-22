@@ -2,15 +2,13 @@ package com.goldenstraw.restaurant.goodsmanager.ui.place_order
 
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
+import com.goldenstraw.restaurant.goodsmanager.adapter.SupplierSpinnerAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
@@ -145,21 +143,17 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      * 创建供应商单选对话框
      */
     fun popUpSelectSupplierDialog() {
+        val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
         val supplierList = mutableListOf<String>()
         viewModel!!.suppliers.forEach {
             supplierList.add(it.username.toString())
         }
-        val adapter = ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_list_item_1, supplierList
-        )
+
         var supplier = ""
         val dialog = AlertDialog.Builder(this)
             .setIcon(R.mipmap.add_icon)
             .setTitle("请选择供应商")
-            .setSingleChoiceItems(adapter, 0) { dialog, which ->
-                supplier = supplierList[which]
-            }
+            .setView(view)
             .setNegativeButton("取消") { dialog, which ->
                 dialog.dismiss()
             }

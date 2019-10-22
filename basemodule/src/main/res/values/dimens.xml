@@ -10,4 +10,5 @@
     <dimen name="common_margin_small">5dp</dimen>
     <dimen name="common_margin_middle">10dp</dimen>
     <dimen name="text_large_size">18sp</dimen>
+    <dimen name="common_border_size">1px</dimen>
 </resources>
