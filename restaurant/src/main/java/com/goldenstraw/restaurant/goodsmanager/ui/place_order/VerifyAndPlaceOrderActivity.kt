@@ -112,7 +112,10 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {
                 0 -> {
-                    updateDialog(showList[adapterPosition])
+                    if (showList[adapterPosition].state == 0)
+                        updateDialog(showList[adapterPosition])
+                    else
+                        toast{"该订单已生成不能修改！"}
                 }
             }
         }
