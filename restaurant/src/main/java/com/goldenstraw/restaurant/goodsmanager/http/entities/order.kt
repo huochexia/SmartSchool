@@ -44,6 +44,13 @@ data class ObjectState(
 )
 
 /*
+   修改订单数量
+ */
+data class ObjectQuantity(
+    var quantity: Float
+)
+
+/*
 批量修改供应商
  */
 data class ObjectSupplier(

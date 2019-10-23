@@ -2,6 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.ui.place_order
 
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
@@ -21,6 +25,9 @@ import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
+import com.yanzhenjie.recyclerview.OnItemMenuClickListener
+import com.yanzhenjie.recyclerview.SwipeMenuCreator
+import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_verify_place_orders.*
@@ -45,7 +52,6 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
     private val ordersOfXingShiNan = mutableListOf<OrderItem>() //新石南路的订单
     private val ordersOfXiShan = mutableListOf<OrderItem>()  //西山校区
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
-
     val state = ObservableField<Int>()
 
     override fun initView() {
@@ -73,6 +79,72 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
         getAllOrderOfDate(TimeConverter.getCurrentDateString())
         tv_show_district.text = "选择校区"
         fab_send_to_supplier.hide()
+        initSwipeMenu()
+
+
+    }
+
+    /**
+     * 初始化Item侧滑菜单,只有修改
+     */
+    private fun initSwipeMenu() {
+        /*
+        1、生成子菜单，这里将子菜单设置在右侧
+         */
+        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
+
+            val updateItem = SwipeMenuItem(this)
+                .setBackground(R.color.secondaryColor)
+                .setText("修改")
+                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+                .setWidth(200)
+            rightMenu.addMenuItem(updateItem)
+        }
+        /*
+         2、关联RecyclerView，设置侧滑菜单
+         */
+        rlw_orders_of_district.setSwipeMenuCreator(mSwipeMenuCreator)
+        /*
+        3、定义子菜单点击事件
+         */
+        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
+            menuBridge.closeMenu()
+            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
+            when (menuBridge.position) {
+                0 -> {
+                    updateDialog(showList[adapterPosition])
+                }
+            }
+        }
+        /*
+        4、给RecyclerView添加监听器
+         */
+        rlw_orders_of_district.setOnItemMenuClickListener(mItemMenuClickListener)
+    }
+
+    private fun updateDialog(order: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
+        val quantity = view.findViewById<EditText>(R.id.dialog_edit)
+        quantity.setText(order.quantity.toString())
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setIcon(R.drawable.ic_update_name)
+            .setTitle("修改购买数量")
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                var newQuantity = quantity.text.toString()
+                if (newQuantity.isNullOrEmpty()) {
+                    newQuantity = "0.0f"
+                }
+                order.quantity = newQuantity.toFloat()
+                viewModel!!.updateOrderItemQuantity(order)
+                adapter!!.forceUpdate()
+                dialog.dismiss()
+
+            }.create()
+        dialog.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -143,13 +215,24 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      * 创建供应商单选对话框
      */
     fun popUpSelectSupplierDialog() {
-        val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
-        val supplierList = mutableListOf<String>()
-        viewModel!!.suppliers.forEach {
-            supplierList.add(it.username.toString())
-        }
-
         var supplier = ""
+        val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
+        val spinner = view.findViewById<AppCompatSpinner>(R.id.spinner_select_supplier)
+        spinner.adapter = SupplierSpinnerAdapter(this, viewModel!!.suppliers)
+        spinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                supplier = viewModel!!.suppliers[position].username.toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        })
         val dialog = AlertDialog.Builder(this)
             .setIcon(R.mipmap.add_icon)
             .setTitle("请选择供应商")
@@ -159,9 +242,6 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             }
             .setPositiveButton("确定") { dialog, which ->
                 sendOrderToSupplier(supplier)
-                if (showList.isEmpty()) {
-                    fab_send_to_supplier.hide()
-                }
                 dialog.dismiss()
             }.create()
         dialog.show()

@@ -1,7 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.room.entities.User
@@ -20,6 +20,15 @@ interface IVerifyAndPlaceOrderManager {
      */
     fun sendOrdersToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable
 
-    //4、获取所有供应商
+    /**
+     *  获取所有供应商
+     */
+
     fun getAllSupplier(): Observable<MutableList<User>>
+
+    /**
+     * 修改订单数量
+     */
+    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
+
 }

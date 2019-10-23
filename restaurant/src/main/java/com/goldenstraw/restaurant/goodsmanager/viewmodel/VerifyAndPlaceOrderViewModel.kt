@@ -1,10 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import androidx.lifecycle.MutableLiveData
-import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
-import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.User
@@ -19,9 +15,7 @@ class VerifyAndPlaceOrderViewModel(
 ) : BaseViewModel() {
 
     val suppliers = mutableListOf<User>() //供应商列表
-    val isPopUpSupplierDialog = MutableLiveData<Boolean>()//观察是否弹出选择供应列表对话框
-    val isRefresh = MutableLiveData<Boolean>() //Fragment用于观察是否刷新列表
-    var selectedSupplier = ""
+
 
     init {
         getAllSupplier()
@@ -31,7 +25,9 @@ class VerifyAndPlaceOrderViewModel(
             .subscribe({
                 suppliers.clear()
                 suppliers.addAll(it)
-            }, {}, {})
+            }, {}, {
+
+            })
     }
 
     /**
@@ -80,4 +76,14 @@ class VerifyAndPlaceOrderViewModel(
         return repository.sendOrdersToSupplier(orders)
     }
 
+    /**
+     * 修改订单数量
+     */
+    fun updateOrderItemQuantity(order: OrderItem) {
+        val newQuantity = ObjectQuantity(order.quantity)
+        repository.updateOrderItemQuantity(newQuantity, order.objectId)
+            .subscribeOn(Schedulers.io())
+            .autoDisposable(this)
+            .subscribe({}, {})
+    }
 }

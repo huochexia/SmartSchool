@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.service.VerifyAndPlaceOrderApi
@@ -46,5 +47,11 @@ class VerifyAndPlaceOrderManageImpl(
         }
     }
 
+    override fun updateOrderItemQuantity(
+        newQuantity: ObjectQuantity,
+        objectId: String
+    ): Completable {
+        return service.updateOrderItem(newQuantity, objectId)
+    }
 
 }

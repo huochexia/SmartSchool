@@ -66,7 +66,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
      * 显示增加类别的对话框
      */
     private fun showAddCategoryDialog() {
-        val view = layoutInflater.inflate(R.layout.add_dialog_view, null)
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
         val editText = view.findViewById<EditText>(R.id.dialog_edit)
         val dialog = AlertDialog.Builder(this)
             .setIcon(R.mipmap.add_icon)
@@ -91,7 +91,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
      * 显示增加商品的对话框
      */
     private fun showAddGoodsDialog(category: GoodsCategory) {
-        val view = layoutInflater.inflate(R.layout.add_goods_dialog_view, null)
+        val view = layoutInflater.inflate(R.layout.add_or_edit_more_dialog_view, null)
         val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
         val unitPrice = view.findViewById<EditText>(R.id.et_unit_price)

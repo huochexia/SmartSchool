@@ -24,7 +24,6 @@ import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_goods_list.*
 import kotlinx.android.synthetic.main.fragment_search_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -148,7 +147,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
      */
     @SuppressLint("AutoDispose")
     private fun updateDialog(goods: Goods) {
-        val view = layoutInflater.inflate(R.layout.add_goods_dialog_view, null)
+        val view = layoutInflater.inflate(R.layout.add_or_edit_more_dialog_view, null)
         val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
         goodsName.setText(goods.goodsName)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)

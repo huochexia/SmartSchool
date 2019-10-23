@@ -178,7 +178,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
      */
     @SuppressLint("AutoDispose")
     private fun updateDialog(category: GoodsCategory) {
-        val view = layoutInflater.inflate(R.layout.add_dialog_view, null)
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
         val name = view.findViewById<EditText>(R.id.dialog_edit)
         name.setText(category.categoryName)
         val dialog = AlertDialog.Builder(context)

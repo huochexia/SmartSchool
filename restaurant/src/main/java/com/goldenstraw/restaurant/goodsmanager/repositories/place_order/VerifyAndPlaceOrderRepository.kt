@@ -4,11 +4,10 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
  * 对应审核和发送订单功能
  */
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -37,5 +36,12 @@ class VerifyAndPlaceOrderRepository(
      */
     fun sendOrdersToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable {
         return remote.sendOrdersToSupplier(orders)
+    }
+
+    /**
+     * 修改订单数量
+     */
+    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable {
+        return remote.updateOrderItemQuantity(newQuantity, objectId)
     }
 }

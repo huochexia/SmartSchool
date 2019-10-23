@@ -164,7 +164,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
      */
     @SuppressLint("AutoDispose")
     private fun updateDialog(goods: Goods) {
-        val view = layoutInflater.inflate(R.layout.add_goods_dialog_view, null)
+        val view = layoutInflater.inflate(R.layout.add_or_edit_more_dialog_view, null)
         val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
         goodsName.setText(goods.goodsName)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)

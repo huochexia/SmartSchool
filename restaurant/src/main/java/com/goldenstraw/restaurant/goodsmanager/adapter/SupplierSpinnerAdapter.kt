@@ -12,7 +12,7 @@ import com.owner.basemodule.room.entities.User
 
 class SupplierSpinnerAdapter(
     private val mContext: Context,
-    private val list: MutableList<String>
+    private val list: MutableList<User>
 ) :
     BaseAdapter() {
     override fun getCount(): Int {
@@ -27,12 +27,12 @@ class SupplierSpinnerAdapter(
         return position.toLong()
     }
 
-    override fun getView(position: Int, view: View, viewGroup: ViewGroup): View {
+    override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
         val ll = LinearLayout(mContext)
         ll.orientation = LinearLayout.HORIZONTAL
         ll.gravity = Gravity.CENTER_HORIZONTAL
         val tv = TextView(mContext)
-        tv.text = list[position]
+        tv.text = list[position].username
         tv.textSize = 18f
         tv.setTextColor(Color.BLACK)
         ll.addView(tv)

@@ -1,7 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.manager.place_order.IVerifyAndPlaceOrderManager
@@ -26,6 +26,8 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     fun sendOrdersToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable
 
     fun getAllSupplier(): Observable<MutableList<User>>
+
+    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
 }
 
 class RemotePlaceOrderDataSourceImpl(
@@ -42,5 +44,12 @@ class RemotePlaceOrderDataSourceImpl(
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
         return manager.getAllSupplier()
+    }
+
+    override fun updateOrderItemQuantity(
+        newQuantity: ObjectQuantity,
+        objectId: String
+    ): Completable {
+        return manager.updateOrderItemQuantity(newQuantity, objectId)
     }
 }
