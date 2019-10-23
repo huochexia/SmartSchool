@@ -18,7 +18,7 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.MyApp">
 
-        <activity android:name=".goodsmanager.ui.SingleDateActivity">
+        <activity android:name=".goodsmanager.ui.query_orders.QueryOrdersActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,6 @@
         <activity android:name=".goodsmanager.ui.goods_order.OrderManagerActivity" />
         <activity android:name=".goodsmanager.ui.RangeDateActivity" />
         <activity android:name=".goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
-
         <!--        <provider-->
         <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
         <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->

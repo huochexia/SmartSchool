@@ -1,30 +1,45 @@
-package com.goldenstraw.restaurant.goodsmanager.ui
+package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
-import kotlinx.android.synthetic.main.activity_single_date_select.*
+import kotlinx.android.synthetic.main.fragment_single_date_select.*
 import java.util.*
 
-class SingleDateActivity : AppCompatActivity(), CalendarView.OnCalendarSelectListener
-    {
+/**
+ * Created by Administrator on 2019/10/23 0023
+ */
+class SingleSelectCalenderFragment
+    : Fragment(), CalendarView.OnCalendarSelectListener {
+
 
     protected val layoutId: Int
-        get() = R.layout.activity_single_date_select
+        get() = R.layout.fragment_single_date_select
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(layoutId)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        return LayoutInflater.from(context).inflate(layoutId, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
-        initData()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     @SuppressLint("SetTextI18n")
-    protected fun initView() {
+    fun initView() {
+
         //点击小日历返回当前日期
         fl_current.setOnClickListener { calendarView.scrollToCurrent() }
 
@@ -33,7 +48,9 @@ class SingleDateActivity : AppCompatActivity(), CalendarView.OnCalendarSelectLis
         tv_year.text = calendarView.curYear.toString()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
-        tv_lunar.text="今日"
+        tv_lunar.text = "今日"
+        //
+        initData()
     }
 
     protected fun initData() {
@@ -53,7 +70,7 @@ class SingleDateActivity : AppCompatActivity(), CalendarView.OnCalendarSelectLis
 
     }
 
-    private fun getCalendar(year: Int,month: Int,day: Int):Calendar{
+    private fun getCalendar(year: Int, month: Int, day: Int): Calendar {
         val calendar = Calendar()
         calendar.year = year
         calendar.month = month
@@ -61,25 +78,30 @@ class SingleDateActivity : AppCompatActivity(), CalendarView.OnCalendarSelectLis
         return calendar
     }
 
-    private fun getSchemeCalendar(year: Int, month: Int, day: Int, color: Int, text: String): Calendar {
-        val calendar = getCalendar(year,month,day)
+    private fun getSchemeCalendar(
+        year: Int,
+        month: Int,
+        day: Int,
+        color: Int,
+        text: String
+    ): Calendar {
+        val calendar = getCalendar(year, month, day)
         calendar.schemeColor = color//如果单独标记颜色、则会使用这个颜色
         calendar.scheme = text
         return calendar
     }
 
-
-    override fun onCalendarOutOfRange(calendar: Calendar) {
-
-    }
-
     @SuppressLint("SetTextI18n")
-    override fun onCalendarSelect(calendar: Calendar, isClick: Boolean) {
+    override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
-        tv_month_day.text = calendar.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar.year.toString()
+        tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
+        tv_year.text = calendar!!.year.toString()
         tv_lunar.text = calendar.lunar
+        findNavController().navigate(R.id.selectSupplierFragment)
     }
 
+    override fun onCalendarOutOfRange(calendar: Calendar?) {
+        TODO("not implemented")
+    }
 }
