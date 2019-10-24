@@ -1,16 +1,21 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSingleDateSelectBinding
+import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
+import com.owner.basemodule.base.viewmodel.getViewModel
 import kotlinx.android.synthetic.main.fragment_single_date_select.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 /**
  * Created by Administrator on 2019/10/23 0023
@@ -24,25 +29,29 @@ class SingleSelectCalenderFragment
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+    val repository: QueryOrdersRepository by instance()
+    var viewModel: QueryOrdersViewModel? = null
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = activity!!.getViewModel {
+            QueryOrdersViewModel(repository)
+        }
+    }
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
-
         //点击小日历返回当前日期
         fl_current.setOnClickListener { calendarView.scrollToCurrent() }
-
-//        calendarView.setOnCalendarSelectListener(this)
-
+        calendarView.setOnCalendarSelectListener(this)
         tv_year.text = calendarView.curYear.toString()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
         tv_lunar.text = "今日"
-
         initData()
     }
 
-    protected fun initData() {
+    private fun initData() {
         val year = calendarView.curYear
         val month = calendarView.curMonth
         val map = HashMap<String, Calendar>()
@@ -87,7 +96,12 @@ class SingleSelectCalenderFragment
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
         tv_year.text = calendar!!.year.toString()
         tv_lunar.text = calendar.lunar
-        findNavController().navigate(R.id.selectSupplierFragment, null)
+        //因为每次初始化视图时都会执行这个方法，所以只有是点击事件时才进行跳转。如果不加上这个判断，
+        //当回退到这个视图时就会调用跳转方法，这样形成一个死循环。
+        if (isClick) {
+            findNavController().navigate(R.id.selectSupplierFragment)
+        }
+
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {

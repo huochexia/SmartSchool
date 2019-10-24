@@ -3,7 +3,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <data></data>
+    <data>
+
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SingleSelectCalenderFragment" />
+    </data>
 
     <LinearLayout
             android:layout_width="match_parent"

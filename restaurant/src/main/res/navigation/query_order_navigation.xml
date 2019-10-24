@@ -19,5 +19,17 @@
             android:id="@+id/selectSupplierFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SelectSupplierFragment"
             android:label="SelectSupplierFragment"
-            tools:layout="@layout/fragment_select_supplier"/>
+            tools:layout="@layout/fragment_select_supplier">
+        <argument
+                android:name="orderDate"
+                app:argType="String" />
+        <action
+                android:id="@+id/action_selectSupplierFragment_to_ordersOfDateFragment"
+                app:destination="@id/ordersOfDateFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/ordersOfDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.OrdersOfDateFragment"
+            android:label="OrdersOfDateFragment"
+            tools:layout="@layout/fragment_orders_of_date_list"/>
 </navigation>

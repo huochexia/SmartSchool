@@ -6,7 +6,6 @@ if (isRestaurant.toBoolean()) {
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-//apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 android {
     compileSdkVersion build_version.compileSdkVersion
