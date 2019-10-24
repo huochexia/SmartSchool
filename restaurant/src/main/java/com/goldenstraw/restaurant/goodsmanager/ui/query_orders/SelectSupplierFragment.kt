@@ -1,21 +1,27 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentSelectSupplierBinding
-import com.owner.basemodule.base.view.fragment.BaseFragment
-import org.kodein.di.Copy
-import org.kodein.di.Kodein
 
 /**
  * Created by Administrator on 2019/10/23 0023
  */
-class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
+class SelectSupplierFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return LayoutInflater.from(context)
+            .inflate(R.layout.fragment_select_supplier, container, false)
+    }
 
-    override val layoutId: Int
-        get() = R.layout.fragment_select_supplier
-
-    override val kodein: Kodein = Kodein.lazy {
-        extend(parentKodein, copy = Copy.All)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
 }

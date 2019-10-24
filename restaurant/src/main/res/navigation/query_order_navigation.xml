@@ -5,14 +5,12 @@
         android:id="@+id/order_navigation"
         app:startDestination="@id/singleSelectCalenderFragment">
 
-    <activity
-            android:id="@+id/queryOrdersActivity"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.QueryOrdersActivity"
-            android:label="QueryOrdersActivity" />
+
     <fragment
             android:id="@+id/singleSelectCalenderFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SingleSelectCalenderFragment"
-            android:label="SingleSelectCalenderFragment" >
+            android:label="SingleSelectCalenderFragment"
+            tools:layout="@layout/fragment_single_date_select">
         <action
                 android:id="@+id/action_singleSelectCalenderFragment_to_selectSupplierFragment"
                 app:destination="@id/selectSupplierFragment" />
@@ -20,9 +18,6 @@
     <fragment
             android:id="@+id/selectSupplierFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SelectSupplierFragment"
-            android:label="SelectSupplierFragment" >
-        <action
-                android:id="@+id/action_selectSupplierFragment_to_queryOrdersActivity"
-                app:destination="@id/queryOrdersActivity" />
-    </fragment>
+            android:label="SelectSupplierFragment"
+            tools:layout="@layout/fragment_select_supplier"/>
 </navigation>

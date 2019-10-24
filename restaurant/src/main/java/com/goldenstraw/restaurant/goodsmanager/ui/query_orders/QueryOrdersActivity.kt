@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityQueryOrderBinding
+import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.owner.basemodule.base.view.activity.BaseActivity
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -14,6 +15,7 @@ class QueryOrdersActivity : BaseActivity<ActivityQueryOrderBinding>() {
         get() = R.layout.activity_query_order
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
+        import(verifyandplaceorderdatasource)
     }
 
 }

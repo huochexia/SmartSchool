@@ -1,55 +1,44 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
+import com.goldenstraw.restaurant.databinding.FragmentSingleDateSelectBinding
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
+import com.owner.basemodule.base.view.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_single_date_select.*
-import java.util.*
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
 
 /**
  * Created by Administrator on 2019/10/23 0023
  */
 class SingleSelectCalenderFragment
-    : Fragment(), CalendarView.OnCalendarSelectListener {
+    : BaseFragment<FragmentSingleDateSelectBinding>(), CalendarView.OnCalendarSelectListener {
 
-
-    protected val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.fragment_single_date_select
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        return LayoutInflater.from(context).inflate(layoutId, container, false)
+    override val kodein: Kodein = Kodein.lazy {
+        extend(parentKodein, copy = Copy.All)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initView()
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     @SuppressLint("SetTextI18n")
-    fun initView() {
+    override fun initView() {
 
         //点击小日历返回当前日期
         fl_current.setOnClickListener { calendarView.scrollToCurrent() }
 
-        calendarView.setOnCalendarSelectListener(this)
+//        calendarView.setOnCalendarSelectListener(this)
 
         tv_year.text = calendarView.curYear.toString()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
         tv_lunar.text = "今日"
-        //
+
         initData()
     }
 
@@ -98,7 +87,7 @@ class SingleSelectCalenderFragment
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
         tv_year.text = calendar!!.year.toString()
         tv_lunar.text = calendar.lunar
-        findNavController().navigate(R.id.selectSupplierFragment)
+        findNavController().navigate(R.id.selectSupplierFragment, null)
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {
