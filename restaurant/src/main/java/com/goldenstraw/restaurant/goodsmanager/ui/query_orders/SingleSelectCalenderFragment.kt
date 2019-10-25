@@ -99,7 +99,10 @@ class SingleSelectCalenderFragment
         //因为每次初始化视图时都会执行这个方法，所以只有是点击事件时才进行跳转。如果不加上这个判断，
         //当回退到这个视图时就会调用跳转方法，这样形成一个死循环。
         if (isClick) {
-            findNavController().navigate(R.id.selectSupplierFragment)
+            val bundle = Bundle()
+            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            bundle.putString("date", date)
+            findNavController().navigate(R.id.selectSupplierFragment, bundle)
         }
 
     }

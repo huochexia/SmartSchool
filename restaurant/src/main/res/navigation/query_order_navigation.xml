@@ -31,5 +31,5 @@
             android:id="@+id/ordersOfDateFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.OrdersOfDateFragment"
             android:label="OrdersOfDateFragment"
-            tools:layout="@layout/fragment_orders_of_date_list"/>
+            tools:layout="@layout/fragment_orders_of_date_list" />
 </navigation>

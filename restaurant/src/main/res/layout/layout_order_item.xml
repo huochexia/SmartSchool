@@ -45,7 +45,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginBottom="8dp"
-                            android:onClick="@{()->checkEvent.accept(orderitem)}"
                             android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

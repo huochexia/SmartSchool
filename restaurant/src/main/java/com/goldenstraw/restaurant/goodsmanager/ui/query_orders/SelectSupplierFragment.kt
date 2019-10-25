@@ -1,10 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSelectSupplierBinding
@@ -30,7 +26,7 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
         get() = R.layout.fragment_select_supplier
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
-
+        import(queryordersactivitymodule)
     }
     val repository: QueryOrdersRepository by instance()
 
@@ -40,6 +36,8 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
 
     override fun initView() {
         super.initView()
+        val date = arguments?.getString("date")
+
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
@@ -51,7 +49,10 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
                 binding.supplier = user
                 binding.clickEvent = object : Consumer<User> {
                     override fun accept(t: User) {
-                        findNavController().navigate(R.id.ordersOfDateFragment)
+                        val bundle = Bundle()
+                        bundle.putString("date", date)
+                        bundle.putString("supplier", user.username)
+                        findNavController().navigate(R.id.ordersOfDateFragment, bundle)
                     }
 
                 }

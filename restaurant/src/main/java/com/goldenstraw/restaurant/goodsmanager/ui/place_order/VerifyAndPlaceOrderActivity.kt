@@ -115,7 +115,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                     if (showList[adapterPosition].state == 0)
                         updateDialog(showList[adapterPosition])
                     else
-                        toast{"该订单已生成不能修改！"}
+                        toast { "该订单已生成不能修改！" }
                 }
             }
         }
