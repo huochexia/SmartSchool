@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/supplier_apply_navigation"
+        app:startDestination="@id/singleSelectCalender">
+
+    <fragment
+            android:id="@+id/singleSelectCalender"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SingleSelectCalenderFragment"
+            android:label="SingleSelectCalender"
+            tools:layout="@layout/fragment_single_date_select">
+        <action
+                android:id="@+id/action_singleSelectCalender_to_supplierOrderOfDate"
+                app:destination="@id/supplierOrderOfDate" />
+    </fragment>
+    <fragment
+            android:id="@+id/supplierOrderOfDate"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierOrderOfDateFragment"
+            android:label="SupplierOrderOfDate"
+            tools:layout="@layout/fragment_orders_of_date_list" />
+</navigation>

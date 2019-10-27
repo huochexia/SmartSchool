@@ -23,4 +23,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="查看" />
+
+    <Button
+            android:id="@+id/supplier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="供货商" />
 </LinearLayout>

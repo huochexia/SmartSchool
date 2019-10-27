@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui
+package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 
 import android.annotation.SuppressLint
@@ -11,13 +11,13 @@ import com.goldenstraw.restaurant.R
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 
-import kotlinx.android.synthetic.main.activity_range_date_select.*
+import kotlinx.android.synthetic.main.fragment_range_date_select.*
 
-class RangeDateActivity : AppCompatActivity(),
+class SupplierAccountActivity : AppCompatActivity(),
     CalendarView.OnCalendarRangeSelectListener, View.OnClickListener {
 
     private val layoutId: Int
-        get() = R.layout.activity_range_date_select
+        get() = R.layout.fragment_range_date_select
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

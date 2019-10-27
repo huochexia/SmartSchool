@@ -27,9 +27,10 @@
         </activity>
         <activity android:name=".goodsmanager.ui.ShoppingCartManagerActivity" />
         <activity android:name=".goodsmanager.ui.goods_order.OrderManagerActivity" />
-        <activity android:name=".goodsmanager.ui.RangeDateActivity" />
+        <activity android:name=".goodsmanager.ui.supplier.SupplierAccountActivity" />
         <activity android:name=".goodsmanager.ui.query_orders.QueryOrdersActivity" />
         <activity android:name=".goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
+        <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity"/>
         <!--        <provider-->
         <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
         <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->
