@@ -14,8 +14,10 @@ import io.reactivex.schedulers.Schedulers
 class QueryOrdersViewModel(
     private val repository: QueryOrdersRepository
 ) : BaseViewModel() {
-
+    //所有供应商列表
     val suppliers = mutableListOf<User>() //供应商列表
+    //用于查询某个供应商订单
+    var supplier: String = ""
 
     init {
         getAllSupplier()
@@ -41,8 +43,7 @@ class QueryOrdersViewModel(
      * 按日期获取供应商订单
      */
 
-    fun getOrdersOfSupplier(supplier: String, date: String): Observable<MutableList<OrderItem>> {
-        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
+    fun getOrdersOfSupplier(where: String): Observable<MutableList<OrderItem>> {
         return repository.getOrdersOfSupplier(where)
     }
 

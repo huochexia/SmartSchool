@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/singleSelectCalender"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SingleSelectCalenderFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierQueryOrderFragment"
             android:label="SingleSelectCalender"
             tools:layout="@layout/fragment_single_date_select">
         <action
