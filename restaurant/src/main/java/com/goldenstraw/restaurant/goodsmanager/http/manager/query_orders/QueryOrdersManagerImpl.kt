@@ -34,10 +34,9 @@ class QueryOrdersManagerImpl(
      *    val where1 = "{\"orderDate\":{\"\$lt\":\"$date\"}}"
      */
     override fun getOrderOfSupplier(
-        supplier: String,
-        date: String
+        where:String
     ): Observable<MutableList<OrderItem>> {
-        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
+
         return service.getOrdersOfSupplier(where).map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)

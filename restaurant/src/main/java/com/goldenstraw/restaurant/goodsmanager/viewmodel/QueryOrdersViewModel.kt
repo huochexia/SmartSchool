@@ -42,7 +42,8 @@ class QueryOrdersViewModel(
      */
 
     fun getOrdersOfSupplier(supplier: String, date: String): Observable<MutableList<OrderItem>> {
-        return repository.getOrdersOfSupplier(supplier, date)
+        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
+        return repository.getOrdersOfSupplier(where)
     }
 
     /**

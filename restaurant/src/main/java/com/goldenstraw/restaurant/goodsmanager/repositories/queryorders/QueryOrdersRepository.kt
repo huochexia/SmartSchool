@@ -21,8 +21,8 @@ class QueryOrdersRepository(
     /**
      *按日期获取供应商订单
      */
-    fun getOrdersOfSupplier(supplier: String, date: String): Observable<MutableList<OrderItem>> {
-        return remote.getOrdersOfSupplier(supplier, date)
+    fun getOrdersOfSupplier(where:String): Observable<MutableList<OrderItem>> {
+        return remote.getOrdersOfSupplier(where)
     }
 
     /**
