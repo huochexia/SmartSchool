@@ -12,7 +12,7 @@ data class NewOrderItem(
     var categoryCode: String,
     var quantity: Float,
     var note: String = "",
-    var state: String = "0"
+    var state: Int
 )
 
 

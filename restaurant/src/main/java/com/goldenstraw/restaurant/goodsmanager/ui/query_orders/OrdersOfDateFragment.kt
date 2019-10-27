@@ -106,7 +106,8 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {
                 0 -> {
-                    if (orderList[adapterPosition].state == 0)
+                    //当state=1时，属于送货阶段，可以进行供应商调整。
+                    if (orderList[adapterPosition].state == 1)
                         deleteDialog(orderList[adapterPosition])
                     else
                         Toast.makeText(context, "该商品不是新订单，不能删除！！", Toast.LENGTH_SHORT).show()
@@ -132,6 +133,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
+                //将商品信息中的供应商清空，同时state设定为0，则该商品为订货最初状态
                 val newOrder = ObjectSupplier("", 0)
                 viewModel!!.updateOrderOfSupplier(newOrder, order.objectId)
                     .subscribeOn(Schedulers.io())

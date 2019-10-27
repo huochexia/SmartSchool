@@ -89,7 +89,7 @@ class ShoppingCartMgViewModel(
                     note = it.note,
                     categoryCode = it.categoryCode,
                     orderDate = TimeConverter.getCurrentDateString(),
-                    state = "0"
+                    state = 0
                 )
                 val batchItem = BatchOrderItem<NewOrderItem>(
                     method = "POST",
