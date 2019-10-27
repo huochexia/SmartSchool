@@ -27,24 +27,23 @@ class QueryOrdersManagerImpl(
 
     /**
      * 复合查询，供应商和日期
-     * 'where={"$or":[{"wins":{"$gt":150}},{"wins":{"$lt":5}}]}'
-     *  因为写不成标准的语句，采用先得到某日期的，然后过滤出对应供应商的。
+     * 'where={"$and":[{"supplier":XXXXX},{"date":XXXXX}]}'
+     *  条件查询：查询小于某日期订单
+     *  where1={"orderDate":{"$lt":XXXX}}
+     *  表达式：
+     *    val where1 = "{\"orderDate\":{\"\$lt\":\"$date\"}}"
      */
     override fun getOrderOfSupplier(
         supplier: String,
         date: String
     ): Observable<MutableList<OrderItem>> {
-        val where = """{"orderDate":"$date"}"""
+        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
         return service.getOrdersOfSupplier(where).map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)
             }
             it.results
-        }.flatMap {
-            Observable.fromIterable(it)
-        }.filter {
-            it.supplier == supplier
-        }.buffer(100)
+        }
 
     }
 

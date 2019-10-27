@@ -28,20 +28,14 @@ class VerifyAndPlaceOrderManageImpl(
         date: String
 
     ): Observable<MutableList<OrderItem>> {
-        val condition = """{"orderDate":"$date"}"""
+        val condition = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":0}]}"
         return service.getAllOrderOfDate(condition)
             .map {
                 if (!it.isSuccess()) {
                     throw ApiException(it.code)
                 }
                 it.results
-            }.flatMap {
-                Observable.fromIterable(it)
             }
-            .filter {
-                it.supplier.isNullOrEmpty()
-            }
-            .buffer(1000)
     }
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
