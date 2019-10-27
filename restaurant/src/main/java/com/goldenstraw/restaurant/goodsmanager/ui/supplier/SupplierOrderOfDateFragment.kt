@@ -22,7 +22,7 @@ import org.kodein.di.generic.instance
  */
 class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
     override val layoutId: Int
-        get() = R.layout.fragment_orders_of_date_list
+        get() = R.layout.fragment_supplier_of_order_list
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
