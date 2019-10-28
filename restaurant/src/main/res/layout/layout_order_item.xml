@@ -2,7 +2,6 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:jmf="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -45,8 +44,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginBottom="8dp"
-                            android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
                             android:onClick="@{()->checkEvent.accept(orderitem)}"
+                            android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -78,8 +77,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="24dp"
-                            android:text="@{String.valueOf(orderitem.quantity)}"
                             android:textSize="18sp"
+                            app:bind_quantity_text="@{orderitem}"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="100" />
@@ -101,6 +100,7 @@
                             android:layout_marginEnd="24dp"
                             android:text="@{String.valueOf(orderitem.unitOfMeasurement)}"
                             android:textSize="18sp"
+
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             tools:text="斤" />

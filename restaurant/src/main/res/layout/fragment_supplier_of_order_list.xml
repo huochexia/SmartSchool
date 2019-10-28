@@ -22,18 +22,26 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 app:title="订单列表" />
-
-        <androidx.core.widget.NestedScrollView
+        <com.kennyc.view.MultiStateView
+                style="@style/MultiStateStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:msv_viewState="@{fragment.ordersState}">
 
-            <com.yanzhenjie.recyclerview.SwipeRecyclerView
-                    android:id="@+id/rlw_order_of_supplier"
+            <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:bind_recyclerView_adapter="@{fragment.adapter}"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    tools:listitem="@layout/layout_order_item" />
-        </androidx.core.widget.NestedScrollView>
+                    android:layout_height="match_parent">
+
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                        android:id="@+id/rlw_order_of_supplier"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:bind_recyclerView_adapter="@{fragment.adapter}"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        tools:listitem="@layout/layout_order_item" />
+            </androidx.core.widget.NestedScrollView>
+        </com.kennyc.view.MultiStateView>
+
     </LinearLayout>
 </layout>

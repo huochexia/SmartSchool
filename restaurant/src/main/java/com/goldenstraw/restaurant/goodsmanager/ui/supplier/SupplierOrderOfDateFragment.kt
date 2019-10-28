@@ -1,12 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.os.Bundle
+import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentOrdersOfDateListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -34,6 +36,8 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
     lateinit var supplier: String
     lateinit var date: String
+    val ordersState = ObservableField<Int>()
+
     override fun initView() {
         super.initView()
         supplier = arguments?.getString("supplier")!!
@@ -63,10 +67,20 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
                 {
                     orderList.clear()
                     orderList.addAll(it)
-                    toolbar.title = date + "订单"
-                    summation(orderList)
-                    adapter!!.forceUpdate()
-                }, {}, {})
+                    if (orderList.size != 0) {
+                        ordersState.set(MultiStateView.VIEW_STATE_CONTENT)
+                        when (orderList[0].district) {
+                            0 -> toolbar.title = date + "订单----市区"
+                            1 -> toolbar.title = date + "订单----西山"
+                        }
+                        summation(orderList)
+                        adapter!!.forceUpdate()
+                    } else {
+                        ordersState.set(MultiStateView.VIEW_STATE_EMPTY)
+                    }
+                }, {
+                    ordersState.set(MultiStateView.VIEW_STATE_ERROR)
+                }, {}, { ordersState.set(MultiStateView.VIEW_STATE_LOADING) })
     }
 
     /**

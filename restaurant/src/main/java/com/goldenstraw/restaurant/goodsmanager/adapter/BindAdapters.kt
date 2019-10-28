@@ -1,11 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.adapter
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 
 @BindingAdapter("bind_state_text")
 fun setStateText(textView: TextView, state: Int) {
@@ -27,4 +25,12 @@ fun setStateText(textView: TextView, state: Int) {
             textView.setTextColor(Color.RED)
         }
     }
+}
+
+@BindingAdapter("bind_quantity_text")
+fun setQuantityText(textView: TextView, order: OrderItem) {
+    if (order.state == 1)
+        textView.text = order.quantity.toString()
+    else
+        textView.text = order.checkQuantity.toString()
 }
