@@ -101,7 +101,8 @@
         <com.haibin.calendarview.CalendarLayout
                 android:id="@+id/calendarLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:background="#fff"
                 android:orientation="vertical">
 
@@ -138,6 +139,16 @@
 
         </com.haibin.calendarview.CalendarLayout>
 
-
+        <Button
+                android:id="@+id/range_select_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="核算订单"
+                android:textColor="#333333"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
     </LinearLayout>
+
+
 </layout>

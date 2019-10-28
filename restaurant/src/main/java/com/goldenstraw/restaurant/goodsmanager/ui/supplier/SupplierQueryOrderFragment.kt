@@ -12,14 +12,19 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
-import kotlinx.android.synthetic.main.fragment_single_date_select.*
+import kotlinx.android.synthetic.main.fragment_single_date_select.calendarView
+import kotlinx.android.synthetic.main.fragment_single_date_select.fl_current
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_current_day
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_lunar
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_month_day
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_year
+import kotlinx.android.synthetic.main.fragment_supplier_date_select.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>()
     , CalendarView.OnCalendarSelectListener {
-
 
     override val layoutId: Int
         get() = R.layout.fragment_supplier_date_select
@@ -35,7 +40,11 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
+        range_select_date.setOnClickListener {
+            findNavController().navigate(R.id.supplierAccount)
+        }
     }
+
     @SuppressLint("SetTextI18n")
     override fun initView() {
         //点击小日历返回当前日期
@@ -85,6 +94,7 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         calendar.scheme = text
         return calendar
     }
+
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
@@ -106,4 +116,6 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
     override fun onCalendarOutOfRange(calendar: Calendar?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+
 }

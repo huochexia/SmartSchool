@@ -13,10 +13,22 @@
         <action
                 android:id="@+id/action_singleSelectCalender_to_supplierOrderOfDate"
                 app:destination="@id/supplierOrderOfDate" />
+        <action
+                android:id="@+id/action_singleSelectCalender_to_supplierAccountActivity"
+                app:destination="@id/supplierAccount" />
     </fragment>
     <fragment
             android:id="@+id/supplierOrderOfDate"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierOrderOfDateFragment"
             android:label="SupplierOrderOfDate"
             tools:layout="@layout/fragment_orders_of_date_list" />
+    <fragment
+            android:id="@+id/supplierAccount"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierAccountFragment"
+            android:label="SupplierAccount"
+            tools:layout="@layout/fragment_supplier_account_select" >
+        <action
+                android:id="@+id/action_supplierAccount_to_singleSelectCalender"
+                app:destination="@id/singleSelectCalender" />
+    </fragment>
 </navigation>
