@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.VerifyAndPlaceOrderApi
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.User
@@ -25,10 +22,10 @@ class VerifyAndPlaceOrderManageImpl(
      * {"$and":[{"wins":{"$gt":150}},{"wins":{"$lt":5}}]}
      */
     override fun getAllOrderOfDate(
-        date: String
-
+        date: String,
+        state: Int
     ): Observable<MutableList<OrderItem>> {
-        val condition = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":0}]}"
+        val condition = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$state}]}"
         return service.getAllOrderOfDate(condition)
             .map {
                 if (!it.isSuccess()) {
@@ -55,4 +52,7 @@ class VerifyAndPlaceOrderManageImpl(
         return service.updateOrderItem(newQuantity, objectId)
     }
 
+    override fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+        return service.batchCheckQuantityOfOrder(orders)
+    }
 }

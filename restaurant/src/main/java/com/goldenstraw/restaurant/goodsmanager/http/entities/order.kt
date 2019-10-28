@@ -51,6 +51,14 @@ data class ObjectQuantity(
 )
 
 /*
+验货,确定数量，验货日期，改变状态为2
+ */
+data class ObjectCheckGoods(
+    var checkQuantity: Float,
+    var state: Int
+)
+
+/*
 批量修改供应商
  */
 data class ObjectSupplier(

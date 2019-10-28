@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.place_order.IVerifyAndPlaceOrderManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.room.entities.User
@@ -18,7 +15,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     /*
     获取某个日期的商品订单
      */
-    fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>>
+    fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>>
 
     /*
     将订单发送给供应商
@@ -28,6 +25,8 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     fun getAllSupplier(): Observable<MutableList<User>>
 
     fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
+
+    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
 }
 
 class RemotePlaceOrderDataSourceImpl(
@@ -38,8 +37,8 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.sendOrdersToSupplier(orders)
     }
 
-    override fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
-        return manager.getAllOrderOfDate(date)
+    override fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>> {
+        return manager.getAllOrderOfDate(date,state)
     }
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
@@ -51,5 +50,9 @@ class RemotePlaceOrderDataSourceImpl(
         objectId: String
     ): Completable {
         return manager.updateOrderItemQuantity(newQuantity, objectId)
+    }
+
+    override fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+        return manager.batchCheckQuantityOfOrders(orders)
     }
 }

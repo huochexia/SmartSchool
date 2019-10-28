@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -38,4 +35,11 @@ interface VerifyAndPlaceOrderApi {
      */
     @PUT("/1/classes/OrderItem/{objectId}")
     fun updateOrderItem(@Body newOrder: ObjectQuantity, @Path("objectId") objectId: String): Completable
+
+    /**
+     * 批量修改供应商实际数量
+     */
+    @PUT("/1/batch/")
+    fun batchCheckQuantityOfOrder(@Body orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
+
 }

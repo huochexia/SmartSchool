@@ -33,8 +33,8 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 获取拟购单
      */
-    fun getAllOrderOfDate(date: String): Observable<MutableList<OrderItem>> {
-        return repository.getAllOrderOfDate(date)
+    fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>> {
+        return repository.getAllOrderOfDate(date,state)
     }
 
     /**
@@ -85,5 +85,12 @@ class VerifyAndPlaceOrderViewModel(
             .subscribeOn(Schedulers.io())
             .autoDisposable(this)
             .subscribe({}, {})
+    }
+
+    /**
+     * 验货
+     */
+    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+        return repository.checkQuantityOfOrders(orders)
     }
 }

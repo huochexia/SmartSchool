@@ -48,7 +48,7 @@ class QueryOrdersViewModel(
     }
 
     /**
-     *
+     *  发送到供应商
      */
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
         return repository.updateOrderOfSupplier(newOrder, objectId)

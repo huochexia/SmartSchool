@@ -76,7 +76,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
             }
         )
-        getAllOrderOfDate(TimeConverter.getCurrentDateString())
+        getAllOrderOfDate(TimeConverter.getCurrentDateString(), 0)
         tv_show_district.text = "选择校区"
         fab_send_to_supplier.hide()
         initSwipeMenu()
@@ -182,8 +182,8 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      * 获取订单信息
      * 将来可以按类别进行分组
      */
-    private fun getAllOrderOfDate(date: String) {
-        viewModel!!.getAllOrderOfDate(date)
+    private fun getAllOrderOfDate(date: String, stauts: Int) {
+        viewModel!!.getAllOrderOfDate(date, stauts)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

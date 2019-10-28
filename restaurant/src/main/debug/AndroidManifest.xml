@@ -30,7 +30,8 @@
         <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
         <activity android:name=".goodsmanager.ui.query_orders.QueryOrdersActivity" />
         <activity android:name=".goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
-        <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity"/>
+        <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
+        <activity android:name=".goodsmanager.ui.check_orders.CheckQuantityActivity" />
         <!--        <provider-->
         <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
         <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->

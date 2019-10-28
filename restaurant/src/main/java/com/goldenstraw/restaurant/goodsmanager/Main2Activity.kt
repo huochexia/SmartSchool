@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenstraw.restaurant.R
+import com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods_order.OrderManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query_orders.QueryOrdersActivity
@@ -29,6 +30,10 @@ class Main2Activity : AppCompatActivity() {
         }
         supplier.setOnClickListener {
             val intent2 = Intent(this, SupplierApplyActivity::class.java)
+            startActivity(intent2)
+        }
+        check.setOnClickListener {
+            val intent2 = Intent(this, CheckQuantityActivity::class.java)
             startActivity(intent2)
         }
     }

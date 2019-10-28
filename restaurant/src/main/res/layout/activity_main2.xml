@@ -29,4 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="供货商" />
+
+    <Button
+            android:id="@+id/check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="验货" />
 </LinearLayout>

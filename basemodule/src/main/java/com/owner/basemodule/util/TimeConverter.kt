@@ -45,4 +45,27 @@ object TimeConverter {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return formatter.format(date)
     }
+    /**
+     * 获取当前时间的前一天时间
+     * @param cl
+     * *
+     * @return
+     */
+    fun getBeforeDay(cl: Calendar): Calendar {
+        val day = cl.get(Calendar.DATE)
+        cl.set(Calendar.DATE, day - 1)
+        return cl
+    }
+
+    /**
+     * 获取当前时间的后一天时间
+     * @param cl
+     * *
+     * @return
+     */
+    fun getAfterDay(cl: Calendar): Calendar {
+        val day = cl.get(Calendar.DATE)
+        cl.set(Calendar.DATE, day + 10)
+        return cl
+    }
 }
