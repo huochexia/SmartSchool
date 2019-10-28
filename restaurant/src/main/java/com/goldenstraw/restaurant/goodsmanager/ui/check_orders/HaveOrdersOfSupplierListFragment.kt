@@ -22,9 +22,20 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
 
         extend(parentKodein, copy = Copy.All)
     }
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
-    var supplierState = ObservableField<Int>()
+
+    var supplierState = ObservableField<Int>() //显示状态
+
+    private var orderState: Int? = null  //订单状态
+
+
+    override fun initView() {
+        super.initView()
+        orderState = arguments?.getInt("orderState")!!
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
