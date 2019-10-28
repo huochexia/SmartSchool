@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.check_orders
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.navigation.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityCheckOrdersBinding
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
@@ -32,40 +33,15 @@ class CheckQuantityActivity : BaseActivity<ActivityCheckOrdersBinding>() {
 
     private val repository: VerifyAndPlaceOrderRepository by instance()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
-    lateinit var checkDate: String
     override fun initView() {
         super.initView()
-        setSupportActionBar(check_toolbar)
+
         viewModel = getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        val currday = Calendar.getInstance()
-        val before = TimeConverter.getBeforeDay(currday)
-        val year = before.get(Calendar.YEAR)
-        val month = before.get(Calendar.MONTH) + 1
-        val day = before.get(Calendar.DATE)
-        checkDate = "$year-$month-$day"  //验货的是前一天的订单。需要这个时间来确定查询哪一天的订单
-        check_toolbar.subtitle = checkDate + "的订单"
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_check_orders, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        when (item?.itemId) {
-            R.id.menu_checked_order -> {
-                val bundle = Bundle()
-                bundle.putInt("orderState", 2)
-            }
-            R.id.menu_no_check_order -> {
-                val bundle = Bundle()
-                bundle.putInt("orderState", 1)
-            }
-        }
-        return true
     }
 
 }

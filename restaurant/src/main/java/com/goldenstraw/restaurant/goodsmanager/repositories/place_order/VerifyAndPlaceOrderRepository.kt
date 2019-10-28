@@ -17,8 +17,8 @@ class VerifyAndPlaceOrderRepository(
     /**
      *获取某个日期商品订单
      */
-    fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>> {
-        return remote.getAllOrderOfDate(date,state)
+    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
+        return remote.getAllOrderOfDate(condition)
     }
 
     /**
@@ -43,7 +43,14 @@ class VerifyAndPlaceOrderRepository(
     }
 
     /**
-     * 验货
+     * 单量验货
+     */
+    fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable {
+        return remote.setCheckQuantity(newCheckGoods, objectId)
+    }
+
+    /**
+     * 批量验货
      */
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
         return remote.checkQuantityOfOrders(orders)

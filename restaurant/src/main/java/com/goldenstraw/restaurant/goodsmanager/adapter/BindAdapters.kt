@@ -29,7 +29,7 @@ fun setStateText(textView: TextView, state: Int) {
 
 @BindingAdapter("bind_quantity_text")
 fun setQuantityText(textView: TextView, order: OrderItem) {
-    if (order.state == 1)
+    if (order.state == 1 || order.state == 0)
         textView.text = order.quantity.toString()
     else
         textView.text = order.checkQuantity.toString()

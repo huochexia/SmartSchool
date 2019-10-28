@@ -22,10 +22,10 @@ class VerifyAndPlaceOrderManageImpl(
      * {"$and":[{"wins":{"$gt":150}},{"wins":{"$lt":5}}]}
      */
     override fun getAllOrderOfDate(
-        date: String,
-        state: Int
+        condition: String
+
     ): Observable<MutableList<OrderItem>> {
-        val condition = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$state}]}"
+
         return service.getAllOrderOfDate(condition)
             .map {
                 if (!it.isSuccess()) {
@@ -50,6 +50,10 @@ class VerifyAndPlaceOrderManageImpl(
         objectId: String
     ): Completable {
         return service.updateOrderItem(newQuantity, objectId)
+    }
+
+    override fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String): Completable {
+        return service.setCheckQuantity(newQuantity, objectId)
     }
 
     override fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {

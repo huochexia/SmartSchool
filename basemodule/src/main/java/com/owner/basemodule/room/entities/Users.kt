@@ -34,7 +34,7 @@ data class User(
     @ColumnInfo val letters: String = "",
     @ColumnInfo val role: String = ""
 
-)
+    )
 
 data class AllUserResp(val results: MutableList<User>)
 

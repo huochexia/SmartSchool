@@ -183,7 +183,9 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      * 将来可以按类别进行分组
      */
     private fun getAllOrderOfDate(date: String, stauts: Int) {
-        viewModel!!.getAllOrderOfDate(date, stauts)
+        val condition =
+            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}]}"
+        viewModel!!.getAllOrderOfDate(condition)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

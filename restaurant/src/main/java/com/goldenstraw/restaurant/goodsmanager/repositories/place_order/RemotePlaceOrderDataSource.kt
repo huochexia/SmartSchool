@@ -15,7 +15,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     /*
     获取某个日期的商品订单
      */
-    fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>>
+    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>>
 
     /*
     将订单发送给供应商
@@ -25,6 +25,8 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     fun getAllSupplier(): Observable<MutableList<User>>
 
     fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
+
+    fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable
 
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
 }
@@ -37,8 +39,8 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.sendOrdersToSupplier(orders)
     }
 
-    override fun getAllOrderOfDate(date: String,state:Int): Observable<MutableList<OrderItem>> {
-        return manager.getAllOrderOfDate(date,state)
+    override fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
+        return manager.getAllOrderOfDate(condition)
     }
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
@@ -50,6 +52,10 @@ class RemotePlaceOrderDataSourceImpl(
         objectId: String
     ): Completable {
         return manager.updateOrderItemQuantity(newQuantity, objectId)
+    }
+
+    override fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable {
+        return manager.setCheckQuantity(newCheckGoods, objectId)
     }
 
     override fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {

@@ -9,5 +9,15 @@
             android:id="@+id/haveOrdersOfSupplierList"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.HaveOrdersOfSupplierListFragment"
             android:label="HaveOrdersOfSupplierList"
-            tools:layout="@layout/fragment_have_orders_of_supplier" />
+            tools:layout="@layout/fragment_have_orders_of_supplier">
+        <action
+                android:id="@+id/action_haveOrdersOfSupplierList_to_checkOrderListFragment"
+                app:destination="@id/checkOrderList" />
+    </fragment>
+    <fragment
+            android:id="@+id/checkOrderList"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckOrderListFragment"
+            android:label="CheckOrderListFragment"
+            tools:layout="@layout/fragment_check_order_list" />
+
 </navigation>

@@ -7,7 +7,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.HaveOrdersOfSupplierListFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckOrderListFragment" />
     </data>
 
     <LinearLayout
@@ -16,7 +16,7 @@
             android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-                android:id="@+id/check_toolbar"
+                android:id="@+id/check_order_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary" />
@@ -26,21 +26,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:msv_viewState="@{fragment.supplierState}">
+                app:msv_viewState="content">
 
             <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlw_suppliers"
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                        android:id="@+id/rlw_check_order"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:bind_recyclerView_adapter="@{fragment.adapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/layout_supplier_item" />
+                        tools:listitem="@layout/layout_order_item" />
             </androidx.core.widget.NestedScrollView>
-        </com.kennyc.view.MultiStateView>
 
+        </com.kennyc.view.MultiStateView>
     </LinearLayout>
 </layout>
