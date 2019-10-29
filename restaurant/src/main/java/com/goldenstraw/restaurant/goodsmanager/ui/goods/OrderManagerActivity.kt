@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods_order
+package com.goldenstraw.restaurant.goodsmanager.ui.goods
 
 import android.content.Intent
 import android.graphics.Color
@@ -14,7 +14,6 @@ import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.ui.ShoppingCartManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel

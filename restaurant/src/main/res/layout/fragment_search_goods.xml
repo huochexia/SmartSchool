@@ -7,7 +7,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.goods_order.GoodsSearchFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.GoodsSearchFragment" />
     </data>
 
     <LinearLayout

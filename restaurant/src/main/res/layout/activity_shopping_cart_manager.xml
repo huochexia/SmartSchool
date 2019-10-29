@@ -8,7 +8,7 @@
 
         <variable
                 name="activity"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.ShoppingCartManagerActivity" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCartManagerActivity" />
     </data>
 
     <LinearLayout

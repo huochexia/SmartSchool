@@ -31,7 +31,7 @@ class VerifyAndPlaceOrderViewModel(
     }
 
     /**
-     * 获取拟购单
+     * 获取某个条件订单
      */
     fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
         return repository.getAllOrderOfDate(condition)
@@ -90,7 +90,7 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 单个验货
      */
-    fun setCheckQuantity(newQuantity:ObjectCheckGoods,objectId: String): Completable {
+    fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String): Completable {
 
         return repository.setCheckQuantity(newQuantity, objectId)
     }

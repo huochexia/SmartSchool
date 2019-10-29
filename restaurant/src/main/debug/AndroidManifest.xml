@@ -25,8 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".goodsmanager.ui.ShoppingCartManagerActivity" />
-        <activity android:name=".goodsmanager.ui.goods_order.OrderManagerActivity" />
+        <activity android:name=".goodsmanager.ui.goods.ShoppingCartManagerActivity" />
+        <activity android:name=".goodsmanager.ui.goods.OrderManagerActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
         <activity android:name=".goodsmanager.ui.query.QueryOrdersActivity" />
         <activity android:name=".goodsmanager.ui.verify.VerifyAndPlaceOrderActivity" />

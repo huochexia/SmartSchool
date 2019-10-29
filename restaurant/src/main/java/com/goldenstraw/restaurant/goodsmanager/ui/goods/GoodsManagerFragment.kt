@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods_order
+package com.goldenstraw.restaurant.goodsmanager.ui.goods
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -24,22 +24,27 @@ import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_search_goods.*
+import kotlinx.android.synthetic.main.fragment_goods_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
-class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
+class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
+
+    override val layoutId: Int
+        get() = R.layout.fragment_goods_list
+
     override val kodein: Kodein = Kodein.lazy {
+
         extend(parentKodein, copy = Copy.All)
+
         import(goodsDataSourceModule)
     }
-    override val layoutId: Int
-        get() = R.layout.fragment_search_goods
+    //通过Kodein容器检索对象
     private val repository: GoodsRepository by instance()
+    //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -48,9 +53,9 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
-            dataSource = { viewModelGoodsTo!!.searchGoodsResultList },
+            dataSource = { viewModelGoodsTo!!.goodsList },
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, _ ->
+            callback = { goods, binding, position ->
                 binding.goods = goods
                 binding.checkEvent = object : Consumer<Goods> {
                     override fun accept(t: Goods) {
@@ -58,16 +63,28 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                         binding.cbGoods.isChecked = t.isChecked
                     }
                 }
-                binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
+                binding.cbGoods.isChecked = goods.isChecked
+                binding.addSub
+                    .setCurrentNumber(goods.quantity)
+                    .setPosition(position)
+                    .setOnChangeValueListener { value, position ->
+                        goods.quantity = value
+                    }
             }
         )
-        viewModelGoodsTo!!.getIsRefresh().observe(this, Observer {
+        viewModelGoodsTo!!.selected.observe(this, Observer {
+            viewModelGoodsTo!!.getGoodsOfCategory(it)
+            adapter!!.forceUpdate()
+        })
+        viewModelGoodsTo!!.isGoodsListRefresh.observe(this, Observer {
             if (it) {
                 adapter!!.forceUpdate()
             }
         })
+        viewModelGoodsTo!!.getCountOfShoppingCart()
         initSwipeMenu()
     }
+
     /**
      * 初始化Item侧滑菜单
      */
@@ -92,7 +109,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         /*
          2、关联RecyclerView，设置侧滑菜单
          */
-        rlw_search_goods.setSwipeMenuCreator(mSwipeMenuCreator)
+        rlw_goods_item.setSwipeMenuCreator(mSwipeMenuCreator)
         /*
         3、定义子菜单点击事件
          */
@@ -105,14 +122,14 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 }
                 1 -> {
 
-                    updateDialog(viewModelGoodsTo!!.searchGoodsResultList[adapterPosition])
+                    updateDialog(viewModelGoodsTo!!.goodsList[adapterPosition])
                 }
             }
         }
         /*
         4、给RecyclerView添加监听器
          */
-        rlw_search_goods.setOnItemMenuClickListener(mItemMenuClickListener)
+        rlw_goods_item.setOnItemMenuClickListener(mItemMenuClickListener)
     }
 
     /**
@@ -128,14 +145,14 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
 
-                viewModelGoodsTo!!.deleteGoods(viewModelGoodsTo!!.searchGoodsResultList[position])
+                viewModelGoodsTo!!.deleteGoods(viewModelGoodsTo!!.goodsList[position])
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                     }, {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
                     })
-                viewModelGoodsTo!!.searchGoodsResultList.removeAt(position)
+                viewModelGoodsTo!!.goodsList.removeAt(position)
                 adapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
@@ -163,7 +180,6 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val name = goodsName.text.toString().trim()
                 val unit = unitOfMeasure.text.toString().trim()
-
                 if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
@@ -182,17 +198,17 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCart(viewModelGoodsTo!!.searchGoodsResultList)
+        viewModelGoodsTo!!.addGoodsToShoppingCart(viewModelGoodsTo!!.goodsList)
         //还原商品信息
-        val selectedList = mutableListOf<Goods>()
-        viewModelGoodsTo!!.searchGoodsResultList.forEach {
+        var selectedList = mutableListOf<Goods>()
+        viewModelGoodsTo!!.goodsList.forEach {
             if (it.isChecked) {
                 it.isChecked = false
                 it.quantity = 1
                 selectedList.add(it)
             }
         }
-        viewModelGoodsTo!!.searchGoodsResultList.removeAll(selectedList)
+        viewModelGoodsTo!!.goodsList.removeAll(selectedList)
         adapter!!.forceUpdate()
     }
 }
