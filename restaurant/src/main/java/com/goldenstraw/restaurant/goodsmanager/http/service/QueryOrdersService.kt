@@ -4,6 +4,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -24,10 +25,16 @@ interface QueryOrdersApi {
      */
     @GET("/1/classes/OrderItem")
     fun getOrdersOfSupplier(@Query("where") condition: String): Observable<ObjectList<OrderItem>>
+
     /**
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
      */
     @PUT("/1/classes/OrderItem/{objectId}")
     fun updateOrderOfSupplier(@Body newOrder: ObjectSupplier, @Path("objectId") objectId: String): Completable
 
+    //得到某个类别的所有商品
+    //where = {"categoryCode":"  "}
+    @GET("/1/classes/Goods")
+    fun getGoodsOfCategory(@Query("where") condition: String)
+            : Observable<ObjectList<Goods>>
 }

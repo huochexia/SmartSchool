@@ -4,6 +4,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.service.QueryOrdersApi
 import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -34,7 +35,7 @@ class QueryOrdersManagerImpl(
      *    val where1 = "{\"orderDate\":{\"\$lt\":\"$date\"}}"
      */
     override fun getOrderOfSupplier(
-        where:String
+        where: String
     ): Observable<MutableList<OrderItem>> {
 
         return service.getOrdersOfSupplier(where).map {
@@ -51,5 +52,17 @@ class QueryOrdersManagerImpl(
      */
     override fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
         return service.updateOrderOfSupplier(newOrder, objectId)
+    }
+
+    /**
+     * 获取某类商品信息
+     */
+    override fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
+        return service.getGoodsOfCategory(condition).map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
     }
 }

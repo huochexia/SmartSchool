@@ -4,6 +4,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
@@ -54,5 +55,11 @@ class QueryOrdersViewModel(
         return repository.updateOrderOfSupplier(newOrder, objectId)
     }
 
+    /**
+     * 获取商品信息
+     */
+    fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
+        return repository.getGoodsOfCategory(condition)
+    }
 
 }

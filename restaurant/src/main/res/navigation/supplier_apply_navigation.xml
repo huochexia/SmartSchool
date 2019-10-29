@@ -16,6 +16,9 @@
         <action
                 android:id="@+id/action_singleSelectCalender_to_supplierAccountActivity"
                 app:destination="@id/supplierAccount" />
+        <action
+                android:id="@+id/action_singleSelectCalender_to_categoryGoodsInfoFragment"
+                app:destination="@id/categoryGoodsInfoFragment" />
     </fragment>
     <fragment
             android:id="@+id/supplierOrderOfDate"
@@ -31,4 +34,9 @@
                 android:id="@+id/action_supplierAccount_to_singleSelectCalender"
                 app:destination="@id/singleSelectCalender" />
     </fragment>
+    <fragment
+            android:id="@+id/categoryGoodsInfoFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.CategoryGoodsInfoFragment"
+            android:label="CategoryGoodsInfoFragment"
+            tools:layout="@layout/fragment_supplier_category_goods"/>
 </navigation>

@@ -48,7 +48,10 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
     @SuppressLint("SetTextI18n")
     override fun initView() {
         //点击小日历返回当前日期
-        fl_current.setOnClickListener { calendarView.scrollToCurrent() }
+        fl_current.setOnClickListener {
+            calendarView.scrollToCurrent()
+            findNavController().navigate(R.id.categoryGoodsInfoFragment)
+        }
         calendarView.setOnCalendarSelectListener(this)
         tv_year.text = calendarView.curYear.toString()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"

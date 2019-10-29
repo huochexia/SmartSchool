@@ -88,9 +88,9 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 弹出确认实际数量的窗口
      */
     fun popUpCheckQuantityDialog(orderItem: OrderItem) {
-        val view = LayoutInflater.from(context).inflate(R.layout.add_or_edit_one_dialog_view, null)
-        val edit = view.findViewById<EditText>(R.id.dialog_edit)
-        edit.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.only_input_number_dialog_view, null)
+        val edit = view.findViewById<EditText>(R.id.number_edit)
         val dialog = AlertDialog.Builder(context!!)
             .setTitle("确定实际数量")
             .setIcon(R.mipmap.add_icon)

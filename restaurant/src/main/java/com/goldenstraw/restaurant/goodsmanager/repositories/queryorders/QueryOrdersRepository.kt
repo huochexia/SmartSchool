@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -21,7 +22,7 @@ class QueryOrdersRepository(
     /**
      *按日期获取供应商订单
      */
-    fun getOrdersOfSupplier(where:String): Observable<MutableList<OrderItem>> {
+    fun getOrdersOfSupplier(where: String): Observable<MutableList<OrderItem>> {
         return remote.getOrdersOfSupplier(where)
     }
 
@@ -32,4 +33,10 @@ class QueryOrdersRepository(
         return remote.updateOrderOfSupplier(newOrder, objectId)
     }
 
+    /**
+     * 获取商品信息
+     */
+    fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
+        return remote.getGoodsOfCategory(condition)
+    }
 }
