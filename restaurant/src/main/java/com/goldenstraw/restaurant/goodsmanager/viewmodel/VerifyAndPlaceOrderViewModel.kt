@@ -1,9 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckQuantityActivity
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable

@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityQueryOrderBinding

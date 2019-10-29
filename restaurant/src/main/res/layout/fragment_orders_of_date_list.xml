@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.OrdersOfDateFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.query.OrdersOfDateFragment" />
     </data>
 
     <LinearLayout

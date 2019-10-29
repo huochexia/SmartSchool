@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/record_order_navigation"
+        app:startDestination="@id/recordSelectDate">
+    <fragment
+            android:id="@+id/recordSelectDate"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.record.RecordSelectDateFragment"
+            android:label="RecordSelectDateFragment"
+            tools:layout="@layout/fragment_record_select_date">
+        <action
+                android:id="@+id/action_recordSelectDate_to_recordSelectSupplierFragment"
+                app:destination="@id/recordSelectSupplierFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/recordSelectSupplierFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.record.RecordSelectSupplierFragment"
+            android:label="RecordSelectSupplierFragment"
+            tools:layout="@layout/fragment_record_select_supplier">
+        <action
+                android:id="@+id/action_recordSelectSupplierFragment_to_recordOrderListFragment"
+                app:destination="@id/recordOrderListFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/recordOrderListFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrderListFragment"
+            android:label="RecordOrderListFragment"
+            tools:layout="@layout/fragment_record_order_list" />
+</navigation>

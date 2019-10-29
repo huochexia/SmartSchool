@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/haveOrdersOfSupplierList"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.HaveOrdersOfSupplierListFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check.HaveOrdersOfSupplierListFragment"
             android:label="HaveOrdersOfSupplierList"
             tools:layout="@layout/fragment_have_orders_of_supplier">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
             android:id="@+id/checkOrderList"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckOrderListFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check.CheckOrderListFragment"
             android:label="CheckOrderListFragment"
             tools:layout="@layout/fragment_check_order_list" />
 

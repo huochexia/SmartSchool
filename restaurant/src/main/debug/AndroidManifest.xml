@@ -28,10 +28,11 @@
         <activity android:name=".goodsmanager.ui.ShoppingCartManagerActivity" />
         <activity android:name=".goodsmanager.ui.goods_order.OrderManagerActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
-        <activity android:name=".goodsmanager.ui.query_orders.QueryOrdersActivity" />
-        <activity android:name=".goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity" />
+        <activity android:name=".goodsmanager.ui.query.QueryOrdersActivity" />
+        <activity android:name=".goodsmanager.ui.verify.VerifyAndPlaceOrderActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
-        <activity android:name=".goodsmanager.ui.check_orders.CheckQuantityActivity" />
+        <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
+        <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity"/>
         <!--        <provider-->
         <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
         <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->

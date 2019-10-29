@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.place_order
+package com.goldenstraw.restaurant.goodsmanager.ui.verify
 
 import android.view.Menu
 import android.view.MenuItem

@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.check_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.check
 
 import android.os.Bundle
 import android.text.InputType

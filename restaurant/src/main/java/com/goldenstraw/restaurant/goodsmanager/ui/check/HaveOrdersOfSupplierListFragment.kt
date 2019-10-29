@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.check_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.check
 
 import android.os.Bundle
 import android.view.Menu
@@ -6,12 +6,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView

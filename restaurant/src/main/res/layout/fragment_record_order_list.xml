@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tool="http://schemas.android.com/tools">
 
     <data>
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.check.HaveOrdersOfSupplierListFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrderListFragment" />
     </data>
 
     <LinearLayout
@@ -16,31 +16,26 @@
             android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-                android:id="@+id/check_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary" />
 
         <com.kennyc.view.MultiStateView
-                style="@style/MultiStateStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                app:msv_viewState="@{fragment.supplierState}">
+                android:layout_weight="1">
 
             <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlw_suppliers"
+                        android:id="@+id/rlw_record_order"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:bind_recyclerView_adapter="@{fragment.adapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/layout_supplier_item" />
+                        tool:listitem="@layout/layout_order_item" />
             </androidx.core.widget.NestedScrollView>
         </com.kennyc.view.MultiStateView>
-
     </LinearLayout>
 </layout>

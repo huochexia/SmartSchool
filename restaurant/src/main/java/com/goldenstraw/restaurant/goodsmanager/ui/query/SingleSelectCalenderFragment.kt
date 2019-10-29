@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import android.annotation.SuppressLint
 import android.os.Bundle

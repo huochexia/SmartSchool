@@ -8,7 +8,7 @@
 
     <fragment
             android:id="@+id/singleSelectCalenderFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SingleSelectCalenderFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query.SingleSelectCalenderFragment"
             android:label="SingleSelectCalenderFragment"
             tools:layout="@layout/fragment_single_date_select">
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
             android:id="@+id/selectSupplierFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.SelectSupplierFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query.SelectSupplierFragment"
             android:label="SelectSupplierFragment"
             tools:layout="@layout/fragment_select_supplier">
         <argument
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
             android:id="@+id/ordersOfDateFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query_orders.OrdersOfDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.query.OrdersOfDateFragment"
             android:label="OrdersOfDateFragment"
             tools:layout="@layout/fragment_orders_of_date_list" />
 </navigation>

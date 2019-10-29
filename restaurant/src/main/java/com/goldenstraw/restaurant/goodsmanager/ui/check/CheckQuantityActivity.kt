@@ -1,9 +1,5 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.check_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.check
 
-import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.navigation.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityCheckOrdersBinding
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
@@ -11,12 +7,9 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAn
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.owner.basemodule.util.TimeConverter
-import kotlinx.android.synthetic.main.activity_check_orders.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.util.*
 
 /**
  * 验货

@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.query_orders
+package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController

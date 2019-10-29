@@ -10,11 +10,6 @@
             android:id="@+id/select_xishan_district"
             android:title="西山校区"
             app:showAsAction="never" />
-    <group android:id="@+id/query_menu">
-        <item
-                android:id="@+id/query_supplier_order"
-                android:title="查询供应商当日订单"
-                app:showAsAction="never" />
-    </group>
+
 
 </menu>

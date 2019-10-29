@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckQuantityActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods_order.OrderManagerActivity
-import com.goldenstraw.restaurant.goodsmanager.ui.place_order.VerifyAndPlaceOrderActivity
-import com.goldenstraw.restaurant.goodsmanager.ui.query_orders.QueryOrdersActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import kotlinx.android.synthetic.main.activity_main2.*
 
