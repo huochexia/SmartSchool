@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.check_orders
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCheckOrderListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectCheckGoods
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
@@ -23,7 +25,6 @@ import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_check_order_list.*
-import kotlinx.android.synthetic.main.fragment_goods_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -89,7 +90,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     fun popUpCheckQuantityDialog(orderItem: OrderItem) {
         val view = LayoutInflater.from(context).inflate(R.layout.add_or_edit_one_dialog_view, null)
         val edit = view.findViewById<EditText>(R.id.dialog_edit)
-
+        edit.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         val dialog = AlertDialog.Builder(context!!)
             .setTitle("确定实际数量")
             .setIcon(R.mipmap.add_icon)
@@ -99,14 +100,25 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             }
             .setPositiveButton("确定") { dialog, which ->
                 val check = edit.text.toString().trim().toFloat()
-                viewModel!!.setCheckQuantity(check, orderItem.objectId)
+                val newQuantity = ObjectCheckGoods(check, 2)
+                viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(scopeProvider)
+                    .subscribe({
+                        orderList.remove(orderItem)
+                        adapter!!.forceUpdate()
+                    }, {})
                 dialog.dismiss()
             }.create()
         dialog.show()
 
     }
 
-    fun getOrderItemList() {
+    /**
+     * 查询条件：供应商，日期（前一天），状态（1或2），区域（0或1）
+     */
+    private fun getOrderItemList() {
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"},{\"state\":$state},{\"district\":$district}]}"
         viewModel!!.getAllOrderOfDate(where)
@@ -153,14 +165,40 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                     if (orderList[adapterPosition].state == 3) {
                         Toast.makeText(context, "已经记帐不能重新验收！！", Toast.LENGTH_SHORT).show()
                         return@OnItemMenuClickListener
+                    } else {
+                        val dialog = AlertDialog.Builder(context!!)
+                            .setTitle("确定重新验收数量吗？")
+                            .setIcon(R.mipmap.add_icon)
+                            .setNegativeButton("取消") { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .setPositiveButton("确定") { dialog, which ->
+                                cancleChecked(orderList[adapterPosition])
+                                dialog.dismiss()
+                            }.create()
+                        dialog.show()
                     }
                 }
-
             }
         }
         /*
         4、给RecyclerView添加监听器
          */
         rlw_check_order.setOnItemMenuClickListener(mItemMenuClickListener)
+    }
+
+    /**
+     * 重验
+     */
+    private fun cancleChecked(orderItem: OrderItem) {
+        val again = ObjectCheckGoods(0.0f, 1)
+        viewModel!!.setCheckQuantity(again, orderItem.objectId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                orderList.remove(orderItem)
+                adapter!!.forceUpdate()
+            }, {})
     }
 }

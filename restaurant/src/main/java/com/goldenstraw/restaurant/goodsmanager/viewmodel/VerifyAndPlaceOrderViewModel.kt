@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.check_orders.CheckQuantityActivity
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable
@@ -91,8 +92,8 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 单个验货
      */
-    fun setCheckQuantity(quantity: Float, objectId: String): Completable {
-        val newQuantity = ObjectCheckGoods(quantity, 2)
+    fun setCheckQuantity(newQuantity:ObjectCheckGoods,objectId: String): Completable {
+
         return repository.setCheckQuantity(newQuantity, objectId)
     }
 
