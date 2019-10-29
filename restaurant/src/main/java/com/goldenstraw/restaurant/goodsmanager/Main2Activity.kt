@@ -8,6 +8,7 @@ import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import kotlinx.android.synthetic.main.activity_main2.*
 
@@ -34,6 +35,10 @@ class Main2Activity : AppCompatActivity() {
         }
         check.setOnClickListener {
             val intent2 = Intent(this, CheckQuantityActivity::class.java)
+            startActivity(intent2)
+        }
+        record.setOnClickListener {
+            val intent2 = Intent(this, RecordOrdersActivity::class.java)
             startActivity(intent2)
         }
     }

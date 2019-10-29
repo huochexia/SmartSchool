@@ -7,6 +7,7 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 
 /**
+ * 列示某供应商的某日验货或记帐的清单
  * Created by Administrator on 2019/10/29 0029
  */
 class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
