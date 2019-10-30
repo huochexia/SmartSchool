@@ -45,7 +45,7 @@
                     android:background="@color/primaryLightColor"
                     android:gravity="center"
                     android:textColor="@color/primaryTextColor"
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     tools:text="商品小计" />
 
             <TextView

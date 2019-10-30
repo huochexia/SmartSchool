@@ -101,4 +101,11 @@ class VerifyAndPlaceOrderViewModel(
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
         return repository.checkQuantityOfOrders(orders)
     }
+
+    /**
+     * 提交记帐
+     */
+    fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable {
+        return repository.commitRecordState(orders)
+    }
 }

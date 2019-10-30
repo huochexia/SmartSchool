@@ -55,4 +55,11 @@ class VerifyAndPlaceOrderRepository(
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
         return remote.checkQuantityOfOrders(orders)
     }
+
+    /**
+     * 提交记帐
+     */
+    fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable {
+        return remote.commitRecordState(orders)
+    }
 }

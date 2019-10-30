@@ -1,10 +1,17 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.record
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordOrderListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.databinding.PageOfRecordOrdersBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectState
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
@@ -49,10 +56,14 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         district = arguments?.getInt("district")!!
         rlw_record_toolbar.title = supplier
         rlw_record_toolbar.subtitle = orderDate
+
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as AppCompatActivity).setSupportActionBar(rlw_record_toolbar)
+        setHasOptionsMenu(true)
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
@@ -71,19 +82,24 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
                 )
                 binding.rlwPage.adapter = orderAdapter
                 binding.recordCommit.setOnClickListener {
+                    transRecordState(orderList)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .autoDisposable(scopeProvider)
+                        .subscribe {
+                            viewModel!!.commitRecordState(it).subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .autoDisposable(scopeProvider)
+                                .subscribe {
+                                    orderList.forEach { order ->
+                                        order.state = 3
+                                    }
+                                    orderAdapter.forceUpdate()
 
+                                }
+                        }
                 }
-                val total = 0.0f
-                Observable.fromIterable(orderList)
-                    .scan(total) { t1, t2 ->
-                        total + t2.checkQuantity * t2.unitPrice
-                    }
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(scopeProvider)
-                    .subscribe {
-                        binding.totalPrice.text = "共${orderList.size}项小计:$it"
-                    }
+                ComputeTotalPrice(orderList, binding)
             }
         )
         vp_record_order.adapter = vpAdapter
@@ -94,6 +110,26 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         }.attach()
 
         getOrderItemList()
+    }
+
+    /**
+     * 计算小计金额
+     */
+    private fun ComputeTotalPrice(
+        orderList: MutableList<OrderItem>,
+        binding: PageOfRecordOrdersBinding
+    ) {
+        val total = 0.0f
+        Observable.fromIterable(orderList)
+            .scan(total) { sum, order ->
+                sum + order.checkQuantity * order.unitPrice
+            }
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe {
+                binding.totalPrice.text = "${orderList.size}项:$it"
+            }
     }
 
     /**
@@ -121,4 +157,40 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
 
     }
 
+    /**
+     * 提交记帐
+     */
+    fun transRecordState(orderList: MutableList<OrderItem>): Observable<BatchOrdersRequest<ObjectState>> {
+        return Observable.fromIterable(orderList)
+            .map {
+                var updateState = ObjectState(3)
+                val batch = BatchOrderItem(
+                    method = "PUT",
+                    path = "/1/classes/OrderItem/${it.objectId}",
+                    body = updateState
+                )
+                batch
+            }
+            .buffer(20)
+            .map {
+                val commit = BatchOrdersRequest(it)
+                commit
+            }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_set_buffer, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.show_number_6 -> {
+            }
+            R.id.show_number_8 -> {
+            }
+            R.id.show_number_10 -> {
+            }
+        }
+        return true
+    }
 }
