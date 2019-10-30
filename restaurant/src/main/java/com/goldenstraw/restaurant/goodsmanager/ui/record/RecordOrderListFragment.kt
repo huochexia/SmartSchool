@@ -40,6 +40,8 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var orderList = mutableListOf<MutableList<OrderItem>>()

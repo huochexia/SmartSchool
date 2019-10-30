@@ -17,23 +17,31 @@ package com.owner.usercenter.util
 
 import android.content.SharedPreferences
 import com.owner.basemodule.util.prefs.boolean
+import com.owner.basemodule.util.prefs.int
 import com.owner.basemodule.util.prefs.string
+import com.owner.basemodule.util.prefs.stringSet
 
 /**
  *
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
-class PrefsHelper(prefs:SharedPreferences) {
+class PrefsHelper(prefs: SharedPreferences) {
 
-    var autoLogin by prefs.boolean("autoLogin",false)
+    var autoLogin by prefs.boolean("autoLogin", false)
 
-    var username by prefs.string("username","")
+    var username by prefs.string("username", "")
 
-    var password by prefs.string("password","")
+    var password by prefs.string("password", "")
 
-    var sessionToken by prefs.string("sessionToken","")
+    var sessionToken by prefs.string("sessionToken", "")
 
-    var objectId by prefs.string("objectId","")
+    var objectId by prefs.string("objectId", "")
+
+    var categoryCode by prefs.string("categoryCode", "")
+
+    var district by prefs.int("district", 0)
+
+    var roles by prefs.stringSet("roles")
 
 }
