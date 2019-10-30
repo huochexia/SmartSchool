@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tool="http://schemas.android.com/tools">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,26 +15,22 @@
             android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
+                android:id="@+id/rlw_record_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary" />
+                android:background="@color/colorPrimary"
+                />
 
-        <com.kennyc.view.MultiStateView
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="wrap_content" />
 
-            <androidx.core.widget.NestedScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_record_order"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlw_record_order"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tool:listitem="@layout/layout_order_item" />
-            </androidx.core.widget.NestedScrollView>
-        </com.kennyc.view.MultiStateView>
     </LinearLayout>
 </layout>
