@@ -1,2 +1,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.owner.usercenter"/>
+        package="com.owner.usercenter">
+
+    <application
+
+            android:allowBackup="true"
+
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.MyApp">
+        <activity android:name=".login.LoginActivity">
+
+        </activity>
+        <activity
+                android:name=".findpwd.FindPwdActivity"
+                android:parentActivityName=".login.LoginActivity" />
+        <activity android:name=".register.RegisterActivity" />
+        <activity
+                android:name=".resetpwd.ResetPwdActivity"
+                android:parentActivityName=".findpwd.FindPwdActivity" />
+        <activity android:name=".changepwd.ChangePwdActivity" />
+
+
+        <provider
+                android:name="cn.bmob.v3.util.BmobContentProvider"
+                android:authorities="com.owner.usercenter.BmobContentProvider"></provider>
+    </application>
+</manifest>

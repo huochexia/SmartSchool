@@ -1,2 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.goldenstraw.restaurant" />
+        package="com.goldenstraw.restaurant">
+
+    <application
+
+            android:allowBackup="true"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.MyApp">
+        <activity android:name=".goodsmanager.Main2Activity" />
+        <activity android:name=".goodsmanager.ui.goods.ShoppingCartManagerActivity" />
+        <activity android:name=".goodsmanager.ui.goods.OrderManagerActivity" />
+        <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
+        <activity android:name=".goodsmanager.ui.query.QueryOrdersActivity" />
+        <activity android:name=".goodsmanager.ui.verify.VerifyAndPlaceOrderActivity" />
+        <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
+        <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
+        <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity" />
+        <!--        <provider-->
+        <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
+        <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->
+    </application>
+</manifest>
