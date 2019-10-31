@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
@@ -11,7 +12,7 @@ import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import kotlinx.android.synthetic.main.activity_main2.*
-
+@Route(path = "/restaurant/MainActivity")
 class Main2Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

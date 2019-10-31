@@ -16,6 +16,7 @@
 package com.owner.usercenter.login
 
 import android.widget.Toast
+import com.alibaba.android.arouter.launcher.ARouter
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.R
@@ -129,6 +130,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
                 Toast.makeText(this@LoginActivity, "登录成功！！", Toast.LENGTH_SHORT).show()
+                ARouter.getInstance().build("/restaurant/MainActivity").navigation()
 
             }
             is LoginViewState.LoginUiEvent.SetAutoLoginInfo -> {

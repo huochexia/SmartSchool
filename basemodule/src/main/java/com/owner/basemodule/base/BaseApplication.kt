@@ -16,33 +16,31 @@
 package com.owner.basemodule.base
 
 import android.app.Application
-import android.content.Context
 import cn.bmob.v3.Bmob
+import com.alibaba.android.arouter.launcher.ARouter
 import com.owner.basemodule.BuildConfig
-import com.owner.basemodule.kodein.*
+import com.owner.basemodule.kodein.httpFactoryModule
+import com.owner.basemodule.kodein.prefsModule
+import com.owner.basemodule.kodein.roomDBModule
 import com.owner.basemodule.logger.initLogger
-import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.util.SingletonHolderNoArg
 import com.squareup.leakcanary.LeakCanary
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
 import org.kodein.di.android.x.androidXModule
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
 
 /**
  * 基础应用，实现KodeinAware接口
  * Created by Liuyong on 2019-03-26.It's smartschool
  *@description:
  */
-class BaseApplication:Application(),KodeinAware {
+class BaseApplication : Application(), KodeinAware {
 
     //依赖容器
     override val kodein: Kodein = Kodein.lazy {
 
-//        bind<Context>() with singleton { this@BaseApplication }
+        //        bind<Context>() with singleton { this@BaseApplication }
 
 //        bind<AppDatabase>() with singleton {
 //            AppDatabase.getInstance(instance())
@@ -65,6 +63,10 @@ class BaseApplication:Application(),KodeinAware {
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
         initLeakCanary()
+        //初始化ARouter
+        ARouter.openLog()
+        ARouter.openDebug()
+        ARouter.init(this)
     }
 
     private fun initLeakCanary() {
