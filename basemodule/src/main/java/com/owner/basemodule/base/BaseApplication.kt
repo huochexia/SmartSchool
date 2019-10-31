@@ -42,14 +42,14 @@ class BaseApplication:Application(),KodeinAware {
     //依赖容器
     override val kodein: Kodein = Kodein.lazy {
 
-        bind<Context>() with singleton { this@BaseApplication }
+//        bind<Context>() with singleton { this@BaseApplication }
 
 //        bind<AppDatabase>() with singleton {
 //            AppDatabase.getInstance(instance())
 //        }
 
-//        import(androidModule(this@BaseApplication))
-//        import(androidXModule(this@BaseApplication))
+        import(androidModule(this@BaseApplication))
+        import(androidXModule(this@BaseApplication))
 
         import(prefsModule)
         import(httpFactoryModule)  //注入全局Retrofit工厂

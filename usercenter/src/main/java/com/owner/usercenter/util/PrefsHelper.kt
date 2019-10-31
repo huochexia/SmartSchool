@@ -42,6 +42,6 @@ class PrefsHelper(prefs: SharedPreferences) {
 
     var district by prefs.int("district", 0)
 
-    var roles by prefs.stringSet("roles")
+    var role by prefs.string("role","")
 
 }

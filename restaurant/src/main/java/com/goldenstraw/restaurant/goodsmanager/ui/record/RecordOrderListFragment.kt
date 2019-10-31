@@ -14,6 +14,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectState
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -46,7 +47,8 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var orderList = mutableListOf<MutableList<OrderItem>>()
     var vpAdapter: BaseDataBindingAdapter<MutableList<OrderItem>, PageOfRecordOrdersBinding>? = null
-
+    val prefs: PrefsHelper by instance()
+    var showNumber = 10
     var supplier = ""
     var orderDate = ""
     var district = 0
@@ -59,6 +61,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         rlw_record_toolbar.title = supplier
         rlw_record_toolbar.subtitle = orderDate
 
+        showNumber = prefs.showNumber
 
     }
 
@@ -145,7 +148,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
             .flatMap {
                 Observable.fromIterable(it)
             }
-            .buffer(10)
+            .buffer(showNumber)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
@@ -187,12 +190,18 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.show_number_6 -> {
+                showNumber = 6
+
             }
             R.id.show_number_8 -> {
+                showNumber = 8
             }
             R.id.show_number_10 -> {
+                showNumber = 10
             }
         }
+        prefs.showNumber = showNumber
+        getOrderItemList()
         return true
     }
 }

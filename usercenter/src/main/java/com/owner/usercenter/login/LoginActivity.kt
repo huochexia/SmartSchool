@@ -18,7 +18,6 @@ package com.owner.usercenter.login
 import android.widget.Toast
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
-import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityLoginBinding
 import com.owner.usercenter.findpwd.FindPwdActivity
@@ -130,6 +129,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
                 Toast.makeText(this@LoginActivity, "登录成功！！", Toast.LENGTH_SHORT).show()
+
             }
             is LoginViewState.LoginUiEvent.SetAutoLoginInfo -> {
                 prefs.autoLogin = state.uiEvents.isAutoLogin!!.apply {
@@ -147,8 +147,8 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
                     loginIntentPublisher.onNext(LoginIntent.LoginClicksIntent(username, password))
                 }
             }
-            is LoginViewState.LoginUiEvent.JumpFindPassWord ->{
-               startActivity<FindPwdActivity>()
+            is LoginViewState.LoginUiEvent.JumpFindPassWord -> {
+                startActivity<FindPwdActivity>()
             }
         }
     }
