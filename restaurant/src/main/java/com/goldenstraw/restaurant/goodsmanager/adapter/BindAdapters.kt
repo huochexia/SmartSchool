@@ -21,7 +21,7 @@ fun setStateText(textView: TextView, state: Int) {
             textView.setTextColor(Color.CYAN)
         }
         3 -> {
-            textView.text = "对帐"
+            textView.text = "记帐"
             textView.setTextColor(Color.RED)
         }
     }

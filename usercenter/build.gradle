@@ -61,10 +61,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     implementation project(':basemodule')
     implementation project(':restaurant')
-
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -73,6 +71,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
     //ARouter
-    kapt 'com.alibaba:arouter-compiler:1.2.1'
+    kapt 'com.alibaba:arouter-compiler:1.2.2'
 
 }

@@ -24,6 +24,6 @@
             android:hint="请输入商品单价"
             android:inputType="numberDecimal"
             android:text="0.0"
-            android:visibility="gone" />
+             />
 
 </LinearLayout>

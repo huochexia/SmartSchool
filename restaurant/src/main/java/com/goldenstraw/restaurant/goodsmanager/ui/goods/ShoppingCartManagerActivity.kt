@@ -9,6 +9,7 @@ import com.goldenstraw.restaurant.databinding.ActivityShoppingCartManagerBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -40,7 +41,7 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
     private val repository by instance<ShoppingCartRepository>()
     var viewModel: ShoppingCartMgViewModel? = null
     var adapter: BaseDataBindingAdapter<GoodsOfShoppingCart, LayoutShoppingCartItemBinding>? = null
-
+    private val prefs: PrefsHelper by instance()
     override fun initView() {
         super.initView()
         viewModel = getViewModel {
@@ -163,39 +164,15 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
         dialog.show()
     }
 
-    /**
-     * 弹出选择购物区域对话框
-     */
-    fun popUpSelectDistrict() {
-        var district = 0
-        val dialog = AlertDialog.Builder(this)
-            .setIcon(R.mipmap.add_icon)
-            .setTitle("请选择购物校区")
-            .setSingleChoiceItems(R.array.district, 0) { dialog, which ->
-                when (which) {
-                    0 -> {
-                        district = 0
-                    }
-                    1 -> {
-                        district = 1
-                    }
-                }
+    fun commitOrderItem() {
+        val selectedList = mutableListOf<GoodsOfShoppingCart>()
+        viewModel!!.goodsList.forEach { goods ->
+            if (goods.isChecked) {
+                selectedList.add(goods)
             }
-            .setNegativeButton("取消") { dialog, which ->
-                dialog.dismiss()
-            }
-            .setPositiveButton("确定") { dialog, which ->
-                val selectedList = mutableListOf<GoodsOfShoppingCart>()
-                viewModel!!.goodsList.forEach { goods ->
-                    if (goods.isChecked) {
-                        selectedList.add(goods)
-                    }
-                }
-                commitAllGoodsOfShoppingCart(selectedList, district)
-                cb_all.isChecked = false
-                dialog.dismiss()
-            }.create()
-        dialog.show()
+        }
+        commitAllGoodsOfShoppingCart(selectedList, prefs.district)
+        cb_all.isChecked = false
     }
 
     /**

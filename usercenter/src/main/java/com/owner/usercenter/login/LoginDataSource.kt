@@ -63,7 +63,10 @@ interface ILoginRemoteDataSource : IRemoteDataSource {
 class LoginDataSourceRepository(
     remoteDataSource: ILoginRemoteDataSource,
     localDataSource: ILoginLocalDataSource
-) : BaseRepositoryBoth<ILoginRemoteDataSource, ILoginLocalDataSource>(remoteDataSource, localDataSource) {
+) : BaseRepositoryBoth<ILoginRemoteDataSource, ILoginLocalDataSource>(
+    remoteDataSource,
+    localDataSource
+) {
 
     //检查用户登录是否过期
     fun check(sessionToken: String, objectId: String): Single<Either<Errors, Boolean>> =
@@ -74,10 +77,10 @@ class LoginDataSourceRepository(
     //如果有左值，则继续下传数据；如果是右值，则先保存信息，然后继续下传
     fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>> =
         remoteDataSource.login(username, password)
-            .flatMap {either->
+            .flatMap { either ->
                 either.fold({
                     Flowable.just(either)
-                },{
+                }, {
                     localDataSource.savePrefsUser(it, password)//保存信息
                         .andThen(Flowable.just(either)) //然后再返回信息再次发出
                 })
@@ -103,35 +106,47 @@ class LoginLocalDataSource(
     private val prefs: PrefsHelper
 ) : ILoginLocalDataSource {
     override fun savePrefsUser(user: LoginResp, password: String): Completable =
-    //生成一个Completable数据流，它完成给prefs属性赋值的动作
+        //生成一个Completable数据流，它完成给prefs属性赋值的动作
         Completable.fromAction {
             prefs.username = user.username!!
             prefs.password = password
             prefs.objectId = user.objectId!!
             prefs.sessionToken = user.sessionToken!!
+            prefs.rights = user.rights!!
+            prefs.role = user.role!!
+            prefs.categoryCode = user.categoryCode!!
+            prefs.district = user.district!!
         }
 
 
     override fun fetchPresUser(): Flowable<Either<Errors, LoginUser>> =
-    //生成一个prefs数据流，然后将它的内容转换成Either<Errors,LoginEntity>类数据
+        //生成一个prefs数据流，然后将它的内容转换成Either<Errors,LoginEntity>类数据
         Flowable.just(prefs)
             .map {
                 when (it.username.isNotEmpty() && it.password.isNotEmpty()) {
-                    true -> Either.right(LoginUser(it.username, it.password, it.sessionToken, it.objectId))
+                    true -> Either.right(
+                        LoginUser(
+                            it.username,
+                            it.password,
+                            it.sessionToken,
+                            it.objectId
+                        )
+                    )
                     false -> Either.left(Errors.EmptyResultsError)
                 }
             }
 
 
     override fun isAutoLogin(): Single<Boolean> =
-    //生成一个Single数据流，它发射一个数据。
+        //生成一个Single数据流，它发射一个数据。
         Single.just(prefs.autoLogin)
 }
 
 /**
  * 从数据源的管理类中获取数据。
  */
-class LoginRemoteDataSource(private val serviceManager: UserServiceManager) : ILoginRemoteDataSource {
+class LoginRemoteDataSource(private val serviceManager: UserServiceManager) :
+    ILoginRemoteDataSource {
 
     override fun check(sessionToken: String, objectId: String): Single<Either<Errors, Boolean>> {
         return serviceManager.checkLogin(sessionToken, objectId)

@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:onClick="@{()->activity.popUpSelectDistrict()}"
+                android:onClick="@{()->activity.commitOrderItem()}"
                 android:text="@string/commit_shopping_cart"
                 android:textSize="18sp" />
     </LinearLayout>

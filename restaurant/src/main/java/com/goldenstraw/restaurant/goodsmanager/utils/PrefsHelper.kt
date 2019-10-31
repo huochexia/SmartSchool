@@ -14,7 +14,11 @@ class PrefsHelper(prefs: SharedPreferences) {
     var showNumber by prefs.int("shownubmer", 10)
     var categoryCode by prefs.string("categoryCode", "")
 
-    var district by prefs.int("district", 0)
+    var district by prefs.int("district", -1)
 
-    var role by prefs.string("role","")
+    var role by prefs.string("role", "")
+
+    var rights by prefs.string("rights", "")
+
+
 }

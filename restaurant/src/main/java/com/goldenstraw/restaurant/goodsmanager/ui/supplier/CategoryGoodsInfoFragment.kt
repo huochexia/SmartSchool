@@ -8,6 +8,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierCategoryGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -19,7 +20,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
+import org.kodein.di.generic.provider
 
 /**
  * 用于显示某类商品的定价，便于供应商及时了解到所提供商品的价格信息。
@@ -29,7 +32,10 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         get() = R.layout.fragment_supplier_category_goods
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
+
     }
+
+    private val prefs: PrefsHelper by instance()
     private val repository: QueryOrdersRepository by instance()
     var viewModel: QueryOrdersViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
@@ -52,7 +58,7 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 binding.cbGoods.visibility = View.INVISIBLE
             }
         )
-        getGoodsOfCategory("f526b3f6e7")
+        getGoodsOfCategory(prefs.categoryCode)
     }
 
     /**

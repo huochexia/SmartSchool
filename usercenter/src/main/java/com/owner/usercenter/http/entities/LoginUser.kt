@@ -30,19 +30,25 @@ data class LoginUser(
 /**
  * 响应登录
  */
-data class LoginResp(val code :Int = 0,
-                     val error:String?,
-                     val sessionToken: String?,
-                     val username: String?,
-                     val mobilePhoneNumber: String?,
-                     val objectId: String?,
-                     val avatar:String?,
-                     val emailVerified: Boolean,
-                     val mobilePhoneVerified: Boolean,
-                     val letters:String=""){
+data class LoginResp(
+    val code: Int = 0,
+    val error: String?,
+    val sessionToken: String?,
+    val username: String?,
+    val mobilePhoneNumber: String?,
+    val objectId: String?,
+    val avatar: String?,
+    val emailVerified: Boolean,
+    val mobilePhoneVerified: Boolean,
+    val letters: String = "",
+    val role: String = "",
+    val rights: String = "",
+    val district: Int = -1,
+    val categoryCode: String = "1"
+) {
     //因为自定义的拦截器中对404错误的响应结果时行了改写，将其body做为了成功200的body。
     // 所以当code不是0时，可以是404错误的body，此时需要提示用户错误信息。
-    fun isSuccess() :Boolean = code == 0 && sessionToken.isNullOrEmpty().not()
+    fun isSuccess(): Boolean = code == 0 && sessionToken.isNullOrEmpty().not()
 }
 
 /**

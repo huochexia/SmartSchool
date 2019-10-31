@@ -129,9 +129,8 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
         when (state.uiEvents) {
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
-                Toast.makeText(this@LoginActivity, "登录成功！！", Toast.LENGTH_SHORT).show()
                 ARouter.getInstance().build("/restaurant/MainActivity").navigation()
-
+                finish()
             }
             is LoginViewState.LoginUiEvent.SetAutoLoginInfo -> {
                 prefs.autoLogin = state.uiEvents.isAutoLogin!!.apply {

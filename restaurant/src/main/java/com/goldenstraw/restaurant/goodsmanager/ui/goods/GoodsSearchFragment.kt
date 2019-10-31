@@ -152,7 +152,8 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         goodsName.setText(goods.goodsName)
         val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
         unitOfMeasure.setText(goods.unitOfMeasurement)
-
+        val unitPrice = view.findViewById<EditText>(R.id.et_unit_price)
+        unitPrice.setText(goods.unitPrice.toString())
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_update_name)
             .setTitle("修改商品信息")
@@ -163,12 +164,13 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val name = goodsName.text.toString().trim()
                 val unit = unitOfMeasure.text.toString().trim()
-
+                val price = unitPrice.text.toString().trim().toFloat()
                 if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
                     goods.goodsName = name
                     goods.unitOfMeasurement = unit
+                    goods.unitPrice = price
                     viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
                         .subscribe()
                     adapter!!.forceUpdate()

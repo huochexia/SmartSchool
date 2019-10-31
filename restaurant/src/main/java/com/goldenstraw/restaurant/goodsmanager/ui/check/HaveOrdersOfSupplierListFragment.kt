@@ -11,6 +11,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -39,7 +40,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
 
         extend(parentKodein, copy = Copy.All)
     }
-
+    private val prefs: PrefsHelper by instance()
     private val repository: VerifyAndPlaceOrderRepository by instance()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
@@ -48,11 +49,10 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
     val supplierList = mutableListOf<String>()
     var supplierState = ObservableField<Int>() //显示状态
     var orderState = 1
-    var district = 0
+
     override fun initView() {
         super.initView()
         check_toolbar.title = "供应商--未验"
-
         val currday = Calendar.getInstance()
         val before = TimeConverter.getBeforeDay(currday)
         val year = before.get(Calendar.YEAR)
@@ -84,7 +84,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
                         bundle.putString("supplier", supplier)
                         bundle.putString("orderDate", checkDate)
                         bundle.putInt("orderState", orderState)
-                        bundle.putInt("district", district)
+                        bundle.putInt("district", prefs.district)
                         findNavController().navigate(R.id.checkOrderList, bundle)
                     }
                 }
@@ -93,7 +93,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         /*
          区域值应从本地数据中获取，为当前登录用户所有区域值。初始默认是未验状态
          */
-        getSupplierListFromWhere(checkDate, orderState, 0)
+        getSupplierListFromWhere(checkDate, orderState, prefs.district)
 
     }
 
@@ -141,15 +141,13 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
             R.id.menu_checked_order -> {
                 check_toolbar.title = "供应商--已验"
                 orderState = 2
-                getSupplierListFromWhere(checkDate, orderState, district)
             }
             R.id.menu_no_check_order -> {
                 check_toolbar.title = "供应商--未验"
                 orderState = 1
-                getSupplierListFromWhere(checkDate, orderState, district)
-
             }
         }
+        getSupplierListFromWhere(checkDate, orderState, prefs.district)
         return true
 
     }
