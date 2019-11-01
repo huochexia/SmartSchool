@@ -52,7 +52,6 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
 
     override fun initView() {
         super.initView()
-        check_toolbar.title = "供应商--未验"
         val currday = Calendar.getInstance()
         val before = TimeConverter.getBeforeDay(currday)
         val year = before.get(Calendar.YEAR)
@@ -101,6 +100,10 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
      *  获取有订单的供应商名单,状态为1，区域0或1
      */
     private fun getSupplierListFromWhere(date: String, stauts: Int, district: Int) {
+        when (stauts) {
+            1 -> check_toolbar.title = "供应商列表--未验"
+            2 -> check_toolbar.title = "供应商列表--验收"
+        }
         supplierList.clear()
         val where =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts},{\"district\":$district}]}"
