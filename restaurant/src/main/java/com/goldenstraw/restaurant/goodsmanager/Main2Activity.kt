@@ -51,7 +51,6 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                         order.visibility = View.VISIBLE
                         send.visibility = View.VISIBLE
                         query.visibility = View.VISIBLE
-                        supplier.visibility = View.VISIBLE
                         check.visibility = View.VISIBLE
                         record.visibility = View.VISIBLE
                     }

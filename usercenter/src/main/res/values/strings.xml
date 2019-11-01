@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Usercenter</string>
+    <string name="app_name">餐厅管理</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="login_hint_password">密码</string>
     <string name="login_hint_mobilephone">用户名称</string>
