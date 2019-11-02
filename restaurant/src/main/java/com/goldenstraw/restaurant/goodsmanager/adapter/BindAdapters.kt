@@ -8,6 +8,10 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 @BindingAdapter("bind_state_text")
 fun setStateText(textView: TextView, state: Int) {
     when (state) {
+        -1 -> {
+            textView.text = "退货"
+            textView.setTextColor(Color.DKGRAY)
+        }
         0 -> {
             textView.text = "订货"
             textView.setTextColor(Color.BLUE)

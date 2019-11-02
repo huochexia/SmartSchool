@@ -57,7 +57,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         val year = before.get(Calendar.YEAR)
         val month = before.get(Calendar.MONTH) + 1
         val day = before.get(Calendar.DATE)
-        checkDate = "$year-$month-$day"  //验货的是前一天的订单。需要这个时间来确定查询哪一天的订单
+        checkDate = arguments?.getString("orderDate")!! //验货的是前一天的订单。需要这个时间来确定查询哪一天的订单
         check_toolbar.subtitle = checkDate + "的订单"
     }
 

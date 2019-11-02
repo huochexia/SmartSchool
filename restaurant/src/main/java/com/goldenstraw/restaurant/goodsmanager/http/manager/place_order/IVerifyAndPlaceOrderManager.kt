@@ -22,7 +22,10 @@ interface IVerifyAndPlaceOrderManager {
      */
 
     fun getAllSupplier(): Observable<MutableList<User>>
-
+    /**
+     * 删除订单
+     */
+    fun deleteOrderItem(objectId: String):Completable
     /**
      * 修改订单数量
      */

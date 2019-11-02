@@ -24,6 +24,8 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
 
     fun getAllSupplier(): Observable<MutableList<User>>
 
+    fun deleteOrderItem(objectId: String): Completable
+
     fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
 
     fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable
@@ -51,6 +53,10 @@ class RemotePlaceOrderDataSourceImpl(
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
         return manager.getAllSupplier()
+    }
+
+    override fun deleteOrderItem(objectId: String): Completable {
+        return manager.deleteOrderItem(objectId)
     }
 
     override fun updateOrderItemQuantity(

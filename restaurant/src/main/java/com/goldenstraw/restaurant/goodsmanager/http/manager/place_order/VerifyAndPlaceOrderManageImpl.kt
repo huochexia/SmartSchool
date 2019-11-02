@@ -45,6 +45,10 @@ class VerifyAndPlaceOrderManageImpl(
         }
     }
 
+    override fun deleteOrderItem(objectId: String): Completable {
+        return service.deleteOrderItem(objectId)
+    }
+
     override fun updateOrderItemQuantity(
         newQuantity: ObjectQuantity,
         objectId: String

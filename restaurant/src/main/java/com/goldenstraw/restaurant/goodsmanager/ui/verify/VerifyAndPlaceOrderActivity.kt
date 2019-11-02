@@ -85,8 +85,6 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
     }
 
-
-
     /**
      * 初始化Item侧滑菜单,只有修改
      */

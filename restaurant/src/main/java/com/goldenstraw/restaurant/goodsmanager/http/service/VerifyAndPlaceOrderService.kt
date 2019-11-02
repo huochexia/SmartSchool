@@ -59,4 +59,11 @@ interface VerifyAndPlaceOrderApi {
      */
     @POST("1/push/")
     fun pushNotice(@Body pushBody: PushBody): Completable
+
+    /**
+     * 删除订单
+     */
+    @DELETE("/1/classes/OrderItem/{objectId}")
+    fun deleteOrderItem(@Path("objectId") objectId: String): Completable
+
 }

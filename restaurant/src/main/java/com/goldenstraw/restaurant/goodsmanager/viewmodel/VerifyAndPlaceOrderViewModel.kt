@@ -2,7 +2,6 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.haibin.calendarview.Calendar
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable
@@ -10,7 +9,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_single_date_select.*
 
 class VerifyAndPlaceOrderViewModel(
     private val repository: VerifyAndPlaceOrderRepository
@@ -43,6 +41,13 @@ class VerifyAndPlaceOrderViewModel(
      */
     fun getAllSupplier(): Observable<MutableList<User>> {
         return repository.getAllSupplier()
+    }
+
+    /**
+     * 删除订单
+     */
+    fun deleteOrderItem(objectId: String): Completable {
+        return repository.deleteOrderItem(objectId)
     }
 
     /**

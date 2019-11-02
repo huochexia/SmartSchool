@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/check_quantity_order_navigation"
-        app:startDestination="@id/haveOrdersOfSupplierList">
+        app:startDestination="@id/checkSelectDateFragment">
 
     <fragment
             android:id="@+id/haveOrdersOfSupplierList"
@@ -19,5 +19,14 @@
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.check.CheckOrderListFragment"
             android:label="CheckOrderListFragment"
             tools:layout="@layout/fragment_check_order_list" />
+    <fragment
+            android:id="@+id/checkSelectDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.check.CheckSelectDateFragment"
+            android:label="CheckSelectDateFragment"
+            tools:layout="@layout/fragment_check_select_date">
+        <action
+                android:id="@+id/action_checkSelectDateFragment_to_haveOrdersOfSupplierList"
+                app:destination="@id/haveOrdersOfSupplierList" />
+    </fragment>
 
 </navigation>

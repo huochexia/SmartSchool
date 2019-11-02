@@ -64,6 +64,11 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
                 Toast.makeText(context, "请选择区间日期！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            val bundle = Bundle()
+            bundle.putString("supplier", supplier)
+            bundle.putString("start", start)
+            bundle.putString("end", end)
+//            findNavController().navigate(R.id.detailedInventoryFragment, bundle)
             accountOrders()
         }
         iv_clear.setOnClickListener {

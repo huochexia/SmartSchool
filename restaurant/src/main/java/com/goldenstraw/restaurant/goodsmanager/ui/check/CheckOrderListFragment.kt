@@ -1,7 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.check
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -52,9 +51,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         orderDate = arguments!!.getString("orderDate")
         state = arguments!!.getInt("orderState")
         district = arguments!!.getInt("district")
-        if (state == 2) {
-            initSwipeMenu()
-        }
+        initSwipeMenu()
         check_order_toolbar.title = supplier
         check_order_toolbar.subtitle = orderDate
     }
@@ -141,12 +138,22 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         1、生成子菜单，这里将子菜单设置在右侧
          */
         val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(R.color.colorAccent)
-                .setText("重验")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(deleteItem)
+            if (state == 1) {
+                val deleteItem = SwipeMenuItem(context)
+                    .setBackground(R.color.colorAccent)
+                    .setText("退货")
+                    .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+                    .setWidth(200)
+                leftMenu.addMenuItem(deleteItem)
+            }
+            if (state == 2) {
+                val againCheckItem = SwipeMenuItem(context)
+                    .setBackground(R.color.colorAccent)
+                    .setText("重验")
+                    .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
+                    .setWidth(200)
+                rightMenu.addMenuItem(againCheckItem)
+            }
 
         }
         /*
@@ -159,27 +166,48 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
             menuBridge.closeMenu()
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-//                    deleteDialog(adapterPosition)
-                    if (orderList[adapterPosition].state == 3) {
-                        Toast.makeText(context, "已经记帐不能重新验收！！", Toast.LENGTH_SHORT).show()
-                        return@OnItemMenuClickListener
-                    } else {
-                        val dialog = AlertDialog.Builder(context!!)
-                            .setTitle("确定重新验收数量吗？")
-                            .setIcon(R.mipmap.add_icon)
-                            .setNegativeButton("取消") { dialog, which ->
-                                dialog.dismiss()
+            when (direction) {
+                1 -> {
+                    when (menuBridge.position) {
+                        0 -> {
+                            val dialog = AlertDialog.Builder(context!!)
+                                .setTitle("确定要退货吗？")
+                                .setIcon(R.mipmap.add_icon)
+                                .setNegativeButton("取消") { dialog, which ->
+                                    dialog.dismiss()
+                                }
+                                .setPositiveButton("确定") { dialog, which ->
+                                    returnedGoods(orderList[adapterPosition])
+                                    dialog.dismiss()
+                                }.create()
+                            dialog.show()
+                        }
+                    }
+                }
+                -1 -> {
+                    when (menuBridge.position) {
+                        0 -> {
+                            if (orderList[adapterPosition].state == 3) {
+                                Toast.makeText(context, "已经记帐不能重新验收！！", Toast.LENGTH_SHORT).show()
+                                return@OnItemMenuClickListener
+                            } else {
+                                val dialog = AlertDialog.Builder(context!!)
+                                    .setTitle("确定重新验收数量吗？")
+                                    .setIcon(R.mipmap.add_icon)
+                                    .setNegativeButton("取消") { dialog, which ->
+                                        dialog.dismiss()
+                                    }
+                                    .setPositiveButton("确定") { dialog, which ->
+                                        cancleChecked(orderList[adapterPosition])
+                                        dialog.dismiss()
+                                    }.create()
+                                dialog.show()
                             }
-                            .setPositiveButton("确定") { dialog, which ->
-                                cancleChecked(orderList[adapterPosition])
-                                dialog.dismiss()
-                            }.create()
-                        dialog.show()
+                        }
                     }
                 }
             }
+
         }
         /*
         4、给RecyclerView添加监听器
@@ -200,5 +228,28 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 orderList.remove(orderItem)
                 adapter!!.forceUpdate()
             }, {})
+    }
+
+    /**
+     * 退货
+     */
+    private fun returnedGoods(orderItem: OrderItem) {
+        val returned = ObjectCheckGoods(0.0f, -1)
+        viewModel!!.setCheckQuantity(returned, orderItem.objectId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                orderList.remove(orderItem)
+                adapter!!.forceUpdate()
+            }, {})
+//        viewModel!!.deleteOrderItem(orderItem.objectId)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe({
+//                orderList.remove(orderItem)
+//                adapter!!.forceUpdate()
+//            }, {})
     }
 }

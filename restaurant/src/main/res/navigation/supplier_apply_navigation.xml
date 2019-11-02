@@ -33,10 +33,18 @@
         <action
                 android:id="@+id/action_supplierAccount_to_singleSelectCalender"
                 app:destination="@id/singleSelectCalender" />
+        <action
+                android:id="@+id/action_supplierAccount_to_detailedInventoryFragment"
+                app:destination="@id/detailedInventoryFragment" />
     </fragment>
     <fragment
             android:id="@+id/categoryGoodsInfoFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.CategoryGoodsInfoFragment"
             android:label="CategoryGoodsInfoFragment"
             tools:layout="@layout/fragment_supplier_category_goods"/>
+    <fragment
+            android:id="@+id/detailedInventoryFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.supplier.DetailedInventoryFragment"
+            android:label="DetailedInventoryFragment"
+            tools:layout="@layout/fragment_supplier_of_detail_inventory"/>
 </navigation>

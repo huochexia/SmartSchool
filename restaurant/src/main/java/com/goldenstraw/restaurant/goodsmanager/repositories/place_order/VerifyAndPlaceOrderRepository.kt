@@ -29,6 +29,12 @@ class VerifyAndPlaceOrderRepository(
     }
 
     /**
+     * 删除订单
+     */
+    fun deleteOrderItem(objectId: String): Completable {
+        return remote.deleteOrderItem(objectId)
+    }
+    /**
      * 将订单发送给供应商
      */
     fun sendOrdersToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable {
