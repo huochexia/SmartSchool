@@ -63,12 +63,13 @@
                         android:id="@+id/btn_add_to_shopping_cart"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorPrimary"
+                        android:background="@drawable/selector_button"
                         android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
                         android:onClick="@{()->fragment.addGoodsToShoppingCart()}"
                         android:text="@{`加入购物车` +`(`+ fragment.viewModelGoodsTo.shoppingCartOfQuantity +`)` }"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:textColor="@color/secondaryTextColor"/>
             </LinearLayout>
 
         </LinearLayout>

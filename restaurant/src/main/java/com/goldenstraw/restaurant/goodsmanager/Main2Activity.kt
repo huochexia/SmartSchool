@@ -24,7 +24,7 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 
-@Route(path = "/restaurant/MainActivity")
+@Route(path = "/restaurant/main")
 class Main2Activity : BaseActivity<ActivityMain2Binding>() {
     override val layoutId: Int
         get() = R.layout.activity_main2

@@ -41,10 +41,7 @@
         <activity android:name=".changepwd.ChangePwdActivity"/>
 
 
-        <provider
-                android:name="cn.bmob.v3.util.BmobContentProvider"
-                android:authorities="com.owner.usercenter.BmobContentProvider">
-        </provider>
+
 
     </application>
 

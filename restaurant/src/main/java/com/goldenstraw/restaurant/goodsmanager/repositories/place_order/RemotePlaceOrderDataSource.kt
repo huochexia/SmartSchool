@@ -31,6 +31,10 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
 
     fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable
+    /*
+    推送消息
+     */
+    fun pushNotice(installactionId: String, notice: String): Completable
 }
 
 class RemotePlaceOrderDataSourceImpl(
@@ -66,5 +70,9 @@ class RemotePlaceOrderDataSourceImpl(
 
     override fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable {
         return manager.commitRecordState(orders)
+    }
+
+    override fun pushNotice(installactionId: String, notice: String): Completable {
+        return manager.pushNotice(installactionId, notice)
     }
 }

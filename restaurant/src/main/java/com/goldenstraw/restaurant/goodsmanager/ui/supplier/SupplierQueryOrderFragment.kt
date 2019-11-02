@@ -57,25 +57,29 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
         tv_lunar.text = "今日"
-        initData()
-    }
-
-    private fun initData() {
-        val year = calendarView.curYear
-        val month = calendarView.curMonth
-        val map = HashMap<String, Calendar>()
-        map[getSchemeCalendar(year, month, 3, -0x40db25, "进货").toString()] =
-            getSchemeCalendar(year, month, 3, -0x40db25, "进货")
-        map[getSchemeCalendar(year, month, 6, -0x196ec8, "验货").toString()] =
-            getSchemeCalendar(year, month, 6, -0x196ec8, "验货")
-        map[getSchemeCalendar(year, month, 9, -0x20ecaa, "确认").toString()] =
-            getSchemeCalendar(year, month, 9, -0x20ecaa, "确认")
-        map[getSchemeCalendar(year, month, 13, -0x123a93, "录入").toString()] =
-            getSchemeCalendar(year, month, 13, -0x123a93, "录入")
-
-        calendarView.setSchemeDate(map)
 
     }
+
+    /**
+     * 留着学习用
+     */
+
+//    private fun initData() {
+//        val year = calendarView.curYear
+//        val month = calendarView.curMonth
+//        val map = HashMap<String, Calendar>()
+//        map[getSchemeCalendar(year, month, 3, -0x40db25, "进货").toString()] =
+//            getSchemeCalendar(year, month, 3, -0x40db25, "进货")
+//        map[getSchemeCalendar(year, month, 6, -0x196ec8, "验货").toString()] =
+//            getSchemeCalendar(year, month, 6, -0x196ec8, "验货")
+//        map[getSchemeCalendar(year, month, 9, -0x20ecaa, "确认").toString()] =
+//            getSchemeCalendar(year, month, 9, -0x20ecaa, "确认")
+//        map[getSchemeCalendar(year, month, 13, -0x123a93, "录入").toString()] =
+//            getSchemeCalendar(year, month, 13, -0x123a93, "录入")
+//
+//        calendarView.setSchemeDate(map)
+//
+//    }
 
     private fun getCalendar(year: Int, month: Int, day: Int): Calendar {
         val calendar = Calendar()

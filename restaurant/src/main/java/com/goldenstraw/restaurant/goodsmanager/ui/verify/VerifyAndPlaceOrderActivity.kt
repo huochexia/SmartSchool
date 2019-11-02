@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
+import cn.bmob.push.BmobPush
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -83,6 +84,8 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
 
     }
+
+
 
     /**
      * 初始化Item侧滑菜单,只有修改
@@ -271,7 +274,14 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({ it ->
-                viewModel!!.sendToOrderToSupplier(it).subscribeOn(Schedulers.io())
+                viewModel!!.sendToOrderToSupplier(it)
+                    .andThen(
+                        viewModel!!.pushNotice(
+                            "A5FC2F92C466F04591465DCCE420FF54",
+                            "河北省税务干部学校给您发送了${TimeConverter.getCurrentDateString()}的新订单！"
+                        )
+                    )
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({

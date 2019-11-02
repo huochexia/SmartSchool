@@ -65,20 +65,6 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
                 return@setOnClickListener
             }
             accountOrders()
-//            for (c in calendars) {
-//                Log.e(
-//                    "SelectCalendarRange", c.toString()
-//                            + " -- " + c.scheme
-//                            + "  --  " + c.lunar
-//                )
-//            }
-//            Toast.makeText(
-//                context, String.format(
-//                    "选择了%s个日期: %s —— %s", calendars.size,
-//                    calendars[0].toString(), calendars[calendars.size - 1].toString()
-//                ),
-//                Toast.LENGTH_SHORT
-//            ).show()
         }
         iv_clear.setOnClickListener {
             calendarView.clearSelectRange()

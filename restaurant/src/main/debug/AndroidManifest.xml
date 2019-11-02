@@ -33,9 +33,7 @@
         <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
         <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
         <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity"/>
-        <!--        <provider-->
-        <!--                android:name="cn.bmob.v3.util.BmobContentProvider"-->
-        <!--                android:authorities="com.owner.usercenter.BmobContentProvider" />-->
+
     </application>
 
 

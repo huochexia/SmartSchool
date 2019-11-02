@@ -16,8 +16,13 @@
 package com.owner.usercenter.login
 
 import android.widget.Toast
+import cn.bmob.v3.BmobInstallationManager
+import cn.bmob.v3.BmobQuery
+import cn.bmob.v3.BmobUser
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.jakewharton.rxbinding3.view.clicks
+import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityLoginBinding
@@ -26,6 +31,8 @@ import com.owner.usercenter.mvi.MVIActivity
 import com.owner.usercenter.util.PrefsHelper
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.startActivity
@@ -38,6 +45,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-01.It's smartschool
  *@description:
  */
+@Route(path = "/usercenter/login")
 class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewState>() {
 
 
@@ -129,7 +137,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
         when (state.uiEvents) {
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
-                ARouter.getInstance().build("/restaurant/MainActivity").navigation()
+                ARouter.getInstance().build(RouterPath.Restaurant.PATH_MAIN).navigation()
                 finish()
             }
             is LoginViewState.LoginUiEvent.SetAutoLoginInfo -> {

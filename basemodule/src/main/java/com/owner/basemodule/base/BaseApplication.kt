@@ -16,19 +16,27 @@
 package com.owner.basemodule.base
 
 import android.app.Application
+import cn.bmob.push.BmobPush
 import cn.bmob.v3.Bmob
+import cn.bmob.v3.BmobInstallation
+import cn.bmob.v3.BmobInstallationManager
+import cn.bmob.v3.InstallationListener
+import cn.bmob.v3.exception.BmobException
 import com.alibaba.android.arouter.launcher.ARouter
 import com.owner.basemodule.BuildConfig
 import com.owner.basemodule.kodein.httpFactoryModule
 import com.owner.basemodule.kodein.prefsModule
 import com.owner.basemodule.kodein.roomDBModule
 import com.owner.basemodule.logger.initLogger
+import com.owner.basemodule.logger.loge
+import com.owner.basemodule.logger.logi
 import com.owner.basemodule.util.SingletonHolderNoArg
 import com.squareup.leakcanary.LeakCanary
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.androidModule
 import org.kodein.di.android.x.androidXModule
+
 
 /**
  * 基础应用，实现KodeinAware接口
@@ -59,10 +67,22 @@ class BaseApplication : Application(), KodeinAware {
 
         //通过AppId连接Bmob云端
         Bmob.initialize(this, BMOB_APP_ID)
-        //初始化本地数据库
+        // 使用推送服务时的初始化操作
+        BmobInstallationManager.getInstance()
+            .initialize(object : InstallationListener<BmobInstallation>() {
+                override fun done(bmobInstallation: BmobInstallation?, e: BmobException?) {
+                    if (e == null) {
+                        logi { bmobInstallation!!.objectId + "-" + bmobInstallation.installationId }
+                    } else {
+                        loge { e.message!! }
+                    }
+                }
+            })
+        //启动Bmob的消息推送功能
+//        BmobPush.startWork(this)
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
-        initLeakCanary()
+//        initLeakCanary()
         //初始化ARouter
         ARouter.openLog()
         ARouter.openDebug()

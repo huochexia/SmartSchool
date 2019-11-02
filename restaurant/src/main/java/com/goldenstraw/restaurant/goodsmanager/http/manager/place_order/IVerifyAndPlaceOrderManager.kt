@@ -41,4 +41,9 @@ interface IVerifyAndPlaceOrderManager {
      * 确定记帐
      */
     fun commitRecordState(orders:BatchOrdersRequest<ObjectState>):Completable
+
+    /**
+     * 推送消息
+     */
+    fun pushNotice(installactionId:String,notice:String):Completable
 }

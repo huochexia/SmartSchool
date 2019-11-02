@@ -33,7 +33,7 @@ object TimeConverter {
      * 获取系统当前日期字符串
      */
     fun getCurrentDateString(): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val formatter = SimpleDateFormat("yyyy-M-d")
         val curDate = Date(System.currentTimeMillis())//获取当日期
         return formatter.format(curDate)
     }
