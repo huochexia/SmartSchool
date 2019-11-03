@@ -9,7 +9,6 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.ObservableField
-import cn.bmob.push.BmobPush
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -127,8 +126,8 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
     }
 
     private fun updateDialog(order: OrderItem) {
-        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
-        val quantity = view.findViewById<EditText>(R.id.dialog_edit)
+        val view = layoutInflater.inflate(R.layout.only_input_number_dialog_view, null)
+        val quantity = view.findViewById<EditText>(R.id.number_edit)
         quantity.setText(order.quantity.toString())
         val dialog = android.app.AlertDialog.Builder(this)
             .setIcon(R.drawable.ic_update_name)
@@ -222,6 +221,24 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      */
     fun popUpSelectSupplierDialog() {
         var supplier = ""
+        //1、创建一个已选择的列表
+        val selectedList = mutableListOf<OrderItem>()
+        showList.forEach {
+            if (it.isSelected) {
+                it.supplier = supplier
+                selectedList.add(it)
+            }
+        }
+        if (selectedList.isEmpty()) {
+            toast { "请选择选择商品！！" }
+            return
+        }
+        showDialog(supplier, selectedList)
+
+    }
+
+    private fun showDialog(supplier: String, selectedList: MutableList<OrderItem>) {
+        var supplier1 = supplier
         val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
         val spinner = view.findViewById<AppCompatSpinner>(R.id.spinner_select_supplier)
         spinner.adapter = SupplierSpinnerAdapter(this, viewModel!!.suppliers)
@@ -232,7 +249,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                 position: Int,
                 id: Long
             ) {
-                supplier = viewModel!!.suppliers[position].username.toString()
+                supplier1 = viewModel!!.suppliers[position].username.toString()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -247,26 +264,25 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                sendOrderToSupplier(supplier)
+                sendOrderToSupplier(supplier1, selectedList)
                 dialog.dismiss()
             }.create()
         dialog.show()
-
     }
 
     /**
      * 将订单发送给对应的供应商，刷新列表
      */
 
-    private fun sendOrderToSupplier(supplier: String) {
-        //1、创建一个已选择的列表
-        val selectedList = mutableListOf<OrderItem>()
-        showList.forEach {
-            if (it.isSelected) {
-                it.supplier = supplier
-                selectedList.add(it)
-            }
-        }
+    private fun sendOrderToSupplier(supplier: String, selectedList: MutableList<OrderItem>) {
+//        //1、创建一个已选择的列表
+//        val selectedList = mutableListOf<OrderItem>()
+//        showList.forEach {
+//            if (it.isSelected) {
+//                it.supplier = supplier
+//                selectedList.add(it)
+//            }
+//        }
         viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

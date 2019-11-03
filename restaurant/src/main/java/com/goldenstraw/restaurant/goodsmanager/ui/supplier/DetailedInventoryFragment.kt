@@ -8,6 +8,7 @@ import com.goldenstraw.restaurant.databinding.FragmentSupplierOfDetailInventoryB
 import com.goldenstraw.restaurant.databinding.TotalOfOrderDetailBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.mergeSimilarOrderItem
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -20,7 +21,6 @@ import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.text.DecimalFormat
 
 class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventoryBinding>() {
     override val layoutId: Int
@@ -71,7 +71,6 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
      */
     fun getAllOfOrderAndSum() {
         details.clear()
-        val sum = 0.0f
         val map = HashMap<String, OrderItem>()
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
@@ -81,19 +80,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             .flatMap {
                 Observable.fromIterable(it)
             }.map {
-                val format = DecimalFormat(".00")
-                it.total = format.format(it.checkQuantity * it.unitPrice).toFloat()
-                val key = it.goodsName
-                if (map[key] == null) {
-                    map[key] = it
-                } else {
-
-                    val oldOrder = map[key]!!
-                    oldOrder.checkQuantity = oldOrder.checkQuantity.plus(it.checkQuantity)
-                    oldOrder.total = format.format(oldOrder.total.plus(it.total)).toFloat()
-                    map[key] = oldOrder
-                }
-                key
+                mergeSimilarOrderItem(it, map)
             }
             .distinct()
             .map {

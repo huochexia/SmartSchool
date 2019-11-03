@@ -57,7 +57,10 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
                 binding.orderitem = order
             })
 
+        getOrderOfAll()
+    }
 
+    private fun getOrderOfAll() {
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .subscribeOn(Schedulers.io())
