@@ -37,7 +37,7 @@ interface VerifyAndPlaceOrderApi {
     fun updateOrderItem(@Body newOrder: ObjectQuantity, @Path("objectId") objectId: String): Completable
 
     /**
-     * 修改实际数量
+     * 修改数量
      */
     @PUT("/1/classes/OrderItem/{objectId}")
     fun setCheckQuantity(@Body newCheck: ObjectCheckGoods, @Path("objectId") objectId: String): Completable

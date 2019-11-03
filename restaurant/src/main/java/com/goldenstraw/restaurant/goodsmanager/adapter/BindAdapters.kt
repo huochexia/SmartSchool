@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import java.text.DecimalFormat
 
 @BindingAdapter("bind_state_text")
 fun setStateText(textView: TextView, state: Int) {
@@ -37,4 +38,11 @@ fun setQuantityText(textView: TextView, order: OrderItem) {
         textView.text = order.quantity.toString()
     else
         textView.text = order.checkQuantity.toString()
+}
+
+@BindingAdapter("bind_difference_text")
+fun setDifferenceText(textView: TextView, order: OrderItem) {
+    val format = DecimalFormat("0")
+    val differ = (order.againCheckQuantity - order.checkQuantity) * order.unitPrice
+    textView.text = format.format(differ)
 }

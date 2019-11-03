@@ -90,7 +90,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             LayoutInflater.from(context).inflate(R.layout.only_input_number_dialog_view, null)
         val edit = view.findViewById<EditText>(R.id.number_edit)
         val dialog = AlertDialog.Builder(context!!)
-            .setTitle("确定实际数量")
+            .setTitle("确定\"${orderItem.goodsName}\"的数量")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
             .setNegativeButton("取消") { dialog, which ->
@@ -107,11 +107,13 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
 
     /**
-     * 查询条件：供应商，日期（前一天），状态（1或2），区域（0或1）
+     * 查看状态由菜单控制，可以是1送货状态，也可以2已验状态。
      */
     private fun getOrderItemList() {
         val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"},{\"state\":$state},{\"district\":$district}]}"
+            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
+                    ",{\"state\":$state},{\"district\":$district}" +
+                    ",{\"quantity\":{\"\$ne\":0}}]}"
         viewModel!!.getAllOrderOfDate(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -164,14 +166,15 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 1 -> {
                     when (menuBridge.position) {
                         0 -> {
+                            val order = orderList[adapterPosition]
                             val dialog = AlertDialog.Builder(context!!)
-                                .setTitle("确定要退货吗？")
+                                .setTitle("确定\"${order.goodsName}\"退货吗？")
                                 .setIcon(R.mipmap.add_icon)
                                 .setNegativeButton("取消") { dialog, which ->
                                     dialog.dismiss()
                                 }
                                 .setPositiveButton("确定") { dialog, which ->
-                                    returnedGoods(orderList[adapterPosition])
+                                    returnedGoods(order)
                                     dialog.dismiss()
                                 }.create()
                             dialog.show()
@@ -186,7 +189,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                                 return@OnItemMenuClickListener
                             } else {
                                 val dialog = AlertDialog.Builder(context!!)
-                                    .setTitle("确定重新验收数量吗？")
+                                    .setTitle("确定对\"${orderList[adapterPosition].goodsName}\"重新验收吗？")
                                     .setIcon(R.mipmap.add_icon)
                                     .setNegativeButton("取消") { dialog, which ->
                                         dialog.dismiss()
@@ -218,7 +221,13 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     ) {
         val format = DecimalFormat(".00")
         val total = format.format(check * orderItem.unitPrice).toFloat()
-        val newQuantity = ObjectCheckGoods(check, check, total, 2)
+        val newQuantity = ObjectCheckGoods(
+            quantity = orderItem.quantity,
+            checkQuantity = check,
+            againCheckQuantity = check,
+            total = total,
+            state = 2
+        )
         viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -232,7 +241,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 重验
      */
     private fun cancleChecked(orderItem: OrderItem) {
-        val again = ObjectCheckGoods(0.0f, 0.0f, 0.0f, 1)
+        val again = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, 1)
         viewModel!!.setCheckQuantity(again, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -244,10 +253,10 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     }
 
     /**
-     * 退货
+     * 退货,状态改为-1。
      */
     private fun returnedGoods(orderItem: OrderItem) {
-        val returned = ObjectCheckGoods(0.0f, 0.0f, 0.0f, -1)
+        val returned = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, -1)
         viewModel!!.setCheckQuantity(returned, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -256,13 +265,6 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 orderList.remove(orderItem)
                 adapter!!.forceUpdate()
             }, {})
-//        viewModel!!.deleteOrderItem(orderItem.objectId)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(scopeProvider)
-//            .subscribe({
-//                orderList.remove(orderItem)
-//                adapter!!.forceUpdate()
-//            }, {})
+
     }
 }

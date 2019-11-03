@@ -11,6 +11,7 @@ import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.ReCheckOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
@@ -62,7 +63,12 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                         order.visibility = View.VISIBLE
                         check.visibility = View.VISIBLE
                     }
+
                 }
+
+            }
+            "复核" -> {
+                recheck.visibility = View.VISIBLE
             }
         }
         initEvent()
@@ -92,6 +98,10 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         record.setOnClickListener {
             val intent2 = Intent(this, RecordOrdersActivity::class.java)
             startActivity(intent2)
+        }
+        recheck.setOnClickListener {
+            val intentRecheck = Intent(this, ReCheckOrdersActivity::class.java)
+            startActivity(intentRecheck)
         }
     }
 

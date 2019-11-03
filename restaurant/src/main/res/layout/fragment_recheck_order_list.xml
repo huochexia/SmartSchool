@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckOrderListFragment" />
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/rlw_record_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary" />
+
+        <com.kennyc.view.MultiStateView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlw_recheck_order"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:bind_recyclerView_adapter="@{fragment.adapter}"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/layout_recheck_item" />
+            </androidx.core.widget.NestedScrollView>
+        </com.kennyc.view.MultiStateView>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <Button
+                    android:id="@+id/account_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/selector_button"
+                    android:onClick="@{()->fragment.computeTotalPrice()}"
+                    android:text="核算"
+                    android:textSize="18sp" />
+
+            <TextView
+                    android:id="@+id/tv_account_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/common_red"
+                    android:textSize="18sp"
+                    tools:text="1000" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

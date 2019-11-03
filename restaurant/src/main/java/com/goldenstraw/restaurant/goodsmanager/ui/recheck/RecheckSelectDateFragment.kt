@@ -1,26 +1,17 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.check
+package com.goldenstraw.restaurant.goodsmanager.ui.recheck
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentCheckSelectDateBinding
-import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
+import com.goldenstraw.restaurant.databinding.FragmentRecheckSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.uber.autodispose.autoDisposable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_single_date_select.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -28,25 +19,24 @@ import org.kodein.di.generic.instance
 /**
  * Created by Administrator on 2019/10/29 0029
  */
-class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
+class RecheckSelectDateFragment : BaseFragment<FragmentRecheckSelectDateBinding>(),
     CalendarView.OnCalendarSelectListener {
 
 
     override val layoutId: Int
-        get() = R.layout.fragment_check_select_date
+        get() = R.layout.fragment_recheck_select_date
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    val map = HashMap<String, Calendar>()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        markDate()
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -92,46 +82,12 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
             val bundle = Bundle()
             val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
             bundle.putString("orderDate", date)
-            findNavController().navigate(R.id.haveOrdersOfSupplierList, bundle)
+            findNavController().navigate(R.id.reCheckSupplierFragment, bundle)
         }
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
-    /**
-     * 标记尚未记帐的日期
-     */
-    private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":1},{\"quantity\":{\"\$ne:0}}]}"
-        viewModel!!.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }.map {
-                it.orderDate
-            }
-            .distinct()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                val string = it.split("-")
-                val year = string[0]
-                val month = string[1]
-                val day = string[2]
-                map[getSchemeCalendar(
-                    year.toInt(), month.toInt(), day.toInt(),
-                    -0x20ecaa, "未验"
-                ).toString()] = getSchemeCalendar(
-                    year.toInt(), month.toInt(), day.toInt(),
-                    -0x20ecaa, "未验"
-                )
-
-            }, {}, {
-                calendarView.setSchemeDate(map)
-            })
-    }
-
 
 }

@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.check
+package com.goldenstraw.restaurant.goodsmanager.ui.recheck
 
 import android.os.Bundle
 import android.view.Menu
@@ -8,106 +8,91 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfSupplierBinding
+import com.goldenstraw.restaurant.databinding.FragmentRecheckSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_have_orders_of_supplier.*
+import kotlinx.android.synthetic.main.fragment_record_select_supplier.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.util.*
 
 /**
- *
- * Created by Administrator on 2019/10/28 0028
+ * 需要
+ * Created by Administrator on 2019/10/29 0029
  */
-class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSupplierBinding>() {
-    override val layoutId: Int
-        get() = R.layout.fragment_have_orders_of_supplier
-    override val kodein: Kodein = Kodein.lazy {
+class ReCheckSupplierFragment : BaseFragment<FragmentRecheckSupplierBinding>() {
 
+    override val layoutId: Int
+        get() = R.layout.fragment_recheck_supplier
+
+    override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val prefs: PrefsHelper by instance()
     private val repository: VerifyAndPlaceOrderRepository by instance()
-    lateinit var viewModel: VerifyAndPlaceOrderViewModel
+    var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
 
-    lateinit var checkDate: String
-    val supplierList = mutableListOf<String>()
-    var supplierState = ObservableField<Int>() //显示状态
-    var orderState = 1
+    var supplierState = ObservableField<Int>()
 
+    var supplierList = mutableListOf<String>()
+    var district = 0 //默认新石校区
+    lateinit var orderDate: String
     override fun initView() {
         super.initView()
-        val currday = Calendar.getInstance()
-        val before = TimeConverter.getBeforeDay(currday)
-        val year = before.get(Calendar.YEAR)
-        val month = before.get(Calendar.MONTH) + 1
-        val day = before.get(Calendar.DATE)
-        checkDate = arguments?.getString("orderDate")!! //验货的是前一天的订单。需要这个时间来确定查询哪一天的订单
-        check_toolbar.subtitle = checkDate + "的订单"
+        orderDate = arguments?.getString("orderDate")!!
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(check_toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(record_select_toolbar)
         setHasOptionsMenu(true)
+        when (district) {
+            0 -> record_select_toolbar.title = "新石校区"
+            1 -> record_select_toolbar.title = "西山校区"
+        }
+        record_select_toolbar.subtitle = orderDate
 
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_supplier_name_item,
-            dataSource = { supplierList },
             dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
+            dataSource = { supplierList },
             callback = { supplier, binding, position ->
                 binding.supplier = supplier
                 binding.clickEvent = object : Consumer<String> {
                     override fun accept(t: String) {
                         val bundle = Bundle()
                         bundle.putString("supplier", supplier)
-                        bundle.putString("orderDate", checkDate)
-                        bundle.putInt("orderState", orderState)
-                        bundle.putInt("district", prefs.district)
-                        findNavController().navigate(R.id.checkOrderList, bundle)
+                        bundle.putString("orderDate", orderDate)
+                        bundle.putInt("district", district)
+                        findNavController().navigate(R.id.recheckOrderListFragment, bundle)
                     }
                 }
             }
         )
-        /*
-         区域值应从本地数据中获取，为当前登录用户所有区域值。初始默认是未验状态
-         */
-        getSupplierListFromWhere(checkDate, orderState, prefs.district)
-
+        getSupplierListFromWhere(orderDate, district)
     }
 
     /**
-     *  获取有订单的供应商名单,状态为1，区域0或1
+     *  获取有订单的供应商名单,状态3（即3记帐），区域0或1
      */
-    private fun getSupplierListFromWhere(date: String, stauts: Int, district: Int) {
-        when (stauts) {
-            1 -> check_toolbar.title = "供应商列表--未验"
-            2 -> check_toolbar.title = "供应商列表--验收"
-        }
+    private fun getSupplierListFromWhere(date: String, district: Int) {
         supplierList.clear()
         val where =
-            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}" +
-                    ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
+            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":3},{\"district\":$district}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)
@@ -136,24 +121,22 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.menu_check_orders, menu)
-
+        inflater.inflate(R.menu.menu_select_district, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            R.id.menu_checked_order -> {
-                check_toolbar.title = "供应商--已验"
-                orderState = 2
+        when (item.itemId) {
+            R.id.select_xinshinan_district -> {
+                district = 0
+                record_select_toolbar.title = "新石校区"
+                getSupplierListFromWhere(orderDate, 0)
             }
-            R.id.menu_no_check_order -> {
-                check_toolbar.title = "供应商--未验"
-                orderState = 1
+            R.id.select_xishan_district -> {
+                district = 1
+                record_select_toolbar.title = "西山校区"
+                getSupplierListFromWhere(orderDate, 1)
             }
         }
-        getSupplierListFromWhere(checkDate, orderState, prefs.district)
         return true
-
     }
-
 }

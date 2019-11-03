@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_orders_of_date_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 /**
  * 供应商某日订单
@@ -60,8 +61,13 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
         getOrderOfAll()
     }
 
+    /**
+     *
+     */
     private fun getOrderOfAll() {
-        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
+        val where = "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
+                ",{\"orderDate\":\"$date\"}" +
+                ",{\"quantity\":{\"\$ne\":0}}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -91,15 +97,16 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
      */
     private fun summation(orders: MutableList<OrderItem>) {
         val sum = 0.0f
+        val format = DecimalFormat(".00")
         Observable.fromIterable(orders)
             .scan(sum) { sum, orderItem ->
-                sum + orderItem.checkQuantity * orderItem.unitPrice
+                sum + orderItem.total
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe {
-                toolbar.subtitle = "共" + orders.size + "项" + "    记帐金额" + it + "元"
+                toolbar.subtitle = "共${orders.size}项    记帐 ${format.format(it)}元"
             }
     }
 }

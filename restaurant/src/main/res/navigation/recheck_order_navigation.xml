@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/recheck_order_navigation"
+        app:startDestination="@id/recheckSelectDateFragment">
+
+    <fragment
+            android:id="@+id/recheckSelectDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckSelectDateFragment"
+            android:label="RecheckSelectDateFragment"
+            tools:layout="@layout/fragment_recheck_select_date">
+        <action
+                android:id="@+id/action_recheckSelectDateFragment_to_reCheckSupplierFragment"
+                app:destination="@id/reCheckSupplierFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/reCheckSupplierFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.ReCheckSupplierFragment"
+            android:label="ReCheckSupplierFragment"
+            tools:layout="@layout/fragment_recheck_supplier">
+        <action
+                android:id="@+id/action_reCheckSupplierFragment_to_recheckOrderListFragment"
+                app:destination="@id/recheckOrderListFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/recheckOrderListFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckOrderListFragment"
+            android:label="RecheckOrderListFragment"
+            tools:layout="@layout/fragment_recheck_order_list" />
+</navigation>

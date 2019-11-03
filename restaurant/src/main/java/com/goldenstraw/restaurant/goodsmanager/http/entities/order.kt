@@ -58,6 +58,7 @@ data class ObjectQuantity(
 验货,确定数量，验货日期，改变状态为2
  */
 data class ObjectCheckGoods(
+    var quantity: Float,
     var checkQuantity: Float,
     var againCheckQuantity: Float,
     var total: Float,//四舍五入，保留两位数，
