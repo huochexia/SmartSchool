@@ -21,7 +21,11 @@ import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
+/**
+ * 已经记帐订单清单，合并同类商品求和
+ */
 class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventoryBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_supplier_of_detail_inventory
@@ -67,7 +71,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
     }
 
     /**
-     * 获得所有订单
+     * 获得所有已经记帐的订单
      */
     fun getAllOfOrderAndSum() {
         details.clear()
@@ -75,7 +79,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
-                    ",{\"state\":{\"\$ne\":-1}}]}"
+                    ",{\"state\":3}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .flatMap {
                 Observable.fromIterable(it)
@@ -94,15 +98,34 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_ERROR)
             }, {
-                adapter!!.forceUpdate()
-                if (details.isEmpty()) {
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                }
+                showComputerResult()
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
+    }
+
+    /**
+     * 显示最后合并同类项后的计算结果
+     */
+    private fun showComputerResult() {
+        adapter!!.forceUpdate()
+        if (details.isEmpty()) {
+            viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+        } else {
+            viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+        }
+        val total = 0.0f
+        Observable.fromIterable(details)
+            .scan(total) { sum, order ->
+                sum + order.total
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe {
+                val format = DecimalFormat(".00")
+                totalAllOrder.value = format.format(it).toFloat()
+            }
     }
 
 }

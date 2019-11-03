@@ -123,7 +123,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
     }
 
     /**
-     * 计算区间日期订单总额
+     * 计算区间日期订单总额,已经记帐
      *
      */
     fun accountOrders() {
@@ -132,14 +132,14 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
-                    ",{\"state\":{\"\$ne\":-1}}]}"
+                    ",{\"state\":3}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .flatMap {
                 Observable.fromIterable(it)
             }
             .subscribeOn(Schedulers.io())
             .scan(sum) { sum, order ->
-                sum + order.checkQuantity * order.unitPrice
+                sum + order.total
             }
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

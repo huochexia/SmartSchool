@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_record_order_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 /**
  * 列示某供应商的某日验货或记帐的清单
@@ -127,13 +128,14 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         val total = 0.0f
         Observable.fromIterable(orderList)
             .scan(total) { sum, order ->
-                sum + order.checkQuantity * order.unitPrice
+                sum + order.total
             }
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe {
-                binding.totalPrice.text = "${orderList.size}项:$it"
+                val format = DecimalFormat("0.00")
+                binding.totalPrice.text = "${orderList.size}项:${format.format(it)}"
             }
     }
 

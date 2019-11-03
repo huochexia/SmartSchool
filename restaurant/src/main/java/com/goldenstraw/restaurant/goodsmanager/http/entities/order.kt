@@ -60,7 +60,7 @@ data class ObjectQuantity(
 data class ObjectCheckGoods(
     var checkQuantity: Float,
     var againCheckQuantity: Float,
-//    var total: Float,//四舍五入，保留两位数，
+    var total: Float,//四舍五入，保留两位数，
     var state: Int
 )
 

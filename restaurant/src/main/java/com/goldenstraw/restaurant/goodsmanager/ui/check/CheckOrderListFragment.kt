@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_check_order_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
@@ -97,20 +98,13 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             }
             .setPositiveButton("确定") { dialog, which ->
                 val check = edit.text.toString().trim().toFloat()
-                val newQuantity = ObjectCheckGoods(check, check, 2)
-                viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(scopeProvider)
-                    .subscribe({
-                        orderList.remove(orderItem)
-                        adapter!!.forceUpdate()
-                    }, {})
+                saveCheckResult(check, orderItem)
                 dialog.dismiss()
             }.create()
         dialog.show()
 
     }
+
 
     /**
      * 查询条件：供应商，日期（前一天），状态（1或2），区域（0或1）
@@ -216,10 +210,29 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     }
 
     /**
+     * 保存验货结果
+     */
+    private fun saveCheckResult(
+        check: Float,
+        orderItem: OrderItem
+    ) {
+        val format = DecimalFormat(".00")
+        val total = format.format(check * orderItem.unitPrice).toFloat()
+        val newQuantity = ObjectCheckGoods(check, check, total, 2)
+        viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                orderList.remove(orderItem)
+                adapter!!.forceUpdate()
+            }, {})
+    }
+    /**
      * 重验
      */
     private fun cancleChecked(orderItem: OrderItem) {
-        val again = ObjectCheckGoods(0.0f, 0.0f, 1)
+        val again = ObjectCheckGoods(0.0f, 0.0f, 0.0f, 1)
         viewModel!!.setCheckQuantity(again, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -234,7 +247,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 退货
      */
     private fun returnedGoods(orderItem: OrderItem) {
-        val returned = ObjectCheckGoods(0.0f, 0.0f, -1)
+        val returned = ObjectCheckGoods(0.0f, 0.0f, 0.0f, -1)
         viewModel!!.setCheckQuantity(returned, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

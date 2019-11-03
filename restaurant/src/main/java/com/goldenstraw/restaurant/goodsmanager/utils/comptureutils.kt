@@ -11,12 +11,10 @@ fun mergeSimilarOrderItem(
     map: HashMap<String, OrderItem>
 ): String {
     val format = DecimalFormat(".00")
-    it.total = format.format(it.checkQuantity * it.unitPrice).toFloat()
     val key = it.goodsName
     if (map[key] == null) {
         map[key] = it
     } else {
-
         val oldOrder = map[key]!!
         //数量加
         oldOrder.checkQuantity = oldOrder.checkQuantity.plus(it.checkQuantity)
