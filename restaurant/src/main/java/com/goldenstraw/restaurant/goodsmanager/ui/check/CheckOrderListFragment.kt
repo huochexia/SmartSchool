@@ -97,7 +97,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             }
             .setPositiveButton("确定") { dialog, which ->
                 val check = edit.text.toString().trim().toFloat()
-                val newQuantity = ObjectCheckGoods(check, 2)
+                val newQuantity = ObjectCheckGoods(check, check, 2)
                 viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -219,7 +219,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 重验
      */
     private fun cancleChecked(orderItem: OrderItem) {
-        val again = ObjectCheckGoods(0.0f, 1)
+        val again = ObjectCheckGoods(0.0f, 0.0f, 1)
         viewModel!!.setCheckQuantity(again, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -234,7 +234,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 退货
      */
     private fun returnedGoods(orderItem: OrderItem) {
-        val returned = ObjectCheckGoods(0.0f, -1)
+        val returned = ObjectCheckGoods(0.0f, 0.0f, -1)
         viewModel!!.setCheckQuantity(returned, orderItem.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

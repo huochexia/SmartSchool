@@ -143,6 +143,7 @@
                 android:id="@+id/range_select_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/selector_button"
                 android:text="核算订单"
                 android:textColor="#333333"
                 android:textSize="18sp"

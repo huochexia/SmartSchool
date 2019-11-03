@@ -1,8 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
@@ -20,6 +22,7 @@ class QueryOrdersViewModel(
     //用于查询某个供应商订单
     var supplier: String = ""
 
+    var viewState = ObservableField<Int>()
     init {
         getAllSupplier()
             .subscribeOn(Schedulers.io())
@@ -28,8 +31,17 @@ class QueryOrdersViewModel(
             .subscribe({
                 suppliers.clear()
                 suppliers.addAll(it)
-            }, {}, {
+                if (suppliers.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                }
+            }, {
+                viewState.set(MultiStateView.VIEW_STATE_ERROR)
+            }, {
 
+            }, {
+                viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
     }
 

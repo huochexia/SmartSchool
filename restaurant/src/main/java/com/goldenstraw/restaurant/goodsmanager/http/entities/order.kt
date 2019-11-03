@@ -11,6 +11,9 @@ data class NewOrderItem(
     var unitPrice: Float,
     var categoryCode: String,
     var quantity: Float,
+    var checkQuantity: Float = 0.0f,//验货数量
+    var againCheckQuantity: Float = 0.0f,//再次确认验货数量
+    var total: Float = 0.0f,
     var note: String = "",
     var state: Int
 )
@@ -30,6 +33,7 @@ data class OrderItem(
     var quantity: Float, //采购数量
     var checkQuantity: Float = 0.0f,//验货数量
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
+    var total: Float,
     var note: String,//备注
     var supplier: String? = null, //供货商
     var state: Int, //0：拟购单，1：订货单，2：验货单，3：对帐单
@@ -55,6 +59,8 @@ data class ObjectQuantity(
  */
 data class ObjectCheckGoods(
     var checkQuantity: Float,
+    var againCheckQuantity: Float,
+//    var total: Float,//四舍五入，保留两位数，
     var state: Int
 )
 

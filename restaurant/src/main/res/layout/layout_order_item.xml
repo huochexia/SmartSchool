@@ -42,29 +42,50 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                    <CheckBox
-                            android:id="@+id/cb_goods"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/constraintLayout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:onClick="@{()->checkEvent.accept(orderitem)}"
-                            android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                            android:id="@+id/tv_goods_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@{orderitem.goodsName}"
-                            android:textSize="18sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/cb_goods"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="商品名称" />
+                        <CheckBox
+                                android:id="@+id/cb_goods"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:onClick="@{()->checkEvent.accept(orderitem)}"
+                                android:visibility="@{orderitem.state==0?View.VISIBLE:View.INVISIBLE}"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                                android:id="@+id/tv_goods_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:text="@{orderitem.goodsName}"
+                                android:textSize="18sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/cb_goods"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="商品名称" />
+
+                        <TextView
+                                android:id="@+id/tv_note"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@{orderitem.note}"
+                                android:textColor="@color/secondaryDarkColor"
+                                android:textSize="14sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_goods_name"
+                                tools:text="说明内容" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView
                             android:id="@+id/textView4"
@@ -72,7 +93,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="80dp"
                             android:text="@string/goods_of_quantity"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,8 +101,7 @@
                             android:id="@+id/tv_goods_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             app:bind_quantity_text="@{orderitem}"
                             app:layout_constraintStart_toEndOf="@+id/textView4"
                             app:layout_constraintTop_toTopOf="parent"
@@ -92,9 +112,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/goods_unit_of_price"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/textView4" />
+                            android:textSize="15sp"
+                            app:layout_constraintStart_toStartOf="@+id/textView4"
+                            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                     <TextView
                             android:id="@+id/tv_orderitem_quantity"
@@ -103,10 +123,9 @@
                             android:layout_marginEnd="4dp"
                             android:layout_marginBottom="32dp"
                             android:text="@{String.valueOf(orderitem.unitOfMeasurement)}"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:textSize="15sp"
                             app:layout_constraintStart_toEndOf="@+id/tv_goods_price"
+                            app:layout_constraintTop_toTopOf="parent"
                             tools:text="斤" />
 
                     <TextView
@@ -114,29 +133,32 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="@{String.valueOf(orderitem.unitPrice)}"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:text="@{String.valueOf(orderitem.unitPrice)+`元`}"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView5"
                             app:layout_constraintStart_toEndOf="@+id/textView5" />
 
                     <TextView
-                            android:id="@+id/textView3"
+                            android:id="@+id/textView7"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="元"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/textView"
-                            app:layout_constraintStart_toEndOf="@+id/textView" />
+                            android:text="小计："
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView5"
+                            app:layout_constraintStart_toStartOf="@+id/textView5" />
+                    <TextView
+                            android:id="@+id/tv_goods_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{String.valueOf(orderitem.total)+`元`}"
+                            android:textSize="15sp"
+                            tools:text="134"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textView7" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                        android:id="@+id/tv_note"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@{orderitem.note}"
-                        android:textColor="@color/secondaryDarkColor" />
 
             </LinearLayout>
 
@@ -148,7 +170,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
                 android:layout_marginBottom="1dp"
-                android:layout_weight="2">
+                android:layout_weight="1">
 
             <TextView
                     android:layout_width="match_parent"

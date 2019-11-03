@@ -53,6 +53,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                         query.visibility = View.VISIBLE
                         check.visibility = View.VISIBLE
                         record.visibility = View.VISIBLE
+                        supplier.visibility = View.VISIBLE
                     }
                     "审核" -> {
                         send.visibility = View.VISIBLE

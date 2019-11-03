@@ -138,12 +138,16 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     }
 
     /**
-     * 查询条件：供应商，日期，状态2或3，区域（0或1）
+     * 查询条件：供应商，日期，状态2或3，验货数量不为0，区域（0或1）
      */
     private fun getOrderItemList() {
         orderList.clear()
         val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"},{\"state\":{\"\$gte\":2}},{\"district\":$district}]}"
+            "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
+                    ",{\"orderDate\":\"$orderDate\"}" +
+                    ",{\"state\":{\"\$gte\":2}}" +
+                    ",{\"checkQuantity\":{\"\$ne\":0}}"+
+                    ",{\"district\":$district}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)

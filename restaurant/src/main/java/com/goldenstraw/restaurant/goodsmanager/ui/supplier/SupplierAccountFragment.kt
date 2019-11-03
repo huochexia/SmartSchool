@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_supplier_account_select.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBinding>(),
     CalendarView.OnCalendarRangeSelectListener {
@@ -64,11 +66,6 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
                 Toast.makeText(context, "请选择区间日期！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val bundle = Bundle()
-            bundle.putString("supplier", supplier)
-            bundle.putString("start", start)
-            bundle.putString("end", end)
-//            findNavController().navigate(R.id.detailedInventoryFragment, bundle)
             accountOrders()
         }
         iv_clear.setOnClickListener {
@@ -78,6 +75,18 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
             tv_left_date.text = ""
             tv_right_date.text = ""
 
+        }
+        tv_account_detail.setOnClickListener {
+            val calendars = calendarView.selectCalendarRange
+            if (calendars == null || calendars.size == 0) {
+                Toast.makeText(context, "请选择区间日期！", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val bundle = Bundle()
+            bundle.putString("supplier", supplier)
+            bundle.putString("start", start)
+            bundle.putString("end", end)
+            findNavController().navigate(R.id.detailedInventoryFragment, bundle)
         }
 
     }
@@ -118,10 +127,12 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
      *
      */
     fun accountOrders() {
+        tv_account_detail.visibility = View.VISIBLE
         val sum = 0.0f
         val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
-
+            "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
+                    ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
+                    ",{\"state\":{\"\$ne\":-1}}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .flatMap {
                 Observable.fromIterable(it)
@@ -132,12 +143,15 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
             }
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe({
-                tv_account_price.text = it.toString()
-            }, {}, {}, {
+            .subscribe({ sum ->
+                val format = DecimalFormat(".00")
+                tv_account_price.text = format.format(sum)
+
+            }, {}, {
+                tv_account_detail.visibility = View.VISIBLE
+            }, {
                 tv_account_price.text = "正在计算中....."
             })
-
 
     }
 }

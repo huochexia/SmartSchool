@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import android.os.Bundle
+import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSelectSupplierBinding
@@ -28,6 +29,8 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
         extend(parentKodein, copy = Copy.All)
         import(queryordersactivitymodule)
     }
+
+
     val repository: QueryOrdersRepository by instance()
 
     var viewModel: QueryOrdersViewModel? = null

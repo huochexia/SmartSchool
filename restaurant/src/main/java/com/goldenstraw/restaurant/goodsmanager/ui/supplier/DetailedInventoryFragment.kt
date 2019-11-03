@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.os.Bundle
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierOfDetailInventoryBinding
@@ -8,6 +9,7 @@ import com.goldenstraw.restaurant.databinding.TotalOfOrderDetailBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -18,6 +20,7 @@ import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventoryBinding>() {
     override val layoutId: Int
@@ -32,6 +35,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
     var details = mutableListOf<OrderItem>()
     var adapter: BaseDataBindingAdapter<OrderItem, TotalOfOrderDetailBinding>? = null
     var totalAllOrder = MutableLiveData<Float>()
+    var viewState = ObservableField<Int>()
 
     var start = ""
     var end = ""
@@ -56,7 +60,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             dataBinding = { TotalOfOrderDetailBinding.bind(it) },
             callback = { order, binding, posititon ->
                 binding.order = order
-                binding.orderPosition.text = posititon.toString()
+                binding.orderPosition.text = "${posititon.plus(1)}."
             }
         )
         getAllOfOrderAndSum()
@@ -66,27 +70,32 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
      * 获得所有订单
      */
     fun getAllOfOrderAndSum() {
+        details.clear()
         val sum = 0.0f
         val map = HashMap<String, OrderItem>()
         val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
+            "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
+                    ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
+                    ",{\"state\":{\"\$ne\":-1}}]}"
         viewModel!!.getOrdersOfSupplier(where)
             .flatMap {
                 Observable.fromIterable(it)
             }.map {
-                val key = it.objectId
+                val format = DecimalFormat(".00")
+                it.total = format.format(it.checkQuantity * it.unitPrice).toFloat()
+                val key = it.goodsName
                 if (map[key] == null) {
                     map[key] = it
                 } else {
-                    val oldOrder = map[key]
-                    oldOrder?.checkQuantity = oldOrder?.checkQuantity!!.plus(it.checkQuantity)
+
+                    val oldOrder = map[key]!!
+                    oldOrder.checkQuantity = oldOrder.checkQuantity.plus(it.checkQuantity)
+                    oldOrder.total = format.format(oldOrder.total.plus(it.total)).toFloat()
                     map[key] = oldOrder
                 }
-                map.keys
+                key
             }
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+            .distinct()
             .map {
                 details.add(map[it]!!)
             }
@@ -94,8 +103,19 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
+
+            }, {
+                viewState.set(MultiStateView.VIEW_STATE_ERROR)
+            }, {
                 adapter!!.forceUpdate()
-            }, {}, {})
+                if (details.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                }
+            }, {
+                viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            })
     }
 
 }

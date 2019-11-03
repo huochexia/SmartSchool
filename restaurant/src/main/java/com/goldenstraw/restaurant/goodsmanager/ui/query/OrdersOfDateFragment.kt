@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentOrdersOfDateListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -11,6 +12,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -35,6 +37,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
     var viewModel: QueryOrdersViewModel? = null
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
     var orderList = mutableListOf<OrderItem>()
+    var viewState = ObservableField<Int>()
     lateinit var supplier: String
     lateinit var date: String
     override fun initView() {
@@ -72,11 +75,18 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
             .subscribe({
                 orderList.clear()
                 orderList.addAll(it)
+                if (orderList.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                }
                 adapter!!.forceUpdate()
             }, {
-
+                viewState.set(MultiStateView.VIEW_STATE_ERROR)
             }, {
 
+            }, {
+                viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
 
     }
@@ -112,7 +122,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                     if (orderList[adapterPosition].state == 1)
                         deleteDialog(orderList[adapterPosition])
                     else
-                        Toast.makeText(context, "该商品不是新订单，不能删除！！", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "该商品已验收，不能删除！！", Toast.LENGTH_SHORT).show()
                 }
 
             }

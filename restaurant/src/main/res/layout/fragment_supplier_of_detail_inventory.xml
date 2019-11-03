@@ -22,9 +22,11 @@
                 app:title="购买清单" />
 
         <com.kennyc.view.MultiStateView
+                style="@style/MultiStateStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                app:msv_viewState="@{fragment.viewState}">
 
             <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
@@ -62,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-
+                    android:text="@{fragment.totalAllOrder.toString()}"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="20sp"
                     tools:text="1900" />
