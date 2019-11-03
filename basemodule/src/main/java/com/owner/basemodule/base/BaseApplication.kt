@@ -84,8 +84,8 @@ class BaseApplication : Application(), KodeinAware {
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
 //        initLeakCanary()
         //初始化ARouter
-        ARouter.openLog()
-        ARouter.openDebug()
+//        ARouter.openLog()
+//        ARouter.openDebug()
         ARouter.init(this)
     }
 
