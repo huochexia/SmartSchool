@@ -33,7 +33,7 @@ class SupplierSpinnerAdapter(
         ll.gravity = Gravity.CENTER_HORIZONTAL
         val tv = TextView(mContext)
         tv.text = list[position].username
-        tv.textSize = 18f
+        tv.textSize = 20f
         tv.setTextColor(Color.BLACK)
         ll.addView(tv)
         return ll

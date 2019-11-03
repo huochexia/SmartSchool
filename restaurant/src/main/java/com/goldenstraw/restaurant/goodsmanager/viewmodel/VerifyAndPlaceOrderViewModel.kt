@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.owner.basemodule.base.viewmodel.BaseViewModel
@@ -9,12 +10,17 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
 
 class VerifyAndPlaceOrderViewModel(
     private val repository: VerifyAndPlaceOrderRepository
 ) : BaseViewModel() {
 
     val suppliers = mutableListOf<User>() //供应商列表
+
+    var new = MutableLiveData<String>()
+    var old = MutableLiveData<String>()
+    var differ = MutableLiveData<String>()
 
     init {
         getAllSupplier()
@@ -123,5 +129,37 @@ class VerifyAndPlaceOrderViewModel(
         return repository.commitRecordState(orders)
     }
 
+    /**
+     * 得到所有数据并计算
+     */
+    fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
+        val where =
+            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
+        val formate = DecimalFormat("0")
+        var newprice = 0.0f
+        var oldprice = 0.0f
+        getAllOrderOfDate(where)
+            .subscribeOn(Schedulers.computation())
+            .flatMap {
+                Observable.fromIterable(it)
+            }
+            .map {
+                val map = HashMap<Int, Float>()
+                oldprice += it.total
+                newprice += it.unitPrice * it.againCheckQuantity
+                map[0] = newprice
+                map[1] = oldprice
+                map
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                new.value = formate.format(it[0])
+                old.value = formate.format(it[1])
+                differ.value = formate.format(it[0]?.minus(it[1]!!))
+            }, {}, {
 
+            })
+
+    }
 }

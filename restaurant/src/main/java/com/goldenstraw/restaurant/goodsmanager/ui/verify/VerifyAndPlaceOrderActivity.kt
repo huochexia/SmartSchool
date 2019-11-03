@@ -275,14 +275,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      */
 
     private fun sendOrderToSupplier(supplier: String, selectedList: MutableList<OrderItem>) {
-//        //1、创建一个已选择的列表
-//        val selectedList = mutableListOf<OrderItem>()
-//        showList.forEach {
-//            if (it.isSelected) {
-//                it.supplier = supplier
-//                selectedList.add(it)
-//            }
-//        }
+
         viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

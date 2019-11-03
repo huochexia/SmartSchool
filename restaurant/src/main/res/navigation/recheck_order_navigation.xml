@@ -13,6 +13,9 @@
         <action
                 android:id="@+id/action_recheckSelectDateFragment_to_reCheckSupplierFragment"
                 app:destination="@id/reCheckSupplierFragment" />
+        <action
+                android:id="@+id/action_recheckSelectDateFragment_to_recheckAccountFragment"
+                app:destination="@id/recheckAccountFragment" />
     </fragment>
     <fragment
             android:id="@+id/reCheckSupplierFragment"
@@ -28,4 +31,9 @@
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckOrderListFragment"
             android:label="RecheckOrderListFragment"
             tools:layout="@layout/fragment_recheck_order_list" />
+    <fragment
+            android:id="@+id/recheckAccountFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckAccountFragment"
+            android:label="RecheckAccountFragment"
+            tools:layout="@layout/fragment_recheck_account_date"/>
 </navigation>

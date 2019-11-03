@@ -12,7 +12,14 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import kotlinx.android.synthetic.main.fragment_recheck_select_date.*
 import kotlinx.android.synthetic.main.fragment_single_date_select.*
+import kotlinx.android.synthetic.main.fragment_single_date_select.calendarView
+import kotlinx.android.synthetic.main.fragment_single_date_select.fl_current
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_current_day
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_lunar
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_month_day
+import kotlinx.android.synthetic.main.fragment_single_date_select.tv_year
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
@@ -48,7 +55,9 @@ class RecheckSelectDateFragment : BaseFragment<FragmentRecheckSelectDateBinding>
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
         tv_lunar.text = "今日"
-
+        goto_account_btn.setOnClickListener {
+            findNavController().navigate(R.id.recheckAccountFragment)
+        }
     }
 
     private fun getCalendar(year: Int, month: Int, day: Int): Calendar {
