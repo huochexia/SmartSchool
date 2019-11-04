@@ -60,7 +60,7 @@ interface GoodsApi {
     //2、得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    fun getGoodsList(@Query("where") condition: String)
+    fun getGoodsList(@Query("where") condition: String, @Query("limit") limit: Int = 500)
             : Observable<ObjectList<Goods>>
 
     //3、获取所有商品信息

@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantity
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.network.ObjectList
@@ -24,7 +23,10 @@ interface QueryOrdersApi {
      * 按日期和供应商查询订单
      */
     @GET("/1/classes/OrderItem")
-    fun getOrdersOfSupplier(@Query("where") condition: String): Observable<ObjectList<OrderItem>>
+    fun getOrdersOfSupplier(
+        @Query("where") condition: String,
+        @Query("limit") limit: Int = 500
+    ): Observable<ObjectList<OrderItem>>
 
     /**
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
@@ -35,6 +37,6 @@ interface QueryOrdersApi {
     //得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    fun getGoodsOfCategory(@Query("where") condition: String)
+    fun getGoodsOfCategory(@Query("where") condition: String,@Query("limit") limit:Int=500)
             : Observable<ObjectList<Goods>>
 }
