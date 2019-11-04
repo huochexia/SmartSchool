@@ -50,7 +50,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
             layoutId = R.layout.layout_goods_item,
             dataSource = { viewModelGoodsTo!!.searchGoodsResultList },
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, _ ->
+            callback = { goods, binding, position ->
                 binding.goods = goods
                 binding.checkEvent = object : Consumer<Goods> {
                     override fun accept(t: Goods) {
@@ -59,6 +59,12 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
                 }
                 binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
+                binding.addSub
+                    .setCurrentNumber(goods.quantity)
+                    .setPosition(position)
+                    .setOnChangeValueListener { value, position ->
+                        goods.quantity = value
+                    }
             }
         )
         viewModelGoodsTo!!.getIsRefresh().observe(this, Observer {

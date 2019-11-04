@@ -6,7 +6,6 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -66,7 +65,7 @@ interface GoodsApi {
 
     //3、获取所有商品信息
     @GET("/1/classes/Goods/")
-    fun getAllGoods(): Observable<ObjectList<Goods>>
+    fun getAllGoods(@Query("limit") limit: Int = 500): Observable<ObjectList<Goods>>
 
     /**
      * 从用户表中获取供应商信息

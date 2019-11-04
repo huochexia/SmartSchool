@@ -190,6 +190,6 @@ class GoodsRepository(
      * 清空本地内容，主要是为了同步做准备。
      */
     fun clearAllData(): Completable {
-        return local.clearGoodsAll().andThen(local.clearCategoryAll()).andThen(local.clearUserAll())
+        return local.clearGoodsAll().andThen(local.clearCategoryAll())
     }
 }

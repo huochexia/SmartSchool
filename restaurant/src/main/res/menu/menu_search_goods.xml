@@ -16,5 +16,9 @@
             android:id="@+id/action_add_goods_item"
             android:title="增加商品"
             app:showAsAction="never" />
+    <item
+            android:id="@+id/sync_data"
+            android:title="同步数据"
+            app:showAsAction="never" />
 
 </menu>
