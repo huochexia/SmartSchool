@@ -11,6 +11,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCheckSelectDateBinding
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
@@ -38,9 +39,12 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
+    private val prefs: PrefsHelper by instance()
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     val map = HashMap<String, Calendar>()
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
@@ -82,16 +86,18 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
         return calendar
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar!!.year.toString()
+        tv_year.text = calendar.year.toString()
         tv_lunar.text = calendar.lunar
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
             bundle.putString("orderDate", date)
+            bundle.putInt("district",prefs.district)
             findNavController().navigate(R.id.haveOrdersOfSupplierList, bundle)
         }
     }
@@ -104,7 +110,7 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
      * 标记尚未记帐的日期
      */
     private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":1},{\"quantity\":{\"\$ne:0}}]}"
+        val where = "{\"\$and\":[{\"state\":1},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)

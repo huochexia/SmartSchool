@@ -9,4 +9,7 @@
     <string name="commit_shopping_cart">提交商品</string>
     <string name="goods_of_quantity">数量：</string>
     <string name="goods_unit_of_price">单价:</string>
+    <string name="unit_of_measure">单位：</string>
+    <string name="unit_of_price">单价：</string>
+    <string name="total">小计：</string>
 </resources>

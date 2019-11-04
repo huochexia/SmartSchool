@@ -11,7 +11,6 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -40,24 +39,21 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
 
         extend(parentKodein, copy = Copy.All)
     }
-    private val prefs: PrefsHelper by instance()
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
 
     lateinit var checkDate: String
+    var district: Int = -1
     val supplierList = mutableListOf<String>()
     var supplierState = ObservableField<Int>() //显示状态
     var orderState = 1
 
     override fun initView() {
         super.initView()
-        val currday = Calendar.getInstance()
-        val before = TimeConverter.getBeforeDay(currday)
-        val year = before.get(Calendar.YEAR)
-        val month = before.get(Calendar.MONTH) + 1
-        val day = before.get(Calendar.DATE)
-        checkDate = arguments?.getString("orderDate")!! //验货的是前一天的订单。需要这个时间来确定查询哪一天的订单
+        checkDate = arguments?.getString("orderDate")!!
+        district = arguments?.getInt("district")!!
         check_toolbar.subtitle = checkDate + "的订单"
     }
 
@@ -83,7 +79,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
                         bundle.putString("supplier", supplier)
                         bundle.putString("orderDate", checkDate)
                         bundle.putInt("orderState", orderState)
-                        bundle.putInt("district", prefs.district)
+                        bundle.putInt("district", district)
                         findNavController().navigate(R.id.checkOrderList, bundle)
                     }
                 }
@@ -92,7 +88,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         /*
          区域值应从本地数据中获取，为当前登录用户所有区域值。初始默认是未验状态
          */
-        getSupplierListFromWhere(checkDate, orderState, prefs.district)
+        getSupplierListFromWhere(checkDate, orderState, district)
 
     }
 
@@ -108,7 +104,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         val where =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}" +
                     ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
-        viewModel!!.getAllOrderOfDate(where)
+        viewModel.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)
             }
@@ -141,7 +137,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
+        when (item.itemId) {
             R.id.menu_checked_order -> {
                 check_toolbar.title = "供应商--已验"
                 orderState = 2
@@ -151,7 +147,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
                 orderState = 1
             }
         }
-        getSupplierListFromWhere(checkDate, orderState, prefs.district)
+        getSupplierListFromWhere(checkDate, orderState, district)
         return true
 
     }
