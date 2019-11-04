@@ -7,6 +7,8 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecheckSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -36,12 +38,12 @@ class RecheckSelectDateFragment : BaseFragment<FragmentRecheckSelectDateBinding>
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
-    private val repository: VerifyAndPlaceOrderRepository by instance()
-    var viewModel: VerifyAndPlaceOrderViewModel? = null
+    private val repository: RecheckOrderRepository by instance()
+    var viewModel: RecheckOrderViewModel? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
-            VerifyAndPlaceOrderViewModel(repository)
+            RecheckOrderViewModel(repository)
         }
 
     }

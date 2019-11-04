@@ -11,6 +11,8 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecheckSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -38,8 +40,8 @@ class ReCheckSupplierFragment : BaseFragment<FragmentRecheckSupplierBinding>() {
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository: VerifyAndPlaceOrderRepository by instance()
-    var viewModel: VerifyAndPlaceOrderViewModel? = null
+    private val repository: RecheckOrderRepository by instance()
+    var viewModel: RecheckOrderViewModel? = null
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
 
     var supplierState = ObservableField<Int>()
@@ -64,7 +66,7 @@ class ReCheckSupplierFragment : BaseFragment<FragmentRecheckSupplierBinding>() {
         record_select_toolbar.subtitle = orderDate
 
         viewModel = activity!!.getViewModel {
-            VerifyAndPlaceOrderViewModel(repository)
+            RecheckOrderViewModel(repository)
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_supplier_name_item,

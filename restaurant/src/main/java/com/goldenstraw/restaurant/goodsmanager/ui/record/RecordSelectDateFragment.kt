@@ -2,15 +2,11 @@ package com.goldenstraw.restaurant.goodsmanager.ui.record
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -40,6 +36,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     val map = HashMap<String, Calendar>()
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
@@ -131,6 +128,5 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
                 calendarView.setSchemeDate(map)
             })
     }
-
 
 }

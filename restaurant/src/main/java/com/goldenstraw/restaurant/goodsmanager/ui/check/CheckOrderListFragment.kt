@@ -97,6 +97,9 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
+                if (edit.text.isNullOrEmpty()) {
+                    return@setPositiveButton
+                }
                 val check = edit.text.toString().trim().toFloat()
                 saveCheckResult(check, orderItem)
                 dialog.dismiss()

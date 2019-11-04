@@ -7,10 +7,10 @@ import android.widget.EditText
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecheckOrderListBinding
 import com.goldenstraw.restaurant.databinding.LayoutRecheckItemBinding
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectCheckGoods
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
-import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.ObjectReCheck
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -39,8 +39,8 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
         extend(parentKodein, copy = Copy.All)
     }
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
-    var viewModel: VerifyAndPlaceOrderViewModel? = null
+    private val repository: RecheckOrderRepository by instance()
+    var viewModel: RecheckOrderViewModel? = null
     var orderList = mutableListOf<OrderItem>()
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutRecheckItemBinding>? = null
 
@@ -61,7 +61,7 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
-            VerifyAndPlaceOrderViewModel(repository)
+            RecheckOrderViewModel(repository)
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_recheck_item,
@@ -72,10 +72,11 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
                 binding.clickEvent = object : Consumer<OrderItem> {
                     override fun accept(t: OrderItem) {
                         val view = LayoutInflater.from(context).inflate(
-                            R.layout.only_input_number_dialog_view,
+                            R.layout.input_number_two_dialog_view,
                             null
                         )
-                        val edit = view.findViewById<EditText>(R.id.number_edit)
+                        val recheck = view.findViewById<EditText>(R.id.number_edit)
+                        val requantity = view.findViewById<EditText>(R.id.number_two_edit)
                         val dialog = AlertDialog.Builder(context)
                             .setTitle("再次确认数量")
                             .setIcon(R.mipmap.add_icon)
@@ -84,8 +85,13 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
                                 dialog.dismiss()
                             }
                             .setPositiveButton("确定") { dialog, which ->
-                                val again = edit.text.toString().trim().toFloat()
-                                againQuantity(order, again)
+
+                                if (recheck.text.isNullOrEmpty() || requantity.text.isNullOrEmpty()) {
+                                    return@setPositiveButton
+                                }
+                                val again = recheck.text.toString().trim().toFloat()
+                                val newquantity = requantity.text.toString().trim().toFloat()
+                                againQuantity(order, again, newquantity)
                                 dialog.dismiss()
                             }.create()
                         dialog.show()
@@ -101,17 +107,15 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
 
     private fun againQuantity(
         order: OrderItem,
-        again: Float
+        again: Float,
+        requantity: Float
     ) {
         order.againCheckQuantity = again
-        val newQuantity = ObjectCheckGoods(
-            quantity = order.quantity,
-            checkQuantity = order.checkQuantity,
+        val newQuantity = ObjectReCheck(
             againCheckQuantity = again,
-            total = order.total,
-            state = order.state
+            reQuantity = requantity
         )
-        viewModel!!.setCheckQuantity(newQuantity, order.objectId)
+        viewModel!!.updateOrderItemQuantity(newQuantity, order.objectId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

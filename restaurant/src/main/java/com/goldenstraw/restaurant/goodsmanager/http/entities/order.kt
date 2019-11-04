@@ -31,6 +31,7 @@ data class OrderItem(
     var unitPrice: Float,//单价
     var categoryCode: String,
     var quantity: Float, //采购数量
+    var requantity:Float=0.0f,
     var checkQuantity: Float = 0.0f,//验货数量
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var total: Float,
