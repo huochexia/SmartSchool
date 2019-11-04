@@ -21,7 +21,7 @@ import io.reactivex.schedulers.Schedulers
  * 订单管理的ViewModel
  */
 class GoodsToOrderMgViewModel(
-    private val repository: GoodsRepository
+     val repository: GoodsRepository
 ) : BaseViewModel() {
 
 
@@ -271,8 +271,11 @@ class GoodsToOrderMgViewModel(
      * 同步类别和商品信息
      */
     fun syncAllData() {
-        repository.clearAllData().subscribeOn(Schedulers.newThread())
-            .autoDisposable(this).subscribe({
+        repository.clearAllData()
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
                 repository.getAllCategoryFromNetwork()
                     .subscribeOn(Schedulers.io())
                     .autoDisposable(this)
@@ -290,16 +293,16 @@ class GoodsToOrderMgViewModel(
                             .subscribe({}, {})
 
                     }
-                repository.getAllSupplierFromRemote()
-                    .subscribeOn(Schedulers.io())
-                    .autoDisposable(this)
-                    .subscribe {
-                        repository.addSupplierTolocal(it)
-                            .autoDisposable(this)
-                            .subscribe({
-
-                            }, {})
-                    }
+//                repository.getAllSupplierFromRemote()
+//                    .subscribeOn(Schedulers.io())
+//                    .autoDisposable(this)
+//                    .subscribe {
+//                        repository.addSupplierTolocal(it)
+//                            .autoDisposable(this)
+//                            .subscribe({
+//
+//                            }, {})
+//                    }
             }, {})
 
     }

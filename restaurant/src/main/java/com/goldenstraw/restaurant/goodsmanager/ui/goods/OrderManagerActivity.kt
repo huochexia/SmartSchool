@@ -19,6 +19,9 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
+import com.uber.autodispose.autoDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -54,10 +57,6 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         trans.replace(R.id.fragment_goods_container, goodsFragment)
         trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
-        /*
-        暂时在这里实现网络数据与本地数据的同步
-         */
-        viewModelGoodsTo.syncAllData()
 
     }
 
@@ -149,6 +148,49 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                     toast { "请先确定商品所属类别" }
                 else
                     showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
+            }
+            R.id.sync_data->{
+                /*
+                       暂时在这里实现网络数据与本地数据的同步
+                        */
+                viewModelGoodsTo.repository.clearAllData()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(scopeProvider)
+                    .subscribe({
+                        repository.getAllCategoryFromNetwork()
+                            .subscribeOn(Schedulers.io())
+                            .autoDisposable(scopeProvider)
+                            .subscribe {
+                                repository.addCategoryListToLocal(it)
+                                    .autoDisposable(scopeProvider)
+                                    .subscribe({
+                                        toast{"类别同步成功！"}
+                                    }, {})
+                            }
+                        repository.getAllGoodsFromNetwork()
+                            .subscribeOn(Schedulers.io())
+                            .autoDisposable(scopeProvider)
+                            .subscribe {
+                                repository.addGoodsListToLocal(it)
+                                    .autoDisposable(scopeProvider)
+                                    .subscribe({
+                                        toast { "商品同步成功！！" }
+                                    }, {})
+
+                            }
+//                repository.getAllSupplierFromRemote()
+//                    .subscribeOn(Schedulers.io())
+//                    .autoDisposable(this)
+//                    .subscribe {
+//                        repository.addSupplierTolocal(it)
+//                            .autoDisposable(this)
+//                            .subscribe({
+//
+//                            }, {})
+//                    }
+                    }, {})
+
             }
             else -> super.onOptionsItemSelected(item)
 
