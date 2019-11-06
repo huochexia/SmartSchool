@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -29,4 +30,8 @@ interface IQueryOrdersManager {
      * 查询商品信息
      */
     fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
+    /**
+     * 求和
+     */
+    fun getTotalOfSupplier(condition:String):Observable<MutableList<SumResult>>
 }

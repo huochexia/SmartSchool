@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.goldenstraw.restaurant.goodsmanager.http.service.QueryOrdersApi
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.Goods
@@ -59,6 +60,15 @@ class QueryOrdersManagerImpl(
      */
     override fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
         return service.getGoodsOfCategory(condition).map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
+    }
+
+    override fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
+        return service.getTotalOfSupplier(condition = condition).map {
             if (!it.isSuccess()) {
                 throw ApiException(it.code)
             }

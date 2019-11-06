@@ -14,6 +14,7 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.network.ApiException
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -133,25 +134,38 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
                     ",{\"state\":3}]}"
-        viewModel!!.getOrdersOfSupplier(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+//        viewModel!!.getOrdersOfSupplier(where)
+//            .flatMap {
+//                Observable.fromIterable(it)
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .scan(sum) { sum, order ->
+//                sum + order.total
+//            }
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe({ sum ->
+//                val format = DecimalFormat(".00")
+//                tv_account_price.text = format.format(sum)
+//
+//            }, {}, {
+//                tv_account_detail.visibility = View.VISIBLE
+//            }, {
+//                tv_account_price.text = "正在计算中....."
+//            })
+        viewModel!!.getTotalOfSupplier(where)
             .subscribeOn(Schedulers.io())
-            .scan(sum) { sum, order ->
-                sum + order.total
-            }
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
-            .subscribe({ sum ->
+            .subscribe({
                 val format = DecimalFormat(".00")
-                tv_account_price.text = format.format(sum)
-
-            }, {}, {
-                tv_account_detail.visibility = View.VISIBLE
+                tv_account_price.text = format.format(it[0]._sumTotal.toString())
             }, {
-                tv_account_price.text = "正在计算中....."
-            })
 
+            }, {
+                tv_account_detail.visibility = View.VISIBLE
+            },{
+                tv_account_price.text = "正在计算中......"
+            })
     }
 }

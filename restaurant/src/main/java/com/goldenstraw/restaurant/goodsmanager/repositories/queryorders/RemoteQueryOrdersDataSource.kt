@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders.IQueryOrdersManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.room.entities.Goods
@@ -17,6 +18,8 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
 
     fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
+
+    fun getTotalOfSupplier(condition: String):Observable<MutableList<SumResult>>
 }
 
 class RemoteQueryOrdersDataSourceImpl(
@@ -41,5 +44,9 @@ class RemoteQueryOrdersDataSourceImpl(
 
     override fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
         return manager.getGoodsOfCategory(condition)
+    }
+
+    override fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
+        return manager.getTotalOfSupplier(condition)
     }
 }

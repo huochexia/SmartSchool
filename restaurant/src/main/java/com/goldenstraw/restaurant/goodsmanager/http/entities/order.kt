@@ -90,6 +90,14 @@ data class BatchOrdersRequest<T>(
 /**
  *求和结果
  */
-data class sumResult(
+data class SumResult(
     val _sumTotal: Float
+)
+/**
+ * 分组求和
+ */
+data class SumByGroup(
+    val _sumCheckQuantity :Float,
+    val _sumTotal: Float,
+    val goodsName:String
 )

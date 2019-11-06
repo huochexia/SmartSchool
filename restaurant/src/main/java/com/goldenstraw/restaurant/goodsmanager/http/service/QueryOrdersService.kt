@@ -2,6 +2,8 @@ package com.goldenstraw.restaurant.goodsmanager.http.service
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
@@ -45,17 +47,18 @@ interface QueryOrdersApi {
      */
     @GET("/1/classes/OrderItem")
     fun getGroupofSupplierSum(
-        @Query("where") condition: String,
+
         @Query("sum") checkQuantity: String = "checkQuantity",
         @Query("sum") total: String = "total",
+        @Query("where") condition: String,
         @Query("groupby") groupby: String = "goodsName"
-    )
+    ): Observable<ObjectList<SumByGroup>>
     /**
      * 求和
      */
     @GET("/1/classes/OrderItem")
     fun getTotalOfSupplier(
-        @Query("where") condition: String,
-        @Query("sum") total: String
-    )
+        @Query("sum") total: String = "total",
+        @Query("where") condition: String
+    ): Observable<ObjectList<SumResult>>
 }
