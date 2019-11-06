@@ -37,6 +37,25 @@ interface QueryOrdersApi {
     //得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    fun getGoodsOfCategory(@Query("where") condition: String,@Query("limit") limit:Int=500)
+    fun getGoodsOfCategory(@Query("where") condition: String, @Query("limit") limit: Int = 500)
             : Observable<ObjectList<Goods>>
+
+    /**
+     * 按商品名称分组求和
+     */
+    @GET("/1/classes/OrderItem")
+    fun getGroupofSupplierSum(
+        @Query("where") condition: String,
+        @Query("sum") checkQuantity: String = "checkQuantity",
+        @Query("sum") total: String = "total",
+        @Query("groupby") groupby: String = "goodsName"
+    )
+    /**
+     * 求和
+     */
+    @GET("/1/classes/OrderItem")
+    fun getTotalOfSupplier(
+        @Query("where") condition: String,
+        @Query("sum") total: String
+    )
 }

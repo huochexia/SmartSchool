@@ -31,7 +31,7 @@ data class OrderItem(
     var unitPrice: Float,//单价
     var categoryCode: String,
     var quantity: Float, //采购数量
-    var requantity:Float=0.0f,
+    var requantity: Float = 0.0f,
     var checkQuantity: Float = 0.0f,//验货数量
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var total: Float,
@@ -85,4 +85,11 @@ data class BatchOrderItem<T>(
 
 data class BatchOrdersRequest<T>(
     val requests: MutableList<BatchOrderItem<T>>
+)
+
+/**
+ *求和结果
+ */
+data class sumResult(
+    val _sumTotal: Float
 )

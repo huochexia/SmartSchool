@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
-import android.view.View
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivitySupplierApplyBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
@@ -9,7 +8,6 @@ import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
-import kotlinx.android.synthetic.main.activity_supplier_apply.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -35,6 +33,5 @@ class SupplierApplyActivity : BaseActivity<ActivitySupplierApplyBinding>() {
         }
         viewModel!!.supplier = prefs.username
     }
-
 
 }
