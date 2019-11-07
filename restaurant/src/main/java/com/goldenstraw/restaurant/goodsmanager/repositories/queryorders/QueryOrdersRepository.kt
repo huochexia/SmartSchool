@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.room.entities.Goods
@@ -46,5 +47,12 @@ class QueryOrdersRepository(
      */
     fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
         return remote.getTotalOfSupplier(condition)
+    }
+
+    /**
+     * 分组求和
+     */
+    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
+        return remote.getTotalGroupByName(condition)
     }
 }

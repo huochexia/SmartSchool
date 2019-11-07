@@ -5,17 +5,16 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierOfDetailInventoryBinding
-import com.goldenstraw.restaurant.databinding.TotalOfOrderDetailBinding
+import com.goldenstraw.restaurant.databinding.GroupByOrderTotalBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.mergeSimilarOrderItem
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.uber.autodispose.autoDisposable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
@@ -36,8 +35,8 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
 
     private val repository: QueryOrdersRepository by instance()
     var viewModel: QueryOrdersViewModel? = null
-    var details = mutableListOf<OrderItem>()
-    var adapter: BaseDataBindingAdapter<OrderItem, TotalOfOrderDetailBinding>? = null
+    var details = mutableListOf<SumByGroup>()
+    var adapter: BaseDataBindingAdapter<SumByGroup, GroupByOrderTotalBinding>? = null
     var totalAllOrder = MutableLiveData<Float>()
     var viewState = ObservableField<Int>()
 
@@ -59,11 +58,11 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
         }
 
         adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.total_of_order_detail,
+            layoutId = R.layout.group_by_order_total,
             dataSource = { details },
-            dataBinding = { TotalOfOrderDetailBinding.bind(it) },
+            dataBinding = { GroupByOrderTotalBinding.bind(it) },
             callback = { order, binding, posititon ->
-                binding.order = order
+                binding.group = order
                 binding.orderPosition.text = "${posititon.plus(1)}."
             }
         )
@@ -80,52 +79,81 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
                     ",{\"state\":3}]}"
-        viewModel!!.getOrdersOfSupplier(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }.map {
-                mergeSimilarOrderItem(it, map)
-            }
-            .distinct()
-            .map {
-                details.add(map[it]!!)
-            }
+        viewModel!!.getTotalGroupByName(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
-
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    details.clear()
+                    details.addAll(it)
+                }
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_ERROR)
             }, {
-                showComputerResult()
+                viewModel!!.getTotalOfSupplier(where)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(scopeProvider)
+                    .subscribe {
+                        val format = DecimalFormat(".00")
+                        if (it.isNotEmpty()) {
+                            val sum = it[0]._sumTotal
+                            totalAllOrder.value = format.format(sum).toFloat()
+                        }
+                    }
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
+//        viewModel!!.getOrdersOfSupplier(where)
+//            .flatMap {
+//                Observable.fromIterable(it)
+//            }.map {
+//                mergeSimilarOrderItem(it, map)
+//            }
+//            .distinct()
+//            .map {
+//                details.add(map[it]!!)
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe({
+//
+//            }, {
+//                viewState.set(MultiStateView.VIEW_STATE_ERROR)
+//            }, {
+//                showComputerResult()
+//            }, {
+//                viewState.set(MultiStateView.VIEW_STATE_LOADING)
+//            })
     }
 
     /**
      * 显示最后合并同类项后的计算结果
      */
-    private fun showComputerResult() {
-        adapter!!.forceUpdate()
-        if (details.isEmpty()) {
-            viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-        } else {
-            viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-        }
-        val total = 0.0f
-        Observable.fromIterable(details)
-            .scan(total) { sum, order ->
-                sum + order.total
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe {
-                val format = DecimalFormat(".00")
-                totalAllOrder.value = format.format(it).toFloat()
-            }
-    }
+//    private fun showComputerResult() {
+//        adapter!!.forceUpdate()
+//        if (details.isEmpty()) {
+//            viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+//        } else {
+//            viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+//        }
+//        val total = 0.0f
+//        Observable.fromIterable(details)
+//            .scan(total) { sum, order ->
+//                sum + order.total
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe {
+//                val format = DecimalFormat(".00")
+//                totalAllOrder.value = format.format(it).toFloat()
+//            }
+//    }
 
 }

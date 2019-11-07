@@ -46,10 +46,9 @@ interface QueryOrdersApi {
      * 按商品名称分组求和
      */
     @GET("/1/classes/OrderItem")
-    fun getGroupofSupplierSum(
+    fun getTotalGroupByName(
 
-        @Query("sum") checkQuantity: String = "checkQuantity",
-        @Query("sum") total: String = "total",
+        @Query("sum") checkQuantity: String = "checkQuantity,total",
         @Query("where") condition: String,
         @Query("groupby") groupby: String = "goodsName"
     ): Observable<ObjectList<SumByGroup>>

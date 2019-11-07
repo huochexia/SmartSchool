@@ -14,7 +14,6 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.owner.basemodule.network.ApiException
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -159,7 +158,12 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
             .autoDisposable(scopeProvider)
             .subscribe({
                 val format = DecimalFormat(".00")
-                tv_account_price.text = format.format(it[0]._sumTotal.toString())
+                if (it.isNotEmpty()) {
+                    val sum = it[0]._sumTotal
+                    tv_account_price.text = format.format(sum)
+                }else{
+                    tv_account_price.text = "没有值"
+                }
             }, {
 
             }, {

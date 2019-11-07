@@ -16,3 +16,4 @@ data class BatchRecheckObject(
     var total:Float,
     var state:Int
 )
+

@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.kennyc.view.MultiStateView
@@ -80,5 +81,11 @@ class QueryOrdersViewModel(
      */
     fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
         return repository.getTotalOfSupplier(condition)
+    }
+    /**
+     * 分组求和
+     */
+    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
+        return repository.getTotalGroupByName(condition)
     }
 }

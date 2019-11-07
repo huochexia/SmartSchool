@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
+import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import java.text.DecimalFormat
 
 @BindingAdapter("bind_state_text")
@@ -45,4 +46,11 @@ fun setDifferenceText(textView: TextView, order: OrderItem) {
     val format = DecimalFormat("0")
     val differ = (order.againCheckQuantity - order.checkQuantity) * order.unitPrice
     textView.text = format.format(differ)
+}
+
+@BindingAdapter("bind_average_text")
+fun setAverageText(textView: TextView, sumByGroup: SumByGroup) {
+    val format = DecimalFormat(".00")
+    val average = (sumByGroup._sumTotal) / sumByGroup._sumCheckQuantity
+    textView.text = format.format(average)
 }
