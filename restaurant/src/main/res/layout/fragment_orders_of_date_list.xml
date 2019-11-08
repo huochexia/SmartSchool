@@ -43,6 +43,32 @@
                         tools:listitem="@layout/layout_order_item" />
             </androidx.core.widget.NestedScrollView>
         </com.kennyc.view.MultiStateView>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+            <TextView
+                    android:id="@+id/total_of_current_date_supplier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="20sp"
+                    tools:text="2019-10-8" />
+
+            <TextView
+                    android:id="@+id/price_total_of_day_supplier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="20sp"
+                    tools:text="200" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

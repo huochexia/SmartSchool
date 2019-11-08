@@ -25,6 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_orders_of_date_list.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.text.DecimalFormat
 
 class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
     override val layoutId: Int
@@ -54,6 +55,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        total_of_current_date_supplier.text = "${date}的记帐金额："
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
@@ -88,6 +90,20 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
+        viewModel!!.getTotalOfSupplier(where)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe {
+                if (it.isNotEmpty()) {
+                    val format = DecimalFormat(".00")
+                    val sum = format.format(it[0]._sumTotal)
+                    price_total_of_day_supplier.text = "${sum}元"
+                }else{
+                    price_total_of_day_supplier.text ="0.0元"
+                }
+
+            }
 
     }
 
