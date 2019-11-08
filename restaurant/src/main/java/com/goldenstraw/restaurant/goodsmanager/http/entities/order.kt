@@ -28,13 +28,14 @@ data class OrderItem(
     var orderDate: String,//订单日期
     var goodsName: String,
     var unitOfMeasurement: String,
-    var unitPrice: Float,//单价
     var categoryCode: String,
+    var unitPrice: Float,//单价
     var quantity: Float, //采购数量
-    var requantity: Float = 0.0f,
     var checkQuantity: Float = 0.0f,//验货数量
-    var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var total: Float,
+    var requantity: Float = 0.0f,
+    var againCheckQuantity: Float = 0.0f,//再次确认验货数量
+    var againTotal: Float = 0.0f,
     var note: String,//备注
     var supplier: String? = null, //供货商
     var state: Int, //0：拟购单，1：订货单，2：验货单，3：对帐单

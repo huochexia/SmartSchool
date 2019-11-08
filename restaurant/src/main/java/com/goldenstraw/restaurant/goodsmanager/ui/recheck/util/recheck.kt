@@ -5,7 +5,8 @@ package com.goldenstraw.restaurant.goodsmanager.ui.recheck.util
 
 data class ObjectReCheck(
     var againCheckQuantity: Float,
-    var reQuantity:Float
+    var reQuantity:Float,
+    var againTotal:Float
 )
 /*
 

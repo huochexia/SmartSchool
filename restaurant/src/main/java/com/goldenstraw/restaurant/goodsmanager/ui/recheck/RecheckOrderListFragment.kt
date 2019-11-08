@@ -111,9 +111,11 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
         requantity: Float
     ) {
         order.againCheckQuantity = again
+        val againTotal = again * order.unitPrice
         val newQuantity = ObjectReCheck(
             againCheckQuantity = again,
-            reQuantity = requantity
+            reQuantity = requantity,
+            againTotal = againTotal
         )
         viewModel!!.updateOrderItemQuantity(newQuantity, order.objectId)
             .subscribeOn(Schedulers.io())
