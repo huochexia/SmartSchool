@@ -98,7 +98,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 }
             })
             setImages(images)
-            setDelayTime(3000)
+            setDelayTime(5000)
             setIndicatorGravity(BannerConfig.RIGHT)
             start()
         }
