@@ -20,8 +20,7 @@ class RecheckOrderViewModel(
     val suppliers = mutableListOf<User>() //供应商列表
 
     var new = MutableLiveData<String>()
-    var old = MutableLiveData<String>()
-    var differ = MutableLiveData<String>()
+
 
     init {
         getAllSupplier()
@@ -39,7 +38,7 @@ class RecheckOrderViewModel(
     /**
      * 获取某个条件订单
      */
-    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
+    fun getAllOrderOfCondition(condition: String): Observable<MutableList<OrderItem>> {
         return repository.getAllOrderOfDate(condition)
     }
 
@@ -55,17 +54,18 @@ class RecheckOrderViewModel(
      *
      */
     fun transOrdersToBatchRequestObject(
-        list: MutableList<OrderItem>,
-        supplier: String
+        list: MutableList<OrderItem>
+
     ): Observable<BatchOrdersRequest<BatchRecheckObject>> {
         return Observable.fromIterable(list)
             .map {
                 val format = DecimalFormat(".00")
                 val newtotal = format.format(it.againCheckQuantity * it.unitPrice).toFloat()
                 val update = BatchRecheckObject(
-                    quantity = it.requantity,
+                    quantity = it.reQuantity,
                     checkQuantity = it.againCheckQuantity,
                     total = newtotal,
+                    againTotal = newtotal,
                     state = 3
                 )
                 val batchItem = BatchOrderItem(
@@ -99,38 +99,11 @@ class RecheckOrderViewModel(
         return repository.checkQuantityOfOrders(orders)
     }
 
-
     /**
-     * 得到所有数据并计算
+     * 分组求和
      */
-    fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
-        val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
-        val formate = DecimalFormat("0")
-        var newprice = 0.0f
-        var oldprice = 0.0f
-        getAllOrderOfDate(where)
-            .subscribeOn(Schedulers.computation())
-            .flatMap {
-                Observable.fromIterable(it)
-            }
-            .map {
-                val map = HashMap<Int, Float>()
-                oldprice += it.total
-                newprice += it.unitPrice * it.againCheckQuantity
-                map[0] = newprice
-                map[1] = oldprice
-                map
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                new.value = formate.format(it[0])
-                old.value = formate.format(it[1])
-                differ.value = formate.format(it[0]?.minus(it[1]!!))
-            }, {}, {
-
-            })
-
+    fun getTotalOfSuppliers(condition: String): Observable<MutableList<SupplierOfTotal>> {
+        return repository.getTotalOfSuppliers(condition)
     }
+
 }

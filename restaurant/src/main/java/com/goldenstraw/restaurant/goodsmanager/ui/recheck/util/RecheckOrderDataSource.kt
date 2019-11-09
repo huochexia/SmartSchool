@@ -1,7 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.recheck.util
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.room.entities.User
@@ -24,6 +23,8 @@ interface IRecheckOrderDataSource : IRemoteDataSource {
 
 
     fun batchRecheckQuantity(orders: BatchOrdersRequest<BatchRecheckObject>): Completable
+
+    fun getTotalOfSuppliers(condition: String): Observable<MutableList<SupplierOfTotal>>
 
 }
 
@@ -49,4 +50,7 @@ class RecheckOrderDataSourceImpl(
         return manager.getAllSupplier()
     }
 
+    override fun getTotalOfSuppliers(condition: String): Observable<MutableList<SupplierOfTotal>> {
+        return manager.getTotalOfSuppliers(condition)
+    }
 }

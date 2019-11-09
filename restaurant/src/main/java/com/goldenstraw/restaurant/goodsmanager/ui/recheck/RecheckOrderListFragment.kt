@@ -153,7 +153,7 @@ class RecheckOrderListFragment : BaseFragment<FragmentRecheckOrderListBinding>()
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":\"$orderDate\"}" +
                     ",{\"district\":$district}]}"
-        viewModel!!.getAllOrderOfDate(where)
+        viewModel!!.getAllOrderOfCondition(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

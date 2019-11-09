@@ -35,5 +35,14 @@
             android:id="@+id/recheckAccountFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckAccountFragment"
             android:label="RecheckAccountFragment"
-            tools:layout="@layout/fragment_recheck_account_date"/>
+            tools:layout="@layout/fragment_recheck_account_date">
+        <action
+                android:id="@+id/action_recheckAccountFragment_to_recheckAccountSupplierFragment"
+                app:destination="@id/recheckAccountSupplierFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/recheckAccountSupplierFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.recheck.RecheckAccountSupplierFragment"
+            android:label="RecheckAccountSupplierFragment"
+            tools:layout="@layout/fragment_recheck_account_supplier"/>
 </navigation>

@@ -29,5 +29,8 @@ interface IRecheckOrderManager {
      * 获取某个日期的拟购单
      */
     fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>>
-
+    /**
+     * 求各供应商和
+     */
+    fun getTotalOfSuppliers(condition: String):Observable<MutableList<SupplierOfTotal>>
 }

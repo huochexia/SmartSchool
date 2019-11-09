@@ -38,5 +38,13 @@ interface RecheckOrderApi {
     @POST("/1/batch/")
     fun batchReCheckQuantityOfOrder(@Body orders: BatchOrdersRequest<BatchRecheckObject>): Completable
 
-
+    /**
+     * 求各个供应商和
+     */
+    @GET("/1/classes/OrderItem")
+    fun getTotalOfSuppliers(
+        @Query("sum") sum: String = "total,againTotal",
+        @Query("where") condition: String,
+        @Query("groupby") group:String = "supplier"
+    ): Observable<ObjectList<SupplierOfTotal>>
 }

@@ -33,7 +33,7 @@ data class OrderItem(
     var quantity: Float, //采购数量
     var checkQuantity: Float = 0.0f,//验货数量
     var total: Float,
-    var requantity: Float = 0.0f,
+    var reQuantity: Float = 0.0f,
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var againTotal: Float = 0.0f,
     var note: String,//备注

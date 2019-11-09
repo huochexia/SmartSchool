@@ -172,67 +172,7 @@
                         android:layout_height="1dp"
                         android:background="@color/colorPrimary" />
 
-                <androidx.appcompat.widget.AppCompatSpinner
-                        android:id="@+id/supplier_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
 
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/colorPrimary" />
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:orientation="horizontal">
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="新额："
-                            android:textColor="@color/primaryTextColor"
-                            android:textSize="20sp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.new}"
-                            android:textColor="@color/common_red"
-                            android:textSize="20sp"
-                            tools:text="100000" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="  — 旧额："
-                            android:textColor="@color/primaryTextColor"
-                            android:textSize="20sp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.old}"
-                            android:textColor="@color/common_blue"
-                            android:textSize="20sp"
-                            tools:text="89000" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" = "
-                            android:textSize="20dp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.differ}"
-                            android:textSize="24sp"
-                            tools:text="20000" />
-
-
-                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -240,15 +180,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-            <Button
-                    android:id="@+id/merge_btn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/selector_button"
-                    android:text="统一数据"
-                    android:visibility="invisible" />
 
             <Button
                     android:id="@+id/btn_account_orders"
@@ -260,7 +191,7 @@
                     android:layout_marginBottom="2dp"
                     android:layout_weight="1"
                     android:background="@drawable/selector_button"
-                    android:text="计算"
+                    android:text="核算"
                     android:textColor="#333333"
                     android:textSize="18sp"
                     android:textStyle="bold" />

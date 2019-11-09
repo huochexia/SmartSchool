@@ -10,10 +10,8 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecheckSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
-import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderViewModel
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
@@ -95,7 +93,7 @@ class ReCheckSupplierFragment : BaseFragment<FragmentRecheckSupplierBinding>() {
         supplierList.clear()
         val where =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":3},{\"district\":$district}]}"
-        viewModel!!.getAllOrderOfDate(where)
+        viewModel!!.getAllOrderOfCondition(where)
             .flatMap {
                 Observable.fromIterable(it)
             }

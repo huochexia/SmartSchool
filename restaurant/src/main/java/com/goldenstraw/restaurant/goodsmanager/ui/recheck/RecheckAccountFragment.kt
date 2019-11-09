@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecheckAccountDateBinding
 import com.goldenstraw.restaurant.goodsmanager.adapter.SupplierSpinnerAdapter
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.ui.recheck.util.RecheckOrderViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -28,6 +31,7 @@ import kotlinx.android.synthetic.main.fragment_supplier_account_select.tv_left_w
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.tv_month
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.tv_right_date
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.tv_right_week
+import org.jetbrains.anko.bundleOf
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -44,8 +48,8 @@ class RecheckAccountFragment : BaseFragment<FragmentRecheckAccountDateBinding>()
     lateinit var start: String
     lateinit var end: String
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
-    var viewModel: VerifyAndPlaceOrderViewModel? = null
+    private val repository: RecheckOrderRepository by instance()
+    var viewModel: RecheckOrderViewModel? = null
     var adapter: SupplierSpinnerAdapter? = null
     var suppliers = mutableListOf<User>()
 
@@ -53,37 +57,9 @@ class RecheckAccountFragment : BaseFragment<FragmentRecheckAccountDateBinding>()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
-            VerifyAndPlaceOrderViewModel(repository)
+            RecheckOrderViewModel(repository)
         }
-        adapter = SupplierSpinnerAdapter(
-            mContext = context!!,
-            list = suppliers
-        )
-        viewModel!!.getAllSupplier()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                suppliers.clear()
-                suppliers.addAll(it)
-                adapter!!.notifyDataSetChanged()
-            }, {}, {})
 
-        supplier_spinner.adapter = adapter
-        supplier_spinner.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                supplierName = suppliers[position].username.toString()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
-        })
     }
 
     @SuppressLint("SetTextI18n")
@@ -104,7 +80,10 @@ class RecheckAccountFragment : BaseFragment<FragmentRecheckAccountDateBinding>()
                 Toast.makeText(context, "请选择区间日期！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            viewModel!!.computeNewAndOldOfDiffer(supplierName, start, end)
+            val bundle =Bundle()
+            bundle.putString("start",start)
+            bundle.putString("end",end)
+            findNavController().navigate(R.id.recheckAccountSupplierFragment, bundle)
         }
         iv_clear.setOnClickListener {
             calendarView.clearSelectRange()

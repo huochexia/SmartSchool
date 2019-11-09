@@ -45,22 +45,17 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             }
             "管理员" -> {
                 when (prefs.rights) {
-                    "记帐" -> {
-                        record.visibility = View.VISIBLE
-                    }
+
                     "主管" -> {
                         order.visibility = View.VISIBLE
                         send.visibility = View.VISIBLE
                         query.visibility = View.VISIBLE
-                        check.visibility = View.VISIBLE
-                        record.visibility = View.VISIBLE
-                    }
-                    "审核" -> {
-                        send.visibility = View.VISIBLE
+
                     }
                     "库管员" -> {
                         order.visibility = View.VISIBLE
                         check.visibility = View.VISIBLE
+                        record.visibility =View.VISIBLE
                     }
 
                 }

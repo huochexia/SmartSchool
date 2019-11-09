@@ -11,6 +11,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -21,7 +22,6 @@ import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_have_orders_of_supplier.*
 import kotlinx.android.synthetic.main.fragment_record_select_supplier.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -39,6 +39,7 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+    private val prefs: PrefsHelper by instance()
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
@@ -51,6 +52,7 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
     override fun initView() {
         super.initView()
         orderDate = arguments?.getString("orderDate")!!
+        district = prefs.district
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -120,24 +122,24 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
             })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.menu_select_district, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.select_xinshinan_district -> {
-                district = 0
-                record_select_toolbar.title = "新石校区"
-                getSupplierListFromWhere(orderDate, 0)
-            }
-            R.id.select_xishan_district -> {
-                district = 1
-                record_select_toolbar.title = "西山校区"
-                getSupplierListFromWhere(orderDate, 1)
-            }
-        }
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        menu.clear()
+//        inflater.inflate(R.menu.menu_select_district, menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.select_xinshinan_district -> {
+//                district = 0
+//                record_select_toolbar.title = "新石校区"
+//                getSupplierListFromWhere(orderDate, 0)
+//            }
+//            R.id.select_xishan_district -> {
+//                district = 1
+//                record_select_toolbar.title = "西山校区"
+//                getSupplierListFromWhere(orderDate, 1)
+//            }
+//        }
+//        return true
+//    }
 }

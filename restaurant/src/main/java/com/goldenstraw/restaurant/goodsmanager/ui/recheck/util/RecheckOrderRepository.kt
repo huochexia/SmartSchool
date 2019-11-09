@@ -39,4 +39,11 @@ class RecheckOrderRepository(
         return remote.getAllSupplier()
     }
 
+    /**
+     * 分组求各个供应商和
+     */
+    fun getTotalOfSuppliers(condition: String): Observable<MutableList<SupplierOfTotal>> {
+        return remote.getTotalOfSuppliers(condition)
+    }
+
 }

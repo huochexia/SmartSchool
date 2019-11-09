@@ -44,4 +44,15 @@ class RecheckOrderManageImpl(
         }
     }
 
+    override fun getTotalOfSuppliers(condition: String): Observable<MutableList<SupplierOfTotal>> {
+
+        return service.getTotalOfSuppliers(condition = condition)
+            .map {
+                if (!it.isSuccess()) {
+                    throw ApiException(it.code)
+                }
+                it.results
+            }
+    }
+
 }
