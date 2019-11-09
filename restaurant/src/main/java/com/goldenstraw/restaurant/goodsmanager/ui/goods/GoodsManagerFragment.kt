@@ -2,11 +2,14 @@ package com.goldenstraw.restaurant.goodsmanager.ui.goods
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -22,6 +25,8 @@ import com.owner.basemodule.util.toast
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import com.youth.banner.BannerConfig
+import com.youth.banner.loader.ImageLoader
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
@@ -45,6 +50,9 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+
+    val images =
+        mutableListOf(R.mipmap.blueshipin, R.mipmap.zhurou, R.mipmap.shucai, R.mipmap.tiaoliao)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -83,6 +91,18 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         })
         viewModelGoodsTo!!.getCountOfShoppingCart()
         initSwipeMenu()
+        with(banner) {
+            setImageLoader(object : ImageLoader() {
+                override fun displayImage(context: Context, path: Any, imageView: ImageView) {
+                    Glide.with(context).load(path).into(imageView)
+                }
+            })
+            setImages(images)
+            setDelayTime(3000)
+            setIndicatorGravity(BannerConfig.RIGHT)
+            start()
+        }
+
     }
 
     /**

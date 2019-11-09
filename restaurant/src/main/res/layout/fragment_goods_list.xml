@@ -28,11 +28,10 @@
                     android:layout_weight="5"
                     android:orientation="vertical">
 
-                <ImageView
-                        android:id="@+id/img_goods_category"
+                <com.youth.banner.Banner
+                        android:id="@+id/banner"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:src="@mipmap/category_banner" />
+                        android:layout_height="100dp"/>
 
                 <com.kennyc.view.MultiStateView
                         style="@style/MultiStateStyle"
