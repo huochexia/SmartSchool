@@ -41,6 +41,8 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         when (prefs.role) {
             "供应商" -> {
                 supplier.visibility = View.VISIBLE
+                val intent2 = Intent(this, SupplierApplyActivity::class.java)
+                startActivity(intent2)
             }
             "管理员" -> {
                 when (prefs.rights) {

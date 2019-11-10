@@ -7,11 +7,16 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSingleDateSelectBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.uber.autodispose.autoDisposable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_single_date_select.calendarView
 import kotlinx.android.synthetic.main.fragment_single_date_select.fl_current
 import kotlinx.android.synthetic.main.fragment_single_date_select.tv_current_day
@@ -34,7 +39,8 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
     }
     private val repository: QueryOrdersRepository by instance()
     var viewModel: QueryOrdersViewModel? = null
-
+    val map = HashMap<String, Calendar>()
+    val prefs: PrefsHelper by instance()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
@@ -43,6 +49,8 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         range_select_date.setOnClickListener {
             findNavController().navigate(R.id.supplierAccount)
         }
+
+        markDate()
     }
 
     @SuppressLint("SetTextI18n")
@@ -124,5 +132,36 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    /**
+     * 标记有订单的日期，状态等于
+     */
+    private fun markDate() {
+        val where = "{\"\$and\":[{\"state\":1},{\"supplier\":\"${prefs.username}\"}]}"
+        viewModel!!.getOrdersOfSupplier(where)
+            .flatMap {
+                Observable.fromIterable(it)
+            }.map {
+                it.orderDate
+            }
+            .distinct()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                val string = it.split("-")
+                val year = string[0]
+                val month = string[1]
+                val day = string[2]
+                map[getSchemeCalendar(
+                    year.toInt(), month.toInt(), day.toInt(),
+                    -0x20ecaa, "有货"
+                ).toString()] = getSchemeCalendar(
+                    year.toInt(), month.toInt(), day.toInt(),
+                    -0x20ecaa, "有货"
+                )
 
+            }, {}, {
+                calendarView.setSchemeDate(map)
+            })
+    }
 }

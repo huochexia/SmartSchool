@@ -79,8 +79,8 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
                     if (orderList.size != 0) {
                         ordersState.set(MultiStateView.VIEW_STATE_CONTENT)
                         when (orderList[0].district) {
-                            0 -> toolbar.title = date + "订单----市区"
-                            1 -> toolbar.title = date + "订单----西山"
+                            0 -> toolbar.title = date + "订单----新石南路校区"
+                            1 -> toolbar.title = date + "订单----西山校区"
                         }
                         summation(orderList)
                         adapter!!.forceUpdate()

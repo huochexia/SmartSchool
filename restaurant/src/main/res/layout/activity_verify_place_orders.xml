@@ -39,7 +39,7 @@
                         android:layout_marginStart="16sp"
                         android:text="选择校区:"
                         android:textColor="@color/primaryTextColor"
-                        android:textSize="20sp" />
+                        android:textSize="18sp" />
 
                 <RadioGroup
                         android:id="@+id/radio_district"
@@ -54,7 +54,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:text="新石南路校区"
-                            android:textSize="20sp" />
+                            android:textSize="16sp" />
 
                     <RadioButton
                             android:id="@+id/rb_xishan_district"
@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:text="西山校区"
-                            android:textSize="20sp" />
+                            android:textSize="16sp" />
                 </RadioGroup>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
