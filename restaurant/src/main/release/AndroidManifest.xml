@@ -7,6 +7,7 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             >
+
         <activity android:name=".goodsmanager.Main2Activity" />
         <activity android:name=".goodsmanager.ui.goods.ShoppingCartManagerActivity" />
         <activity android:name=".goodsmanager.ui.goods.OrderManagerActivity" />
@@ -16,6 +17,5 @@
         <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
         <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
         <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity" />
-        <activity android:name=".goodsmanager.ui.recheck.ReCheckOrdersActivity"/>
     </application>
 </manifest>

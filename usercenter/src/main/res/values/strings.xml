@@ -3,7 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="login_hint_password">密码</string>
     <string name="login_hint_mobilephone">用户名称</string>
-    <string name="login_tips">智慧校园</string>
+    <string name="login_tips">学校采购</string>
     <string name="login_sign_in">登录</string>
     <string name="register_user">注册</string>
     <string name="register_hint_mobliephone">请输入手机号</string>
