@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -35,6 +36,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
     }
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
+    private val prefs:PrefsHelper by instance()
     val map = HashMap<String, Calendar>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -88,6 +90,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
             val bundle = Bundle()
             val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
             bundle.putString("orderDate", date)
+            bundle.putInt("district",prefs.district)
             findNavController().navigate(R.id.recordSelectSupplierFragment, bundle)
         }
     }
@@ -100,7 +103,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
      * 标记尚未记帐的日期
      */
     private fun markDate() {
-        val where = "{\"state\":2}"
+        val where = "{\"\$and\":[{\"state\":2},{\"district\":${prefs.district}}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)

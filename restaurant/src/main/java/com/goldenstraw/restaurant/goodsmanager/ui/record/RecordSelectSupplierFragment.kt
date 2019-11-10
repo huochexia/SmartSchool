@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.record
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
@@ -11,7 +8,6 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -39,20 +35,20 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val prefs: PrefsHelper by instance()
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
-
+    var district = 0
     var supplierState = ObservableField<Int>()
 
     var supplierList = mutableListOf<String>()
-    var district = 0 //默认新石校区
+
     lateinit var orderDate: String
     override fun initView() {
         super.initView()
         orderDate = arguments?.getString("orderDate")!!
-        district = prefs.district
+        district = arguments?.getInt("district")!!
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -122,24 +118,4 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
             })
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        menu.clear()
-//        inflater.inflate(R.menu.menu_select_district, menu)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.select_xinshinan_district -> {
-//                district = 0
-//                record_select_toolbar.title = "新石校区"
-//                getSupplierListFromWhere(orderDate, 0)
-//            }
-//            R.id.select_xishan_district -> {
-//                district = 1
-//                record_select_toolbar.title = "西山校区"
-//                getSupplierListFromWhere(orderDate, 1)
-//            }
-//        }
-//        return true
-//    }
 }

@@ -56,7 +56,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
     override fun initView() {
         super.initView()
-        setSupportActionBar(toolbar)//没有这个显示不了菜单
+
         viewModel = getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
@@ -77,13 +77,38 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             }
         )
         getAllOrderOfDate(TimeConverter.getCurrentDateString(), 0)
-        tv_show_district.text = "选择校区"
+
         fab_send_to_supplier.hide()
+
+        initEvent()
+
         initSwipeMenu()
 
 
     }
 
+    private fun initEvent() {
+        radio_district.setOnCheckedChangeListener { group, checkedId ->
+            showList.clear()
+            when (checkedId) {
+                R.id.rb_xishinan_district -> {
+                    showList.addAll(ordersOfXingShiNan)
+                }
+                R.id.rb_xishan_district -> {
+                    showList.addAll(ordersOfXiShan)
+                }
+            }
+            if (showList.isNotEmpty()) {
+                state.set(MultiStateView.VIEW_STATE_CONTENT)
+                fab_send_to_supplier.show()
+            } else {
+                state.set(MultiStateView.VIEW_STATE_EMPTY)
+                fab_send_to_supplier.hide()
+            }
+            adapter!!.forceUpdate()
+        }
+
+    }
     /**
      * 初始化Item侧滑菜单,只有修改
      */
@@ -150,33 +175,6 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
         dialog.show()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_select_district, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.select_xinshinan_district -> {
-                tv_show_district.text = "新石南路校区"
-                showList.clear()
-                showList.addAll(ordersOfXingShiNan)
-                if (showList.isNotEmpty())
-                    fab_send_to_supplier.show()
-                adapter!!.forceUpdate()
-            }
-            R.id.select_xishan_district -> {
-
-                tv_show_district.text = "西山校区"
-                showList.clear()
-                showList.addAll(ordersOfXiShan)
-                if (showList.isNotEmpty())
-                    fab_send_to_supplier.show()
-                adapter!!.forceUpdate()
-            }
-        }
-        return true
-    }
 
     /**
      * 获取订单信息
