@@ -19,6 +19,8 @@ import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
+import com.owner.usercenter.login.Installation
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -67,4 +69,8 @@ interface UserServiceManager {
      * 获取所有用户信息
      */
     fun getAllUsers(): Flowable<AllUserResp>
+    /**
+     *
+     */
+    fun saveDeviceId(installation: Installation):Completable
 }

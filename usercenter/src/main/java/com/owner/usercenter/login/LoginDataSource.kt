@@ -20,8 +20,8 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.base.repository.IRemoteDataSource
-import com.owner.usercenter.http.entities.LoginUser
 import com.owner.usercenter.http.entities.LoginResp
+import com.owner.usercenter.http.entities.LoginUser
 import com.owner.usercenter.http.manager.UserServiceManager
 import com.owner.usercenter.util.PrefsHelper
 import io.reactivex.Completable
@@ -44,6 +44,8 @@ interface ILoginLocalDataSource : ILocalDataSource {
     fun fetchPresUser(): Flowable<Either<Errors, LoginUser>>
 
     fun isAutoLogin(): Single<Boolean>
+
+
 }
 
 /**
@@ -55,6 +57,11 @@ interface ILoginRemoteDataSource : IRemoteDataSource {
 
     //登录，因为存在成功和失败两种可能的结果，所以要返回Either<Errors,LoginUser>类型结果
     fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>>
+
+    /*
+     * 保存设备号
+     */
+    fun saveDeviceId(installation: Installation): Completable
 }
 
 /**
@@ -154,5 +161,12 @@ class LoginRemoteDataSource(private val serviceManager: UserServiceManager) :
 
     override fun login(username: String, password: String): Flowable<Either<Errors, LoginResp>> {
         return serviceManager.loginManager(username, password)
+    }
+
+    /**
+     * 保存设备号
+     */
+    override fun saveDeviceId(installation: Installation): Completable {
+        return serviceManager.saveDeviceId(installation)
     }
 }

@@ -16,10 +16,8 @@
 package com.owner.basemodule.room.entities
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import cn.bmob.v3.BmobUser
 
 /**
  *
@@ -34,7 +32,6 @@ data class User(
     @ColumnInfo val avatar: String? = "",
     @ColumnInfo val letters: String = "",
     @ColumnInfo val role: String = ""
-
 )
 
 data class AllUserResp(val results: MutableList<User>)

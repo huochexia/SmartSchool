@@ -20,6 +20,8 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
+import com.owner.usercenter.login.Installation
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -140,5 +142,9 @@ class UserServiceManagerImpl(
      */
     override fun getAllUsers(): Flowable<AllUserResp> {
         return service.getAllUsers()
+    }
+
+    override fun saveDeviceId(installation: Installation): Completable {
+        return service.updateInstallation(installation)
     }
 }

@@ -18,7 +18,6 @@ package com.owner.usercenter.login
 import android.widget.Toast
 import cn.bmob.v3.BmobInstallationManager
 import cn.bmob.v3.BmobQuery
-import cn.bmob.v3.BmobUser
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.jakewharton.rxbinding3.view.clicks
@@ -31,8 +30,8 @@ import com.owner.usercenter.mvi.MVIActivity
 import com.owner.usercenter.util.PrefsHelper
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.startActivity
@@ -137,6 +136,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
         when (state.uiEvents) {
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
+                modifyInstallationUser(prefs.username)
                 ARouter.getInstance().build(RouterPath.Restaurant.PATH_MAIN).navigation()
                 finish()
             }
@@ -160,5 +160,24 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
                 startActivity<FindPwdActivity>()
             }
         }
+    }
+
+    private fun modifyInstallationUser(user: String) {
+        val bmobQuery = BmobQuery<Installation>()
+        val id = BmobInstallationManager.getInstallationId()
+        bmobQuery.addWhereEqualTo("installationId", id)
+        bmobQuery.findObjectsObservable(Installation::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                if (it.isNotEmpty()) {
+                    val installation = it[0]
+                    installation.user = user
+                    installation.updateObservable()
+                        .autoDisposable(scopeProvider)
+                        .subscribe({}, {})
+                }
+            }, {})
     }
 }

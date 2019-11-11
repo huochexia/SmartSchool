@@ -79,7 +79,7 @@ class BaseApplication : Application(), KodeinAware {
                 }
             })
         //启动Bmob的消息推送功能
-//        BmobPush.startWork(this)
+        BmobPush.startWork(this)
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
 //        initLeakCanary()
