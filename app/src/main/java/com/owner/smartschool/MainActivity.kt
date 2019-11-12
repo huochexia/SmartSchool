@@ -1,5 +1,6 @@
 package com.owner.smartschool
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.alibaba.android.arouter.launcher.ARouter
@@ -13,4 +14,6 @@ class MainActivity : AppCompatActivity() {
         ARouter.getInstance().build(RouterPath.UserCenter.PATH_LOGIN).navigation()
         finish()
     }
+
+
 }

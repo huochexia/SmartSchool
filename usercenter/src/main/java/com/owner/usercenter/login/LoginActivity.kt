@@ -174,9 +174,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
                 if (it.isNotEmpty()) {
                     val installation = it[0]
                     installation.user = user
-                    installation.updateObservable()
-                        .autoDisposable(scopeProvider)
-                        .subscribe({}, {})
+
                 }
             }, {})
     }
