@@ -1,8 +1,9 @@
 package com.owner.usercenter.login
 
+import cn.bmob.v3.BmobInstallation
 
-data class Installation(
-    var deviceType: String = "android",
-    var installationId: String,
+
+class Installation(
+
     var user: String
-)
+) : BmobInstallation()

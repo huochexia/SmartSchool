@@ -16,6 +16,7 @@
 package com.owner.usercenter.login
 
 import android.widget.Toast
+import cn.bmob.v3.BmobInstallation
 import cn.bmob.v3.BmobInstallationManager
 import cn.bmob.v3.BmobQuery
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -174,8 +175,13 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
                 if (it.isNotEmpty()) {
                     val installation = it[0]
                     installation.user = user
-
+                    installation.updateObservable()
+                        .subscribeOn(Schedulers.io())
+                        .autoDisposable(scopeProvider)
+                        .subscribe({},{})
                 }
-            }, {})
+            }, {
+                println(it.message)
+            })
     }
 }
