@@ -17,8 +17,6 @@ package com.owner.usercenter.http.service
 
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
-import com.owner.usercenter.login.Installation
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import retrofit2.http.*
@@ -85,10 +83,6 @@ interface UserApi {
     @GET("/1/users")
     fun getAllUsers(): Flowable<AllUserResp>
 
-    /*
-     *更新InstallationId对应的用户名
-     */
-    @POST("/1/installations")
-    fun updateInstallation(@Body installation:Installation):Completable
+
 }
 

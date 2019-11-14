@@ -1,7 +1,8 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.verify
 
-import android.view.Menu
-import android.view.MenuItem
+import android.app.PendingIntent
+import android.content.Intent
+import android.telephony.SmsManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -280,17 +281,10 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             .autoDisposable(scopeProvider)
             .subscribe({ it ->
                 viewModel!!.sendToOrderToSupplier(it)
-                    .andThen(
-                        viewModel!!.pushNotice(
-                            "A5FC2F92C466F04591465DCCE420FF54",
-                            "河北省税务干部学校给您发送了${TimeConverter.getCurrentDateString()}的新订单！"
-                        )
-                    )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({
-
                     }, { error ->
                         toast { "批量修改" + error.message }
                     })
@@ -304,4 +298,5 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
             })
 
     }
+
 }

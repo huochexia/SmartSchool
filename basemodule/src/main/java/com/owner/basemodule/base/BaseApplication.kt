@@ -67,19 +67,6 @@ class BaseApplication : Application(), KodeinAware {
 
         //通过AppId连接Bmob云端
         Bmob.initialize(this, BMOB_APP_ID)
-        // 使用推送服务时的初始化操作
-        BmobInstallationManager.getInstance()
-            .initialize(object : InstallationListener<BmobInstallation>() {
-                override fun done(bmobInstallation: BmobInstallation?, e: BmobException?) {
-                    if (e == null) {
-                        logi { bmobInstallation!!.objectId + "-" + bmobInstallation.installationId }
-                    } else {
-                        loge { e.message!! }
-                    }
-                }
-            })
-        //启动Bmob的消息推送功能
-        BmobPush.startWork(this)
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
 //        initLeakCanary()

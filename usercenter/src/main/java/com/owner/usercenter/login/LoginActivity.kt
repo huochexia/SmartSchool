@@ -137,7 +137,7 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
         when (state.uiEvents) {
 
             is LoginViewState.LoginUiEvent.JumpMain -> {
-                modifyInstallationUser(prefs.username)
+
                 ARouter.getInstance().build(RouterPath.Restaurant.PATH_MAIN).navigation()
                 finish()
             }
@@ -163,25 +163,4 @@ class LoginActivity : MVIActivity<ActivityLoginBinding, LoginIntent, LoginViewSt
         }
     }
 
-    private fun modifyInstallationUser(user: String) {
-        val bmobQuery = BmobQuery<Installation>()
-        val id = BmobInstallationManager.getInstallationId()
-        bmobQuery.addWhereEqualTo("installationId", id)
-        bmobQuery.findObjectsObservable(Installation::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                if (it.isNotEmpty()) {
-                    val installation = it[0]
-                    installation.user = user
-                    installation.updateObservable()
-                        .subscribeOn(Schedulers.io())
-                        .autoDisposable(scopeProvider)
-                        .subscribe({},{})
-                }
-            }, {
-                println(it.message)
-            })
-    }
 }
