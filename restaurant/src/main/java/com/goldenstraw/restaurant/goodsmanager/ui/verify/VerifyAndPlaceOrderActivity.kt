@@ -1,7 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.verify
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.telephony.SmsManager
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +11,8 @@ import android.widget.AdapterView
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
@@ -23,6 +27,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.room.entities.User
 import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
@@ -57,7 +62,13 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
     override fun initView() {
         super.initView()
-
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.SEND_SMS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), 1)
+        }
         viewModel = getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
@@ -110,6 +121,34 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
         }
 
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    toast { "您没有发送短信和权限！" }
+                }
+            }
+        }
+    }
+
+    fun sendOrderItemSMS(address: String, content: String) {
+        val manager = SmsManager.getDefault()
+        val intent = Intent("com.android.TinySMS.RESULT")
+        val sentIntent = PendingIntent.getBroadcast(
+            this, 0,
+            intent, PendingIntent.FLAG_ONE_SHOT
+        )
+        manager.sendTextMessage(address, null, content, sentIntent, null)
+    }
+
+
     /**
      * 初始化Item侧滑菜单,只有修改
      */
@@ -237,7 +276,8 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
     }
 
     private fun showDialog(supplier: String, selectedList: MutableList<OrderItem>) {
-        var supplier1 = supplier
+
+        var supplier1: User = viewModel!!.suppliers[0]
         val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
         val spinner = view.findViewById<AppCompatSpinner>(R.id.spinner_select_supplier)
         spinner.adapter = SupplierSpinnerAdapter(this, viewModel!!.suppliers)
@@ -248,7 +288,7 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                 position: Int,
                 id: Long
             ) {
-                supplier1 = viewModel!!.suppliers[position].username.toString()
+                supplier1 = viewModel!!.suppliers[position]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -273,9 +313,9 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
      * 将订单发送给对应的供应商，刷新列表
      */
 
-    private fun sendOrderToSupplier(supplier: String, selectedList: MutableList<OrderItem>) {
+    private fun sendOrderToSupplier(supplier: User, selectedList: MutableList<OrderItem>) {
 
-        viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier)
+        viewModel!!.transOrdersToBatchRequestObject(selectedList, supplier.username!!)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
@@ -285,6 +325,10 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({
+                        sendOrderItemSMS(
+                            "${supplier.mobilePhoneNumber}",
+                            "税务学校采购订单，共有${selectedList.size}项内容，注意查看！！"
+                        )
                     }, { error ->
                         toast { "批量修改" + error.message }
                     })
