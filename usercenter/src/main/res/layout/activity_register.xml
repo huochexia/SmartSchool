@@ -229,12 +229,18 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.appcompat.widget.AppCompatSpinner
-                                android:id="@+id/category_spinner"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/tv_category" />
+                        <TextView
+                                android:id="@+id/tv_spinner_category"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="100dp"
+                                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                                android:gravity="center"
+                                android:textColor="@color/primaryTextColor"
+                                android:textSize="17sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/tv_category"
+                                app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                     <Button
                             android:id="@+id/btnRegister"

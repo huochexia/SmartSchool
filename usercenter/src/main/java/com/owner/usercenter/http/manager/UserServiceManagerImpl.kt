@@ -17,12 +17,13 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.internal.operators.flowable.FlowableDistinct
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -149,5 +150,13 @@ class UserServiceManagerImpl(
         return service.getAllUsers()
     }
 
+    override fun getAllCategory(): Observable<MutableList<CategoryResp>> {
+        return service.getAllCategory().map {
+            if (!it.isSuccess()) {
+                throw ApiException(it.code)
+            }
+            it.results
+        }
+    }
 
 }

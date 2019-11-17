@@ -41,3 +41,11 @@ data class RegisterUserResp(
 ) {
     fun isSuccess(): Boolean = code == 0 && objectId.isNullOrEmpty().not()
 }
+
+/*
+ 商品类别
+ */
+data class CategoryResp(
+    val objectId: String,
+    val categoryName: String
+)

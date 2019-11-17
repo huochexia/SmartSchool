@@ -15,9 +15,11 @@
  */
 package com.owner.usercenter.http.service
 
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -83,6 +85,10 @@ interface UserApi {
     @GET("/1/users")
     fun getAllUsers(): Flowable<AllUserResp>
 
-
+    /*
+     *查询商品类别
+     */
+    @GET("/1/classes/GoodsCategory")
+    fun getAllCategory(): Observable<ObjectList<CategoryResp>>
 }
 

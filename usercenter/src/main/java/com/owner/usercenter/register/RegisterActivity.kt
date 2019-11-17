@@ -23,12 +23,15 @@ import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityRegisterBinding
+import com.owner.usercenter.http.entities.CategoryResp
 import com.owner.usercenter.mvi.MVIActivity
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_register.*
+import org.jetbrains.anko.selector
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -56,7 +59,8 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
     var role = ""
     var district = 0
     var categoryCode = "-1"
-
+    var categroyList = mutableListOf<CategoryResp>()
+    var name = mutableListOf<String>()
     override fun initView() {
 
         //准备要发射的数据
@@ -72,7 +76,35 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             }, {
                 println("errros::" + it.message)
             })
+        viewModel.getAllCategory().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe ({
+                initSpinner(it)
+            },{},{})
+    }
 
+    private fun initSpinner(it: MutableList<CategoryResp>) {
+        categroyList.clear()
+        categroyList.addAll(it)
+        name.clear()
+        categroyList.forEach { category ->
+            name.add(category.categoryName)
+        }
+        //categoryCode的spinner选择事件
+        if (name.isNotEmpty()) {
+            tv_spinner_category.text = name[0]
+            tv_spinner_category.setOnClickListener {
+                selector("请选择供应商品类别", name) { _, i ->
+                    tv_spinner_category.text = name[i]
+                    categroyList.forEach {
+                        if (it.categoryName == name[i]) {
+                            categoryCode = it.objectId
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun intents(): Observable<RegisterIntent> {
@@ -137,6 +169,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                     "库管员"
                 }
                 R.id.rd_supplier_right -> {
+
                     district_layout.visibility = View.GONE
                     district = 0
                     category_layout.visibility = View.VISIBLE
@@ -154,6 +187,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                 else -> 0
             }
         }
-        //categoryCode的spinner选择事件
+
+
     }
 }

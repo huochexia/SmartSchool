@@ -20,6 +20,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -74,4 +75,8 @@ interface UserServiceManager {
      */
     fun getAllUsers(): Flowable<AllUserResp>
 
+    /**
+     * 获取所有商品类别
+     */
+    fun getAllCategory(): Observable<MutableList<CategoryResp>>
 }

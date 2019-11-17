@@ -19,9 +19,11 @@ import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.usercenter.http.entities.CategoryResp
 import com.owner.usercenter.http.entities.RegisterUserResp
 import com.owner.usercenter.http.manager.UserServiceManager
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 /**
  *注册所需数据源
@@ -40,6 +42,8 @@ interface IRegisterRemoteDataSource : IRemoteDataSource {
         district: Int,
         categoryCode: String
     ): Flowable<Either<Errors, RegisterUserResp>>
+
+    fun getAllCategory(): Observable<MutableList<CategoryResp>>
 }
 
 /**
@@ -56,6 +60,10 @@ class RegisterRemoteDataSourec(
         categoryCode: String
     ): Flowable<Either<Errors, RegisterUserResp>> {
         return serviceManager.registerManager(username, mobilephone,role,district,categoryCode)
+    }
+
+    override fun getAllCategory(): Observable<MutableList<CategoryResp>> {
+        return serviceManager.getAllCategory()
     }
 }
 
@@ -75,4 +83,7 @@ class RegisterDataSourceRepository(
     ): Flowable<Either<Errors, RegisterUserResp>> =
         remoteDataSource.register(username, mobilephone, role, district, categoryCode)
 
+    fun getAllCategory(): Observable<MutableList<CategoryResp>> {
+        return remoteDataSource.getAllCategory()
+    }
 }

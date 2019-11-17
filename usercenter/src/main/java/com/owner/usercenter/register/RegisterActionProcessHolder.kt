@@ -17,6 +17,7 @@ package com.owner.usercenter.register
 
 import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.ext.reactivex.execute
+import com.owner.usercenter.http.entities.CategoryResp
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 
@@ -90,5 +91,7 @@ class RegisterActionProcessHolder(
             }
 
         }
-
+    fun getAllCategory(): Observable<MutableList<CategoryResp>> {
+        return repository.getAllCategory()
+    }
 }

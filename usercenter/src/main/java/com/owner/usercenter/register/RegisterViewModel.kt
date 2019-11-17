@@ -17,6 +17,7 @@ package com.owner.usercenter.register
 
 import androidx.lifecycle.MutableLiveData
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.usercenter.http.entities.CategoryResp
 import com.owner.usercenter.mvi.MVIViewModel
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
@@ -92,5 +93,12 @@ class RegisterViewModel(
             .scan(RegisterViewState.idle(), reducer)
             .publish()
             .autoConnect(0)
+    }
+
+    /**
+     * 获取所有商品类别
+     */
+    fun getAllCategory(): Observable<MutableList<CategoryResp>> {
+        return actionProcessHolder.getAllCategory()
     }
 }
