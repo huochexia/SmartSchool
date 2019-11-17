@@ -69,10 +69,5 @@ class VerifyAndPlaceOrderRepository(
         return remote.commitRecordState(orders)
     }
 
-    /**
-     * 推送消息
-     */
-    fun pushNotice(installactionId: String, notice: String): Completable {
-        return remote.pushNotice(installactionId, notice)
-    }
+
 }

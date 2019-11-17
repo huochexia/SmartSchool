@@ -33,7 +33,13 @@ import io.reactivex.Flowable
  */
 interface IRegisterRemoteDataSource : IRemoteDataSource {
 
-    fun register(username: String, mobilephone: String): Flowable<Either<Errors, RegisterUserResp>>
+    fun register(
+        username: String,
+        mobilephone: String,
+        role: String,
+        district: Int,
+        categoryCode: String
+    ): Flowable<Either<Errors, RegisterUserResp>>
 }
 
 /**
@@ -44,9 +50,12 @@ class RegisterRemoteDataSourec(
 ) : IRegisterRemoteDataSource {
     override fun register(
         username: String,
-        mobilephone: String
+        mobilephone: String,
+        role: String,
+        district: Int,
+        categoryCode: String
     ): Flowable<Either<Errors, RegisterUserResp>> {
-        return serviceManager.registerManager(username, mobilephone)
+        return serviceManager.registerManager(username, mobilephone,role,district,categoryCode)
     }
 }
 
@@ -57,7 +66,13 @@ class RegisterDataSourceRepository(
     remoteDataSource: IRegisterRemoteDataSource
 ) : BaseRepositoryRemote<IRegisterRemoteDataSource>(remoteDataSource) {
 
-    fun register(username: String, mobilephone: String): Flowable<Either<Errors, RegisterUserResp>> =
-        remoteDataSource.register(username, mobilephone)
+    fun register(
+        username: String,
+        mobilephone: String,
+        role: String,
+        district: Int,
+        categoryCode: String
+    ): Flowable<Either<Errors, RegisterUserResp>> =
+        remoteDataSource.register(username, mobilephone, role, district, categoryCode)
 
 }

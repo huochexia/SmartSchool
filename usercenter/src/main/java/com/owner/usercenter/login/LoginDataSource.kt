@@ -116,7 +116,6 @@ class LoginLocalDataSource(
             prefs.password = password
             prefs.objectId = user.objectId!!
             prefs.sessionToken = user.sessionToken!!
-            prefs.rights = user.rights!!
             prefs.role = user.role!!
             prefs.categoryCode = user.categoryCode!!
             prefs.district = user.district!!

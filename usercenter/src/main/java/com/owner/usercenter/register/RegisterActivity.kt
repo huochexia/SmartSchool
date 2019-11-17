@@ -16,10 +16,11 @@
 package com.owner.usercenter.register
 
 import android.app.AlertDialog
+import android.view.View
 import android.widget.Toast
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
-import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityRegisterBinding
 import com.owner.usercenter.mvi.MVIActivity
@@ -37,6 +38,7 @@ import org.kodein.di.generic.instance
  * Created by Liuyong on 2019-04-07.It's smartschool
  *@description:
  */
+@Route(path = "/usercenter/register")
 class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, RegisterViewState>() {
 
     override val layoutId: Int
@@ -50,6 +52,10 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
     private val registerIntentPublish = PublishSubject.create<RegisterIntent>()
 
     val viewModel by instance<RegisterViewModel>()
+    //默认值
+    var role = ""
+    var district = 0
+    var categoryCode = "-1"
 
     override fun initView() {
 
@@ -106,11 +112,48 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             .map {
                 RegisterIntent.ClickRegisterIntent(
                     username = tvNewUsername.text.toString(),
-                    mobilephone = tvUserActor.text.toString()
+                    mobilephone = tvUserActor.text.toString(),
+                    role = role,
+                    district = district,
+                    categoryCode = categoryCode
                 )
             }
             .autoDisposable(scopeProvider)
             .subscribe(registerIntentPublish)
+        //role选择事件
+        rg_role.setOnCheckedChangeListener { group, checkedId ->
+            role = when (checkedId) {
+                R.id.rd_manager_right -> {
+                    district_layout.visibility = View.GONE
+                    district = 0
+                    category_layout.visibility = View.GONE
+                    categoryCode = "-1"
+                    "管理员"
+                }
+                R.id.rd_account_right -> {
+                    district_layout.visibility = View.VISIBLE
+                    category_layout.visibility = View.GONE
+                    categoryCode = "-1"
+                    "库管员"
+                }
+                R.id.rd_supplier_right -> {
+                    district_layout.visibility = View.GONE
+                    district = 0
+                    category_layout.visibility = View.VISIBLE
+                    "供应商"
+                }
+                else -> ""
+            }
 
+        }
+        //district单选事件
+        rg_district.setOnCheckedChangeListener { group, checkId ->
+            district = when (checkId) {
+                R.id.rd_xinshinan_district -> 0
+                R.id.rd_xishan_district -> 1
+                else -> 0
+            }
+        }
+        //categoryCode的spinner选择事件
     }
 }

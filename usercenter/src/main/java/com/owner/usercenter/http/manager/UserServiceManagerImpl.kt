@@ -22,6 +22,7 @@ import com.owner.usercenter.http.entities.*
 import com.owner.usercenter.http.service.UserApi
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.internal.operators.flowable.FlowableDistinct
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -70,11 +71,17 @@ class UserServiceManagerImpl(
      */
     override fun registerManager(
         username: String,
-        mobilephone: String
+        mobilephone: String,
+        role:String,
+        district:Int,
+        categoryCode:String
     ): Flowable<Either<Errors, RegisterUserResp>> {
         val newUser = RegisterUserReq(
             username = username,
-            mobilePhoneNumber = mobilephone
+            mobilePhoneNumber = mobilephone,
+            role = role,
+            district = district,
+            categoryCode = categoryCode
         )
         return service.signUp(newUser)
             .subscribeOn(Schedulers.io())

@@ -24,7 +24,10 @@ package com.owner.usercenter.http.entities
 data class RegisterUserReq(
     val username: String,
     val mobilePhoneNumber: String,
-    val password: String = "000000"
+    val password: String = "111111",
+    val role:String,
+    val district:Int = 0,
+    val categoryCode:String ="-1"
 )
 
 /*

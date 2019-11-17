@@ -13,6 +13,7 @@ object RouterPath {
     class UserCenter {
         companion object{
             const val PATH_LOGIN = "/usercenter/login"
+            const val PATH_REGISTER = "/usercenter/register"
         }
     }
     class Restaurant{

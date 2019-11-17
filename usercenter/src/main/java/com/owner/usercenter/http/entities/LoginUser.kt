@@ -42,7 +42,6 @@ data class LoginResp(
     val mobilePhoneVerified: Boolean,
     val letters: String = "",
     val role: String = "",
-    val rights: String = "",
     val district: Int = -1,
     val categoryCode: String = "1"
 ) {

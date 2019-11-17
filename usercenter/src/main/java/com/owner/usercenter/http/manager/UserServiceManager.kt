@@ -43,7 +43,13 @@ interface UserServiceManager {
     /**
      * 注册，将API返回的结果进行分类（成功或失败）处理，发送一个Either结果给下游
      */
-    fun registerManager(username:String,mobilephone:String):Flowable<Either<Errors,RegisterUserResp>>
+    fun registerManager(
+        username: String,
+        mobilephone: String,
+        role: String,
+        district: Int,
+        categoryCode: String
+    ): Flowable<Either<Errors, RegisterUserResp>>
 
     /**
      * 更换密码

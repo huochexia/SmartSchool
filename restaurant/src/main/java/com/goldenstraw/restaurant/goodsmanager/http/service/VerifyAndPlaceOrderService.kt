@@ -54,11 +54,7 @@ interface VerifyAndPlaceOrderApi {
     @POST("/1/batch/")
     fun batchCommitState(@Body orders: BatchOrdersRequest<ObjectState>): Completable
 
-    /**
-     * 向供应商推送订货消息
-     */
-    @POST("1/push/")
-    fun pushNotice(@Body pushBody: PushBody): Completable
+
 
     /**
      * 删除订单

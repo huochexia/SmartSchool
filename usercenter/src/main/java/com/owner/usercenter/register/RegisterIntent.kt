@@ -31,6 +31,7 @@ sealed class RegisterIntent : IIntent {
       点击注册按钮意图
      */
     data class ClickRegisterIntent(
-        val username: String?, val mobilephone: String?
+        val username: String?, val mobilephone: String?,
+        val role:String?,val district:Int,val categoryCode:String
     ) : RegisterIntent()
 }

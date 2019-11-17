@@ -89,14 +89,6 @@ class VerifyAndPlaceOrderViewModel(
     }
 
     /**
-     * 推送通知
-     */
-
-    fun pushNotice(installactionId: String, notice: String): Completable {
-        return repository.pushNotice(installactionId, notice)
-    }
-
-    /**
      * 修改订单数量
      */
     fun updateOrderItemQuantity(order: OrderItem) {

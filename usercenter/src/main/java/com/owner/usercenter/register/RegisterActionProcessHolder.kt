@@ -39,10 +39,10 @@ class RegisterActionProcessHolder(
         ObservableTransformer<RegisterAction.ClickRegisterAction, RegisterResult.ClickRegisterResult> { action ->
 
             action.flatMap { it ->
-                val (username, mobilephone) = it
-                when (username.isNullOrEmpty() || mobilephone.isNullOrEmpty()) {
+                val (username, mobilephone,role,district,categoryCode) = it
+                when (username.isNullOrEmpty() || mobilephone.isNullOrEmpty()||role.isNullOrEmpty()) {
                     true -> onRegisterParamEmptyResult()
-                    false -> repository.register(username, mobilephone)
+                    false -> repository.register(username, mobilephone,role, district, categoryCode)
                         .toObservable()
                         .flatMap {
                             it.fold(::onRegisterFailureResult) {

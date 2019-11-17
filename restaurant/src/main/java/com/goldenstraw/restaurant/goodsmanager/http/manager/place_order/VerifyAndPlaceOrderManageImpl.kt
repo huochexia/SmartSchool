@@ -68,10 +68,5 @@ class VerifyAndPlaceOrderManageImpl(
         return service.batchCommitState(orders)
     }
 
-    override fun pushNotice(installactionId: String, notice: String): Completable {
-        val where = PushWhere(installactionId)
-        val data = PushData(notice)
-        val body = PushBody(where, data)
-        return service.pushNotice(body)
-    }
+
 }

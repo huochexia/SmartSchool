@@ -43,7 +43,10 @@ class RegisterViewModel(
             is RegisterIntent.InitialRegisterIntent -> RegisterAction.InitialRegisterAction
             is RegisterIntent.ClickRegisterIntent -> RegisterAction.ClickRegisterAction(
                 intent.username,
-                intent.mobilephone
+                intent.mobilephone,
+                intent.role,
+                intent.district,
+                intent.categoryCode
             )
         }
 

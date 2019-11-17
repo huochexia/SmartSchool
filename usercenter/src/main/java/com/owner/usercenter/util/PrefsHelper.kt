@@ -44,6 +44,4 @@ class PrefsHelper(prefs: SharedPreferences) {
 
     var role by prefs.string("role","")
 
-    var rights by prefs.string("rights","")
-
 }

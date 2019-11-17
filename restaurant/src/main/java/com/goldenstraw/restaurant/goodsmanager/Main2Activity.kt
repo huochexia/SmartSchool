@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
@@ -15,6 +16,7 @@ import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
+import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_main2.*
@@ -45,22 +47,15 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 startActivity(intent2)
             }
             "管理员" -> {
-                when (prefs.rights) {
-
-                    "主管" -> {
-                        order.visibility = View.VISIBLE
-                        send.visibility = View.VISIBLE
-                        query.visibility = View.VISIBLE
-
-                    }
-                    "库管员" -> {
-                        order.visibility = View.VISIBLE
-                        check.visibility = View.VISIBLE
-                        record.visibility =View.VISIBLE
-                    }
-
-                }
-
+                order.visibility = View.VISIBLE
+                send.visibility = View.VISIBLE
+                query.visibility = View.VISIBLE
+                manager.visibility = View.VISIBLE
+            }
+            "库管员" -> {
+                order.visibility = View.VISIBLE
+                check.visibility = View.VISIBLE
+                record.visibility = View.VISIBLE
             }
 
         }
@@ -92,6 +87,9 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             val intent2 = Intent(this, RecordOrdersActivity::class.java)
             startActivity(intent2)
         }
+        manager.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.UserCenter.PATH_REGISTER).navigation()
+        }
 
     }
 
@@ -102,6 +100,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         supplier.visibility = View.GONE
         check.visibility = View.GONE
         record.visibility = View.GONE
+        manager.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
