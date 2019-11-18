@@ -45,7 +45,7 @@ interface ILocalUserManagerDataSource : ILocalDataSource {
     fun search(name: String): Observable<List<User>>
 }
 
-class LocalUserManagerDataSource(
+class LocalUserManagerDataSourceImpl(
     private val database: AppDatabase
 ) : ILocalUserManagerDataSource {
 
@@ -85,7 +85,7 @@ interface IRemoteUserManagerDataSource : IRemoteDataSource {
 
 }
 
-class RemoteUserManagerDataSource(
+class RemoteUserManagerDataSourceImpl(
     private val service: UserServiceManager
 ) : IRemoteUserManagerDataSource {
 
@@ -106,7 +106,7 @@ class RemoteUserManagerDataSource(
  */
 class UserManagerRepository(
     remoteDataSource: IRemoteUserManagerDataSource,
-    localDataSource: LocalUserManagerDataSource
+    localDataSource: LocalUserManagerDataSourceImpl
 ) : BaseRepositoryBoth<IRemoteUserManagerDataSource, ILocalUserManagerDataSource>(remoteDataSource, localDataSource) {
 
     //从远程得到用户列表，并保存在本地数据缓存文件中

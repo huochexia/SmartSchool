@@ -15,10 +15,22 @@
  */
 package com.owner.usercenter.usermanager
 
+import com.owner.basemodule.base.view.activity.BaseActivity
+import com.owner.usercenter.R
+import com.owner.usercenter.databinding.ActivityManageUserBinding
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
+
 /**
  *
  * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
-class UserManagerActivity {
+class UserManagerActivity : BaseActivity<ActivityManageUserBinding>() {
+    override val layoutId: Int
+        get() = R.layout.activity_manage_user
+    override val kodein: Kodein = Kodein.lazy {
+        extend(parentKodein, copy = Copy.All)
+        import(usermanageractivitymodule)
+    }
 }
