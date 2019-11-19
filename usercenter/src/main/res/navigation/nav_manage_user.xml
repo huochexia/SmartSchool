@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_manage_user">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nav_manage_user"
+        app:startDestination="@id/userManagerFragment">
 
+    <fragment
+            android:id="@+id/userManagerFragment"
+            android:name="com.owner.usercenter.usermanager.UserManagerFragment"
+            android:label="UserManagerFragment"
+            tools:layout="@layout/fragment_manage_user"/>
 </navigation>

@@ -74,7 +74,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             .subscribe({
                 render(it)
             }, {
-                println("errros::" + it.message)
+                println("errors::" + it.message)
             })
         viewModel.getAllCategory().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
