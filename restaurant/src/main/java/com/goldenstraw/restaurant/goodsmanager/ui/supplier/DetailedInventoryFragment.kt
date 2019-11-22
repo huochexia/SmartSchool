@@ -78,7 +78,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
-                    ",{\"state\":3}]}"
+                    ",{\"state\":4}]}"
         viewModel!!.getTotalGroupByName(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

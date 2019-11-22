@@ -132,7 +132,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
-                    ",{\"state\":3}]}"
+                    ",{\"state\":4}]}"
 //        viewModel!!.getOrdersOfSupplier(where)
 //            .flatMap {
 //                Observable.fromIterable(it)

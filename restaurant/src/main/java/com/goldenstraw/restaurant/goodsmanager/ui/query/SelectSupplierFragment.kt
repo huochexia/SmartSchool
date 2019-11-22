@@ -66,7 +66,7 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
                 }
             }
         )
-        val where = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":3}]}"
+        val where = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":4}]}"
         viewModel!!.getTotalOfSupplier(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
