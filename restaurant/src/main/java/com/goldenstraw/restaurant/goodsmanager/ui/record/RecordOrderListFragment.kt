@@ -98,7 +98,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
                                 .autoDisposable(scopeProvider)
                                 .subscribe {
                                     orderList.forEach { order ->
-                                        order.state = 3
+                                        order.state = 4
                                     }
                                     orderAdapter.forceUpdate()
 
@@ -147,7 +147,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"orderDate\":\"$orderDate\"}" +
-                    ",{\"state\":{\"\$gte\":2}}" +
+                    ",{\"state\":{\"\$gte\":3}}" +
                     ",{\"district\":$district}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
@@ -173,7 +173,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     fun transRecordState(orderList: MutableList<OrderItem>): Observable<BatchOrdersRequest<ObjectState>> {
         return Observable.fromIterable(orderList)
             .map {
-                var updateState = ObjectState(3)
+                var updateState = ObjectState(4)
                 val batch = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",
@@ -181,7 +181,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
                 )
                 batch
             }
-            .buffer(20)
+            .buffer(40)
             .map {
                 val commit = BatchOrdersRequest(it)
                 commit

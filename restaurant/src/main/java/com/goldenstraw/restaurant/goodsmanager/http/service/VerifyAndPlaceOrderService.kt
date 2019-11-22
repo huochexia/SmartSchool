@@ -42,14 +42,10 @@ interface VerifyAndPlaceOrderApi {
     @PUT("/1/classes/OrderItem/{objectId}")
     fun setCheckQuantity(@Body newCheck: ObjectCheckGoods, @Path("objectId") objectId: String): Completable
 
-    /**
-     * 批量修改供应商实际数量
-     */
-    @POST("/1/batch/")
-    fun batchCheckQuantityOfOrder(@Body orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
+
 
     /**
-     * 批量修改供应商状态
+     * 批量修改供应商状态，确认和记帐
      */
     @POST("/1/batch/")
     fun batchCommitState(@Body orders: BatchOrdersRequest<ObjectState>): Completable

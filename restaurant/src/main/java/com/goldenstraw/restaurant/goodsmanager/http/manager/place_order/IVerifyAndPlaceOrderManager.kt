@@ -39,9 +39,9 @@ interface IVerifyAndPlaceOrderManager {
     /**
      * 确定实际数量
      */
-    fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
+    fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable
     /**
-     * 确定记帐
+     * 确定记帐State
      */
     fun commitRecordState(orders:BatchOrdersRequest<ObjectState>):Completable
 

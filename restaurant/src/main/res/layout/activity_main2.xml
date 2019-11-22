@@ -260,14 +260,14 @@
                             android:textSize="20sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
             <androidx.cardview.widget.CardView
-                    android:id="@+id/recheck"
+                    android:id="@+id/confirm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="15dp"
                     android:elevation="20dp"
-                    android:visibility="gone"
                     app:cardCornerRadius="10dp">
 
                 <LinearLayout
@@ -281,18 +281,17 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:background="@null"
-                            android:src="@mipmap/input" />
+                            android:src="@mipmap/confirm" />
 
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="复核商品"
+                            android:text="确认数量"
                             android:textColor="#5099e7"
                             android:textSize="20sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
         </GridLayout>
     </LinearLayout>
 </layout>

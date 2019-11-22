@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
@@ -57,7 +58,9 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 check.visibility = View.VISIBLE
                 record.visibility = View.VISIBLE
             }
-
+            "复核员" -> {
+                confirm.visibility = View.VISIBLE
+            }
         }
         initEvent()
     }
@@ -87,6 +90,10 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             val intent2 = Intent(this, RecordOrdersActivity::class.java)
             startActivity(intent2)
         }
+        confirm.setOnClickListener {
+            val intent3 = Intent(this, ConfirmQuantityActivity::class.java)
+            startActivity(intent3)
+        }
         manager.setOnClickListener {
             ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
         }
@@ -100,6 +107,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         supplier.visibility = View.GONE
         check.visibility = View.GONE
         record.visibility = View.GONE
+        confirm.visibility = View.GONE
         manager.visibility = View.GONE
     }
 

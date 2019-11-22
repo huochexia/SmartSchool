@@ -110,7 +110,7 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 批量验货
      */
-    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable {
         return repository.checkQuantityOfOrders(orders)
     }
 

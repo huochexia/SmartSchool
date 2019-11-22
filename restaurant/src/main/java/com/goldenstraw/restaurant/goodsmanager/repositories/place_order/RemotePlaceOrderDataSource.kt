@@ -30,7 +30,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
 
     fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable
 
-    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable
+    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable
 
     fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable
 
@@ -67,7 +67,7 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.setCheckQuantity(newCheckGoods, objectId)
     }
 
-    override fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+    override fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable {
         return manager.batchCheckQuantityOfOrders(orders)
     }
 

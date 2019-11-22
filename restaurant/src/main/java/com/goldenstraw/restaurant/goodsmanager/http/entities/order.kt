@@ -36,7 +36,7 @@ data class OrderItem(
     var againCheckQuantity: Float = 0.0f,//再次确认验货数量
     var note: String,//备注
     var supplier: String? = null, //供货商
-    var state: Int, //0：拟购单，1：订货单，2：验货单，3：对帐单
+    var state: Int, //0：拟购单，1：订货单，2：验货单，3：确认单，4：记帐单
     var isSelected: Boolean = false
 )
 

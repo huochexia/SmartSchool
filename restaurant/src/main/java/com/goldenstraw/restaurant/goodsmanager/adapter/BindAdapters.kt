@@ -27,7 +27,11 @@ fun setStateText(textView: TextView, state: Int) {
             textView.setTextColor(Color.BLUE)
         }
         3 -> {
-            textView.text = "记"
+            textView.text = "定"
+            textView.setTextColor(Color.YELLOW)
+        }
+        4->{
+            textView.text="记"
             textView.setTextColor(Color.BLACK)
         }
     }

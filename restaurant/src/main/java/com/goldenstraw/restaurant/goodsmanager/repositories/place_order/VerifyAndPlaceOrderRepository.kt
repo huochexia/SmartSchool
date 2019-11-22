@@ -56,9 +56,9 @@ class VerifyAndPlaceOrderRepository(
     }
 
     /**
-     * 批量验货
+     * 批量确认数量State
      */
-    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
+    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable {
         return remote.checkQuantityOfOrders(orders)
     }
 

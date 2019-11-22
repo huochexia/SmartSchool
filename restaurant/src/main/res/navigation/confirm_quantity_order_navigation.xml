@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tool="http://schemas.android.com/tools"
+        android:id="@+id/confirm_quantity_order_navigation"
+        app:startDestination="@id/confirmSelectDateFragment">
+
+    <fragment
+            android:id="@+id/confirmSelectDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmSelectDateFragment"
+            android:label="ConfirmSelectDateFragment"
+            tool:layout="@layout/fragment_confirm_select_date">
+        <action
+                android:id="@+id/action_confirmSelectDateFragment_to_haveOrdersOfCheckFragment"
+                app:destination="@id/haveOrdersOfCheckFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/confirmOrderListFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmOrderListFragment"
+            android:label="ConfirmOrderListFragment"
+            tool:layout="@layout/fragment_confirm_order_list"/>
+    <fragment
+            android:id="@+id/haveOrdersOfCheckFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.confirm.HaveOrdersOfCheckFragment"
+            android:label="HaveOrdersOfCheckFragment"
+            tool:layout="@layout/fragment_have_orders_of_confirm">
+        <action
+                android:id="@+id/action_haveOrdersOfCheckFragment_to_confirmOrderListFragment"
+                app:destination="@id/confirmOrderListFragment" />
+    </fragment>
+</navigation>

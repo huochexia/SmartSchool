@@ -60,8 +60,8 @@ class VerifyAndPlaceOrderManageImpl(
         return service.setCheckQuantity(newQuantity, objectId)
     }
 
-    override fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectCheckGoods>): Completable {
-        return service.batchCheckQuantityOfOrder(orders)
+    override fun batchCheckQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable {
+        return service.batchCommitState(orders)
     }
 
     override fun commitRecordState(orders: BatchOrdersRequest<ObjectState>): Completable {

@@ -1,13 +1,19 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.record
+package com.goldenstraw.restaurant.goodsmanager.ui.confirm
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
+import com.goldenstraw.restaurant.databinding.FragmentCheckSelectDateBinding
+import com.goldenstraw.restaurant.databinding.FragmentConfirmSelectDateBinding
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -24,19 +30,20 @@ import org.kodein.di.generic.instance
 /**
  * Created by Administrator on 2019/10/29 0029
  */
-class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>(),
+class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>(),
     CalendarView.OnCalendarSelectListener {
 
 
     override val layoutId: Int
-        get() = R.layout.fragment_record_select_date
+        get() = R.layout.fragment_confirm_select_date
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
+    private val prefs: PrefsHelper by instance()
+
     private val repository: VerifyAndPlaceOrderRepository by instance()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    private val prefs:PrefsHelper by instance()
     val map = HashMap<String, Calendar>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,18 +87,19 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
         return calendar
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar!!.year.toString()
+        tv_year.text = calendar.year.toString()
         tv_lunar.text = calendar.lunar
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
             bundle.putString("orderDate", date)
             bundle.putInt("district",prefs.district)
-            findNavController().navigate(R.id.recordSelectSupplierFragment, bundle)
+            findNavController().navigate(R.id.haveOrdersOfCheckFragment, bundle)
         }
     }
 
@@ -103,7 +111,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
      * 标记尚未记帐的日期
      */
     private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":3},{\"district\":${prefs.district}}]}"
+        val where = "{\"\$and\":[{\"state\":2},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
         viewModel!!.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)
@@ -121,15 +129,16 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
                 val day = string[2]
                 map[getSchemeCalendar(
                     year.toInt(), month.toInt(), day.toInt(),
-                    -0x20ecaa, "未录"
+                    -0x20ecaa, "未定"
                 ).toString()] = getSchemeCalendar(
                     year.toInt(), month.toInt(), day.toInt(),
-                    -0x20ecaa, "未录"
+                    -0x20ecaa, "未定"
                 )
 
             }, {}, {
                 calendarView.setSchemeDate(map)
             })
     }
+
 
 }
