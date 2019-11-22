@@ -18,7 +18,7 @@
                 android:name=".resetpwd.ResetPwdActivity"
                 android:parentActivityName=".findpwd.FindPwdActivity" />
         <activity android:name=".changepwd.ChangePwdActivity" />
-
+        <activity android:name=".usermanager.UserManagerActivity"/>
 
 
     </application>

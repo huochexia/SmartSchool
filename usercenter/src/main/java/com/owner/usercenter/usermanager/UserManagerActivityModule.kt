@@ -16,11 +16,7 @@ const val USER_MANAGER_ACTIVITY_MODULE = "USER_MANAGER_ACTIVITY_MODULE"
 
 val usermanageractivitymodule = Kodein.Module(USER_MANAGER_ACTIVITY_MODULE) {
 
-    bind<UserManagerViewModel>() with scoped<AppCompatActivity>(AndroidLifecycleScope).singleton {
-        context.getViewModel {
-            UserManagerViewModel(instance())
-        }
-    }
+
     bind<UserManagerRepository>() with singleton {
         UserManagerRepository(
             instance(),

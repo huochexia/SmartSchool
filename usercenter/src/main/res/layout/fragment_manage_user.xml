@@ -29,6 +29,7 @@
                         android:id="@+id/rlw_user_list"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        app:bind_recyclerView_adapter="@{fragment.adapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/layout_user_item" />
             </com.kennyc.view.MultiStateView>

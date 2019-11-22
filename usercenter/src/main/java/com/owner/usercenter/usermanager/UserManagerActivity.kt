@@ -15,6 +15,7 @@
  */
 package com.owner.usercenter.usermanager
 
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityManageUserBinding
@@ -26,6 +27,7 @@ import org.kodein.di.Kodein
  * Created by Liuyong on 2019-04-30.It's smartschool
  *@description:
  */
+@Route(path = "/usercenter/usermanager")
 class UserManagerActivity : BaseActivity<ActivityManageUserBinding>() {
     override val layoutId: Int
         get() = R.layout.activity_manage_user

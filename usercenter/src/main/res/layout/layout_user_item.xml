@@ -9,9 +9,11 @@
     </data>
     <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/common_bg"
+            android:layout_marginBottom="2dp">
         <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="5dp"
@@ -57,6 +59,7 @@
                         android:layout_marginStart="120dp"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
     </FrameLayout>
 

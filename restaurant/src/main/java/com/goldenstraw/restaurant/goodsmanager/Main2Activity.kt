@@ -88,7 +88,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             startActivity(intent2)
         }
         manager.setOnClickListener {
-            ARouter.getInstance().build(RouterPath.UserCenter.PATH_REGISTER).navigation()
+            ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
         }
 
     }
