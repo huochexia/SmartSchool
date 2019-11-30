@@ -13,6 +13,7 @@ import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -281,28 +282,26 @@ class GoodsToOrderMgViewModel(
                     .autoDisposable(this)
                     .subscribe {
                         repository.addCategoryListToLocal(it)
+                            .subscribeOn(Schedulers.newThread())
                             .autoDisposable(this)
-                            .subscribe({}, {})
-                    }
-                repository.getAllGoodsFromNetwork()
-                    .subscribeOn(Schedulers.io())
-                    .autoDisposable(this)
-                    .subscribe {
-                        repository.addGoodsListToLocal(it)
-                            .autoDisposable(this)
-                            .subscribe({}, {})
+                            .subscribe({
+                            }, {
 
+                            })
+                        Observable.fromIterable(it)
+                            .subscribeOn(Schedulers.newThread())
+                            .autoDisposable(this)
+                            .subscribe{category->
+                                repository.getAllGoodsOfCategoryFromNetwork(category)
+                                    .autoDisposable(this)
+                                    .subscribe{goodslist->
+                                        repository.addGoodsListToLocal(goodslist)
+                                            .autoDisposable(this)
+                                            .subscribe({},{})
+                                    }
+                            }
                     }
-//                repository.getAllSupplierFromRemote()
-//                    .subscribeOn(Schedulers.io())
-//                    .autoDisposable(this)
-//                    .subscribe {
-//                        repository.addSupplierTolocal(it)
-//                            .autoDisposable(this)
-//                            .subscribe({
-//
-//                            }, {})
-//                    }
+
             }, {})
 
     }

@@ -139,8 +139,8 @@ class GoodsRepository(
         return remote.getAllCategory()
     }
 
-    fun getAllGoodsFromNetwork(): Observable<MutableList<Goods>> {
-        return remote.getAllGoods()
+    fun getAllGoodsOfCategoryFromNetwork(category:GoodsCategory): Observable<MutableList<Goods>> {
+        return remote.getGoodsOfCategory(category)
     }
 
     fun getAllSupplierFromRemote(): Observable<MutableList<User>> {
