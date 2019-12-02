@@ -69,7 +69,7 @@ class BaseApplication : Application(), KodeinAware {
         Bmob.initialize(this, BMOB_APP_ID)
 
         initLogger(BuildConfig.DEBUG) //初始化Timber为DEBUG
-        initLeakCanary()
+//        initLeakCanary()
         //初始化ARouter
 //        ARouter.openLog()
 //        ARouter.openDebug()
