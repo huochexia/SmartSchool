@@ -20,7 +20,6 @@ import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_check_order_list.check_order_toolbar
 import kotlinx.android.synthetic.main.fragment_confirm_order_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -87,6 +86,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
                         }
                 }
         }
+
     }
 
     /**
@@ -113,11 +113,24 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     /**
      * 查看状态由菜单控制，2状态已验，3状态已确认，4状态已记帐
      */
-    private fun getOrderItemList() {
-        val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
-                    ",{\"state\":$state},{\"district\":$district}" +
-                    ",{\"quantity\":{\"\$ne\":0}}]}"
+     fun getOrderItemList() {
+        //状态为2是只显示状态2的（已验未定），状态为3是显示状态大于等于3的，即已定或已记
+        var where =""
+        when (state) {
+            2 -> {
+                where =
+                    "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
+                            ",{\"state\":$state},{\"district\":$district}" +
+                            ",{\"quantity\":{\"\$ne\":0}}]}"
+            }
+            3 -> {
+                where =
+                    "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
+                            ",{\"state\":{\"\$gte\":$state}},{\"district\":$district}" +
+                            ",{\"quantity\":{\"\$ne\":0}}]}"
+            }
+        }
+
         viewModel!!.getAllOrderOfDate(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

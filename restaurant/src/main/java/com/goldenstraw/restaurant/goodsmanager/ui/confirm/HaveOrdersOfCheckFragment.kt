@@ -9,7 +9,6 @@ import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfConfirmBinding
-import com.goldenstraw.restaurant.databinding.FragmentHaveOrdersOfSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
@@ -18,17 +17,14 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_have_orders_of_confirm.*
-import kotlinx.android.synthetic.main.fragment_have_orders_of_supplier.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.util.*
 
 /**
  *
@@ -98,14 +94,23 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
      *  获取有订单的供应商名单,状态为2或3，区域0或1
      */
     private fun getSupplierListFromWhere(date: String, stauts: Int, district: Int) {
+        var where =""
         when (stauts) {
-            2 -> confirm_toolbar.title = "供应商列表--未定"
-            3 -> confirm_toolbar.title = "供应商列表--已定"
+            2 -> {
+                confirm_toolbar.title = "供应商列表--未定"
+                where =
+                    "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}" +
+                            ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
+            }
+            3 -> {
+                confirm_toolbar.title = "供应商列表--已定"
+                where =
+                    "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":{\"\$gte\":$stauts}}" +
+                            ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
+            }
         }
         supplierList.clear()
-        val where =
-            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}" +
-                    ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
+
         viewModel.getAllOrderOfDate(where)
             .flatMap {
                 Observable.fromIterable(it)
