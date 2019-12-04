@@ -30,8 +30,8 @@ fun setStateText(textView: TextView, state: Int) {
             textView.text = "定"
             textView.setTextColor(Color.YELLOW)
         }
-        4->{
-            textView.text="记"
+        4 -> {
+            textView.text = "记"
             textView.setTextColor(Color.BLACK)
         }
     }
@@ -57,4 +57,16 @@ fun setAverageText(textView: TextView, sumByGroup: SumByGroup) {
     val format = DecimalFormat(".00")
     val average = (sumByGroup._sumTotal) / sumByGroup._sumCheckQuantity
     textView.text = format.format(average)
+}
+
+@BindingAdapter("bind_text_color")
+fun setTextColor(textView: TextView, distinct: Int) {
+    when (distinct) {
+        0 -> {
+            textView.setTextColor(Color.BLUE)
+        }
+        1 -> {
+            textView.setTextColor(Color.GREEN)
+        }
+    }
 }
