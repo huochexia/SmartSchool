@@ -15,7 +15,8 @@ interface VerifyAndPlaceOrderApi {
     @GET("/1/classes/OrderItem/")
     fun getAllOrderOfDate(
         @Query("where") condition: String,
-        @Query("order") name: String = "categoryCode"
+        @Query("order") name: String = "categoryCode",
+        @Query("limit") limit: Int = 500
     ): Observable<ObjectList<OrderItem>>
 
     /**
