@@ -48,6 +48,8 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 startActivity(intent2)
             }
             "管理员" -> {
+                check.visibility = View.VISIBLE
+                confirm.visibility = View.VISIBLE
                 order.visibility = View.VISIBLE
                 send.visibility = View.VISIBLE
                 query.visibility = View.VISIBLE
