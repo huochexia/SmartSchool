@@ -18,10 +18,7 @@ package com.owner.basemodule.network
 import com.owner.basemodule.base.BASE_URL
 import com.owner.basemodule.base.BMOB_APP_ID
 import com.owner.basemodule.base.BMOB_REST_API_KEY
-import com.owner.basemodule.base.BaseApplication
-import com.owner.basemodule.ext.ensureDis
 import com.owner.basemodule.util.SingletonHolderNoArg
-import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -29,7 +26,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -75,10 +71,10 @@ class RetrofitFactory private constructor() {
             //处理响应结果，如果网络访问成功，但是状态码为400，说明一般性错误，则重新组织响应体，状态码改为200
             val response = chain.proceed(request)
             if (!response.isSuccessful) {
-                val mediaType = response.body()?.contentType()
-                val content = response.body()?.string()
+                val mediaType = response.body?.contentType()
+                val content = response.body?.string()
                 response.newBuilder().code(200)
-                    .body(ResponseBody.create(mediaType, content))
+                    .body(content?.let { ResponseBody.create(mediaType, it) })
                     .build()
             } else {
                 response

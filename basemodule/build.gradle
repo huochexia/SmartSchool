@@ -51,14 +51,14 @@ dependencies {
     api'cn.bmob.android:bmob-push:1.0.3'
 
     api 'com.google.code.gson:gson:2.8.5'
-    api 'androidx.core:core:1.1.0'
+    api 'androidx.core:core:1.2.0'
     api 'com.squareup.okio:okio:2.1.0'
     // support
     api libs.support_v7
     api libs.material
     api libs.recyclerview
     api libs.constraint
-    api 'androidx.viewpager2:viewpager2:1.0.0-beta05'
+    api 'androidx.viewpager2:viewpager2:1.0.0'
     api libs.kotlin_stdlib
     api libs.coroutines_core
     api libs.kotlin_coroutines
@@ -67,7 +67,7 @@ dependencies {
     api libs.arch_comp_viewmodel_ktx
     api libs.arch_comp_extension
     api libs.arch_comp_java8
-    api libs.arch_comp_livedata_rx
+    api libs.arch_comp_rx
     //anko
     api libs.anko_commons
     api libs.anko_appcompat

@@ -64,9 +64,9 @@ val httpClientModule = Kodein.Module(HTTP_CLIENT_MODULE_TAG) {
         instance<OkHttpClient.Builder>()
             .connectTimeout(TIME_OUT_SECONDS.toLong(), TimeUnit.SECONDS)
             .readTimeout(TIME_OUT_SECONDS.toLong(), TimeUnit.SECONDS)
-            .addInterceptor(
+            .addInterceptor {
                 instance(HTTP_CLIENT_MODULE_INTERCEPTOR_LOG_TAG)
-            )
+            }
             .build()
     }
 

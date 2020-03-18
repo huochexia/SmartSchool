@@ -53,6 +53,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, ROOM_DATABASE_FILE)
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()//升级数据库时如果出现异常则删除数据库重新创建。
                 .build()
         }
     }
