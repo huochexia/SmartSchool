@@ -54,7 +54,8 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         trans.replace(R.id.fragment_goods_container, goodsFragment)
         trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
-
+        //加载完页面后，同步数据
+        viewModelGoodsTo.syncAllData()
     }
 
     /**
@@ -146,12 +147,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 else
                     showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
             }
-            R.id.sync_data->{
-                /*
-                       暂时在这里实现网络数据与本地数据的同步
-                        */
-                viewModelGoodsTo.syncAllData()
-            }
+
             else -> super.onOptionsItemSelected(item)
 
         }

@@ -80,11 +80,11 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
             }
         )
-        viewModelGoodsTo!!.selected.observe(this, Observer {
+        viewModelGoodsTo!!.selected.observe(viewLifecycleOwner, Observer {
             viewModelGoodsTo!!.getGoodsOfCategory(it)
             adapter!!.forceUpdate()
         })
-        viewModelGoodsTo!!.isGoodsListRefresh.observe(this, Observer {
+        viewModelGoodsTo!!.isGoodsListRefresh.observe(viewLifecycleOwner, Observer {
             if (it) {
                 adapter!!.forceUpdate()
             }
