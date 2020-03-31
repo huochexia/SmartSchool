@@ -1,5 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
+import androidx.paging.DataSource
+import androidx.paging.DataSource.Factory
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.Goods
@@ -39,6 +41,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun getAllCategory(): Observable<MutableList<GoodsCategory>>
 
     fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
+
+    fun getGoodsOfPagind(code: String): DataSource.Factory<Int, Goods>
 
     fun findByName(name: String): Observable<MutableList<Goods>>
 
@@ -109,6 +113,12 @@ class LocalGoodsDataSourceImpl(
 
         return database.goodsDao().getAllGoodsOfCategory(code)
 
+    }
+    /*
+      使用Paging
+     */
+    override fun getGoodsOfPagind(code: String): Factory<Int, Goods> {
+        return database.goodsDao().getAllGoodsOfPaging(code)
     }
 
     override fun findByName(name: String): Observable<MutableList<Goods>> {

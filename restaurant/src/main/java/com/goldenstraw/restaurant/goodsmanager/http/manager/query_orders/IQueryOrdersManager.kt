@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -40,4 +37,9 @@ interface IQueryOrdersManager {
      * 分组求和
      */
     fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>>
+
+    /**
+     * 提交新单价
+     */
+    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable
 }

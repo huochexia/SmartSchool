@@ -41,6 +41,9 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+/**
+ * 审核订单，并发送订单
+ */
 
 class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding>() {
 
@@ -62,6 +65,9 @@ class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBindin
 
     override fun initView() {
         super.initView()
+        /**
+         * 获取发送短信的权限
+         */
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.SEND_SMS

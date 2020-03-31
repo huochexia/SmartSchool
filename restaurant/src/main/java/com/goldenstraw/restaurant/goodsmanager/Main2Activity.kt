@@ -6,9 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
+import com.goldenstraw.restaurant.goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
@@ -17,7 +17,6 @@ import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
-import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_main2.*
@@ -97,7 +96,9 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             startActivity(intent3)
         }
         manager.setOnClickListener {
-            ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
+//            ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
+            val intentAdjust = Intent(this, AdjustPriceOfGoodsActivity::class.java)
+            startActivity(intentAdjust)
         }
 
     }

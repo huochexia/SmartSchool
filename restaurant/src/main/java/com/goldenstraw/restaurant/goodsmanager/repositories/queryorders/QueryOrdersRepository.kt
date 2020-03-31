@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
@@ -54,5 +51,14 @@ class QueryOrdersRepository(
      */
     fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
         return remote.getTotalGroupByName(condition)
+    }
+
+    /**
+     * 更新数据库商品新单价
+     */
+    fun updateNewPrice(newPrice: NewPrice, objectId: String): Completable {
+
+        return remote.updateNewPrice(newPrice, objectId)
+
     }
 }

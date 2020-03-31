@@ -1,5 +1,6 @@
 package com.owner.basemodule.room.dao
 
+import androidx.paging.DataSource
 import androidx.room.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
@@ -42,6 +43,12 @@ interface GoodsDao {
 
     @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
     fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
+
+    /*
+      使用Paging
+     */
+    @Query("SELECT * FROM Goods WHERE categoryCode = :code ORDER BY goodsName")
+    fun getAllGoodsOfPaging(code: String): DataSource.Factory<Int, Goods>
 
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName" )
     fun findByName(name: String): Observable<MutableList<Goods>>

@@ -1,8 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.http.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
-
 /**
  * 订单管理中的实体
  * Created by Administrator on 2019/9/6 0006
@@ -18,7 +15,10 @@ data class NewGoods(
     val unitPrice: Float = 0.0f
 )
 
-
+data class NewPrice(
+    val newPrice: Float,
+    val unitPrice: Float
+)
 /**
  * 商品分类：NewCategory是发送到网络的对象
  *         GoodsCategory是网络返回的对象

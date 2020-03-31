@@ -1,22 +1,21 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.supplier
+package com.goldenstraw.restaurant.goodsmanager.ui.adjustprice
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentSupplierCategoryGoodsBinding
+import com.goldenstraw.restaurant.databinding.ActivityAdjustPirceOfGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
+import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewPrice
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
-import com.owner.basemodule.base.view.fragment.BaseFragment
+import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
@@ -28,31 +27,24 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
- * 用于显示某类商品的定价，便于供应商及时了解到所提供商品的价格信息。
- * 供应商每周初可以申请一次调价，如因市场变化需要临时调价，主动书面提请，由管理员认可后，修改。
- * 供应商可以对商品价格进行申请修改.
- * [这里存在一个问题，如果多家供应商同时对同一商品进行价格调整时，怎么办？原则是取较小值，怎么实现这一功能]
- * 注：管理员确认申请后会将申请调价清零。
+ * 调整价格，当供应商提交新单价时，管理员对新价格进行确认、取消或重新指定价格。
  */
-class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBinding>() {
+class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBinding>() {
     override val layoutId: Int
-        get() = R.layout.fragment_supplier_category_goods
+        get() = R.layout.activity_adjust_pirce_of_goods
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
-
+        import(queryordersactivitymodule)
     }
-
-    private val prefs: PrefsHelper by instance()
+    val state = ObservableField<Int>()
+    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
     private val repository: QueryOrdersRepository by instance()
     var viewModel: QueryOrdersViewModel? = null
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
     var goodsList = mutableListOf<Goods>()
-    var state = ObservableField<Int>()
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = activity!!.getViewModel {
+    override fun initView() {
+        super.initView()
+        viewModel = getViewModel {
             QueryOrdersViewModel(repository)
         }
         adapter = BaseDataBindingAdapter(
@@ -67,11 +59,10 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                     override fun accept(t: Goods) {
                         popUpNewPriceDialog(goods)
                     }
-
                 }
             }
         )
-        getGoodsOfCategory(prefs.categoryCode)
+        getAllGoodsOfAdjustPrice()
     }
 
     /**
@@ -80,22 +71,31 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
     @SuppressLint("AutoDispose")
     fun popUpNewPriceDialog(goods: Goods) {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.only_input_number_dialog_view, null)
+            LayoutInflater.from(this).inflate(R.layout.only_input_number_dialog_view, null)
         val edit = view.findViewById<EditText>(R.id.number_edit)
-        val dialog = AlertDialog.Builder(context!!)
+        edit.setText(goods.newPrice.toString())
+        val dialog = AlertDialog.Builder(this)
             .setTitle("申请调整\"${goods.goodsName}\"的单价")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("不同意") { dialog, which ->
+                //申请清零,原价格不变
+                val newPrice = NewPrice(0.0f, goods.unitPrice)
+                goods.newPrice = 0.0f
+                viewModel!!.updateNewPriceOfGoods(newPrice, goods.objectId)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe()
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("同意") { dialog, which ->
                 if (edit.text.isNullOrEmpty()) {
                     return@setPositiveButton
                 }
                 val newPrice = edit.text.toString().trim().toFloat()
-                goods.newPrice = newPrice
-                val newGoods = NewPrice(newPrice, goods.unitPrice)
+                //新价格清零，原价格改为新价格
+                val newGoods = NewPrice(0.0f, newPrice)
+                goods.unitPrice = newPrice
+
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
                     .subscribeOn(Schedulers.io())
                     .subscribe()
@@ -105,11 +105,13 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         dialog.show()
 
     }
+
     /**
-     * 获取商品信息
+     * 获取所有需要调整价格的商品信息,新价格不等于0的，即为供应商申请调整价格的商品
      */
-    fun getGoodsOfCategory(categoryId: String) {
-        val where = "{\"categoryCode\":\"$categoryId\"}"
+    fun getAllGoodsOfAdjustPrice() {
+        //where={"score":{"$ne":[1,3,5,7,9]}}' \
+        val where = "{\"newPrice\":{\"\$gt\":0}}"
         viewModel!!.getGoodsOfCategory(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -129,6 +131,5 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 state.set(MultiStateView.VIEW_STATE_LOADING)
             })
     }
-
 
 }

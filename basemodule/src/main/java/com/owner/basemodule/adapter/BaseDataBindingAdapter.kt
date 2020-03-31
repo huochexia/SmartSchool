@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
  * RecyclerView的基本适配器：
  * @dataSource 数据源
  * @dataBinding item的绑定实现类
- * @callback   绑定数据和方法
+ * @callback   绑定数据和方法，这个函数需要三个参数，数据项，数据项所绑定的视图和数据项所在位置。
  * @onMove   拖拽事件方法
  * @onItemDismiss  侧滑事件方法
  */

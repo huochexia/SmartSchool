@@ -1,6 +1,9 @@
 package com.owner.basemodule.room.entities
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
 /**
  * Created by Administrator on 2019/10/12 0012
@@ -27,7 +30,8 @@ data class GoodsOfShoppingCart(
     var note: String = "",
     @ColumnInfo
     var isChecked: Boolean = false
-)
+
+    )
 
 @Entity
 data class Goods(
@@ -42,7 +46,9 @@ data class Goods(
     @ColumnInfo
     var categoryCode: String,
     @ColumnInfo
-    var isChecked: Boolean = false
+    var isChecked: Boolean = false,
+    @ColumnInfo
+    var newPrice: Float = 0.0f //用于存储供应商提交的新价格
 ) {
     @Ignore
     var quantity: Int = 1

@@ -3,6 +3,8 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
@@ -39,6 +41,8 @@ class GoodsToOrderMgViewModel(
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
     var shoppingCartOfQuantity = MutableLiveData<Int>()
 
+    //分页
+    var allGoods: LiveData<PagedList<Goods>>? = null
     /**
      * 初始化工作，获取数据，创建列表适配器
      */
@@ -46,6 +50,7 @@ class GoodsToOrderMgViewModel(
         //因为这个ViewModel主要是对商品信息进行操作，所以初始化时需要直接获取所有商品信息
         getAllCategory()
 //        getCountOfShoppingCart()
+
     }
 
 
@@ -71,7 +76,7 @@ class GoodsToOrderMgViewModel(
                 }, {
                     categoryState.set(MultiStateView.VIEW_STATE_ERROR)
                 }, {
-                    //在这里同步数据库
+
                 },
                 {
                     categoryState.set(MultiStateView.VIEW_STATE_LOADING)
@@ -118,6 +123,20 @@ class GoodsToOrderMgViewModel(
         goodsList.addAll(list)
     }
 
+    /*
+    使用分页获取商品列表
+     */
+    fun getPagingOfGoods(category: GoodsCategory) {
+        allGoods = LivePagedListBuilder(
+            repository.getAllGoodsOfPaging(category),
+            PagedList.Config.Builder()
+                .setPageSize(10)
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(2) //距底部还有几条数据时，加载下一页
+                .setInitialLoadSizeHint(20)
+                .build()
+        ).build()
+    }
     /*
     根据商品名称进行模糊查询
      */

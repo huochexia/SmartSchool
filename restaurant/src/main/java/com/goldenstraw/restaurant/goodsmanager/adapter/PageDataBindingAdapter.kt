@@ -13,7 +13,6 @@ import com.owner.basemodule.room.entities.Goods
 
 class PageDataBindingAdapter<DB : ViewDataBinding>(
     private val layoutId: Int,//item的layoutId
-    private val dataSource: () -> LiveData<PagedList<Goods>>,
     private val dataBinding: (View) -> DB,
     private val callback: (Goods, DB, Int) -> Unit = { _, _, _ -> }
 
@@ -37,11 +36,8 @@ class PageDataBindingAdapter<DB : ViewDataBinding>(
         callback
     )
 
-    override fun getItemCount(): Int = dataSource().value!!.size
-
-
     override fun onBindViewHolder(holder: BaseDataBindingViewHolder<Goods, DB>, position: Int) {
-        dataSource().value!![position]?.let { holder.bindToData(it, position) }
+         holder.bindToData(getItem(position)!!, position)
     }
 
     fun forceUpdate() {

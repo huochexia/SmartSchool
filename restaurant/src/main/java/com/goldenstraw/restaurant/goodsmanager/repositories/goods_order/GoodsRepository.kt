@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
+import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
@@ -135,6 +136,7 @@ class GoodsRepository(
         return local.getAllCategory()
     }
 
+
     fun getAllCategoryFromNetwork(): Observable<MutableList<GoodsCategory>> {
         return remote.getAllCategory()
     }
@@ -154,6 +156,13 @@ class GoodsRepository(
 
         return local.getGoodsOfCategory(category.objectId)
 
+    }
+
+    /*
+         使用分页获取商品列表
+        */
+    fun getAllGoodsOfPaging(category: GoodsCategory): DataSource.Factory<Int, Goods> {
+        return local.getGoodsOfPagind(category.objectId)
     }
 
     /*

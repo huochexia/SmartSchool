@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
-import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
-import com.goldenstraw.restaurant.goodsmanager.http.entities.SumResult
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
@@ -60,4 +57,11 @@ interface QueryOrdersApi {
         @Query("sum") total: String = "total",
         @Query("where") condition: String
     ): Observable<ObjectList<SumResult>>
+
+    /**
+    UPDATE
+     */
+    //提交新单价
+    @PUT("/1/classes/Goods/{objectId}")
+    fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): Completable
 }

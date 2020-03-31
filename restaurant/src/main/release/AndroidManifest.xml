@@ -18,5 +18,6 @@
         <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
         <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity" />
         <activity android:name=".goodsmanager.ui.confirm.ConfirmQuantityActivity" />
+        <activity android:name=".goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity" />
     </application>
 </manifest>

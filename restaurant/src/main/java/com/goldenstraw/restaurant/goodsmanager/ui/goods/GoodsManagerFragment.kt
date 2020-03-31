@@ -13,9 +13,11 @@ import com.bumptech.glide.Glide
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
+import com.goldenstraw.restaurant.goodsmanager.adapter.PageDataBindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -50,7 +52,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
-
+    lateinit var pagingAdapter: PageDataBindingAdapter<LayoutGoodsItemBinding>
     val images =
         mutableListOf(R.mipmap.blueshipin, R.mipmap.zhurou, R.mipmap.shucai, R.mipmap.tiaoliao)
 
@@ -80,9 +82,39 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
             }
         )
+        /*
+        分页Adapter
+         */
+        pagingAdapter = PageDataBindingAdapter(
+            layoutId = R.layout.layout_goods_item,
+            dataBinding = { LayoutGoodsItemBinding.bind(it) },
+            callback = { goods, binding, position ->
+                binding.goods = goods
+                binding.checkEvent = object : Consumer<Goods> {
+                    override fun accept(t: Goods) {
+                        t.isChecked = !t.isChecked
+                        binding.cbGoods.isChecked = t.isChecked
+                    }
+                }
+                binding.cbGoods.isChecked = goods.isChecked
+                binding.addSub
+                    .setCurrentNumber(goods.quantity)
+                    .setPosition(position)
+                    .setOnChangeValueListener { value, position ->
+                        goods.quantity = value
+                    }
+            }
+        )
+
         viewModelGoodsTo!!.selected.observe(viewLifecycleOwner, Observer {
             viewModelGoodsTo!!.getGoodsOfCategory(it)
             adapter!!.forceUpdate()
+        })
+
+        viewModelGoodsTo!!.allGoods?.observe(viewLifecycleOwner, Observer {
+            viewModelGoodsTo!!.goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
+            pagingAdapter.submitList(it)
+
         })
         viewModelGoodsTo!!.isGoodsListRefresh.observe(viewLifecycleOwner, Observer {
             if (it) {

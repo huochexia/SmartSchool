@@ -7,6 +7,7 @@
 
     <data>
 
+        <import type="android.view.View" />
         <variable
                 name="goods"
                 type="com.owner.basemodule.room.entities.Goods" />
@@ -14,12 +15,17 @@
         <variable
                 name="checkEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
+                name="clickEvent"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="80dp"
             app:cardBackgroundColor="#00F5F2F2"
+            android:onClick="@{()->clickEvent.accept(goods)}"
             app:cardCornerRadius="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -60,6 +66,37 @@
                     app:layout_constraintStart_toEndOf="@+id/cb_goods"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="商品名称" />
+
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{goods.newPrice == 0.0f?View.GONE:View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_goods_name"
+                    app:layout_constraintStart_toStartOf="@+id/textView4">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="新单价："
+                        android:textColor="@color/common_red" />
+
+                <TextView
+                        android:id="@+id/tv_new_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@{String.valueOf(goods.newPrice)}"
+                        android:textColor="@color/common_red"
+                        tools:text="0.0" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="元"
+                        android:textColor="@color/common_red" />
+            </LinearLayout>
 
             <TextView
                     android:id="@+id/textView2"
