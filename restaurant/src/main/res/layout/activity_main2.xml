@@ -23,276 +23,317 @@
                 android:background="@color/colorPrimary"
                 app:title="餐厅管理系统" />
 
-        <GridLayout
+        <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnCount="1">
+                android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/order"
+            <GridLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                    android:layout_height="match_parent"
+                    android:columnCount="1">
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
-
-                    <ImageButton
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/check_request_note" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="申请购买"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/query"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
-
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
-
-                    <ImageButton
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/check_request_note" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="查看订单"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/send"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="5dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
-
-                <LinearLayout
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/order"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/send" />
-
-                    <TextView
+                    <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="发送订单"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                            android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
+                        <ImageButton
 
-                    android:id="@+id/supplier"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/check_request_note" />
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="申请购买"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/query"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                            android:id="@+id/insert_shopping_cart"
+                    <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:background="@null"
-                            android:src="@mipmap/insert_to_shopping_cart" />
+                            android:orientation="horizontal">
 
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="装载商品"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        <ImageButton
 
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/check_request_note" />
 
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/check"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="查看订单"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/send"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="5dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                            android:layout_width="wrap_content"
+                    <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/examine_commodity" />
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="验收商品"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        <ImageButton
 
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/record"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/send" />
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="发送订单"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+
+                        android:id="@+id/supplier"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                            android:id="@+id/compre_input_order"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/input" />
-
-                    <TextView
-                            android:id="@+id/image_Text"
+                    <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="录入商品"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/confirm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                            android:orientation="horizontal">
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
+                        <ImageButton
+                                android:id="@+id/insert_shopping_cart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@null"
+                                android:src="@mipmap/insert_to_shopping_cart" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="装载商品"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/check"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/confirm" />
-
-                    <TextView
+                    <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="确认数量"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/manager"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="15dp"
-                    android:elevation="20dp"
-                    app:cardCornerRadius="10dp">
+                            android:orientation="horizontal">
 
-                <LinearLayout
-                        android:layout_width="wrap_content"
+                        <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/examine_commodity" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="验收商品"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/record"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                            android:id="@+id/edit_user"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:background="@null"
-                            android:src="@mipmap/input" />
-
-                    <TextView
-                            android:id="@+id/manager_Text"
+                    <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="管理人员"
-                            android:textColor="#5099e7"
-                            android:textSize="20sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                            android:orientation="horizontal">
 
+                        <ImageButton
+                                android:id="@+id/compre_input_order"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/input" />
 
-        </GridLayout>
+                        <TextView
+                                android:id="@+id/image_Text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="录入商品"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="horizontal">
+
+                        <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/confirm" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="确认数量"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/manager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="horizontal">
+
+                        <ImageButton
+                                android:id="@+id/edit_user"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/input" />
+
+                        <TextView
+                                android:id="@+id/manager_Text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="管理人员"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/adjustment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="horizontal">
+
+                        <ImageButton
+                                android:id="@+id/adjust_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/input" />
+
+                        <TextView
+                                android:id="@+id/adjust_price_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="审批调价"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </GridLayout>
+        </androidx.core.widget.NestedScrollView>
+
     </LinearLayout>
 </layout>

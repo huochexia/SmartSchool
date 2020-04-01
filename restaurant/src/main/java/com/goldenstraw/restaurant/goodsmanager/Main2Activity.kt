@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
 import com.goldenstraw.restaurant.goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity
@@ -17,6 +18,7 @@ import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
+import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_main2.*
@@ -53,6 +55,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 send.visibility = View.VISIBLE
                 query.visibility = View.VISIBLE
                 manager.visibility = View.VISIBLE
+                adjustment.visibility = View.VISIBLE
             }
             "库管员" -> {
                 order.visibility = View.VISIBLE
@@ -96,7 +99,10 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             startActivity(intent3)
         }
         manager.setOnClickListener {
-//            ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
+            ARouter.getInstance().build(RouterPath.UserCenter.PATH_USERMANAGER).navigation()
+
+        }
+        adjustment.setOnClickListener{
             val intentAdjust = Intent(this, AdjustPriceOfGoodsActivity::class.java)
             startActivity(intentAdjust)
         }
@@ -112,6 +118,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         record.visibility = View.GONE
         confirm.visibility = View.GONE
         manager.visibility = View.GONE
+        adjustment.visibility=View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
