@@ -19,5 +19,6 @@
         <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity" />
         <activity android:name=".goodsmanager.ui.confirm.ConfirmQuantityActivity" />
         <activity android:name=".goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity" />
+        <activity android:name=".goodsmanager.ui.cookbook.CookBookMainActivity" />
     </application>
 </manifest>

@@ -42,6 +42,7 @@ abstract class BaseFragment<B : ViewDataBinding>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mRootView = LayoutInflater.from(context).inflate(layoutId, container, false)
+
         return mRootView!!
     }
 

@@ -12,6 +12,7 @@ import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
 import com.goldenstraw.restaurant.goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmQuantityActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookMainActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
@@ -61,10 +62,12 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 order.visibility = View.VISIBLE
                 check.visibility = View.VISIBLE
                 record.visibility = View.VISIBLE
+
             }
             "复核员" -> {
                 confirm.visibility = View.VISIBLE
             }
+
         }
         initEvent()
     }
@@ -105,6 +108,10 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         adjustment.setOnClickListener{
             val intentAdjust = Intent(this, AdjustPriceOfGoodsActivity::class.java)
             startActivity(intentAdjust)
+        }
+        cookbook.setOnClickListener {
+            val intentCook = Intent(this, CookBookMainActivity::class.java)
+            startActivity(intentCook)
         }
 
     }

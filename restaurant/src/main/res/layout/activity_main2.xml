@@ -331,6 +331,39 @@
                                 android:textSize="20sp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/cookbook"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="15dp"
+                        android:elevation="20dp"
+                        app:cardCornerRadius="10dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="horizontal">
+
+                        <ImageButton
+                                android:id="@+id/cook_book"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@null"
+                                android:src="@mipmap/input" />
+
+                        <TextView
+                                android:id="@+id/cook_book_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="每日菜谱"
+                                android:textColor="#5099e7"
+                                android:textSize="20sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
             </GridLayout>
         </androidx.core.widget.NestedScrollView>

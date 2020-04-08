@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import com.goldenstraw.restaurant.R
+import com.goldenstraw.restaurant.databinding.ActivityCheckOrdersBinding
 import com.goldenstraw.restaurant.databinding.ActivityQueryOrderBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository

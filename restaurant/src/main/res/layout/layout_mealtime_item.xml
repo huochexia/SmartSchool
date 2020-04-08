@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_horizontal_margin">
+
+            <TextView
+                    android:id="@+id/tv_cool_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="凉  菜"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                    android:id="@+id/img_cool_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintStart_toEndOf="@id/tv_cool_meal"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_cool_meal" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_cool_meal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintTop_toBottomOf="@id/tv_cool_meal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_cool_meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tv_hot_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="热  菜"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_cool_meal" />
+
+            <ImageView
+                    android:id="@+id/img_hot_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_hot_meal"
+                    app:layout_constraintStart_toEndOf="@id/tv_hot_meal" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_hot_meal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_hot_meal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_hot_meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tv_main_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="主  食"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_hot_meal" />
+
+            <ImageView
+                    android:id="@+id/img_main_meal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_main_meal"
+                    app:layout_constraintStart_toEndOf="@id/tv_main_meal" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_main_meal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_main_meal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_main_meal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tv_soup_porridge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="汤  粥"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_main_meal" />
+
+            <ImageView
+                    android:id="@+id/img_soup_porridge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_soup_porridge"
+                    app:layout_constraintStart_toEndOf="@id/tv_soup_porridge" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_soup_porridge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_soup_porridge">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_soup_porridge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tv_snack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="明  档"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_soup_porridge" />
+
+            <ImageView
+                    android:id="@+id/img_snack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_snack"
+                    app:layout_constraintStart_toEndOf="@id/tv_snack" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_snack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_snack">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_snack"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+            <TextView
+                    android:id="@+id/tv_fruit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="水  果"
+                    android:textSize="22sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_snack" />
+
+            <ImageView
+                    android:id="@+id/img_fruit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_more_horiz_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_fruit"
+                    app:layout_constraintStart_toEndOf="@id/tv_fruit" />
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/card_fruit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_fruit">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rlv_fruit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:listitem="@layout/layout_meal_item"/>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
