@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookMainFragment" />
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_classical_cookbook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="经典菜谱"
+                android:gravity="center"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:background="@drawable/selector_button"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_daily_meal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="16dp"
+                android:text="每日菜单"
+                android:background="@drawable/selector_button"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+    </LinearLayout>
+</layout>

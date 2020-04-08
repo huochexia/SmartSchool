@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/cook_book_navigation"
+        app:startDestination="@id/cookBookMainFragment">
+
+    <fragment
+            android:id="@+id/cookBookMainFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookMainFragment"
+            android:label="CookBookMainFragment"
+            tools:layout="@layout/fragment_cook_book">
+        <action
+                android:id="@+id/action_cookBookMainFragment_to_classicalCookBookFragment"
+                app:destination="@id/classicalCookBookFragment" />
+        <action
+                android:id="@+id/action_cookBookMainFragment_to_dailyCookBookFragment"
+                app:destination="@id/dailyCookBookFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/classicalCookBookFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookContentsPageFragment"
+            android:label="ClassicalCookBookFragment"
+            tools:layout="@layout/fragment_cookbook_contents_page">
+        <action
+                android:id="@+id/action_classicalCookBookFragment_to_cookBookDetailFragment"
+                app:destination="@id/cookBookDetailFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/dailyCookBookFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyCookBookFragment"
+            android:label="DailyCookBookFragment"
+            tools:layout="@layout/fragment_daily_meal_select_date">
+        <action
+                android:id="@+id/action_dailyCookBookFragment_to_dailyMealTimeFragment"
+                app:destination="@id/dailyMealTimeFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/cookBookDetailFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookDetailFragment"
+            android:label="CookBookDetailFragment"
+            tools:layout="@layout/fragment_cookbook_detail">
+        <argument
+                android:name="cookcategory"
+                app:argType="string" />
+        <action
+                android:id="@+id/action_cookBookDetailFragment_to_inputCookBookFragment"
+                app:destination="@id/inputCookBookFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/inputCookBookFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.InputCookBookFragment"
+            android:label="InputCookBookFragment"
+            tools:layout="@layout/fragment_input_cook_book">
+
+    </fragment>
+    <fragment
+            android:id="@+id/dailyMealTimeFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyMealTimeFragment"
+            android:label="DailyMealTimeFragment"
+            tools:layout="@layout/fragment_daily_mealtime" >
+
+    </fragment>
+</navigation>

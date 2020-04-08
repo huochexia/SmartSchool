@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cook_kind">
+        <item>素菜</item>
+        <item>小荤菜</item>
+        <item>大荤菜</item>
+    </string-array>
+</resources>
