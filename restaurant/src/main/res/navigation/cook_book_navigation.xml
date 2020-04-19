@@ -53,6 +53,9 @@
             android:label="InputCookBookFragment"
             tools:layout="@layout/fragment_input_cook_book">
 
+        <action
+                android:id="@+id/action_inputCookBookFragment_to_searchMaterialFragment"
+                app:destination="@id/searchMaterialFragment" />
     </fragment>
     <fragment
             android:id="@+id/dailyMealTimeFragment"
@@ -61,4 +64,9 @@
             tools:layout="@layout/fragment_daily_mealtime" >
 
     </fragment>
+    <fragment
+            android:id="@+id/searchMaterialFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.SearchMaterialFragment"
+            android:label="SearchMaterialFragment"
+            tools:layout="@layout/fragment_search_material"/>
 </navigation>

@@ -67,7 +67,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
             }
         )
-        viewModelGoodsTo!!.getIsRefresh().observe(this, Observer {
+        viewModelGoodsTo!!.getIsRefresh().observe(viewLifecycleOwner, Observer {
             if (it) {
                 adapter!!.forceUpdate()
             }
