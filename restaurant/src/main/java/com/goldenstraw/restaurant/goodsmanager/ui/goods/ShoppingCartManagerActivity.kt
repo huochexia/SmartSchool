@@ -41,7 +41,7 @@ class ShoppingCartManagerActivity : BaseActivity<ActivityShoppingCartManagerBind
     private val repository by instance<ShoppingCartRepository>()
     var viewModel: ShoppingCartMgViewModel? = null
     var adapter: BaseDataBindingAdapter<GoodsOfShoppingCart, LayoutShoppingCartItemBinding>? = null
-    private val prefs: PrefsHelper by instance()
+    private val prefs by instance<PrefsHelper>()
     override fun initView() {
         super.initView()
         viewModel = getViewModel {

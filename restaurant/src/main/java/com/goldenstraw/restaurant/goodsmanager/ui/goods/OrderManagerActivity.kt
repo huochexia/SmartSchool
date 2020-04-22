@@ -32,7 +32,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         extend(parentKodein, copy = Copy.All)
         import(goodsDataSourceModule)
     }
-    private val repository: GoodsRepository by instance()
+    private val repository by instance<GoodsRepository>()
 
     override val layoutId: Int
         get() = R.layout.activity_order_manager

@@ -44,14 +44,20 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
     fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
+    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName" )
+    fun findByName(name: String): Observable<MutableList<Goods>>
+
     /*
       使用Paging
      */
     @Query("SELECT * FROM Goods WHERE categoryCode = :code ORDER BY goodsName")
     fun getAllGoodsOfPaging(code: String): DataSource.Factory<Int, Goods>
 
+    /*
+       使用协程进行模糊查询
+     */
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName" )
-    fun findByName(name: String): Observable<MutableList<Goods>>
+    suspend fun searchMaterial(name: String): MutableList<Goods>
 
     @Query("SELECT COUNT() FROM GoodsOfShoppingCart")
     fun getShoppingCartOfCount(): Single<Int>

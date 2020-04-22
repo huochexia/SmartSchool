@@ -71,6 +71,7 @@ dependencies {
     api libs.arch_comp_livedata
     api libs.arch_comp_livedata_ktx
     api libs.arch_comp_runtime_ktx
+    api libs.arch_comp_room_ktx
     //anko
     api libs.anko_commons
     api libs.anko_appcompat

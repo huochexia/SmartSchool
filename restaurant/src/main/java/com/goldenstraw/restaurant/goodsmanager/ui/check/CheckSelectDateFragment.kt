@@ -2,17 +2,12 @@ package com.goldenstraw.restaurant.goodsmanager.ui.check
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCheckSelectDateBinding
-import com.goldenstraw.restaurant.databinding.FragmentRecordSelectDateBinding
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
@@ -39,9 +34,9 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
-    private val prefs: PrefsHelper by instance()
+    private val prefs by instance<PrefsHelper>()
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository by instance<VerifyAndPlaceOrderRepository>()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     val map = HashMap<String, Calendar>()
 

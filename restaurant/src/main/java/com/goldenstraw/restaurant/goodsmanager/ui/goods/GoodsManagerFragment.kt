@@ -48,7 +48,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         import(goodsDataSourceModule)
     }
     //通过Kodein容器检索对象
-    private val repository: GoodsRepository by instance()
+    private val repository  by instance<GoodsRepository>()
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null

@@ -33,7 +33,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository  by instance<VerifyAndPlaceOrderRepository>()
 
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null

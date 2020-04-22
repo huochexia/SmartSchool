@@ -36,7 +36,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
     }
     override val layoutId: Int
         get() = R.layout.fragment_search_goods
-    private val repository: GoodsRepository by instance()
+    private val repository by instance<GoodsRepository>()
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
 

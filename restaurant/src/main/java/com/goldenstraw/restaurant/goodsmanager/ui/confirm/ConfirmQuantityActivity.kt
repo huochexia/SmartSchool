@@ -25,7 +25,7 @@ class ConfirmQuantityActivity : BaseActivity<ActivityConfirmOrdersBinding>() {
         import(verifyandplaceorderdatasource)
     }
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository  by instance<VerifyAndPlaceOrderRepository>()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
     override fun initView() {
         super.initView()

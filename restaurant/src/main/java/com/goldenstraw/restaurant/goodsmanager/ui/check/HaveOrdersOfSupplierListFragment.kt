@@ -40,7 +40,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         extend(parentKodein, copy = Copy.All)
     }
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository  by instance<VerifyAndPlaceOrderRepository>()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
     var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
 

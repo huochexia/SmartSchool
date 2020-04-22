@@ -4,6 +4,7 @@ package com.goldenstraw.restaurant.goodsmanager.di
 import com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok.CookBookServiceManagerImpl
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.LocalCookBookDataSourceImpl
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.RemoteCookBookDataSourceImpl
 import com.owner.basemodule.network.RetrofitFactory
 import org.kodein.di.Kodein
@@ -22,7 +23,7 @@ val cookbookactivitymodule = Kodein.Module(COOK_BOOK_ACTIVITY_MODULE) {
      *1、数据管理库
      */
     bind<CookBookRepository>() with singleton {
-        CookBookRepository(instance())
+        CookBookRepository(instance(), instance())
     }
     /*
       2、为数据管理库提供远程数据源
@@ -30,12 +31,16 @@ val cookbookactivitymodule = Kodein.Module(COOK_BOOK_ACTIVITY_MODULE) {
     bind<RemoteCookBookDataSourceImpl>() with singleton {
         RemoteCookBookDataSourceImpl(instance())
     }
+    bind<LocalCookBookDataSourceImpl>() with singleton {
+        LocalCookBookDataSourceImpl(instance())
+    }
     /*
     3、为远程数据源提供数据管理者
      */
     bind<CookBookServiceManagerImpl>() with singleton {
         CookBookServiceManagerImpl(instance())
     }
+
     /*
     4、为数据管理者提供API
      */
