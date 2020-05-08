@@ -1,77 +1,41 @@
 package com.goldenstraw.restaurant.goodsmanager.http.entities
 
+import cn.bmob.v3.BmobObject
+import cn.bmob.v3.exception.BmobException
 import com.owner.basemodule.room.entities.Goods
 
 /**
- * 菜谱
+ * 菜谱这个功能的设计，因为涉及到数组的存储和查询，这部分内容使用API方式比较复杂，而且也不熟悉，
+ * 所以采用Bmob提供的Android方式。所有对应数据库的对象都将继承BmobObject
+ */
+/*
+菜谱
  */
 data class CookBook(
-    val objectId: String,
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     var foodKind: String,//素菜，小荤，大荤
     var foodName: String,
     var material: List<Goods>,
     var isSelected: Boolean = false
-)
-
-/**
- * 将网络获取的数据，拷贝一份，主要用于网络修改API
- */
-fun CookBook.copy(): NewCookBook {
-    return NewCookBook(
-        this.foodCategory,
-        this.foodKind,
-        this.foodName,
-        this.material
-
-    )
-}
-
-/**
- * 新菜谱,因为网络数据库为数据自动添加objectId，所以生成的对象不能有objectId属性
- */
-data class NewCookBook(
-    var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃，水果
-    var foodKind: String,//素菜，小荤，大荤
-    var foodName: String,
-    var material: List<Goods>,//必须有一个主料
-    var isSelected: Boolean = false
-)
+) : BmobObject()
 
 
-/**
+/*
  * 每日菜单
  * 每日菜单是指每天早午晚三餐供应的菜品，它与菜谱有关联关系，因为每道食品都对应着菜谱
  */
 data class DailyMeal(
-    var objectId: String = "",
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期
     var foodCategory: String,//凉，热，主食，汤粥，小吃，水果
     var foodName: CookBook,
     var isOfTeacher: Boolean
-)
+) : BmobObject()
 
-/**
- *
+/*
+返回结果:使用BmobApi执行网络数据管理的返回对象。
  */
-data class NewDailyMeal(
-    var mealTime: String,//早、午、餐
-    var mealDate: String,//餐日期
-    var foodCategory: String,//凉，热，主食，汤粥，小吃，水果
-    var foodName: CookBook,
-    var isOfTeacher: Boolean
+class Results<T>(
+    var success: T?,
+    var failure: BmobException?
 )
-
-/**
- * 扩展，将数据库中得到的每日菜单，拷贝成一个新的，主要用于网络修改Api
- */
-fun DailyMeal.copy(): NewDailyMeal {
-    return NewDailyMeal(
-        this.mealTime,
-        this.mealDate,
-        this.foodCategory,
-        this.foodName,
-        this.isOfTeacher
-    )
-}

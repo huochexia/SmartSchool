@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSearchMaterialBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -44,7 +45,9 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
     var viewModel: CookBookViewModel? = null
 
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+
     var goodsList = mutableListOf<Goods>()
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -55,13 +58,13 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
         }
         //观察LiveData的变化
         viewModel!!.searchedStatusLiveData.observe(viewLifecycleOwner) { status ->
+            goodsList.clear()
             when (status) {
                 null, None -> {
-                    goodsList.clear()
                 }
                 is Success -> {
                     //刷新列表
-                    goodsList = status.list
+                    goodsList.addAll(status.list)
                 }
             }
             adapter!!.forceUpdate()
@@ -78,14 +81,19 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
                 //项目点击事件，返回用户的选择
                 binding.clickEvent = object : Consumer<Goods> {
                     override fun accept(t: Goods) {
-
+                        with(viewModel!!) {
+                            materialList.add(goods)
+                            defUI.refreshEvent.call()
+                        }
+                        findNavController().popBackStack()
                     }
 
                 }
             }
-
         )
+
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)

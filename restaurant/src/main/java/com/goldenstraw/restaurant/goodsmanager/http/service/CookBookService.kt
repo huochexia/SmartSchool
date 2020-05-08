@@ -3,8 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.http.service
 import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
@@ -22,11 +20,11 @@ interface CookBookApi {
      */
     //增加菜谱
     @POST("/1/classes/CookBook")
-    suspend fun createCookBook(@Body newCookBook: NewCookBook): CreateObject
+    suspend fun createCookBook(@Body newCookBook: CookBook): CreateObject
 
     //增加每日菜单
     @POST("/1/classes/DailyMeal")
-    suspend fun createDailyMeal(@Body dailyMeal: NewDailyMeal): CreateObject
+    suspend fun createDailyMeal(@Body dailyMeal: DailyMeal): CreateObject
 
     /*
      删除
@@ -45,14 +43,14 @@ interface CookBookApi {
     //修改菜谱
     @PUT("/1/classes/CookBook/{objectId}")
     suspend fun updateCookBook(
-        @Body newCookBook: NewCookBook,
+        @Body newCookBook: CookBook,
         @Path("objectId") objectId: String
     ): UpdateObject
 
     //修改每日菜单
     @PUT("/1/classes/DailyMeal/{objectId}")
     suspend fun updateDailyMeal(
-        @Body newDailyMeal: NewDailyMeal,
+        @Body newDailyMeal: DailyMeal,
         @Path("objectId") objectId: String
     ): UpdateObject
 

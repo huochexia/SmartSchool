@@ -3,8 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
@@ -19,8 +17,8 @@ interface ICookBookServiceManager {
     /*
       生成
      */
-    suspend fun createCookBook(newCookBook: NewCookBook): CreateObject
-    suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject
+    suspend fun createCookBook(newCookBook: CookBook): CreateObject
+    suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject
 
     /*
     删除
@@ -31,8 +29,8 @@ interface ICookBookServiceManager {
     /*
     更新
      */
-    suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject
-    suspend fun updateDailyMeal(newDailyMeal: NewDailyMeal, objectId: String): UpdateObject
+    suspend fun updateCookBook(newCookBook: CookBook, objectId: String): UpdateObject
+    suspend fun updateDailyMeal(newDailyMeal: DailyMeal, objectId: String): UpdateObject
 
     /*
     查询

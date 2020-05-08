@@ -1,10 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
 import androidx.paging.DataSource
+import cn.bmob.v3.exception.BmobException
+import cn.bmob.v3.listener.SaveListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.Results
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
@@ -12,6 +13,7 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import kotlinx.coroutines.Deferred
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * 对CookBook数据管理
@@ -22,8 +24,8 @@ class CookBookRepository(
 ) : BaseRepositoryBoth<IRemoteCookBookDataSource, ILocalCookBookDataSource>(remote, local) {
 
     /*
-       查询结果状态,通过这个状态对象来获得最后结果
-        */
+       从本地Room中进行商品模糊查询得到的结果状态,通过这个状态对象来获得最后结果
+    */
     sealed class SearchedStatus {
         object None : SearchedStatus()
         class Error(val throwable: Throwable) : SearchedStatus()
@@ -31,14 +33,8 @@ class CookBookRepository(
     }
 
 
-    /*
-      生成
-     */
-    suspend fun createCookBook(newCookBook: NewCookBook): CreateObject {
-        return remote.createCookBook(newCookBook)
-    }
 
-    suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
+    suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject {
         return remote.createDailyMeal(newDailyMeal)
     }
 
@@ -56,11 +52,11 @@ class CookBookRepository(
     /*
     更新
      */
-    suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject {
+    suspend fun updateCookBook(newCookBook: CookBook, objectId: String): UpdateObject {
         return remote.updateCookBook(newCookBook, objectId)
     }
 
-    suspend fun updateDailyMeal(newDailyMeal: NewDailyMeal, objectId: String): UpdateObject {
+    suspend fun updateDailyMeal(newDailyMeal: DailyMeal, objectId: String): UpdateObject {
         return remote.updateDailyMeal(newDailyMeal, objectId)
     }
 

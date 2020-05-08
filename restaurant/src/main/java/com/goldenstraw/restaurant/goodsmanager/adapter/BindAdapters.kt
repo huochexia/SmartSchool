@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.adapter
 import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import java.text.DecimalFormat
@@ -69,4 +70,16 @@ fun setTextColor(textView: TextView, distinct: Int) {
             textView.setTextColor(Color.GREEN)
         }
     }
+}
+
+/**
+ * 用于修饰菜谱中主料列表的显示。
+ */
+@BindingAdapter("bind_list_content")
+fun setListContent(textView: TextView, cookbook: CookBook) {
+    var text = ""
+    cookbook.material.forEach {
+        text = text + it.goodsName + ","
+    }
+    textView.text = text
 }

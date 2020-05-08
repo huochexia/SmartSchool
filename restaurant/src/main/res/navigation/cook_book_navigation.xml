@@ -68,5 +68,9 @@
             android:id="@+id/searchMaterialFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.SearchMaterialFragment"
             android:label="SearchMaterialFragment"
-            tools:layout="@layout/fragment_search_material"/>
+            tools:layout="@layout/fragment_search_material">
+        <action
+                android:id="@+id/action_searchMaterialFragment_to_inputCookBookFragment"
+                app:destination="@id/inputCookBookFragment" />
+    </fragment>
 </navigation>

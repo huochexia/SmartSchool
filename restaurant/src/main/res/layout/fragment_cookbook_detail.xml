@@ -33,6 +33,8 @@
                         android:id="@+id/rlv_cookbook"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        app:bind_recyclerView_adapter="@{fragment.adapter}"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/layout_coolbook_item" />
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>

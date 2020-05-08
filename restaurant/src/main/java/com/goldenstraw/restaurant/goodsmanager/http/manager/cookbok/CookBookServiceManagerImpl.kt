@@ -3,8 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
@@ -17,11 +15,11 @@ import kotlinx.coroutines.Deferred
  */
 class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBookServiceManager {
 
-    override suspend fun createCookBook(newCookBook: NewCookBook): CreateObject {
+    override suspend fun createCookBook(newCookBook: CookBook): CreateObject {
         return serviceApi.createCookBook(newCookBook)
     }
 
-    override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
+    override suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject {
         return serviceApi.createDailyMeal(newDailyMeal)
     }
 
@@ -33,12 +31,12 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.deleteDailyMeal(objectId)
     }
 
-    override suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject {
+    override suspend fun updateCookBook(newCookBook: CookBook, objectId: String): UpdateObject {
         return serviceApi.updateCookBook(newCookBook, objectId)
     }
 
     override suspend fun updateDailyMeal(
-        newDailyMeal: NewDailyMeal,
+        newDailyMeal: DailyMeal,
         objectId: String
     ): UpdateObject {
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)

@@ -5,13 +5,21 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookDetailBinding
+import com.goldenstraw.restaurant.databinding.LayoutCoolbookItemBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
+import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
+import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
+import com.owner.basemodule.base.viewmodel.getViewModel
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     lateinit var cookCategory: String
@@ -21,6 +29,10 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+
+    private val respository by instance<CookBookRepository>()
+    lateinit var viewModel: CookBookViewModel
+    var adapter: BaseDataBindingAdapter<CookBook, LayoutCoolbookItemBinding>? = null
 
     override fun initView() {
         super.initView()
@@ -39,6 +51,27 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
+
+        viewModel = activity!!.getViewModel {
+
+            CookBookViewModel(respository)
+
+        }
+
+
+        adapter = BaseDataBindingAdapter(
+            layoutId = R.layout.layout_coolbook_item,
+            dataSource = { viewModel.cookbookList },
+            dataBinding = { LayoutCoolbookItemBinding.bind(it) },
+            callback = { cookbook, binding, _ ->
+                binding.cookbook = cookbook
+            }
+        )
+        viewModel.getCookBookOfCategory(cookCategory)
+
+        viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter!!.forceUpdate()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

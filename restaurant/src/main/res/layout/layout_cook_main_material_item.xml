@@ -7,6 +7,9 @@
         <variable
                 name="goods"
                 type="com.owner.basemodule.room.entities.Goods" />
+        <variable
+                name="clickEvent"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +34,8 @@
                 android:src="@drawable/ic_delete"
                 android:layout_margin="@dimen/activity_vertical_margin"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{()->clickEvent.accept(goods)}"/>
 
         <View
                 android:layout_width="match_parent"
@@ -42,6 +46,5 @@
                 android:background="@color/common_blue"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mail_material_name" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

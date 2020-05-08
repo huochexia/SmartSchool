@@ -1,14 +1,25 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
-import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentInputCookBookBinding
+import com.goldenstraw.restaurant.databinding.LayoutCookMainMaterialItemBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
+import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
+import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
+import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.room.entities.Goods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
 
@@ -21,6 +32,10 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
         extend(parentKodein, copy = Copy.All)
     }
 
+    private val repository by instance<CookBookRepository>()
+    lateinit var viewModel: CookBookViewModel
+    var adapter: BaseDataBindingAdapter<Goods, LayoutCookMainMaterialItemBinding>? = null
+
     override fun initView() {
         super.initView()
         arguments?.let {
@@ -31,8 +46,73 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
         add_main_material.setOnClickListener {
             findNavController().navigate(R.id.searchMaterialFragment)
         }
+        //放弃
+        btn_cancel_cookbook.setOnClickListener {
+            viewModel.materialList.clear()
+            findNavController().popBackStack()
+        }
+        //保存菜谱,当菜名和原材料均不为空时，可以进行保存
+        btn_save_cookbook.setOnClickListener {
 
+            if (ed_cook_name.text.isNotEmpty() && viewModel.materialList.isNotEmpty()) {
+                val newFood = CookBook(
+                    foodCategory = cookCategory,
+                    foodName = ed_cook_name.text.toString(),
+                    foodKind = spinner_cook_kind.selectedItem.toString(),
+                    material = viewModel.materialList
+                )
+                viewModel.createCookBook(newFood)
+                findNavController().popBackStack()
+            } else {
+                AlertDialog.Builder(context!!)
+                    .setTitle("菜名或材料不能为空！！").create().show()
+            }
+
+        }
+        /*
+        种类选择取值的另一种方式
+         */
+//        spinner_cook_kind.onItemSelectedListener = object : OnItemSelectedListener {
+//            override fun onNothingSelected(parent: AdapterView<*>?) {
+//                TODO("not implemented")
+//            }
+//
+//            override fun onItemSelected(
+//                parent: AdapterView<*>?,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                activity!!.resources.getStringArray(R.array.cook_kind)[position]
+//            }
+//        }
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel = activity!!.getViewModel {
+            CookBookViewModel(repository)
+        }
+        adapter = BaseDataBindingAdapter(
+            layoutId = R.layout.layout_cook_main_material_item,
+            dataSource = { viewModel.materialList },
+            dataBinding = { LayoutCookMainMaterialItemBinding.bind(it) },
+            callback = { goods, binding, position ->
+                binding.goods = goods
+                binding.clickEvent = object : Consumer<Goods> {
+                    override fun accept(t: Goods) {
+                        viewModel.materialList.remove(goods)
+                        adapter!!.forceUpdate()
+                    }
+                }
+            }
+        )
+        //刷新通知
+        viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter!!.forceUpdate()
+        }
+
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.owner.basemodule.network
 
+import com.owner.basemodule.base.error.NETERROR
+
 
 /**
  * 创建对象响应体
@@ -46,6 +48,24 @@ class ObjectList<T>(
     fun isSuccess(): Boolean = code == 0
 }
 
+/**
+ * 网络访问失败产生的异常封装类，通过这个封装类对异常统一处理。
+ */
+class ResponseThrowable : Exception {
+    var code: Int
+    var errMsg: String
 
+    constructor(NETERROR: NETERROR, e: Throwable? = null) : super(e) {
+        code = NETERROR.getKey()
+        errMsg = NETERROR.getValue()
+    }
+
+    constructor(code: Int, msg: String, e: Throwable? = null) : super(e) {
+        this.code = code
+        this.errMsg = msg
+
+    }
+
+}
 
 

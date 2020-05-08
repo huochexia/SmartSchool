@@ -33,7 +33,7 @@
                     android:layout_height="match_parent">
 
                 <TextView
-                        android:id="@+id/tv_lab_name"
+                        android:id="@+id/tv_cookbook_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
@@ -50,7 +50,7 @@
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
                         android:textSize="16sp"
-                        app:layout_constraintStart_toEndOf="@id/tv_lab_name"
+                        app:layout_constraintStart_toEndOf="@id/tv_cookbook_name"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
@@ -83,7 +83,7 @@
                 android:text="主  料："
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_lab_name" />
+                app:layout_constraintTop_toBottomOf="@id/tv_cookbook_name" />
 
         <View
                 android:layout_width="match_parent"
@@ -99,12 +99,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_vertical_margin"
+                app:bind_recyclerView_adapter="@{fragment.adapter}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/layout_cook_main_material_item"/>
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:layout_marginTop="@dimen/activity_vertical_margin">
             <TextView
                     android:id="@+id/add_main_material"
                     android:layout_width="wrap_content"
@@ -125,6 +128,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/ll_material">
 
             <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_cancel_cookbook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/activity_vertical_margin"
@@ -136,6 +140,7 @@
                     android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_save_cookbook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
