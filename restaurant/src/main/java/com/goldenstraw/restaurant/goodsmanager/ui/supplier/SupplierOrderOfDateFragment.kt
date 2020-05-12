@@ -31,7 +31,7 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository: QueryOrdersRepository by instance()
+    private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     private val orderList = mutableListOf<OrderItem>()
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null

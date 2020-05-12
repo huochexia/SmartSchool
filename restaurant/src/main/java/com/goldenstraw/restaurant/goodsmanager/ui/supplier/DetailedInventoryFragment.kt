@@ -33,7 +33,7 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
         extend(parentKodein, copy = Copy.All)
     }
 
-    private val repository: QueryOrdersRepository by instance()
+    private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     var details = mutableListOf<SumByGroup>()
     var adapter: BaseDataBindingAdapter<SumByGroup, GroupByOrderTotalBinding>? = null
@@ -77,7 +77,8 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
         val map = HashMap<String, OrderItem>()
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
-                    ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
+                    ",{\"createdAt\":{\"\$gte\":{\"__type\":\"Date\",\"iso\":\"$start\"}}}" +
+                    ",{\"createdAt\":{\"\$lte\":{\"__type\":\"Date\",\"iso\":\"$end\"}}}" +
                     ",{\"state\":4}]}"
         viewModel!!.getTotalGroupByName(where)
             .subscribeOn(Schedulers.io())

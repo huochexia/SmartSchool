@@ -60,11 +60,24 @@
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
                         android:entries="@array/cook_kind"
+                        android:visibility="invisible"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/spinner_mingdang_kind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="invisible"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:layout_marginVertical="@dimen/activity_vertical_margin"
+                        android:entries="@array/mingdang_kind"
                         android:spinnerMode="dropdown"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                        android:id="@+id/tv_kind_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"

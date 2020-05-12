@@ -15,7 +15,6 @@ import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.uber.autodispose.autoDisposable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.*
@@ -35,7 +34,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
     var supplier = ""
     lateinit var start: String
     lateinit var end: String
-    private val repository: QueryOrdersRepository by instance()
+    private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -105,14 +104,28 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
 
     @SuppressLint("SetTextI18n")
     override fun onCalendarRangeSelect(calendar: Calendar, isEnd: Boolean) {
+        //数据库中对日期的查询需要日期格式为“yyyy-MM-dd＂即2020-04-02
+        //所以这里对日期进行的修饰
+
+        val month = if (calendar.month < 10) {
+            "0" + calendar.month
+        } else {
+            calendar.month
+        }
+        val day = if (calendar.day < 10) {
+            "0" + calendar.day
+        } else {
+            calendar.day
+        }
         if (!isEnd) {
-            start = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
+            //最终日期格式”2019-05-05 00:00:00"
+            start = calendar.year.toString() + "-" + month + "-" + day + " 00:00:00"
             tv_left_date.text = calendar.month.toString() + "月" + calendar.day + "日"
             tv_left_week.text = WEEK[calendar.week]
             tv_right_week.text = "结束日期"
             tv_right_date.text = ""
         } else {
-            end = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
+            end = calendar.year.toString() + "-" + month + "-" + day + " 23:59:59"
             tv_right_date.text = calendar.month.toString() + "月" + calendar.day + "日"
             tv_right_week.text = WEEK[calendar.week]
         }
@@ -131,7 +144,8 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
         val sum = 0.0f
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
-                    ",{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}" +
+                    ",{\"createdAt\":{\"\$gte\":{\"__type\":\"Date\",\"iso\":\"$start\"}}}" +
+                    ",{\"createdAt\":{\"\$lte\":{\"__type\":\"Date\",\"iso\":\"$end\"}}}" +
                     ",{\"state\":4}]}"
 //        viewModel!!.getOrdersOfSupplier(where)
 //            .flatMap {

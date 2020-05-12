@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -67,13 +68,23 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                 binding.cookbook = cookbook
             }
         )
-        viewModel.getCookBookOfCategory(cookCategory)
 
         viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter!!.forceUpdate()
         }
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
+    override fun onResume() {
+        super.onResume()
+        //增加新菜谱后，返回本Fragment，需要重新加载
+        viewModel.getCookBookOfCategory(cookCategory)
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_add_cookbook, menu)
