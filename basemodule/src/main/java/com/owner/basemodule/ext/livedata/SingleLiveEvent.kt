@@ -46,6 +46,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         super.setValue(value)
     }
 
+
     /**
      * used for cases where T is Void， to make calls cleaner.
      */

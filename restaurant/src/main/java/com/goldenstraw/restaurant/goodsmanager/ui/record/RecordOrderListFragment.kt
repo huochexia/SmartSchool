@@ -44,11 +44,11 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     }
 
 
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository  by instance<VerifyAndPlaceOrderRepository>()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var orderList = mutableListOf<MutableList<OrderItem>>()
     var vpAdapter: BaseDataBindingAdapter<MutableList<OrderItem>, PageOfRecordOrdersBinding>? = null
-    val prefs: PrefsHelper by instance()
+    val prefs by instance<PrefsHelper>()
     var showNumber = 10
     var supplier = ""
     var orderDate = ""

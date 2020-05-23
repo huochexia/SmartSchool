@@ -9,6 +9,8 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityMain2Binding
+import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
+import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmQuantityActivity
@@ -19,8 +21,10 @@ import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.activity.BaseActivity
+import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_main2.*
 import org.kodein.di.Copy
@@ -35,11 +39,15 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         get() = R.layout.activity_main2
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
+        import(goodsDataSourceModule)
         bind<PrefsHelper>() with provider {
             PrefsHelper(instance())
         }
     }
-    private val prefs: PrefsHelper by instance()
+    private val repository by instance<GoodsRepository>()
+    lateinit var viewModelGoodsTo: GoodsToOrderMgViewModel
+
+    private val prefs by instance<PrefsHelper>()
     override fun initView() {
         setSupportActionBar(main_toolbar)
         hideAllFunction()
@@ -69,7 +77,13 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             }
 
         }
+
         initEvent()
+        //将网络数据同步本地
+        viewModelGoodsTo = getViewModel {
+            GoodsToOrderMgViewModel(repository)
+        }
+        viewModelGoodsTo.syncAllData()
     }
 
     private fun initEvent() {

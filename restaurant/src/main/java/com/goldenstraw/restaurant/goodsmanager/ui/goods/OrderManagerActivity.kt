@@ -55,7 +55,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
         //加载完页面后，同步数据
-        viewModelGoodsTo.syncAllData()
+//        viewModelGoodsTo.syncAllData()
     }
 
     /**

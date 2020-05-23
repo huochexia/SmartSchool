@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -10,45 +8,30 @@
                 type="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookDetailFragment" />
     </data>
 
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-        <LinearLayout
+    <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/colorPrimary" />
 
-            <androidx.core.widget.NestedScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_cook_kind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rlv_cookbook"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:bind_recyclerView_adapter="@{fragment.adapter}"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/layout_coolbook_item" />
-            </androidx.core.widget.NestedScrollView>
-        </LinearLayout>
+        <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_cook_kind"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_choice_cookbook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:clickable="true"
-                android:src="@drawable/ic_check_black_24dp"
-                android:visibility="invisible"
-                app:rippleColor="#e7d161" />
-    </RelativeLayout>
+    </LinearLayout>
+
+
 </layout>

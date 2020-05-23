@@ -9,8 +9,12 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_cookbook_contents_page.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import kotlin.properties.Delegates
 
 class CookBookContentsPageFragment : BaseFragment<FragmentCookbookContentsPageBinding>() {
+
+    var isSelected by Delegates.notNull<Boolean>()
+
     override val layoutId: Int
         get() = R.layout.fragment_cookbook_contents_page
     override val kodein: Kodein = Kodein.lazy {
@@ -19,11 +23,15 @@ class CookBookContentsPageFragment : BaseFragment<FragmentCookbookContentsPageBi
 
     override fun initView() {
         super.initView()
+        arguments?.let {
+            isSelected = it.getBoolean("isSelected")
+        }
         initEvent()
     }
 
     fun initEvent() {
         val bundle = Bundle()
+        bundle.putBoolean("isSelected", isSelected)
         tv_cool_food.setOnClickListener {
             bundle.putString("cookcategory", CookKind.ColdFood.kindName)
             findNavController().navigate(R.id.cookBookDetailFragment, bundle)

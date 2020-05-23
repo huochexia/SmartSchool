@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
+import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookBookBinding
@@ -17,11 +18,14 @@ class CookBookMainFragment : BaseFragment<FragmentCookBookBinding>() {
 
     override fun initView() {
         super.initView()
+        var bundle= Bundle()
         btn_classical_cookbook.setOnClickListener{
-            findNavController().navigate(R.id.classicalCookBookFragment)
+            bundle.putBoolean("isSelected",false)//用于查看菜谱
+            findNavController().navigate(R.id.classicalCookBookFragment,bundle)
         }
         btn_daily_meal.setOnClickListener{
-            findNavController().navigate(R.id.dailyCookBookFragment)
+            bundle.putBoolean("isSelected",true)//用于选择菜谱
+            findNavController().navigate(R.id.dailyCookBookFragment,bundle)
         }
     }
 }
