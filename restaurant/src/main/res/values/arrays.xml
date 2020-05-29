@@ -18,5 +18,13 @@
         <item>煎炒</item>
         <item>油炸</item>
     </string-array>
+    /*
+     每日菜谱分类
+    */
+    <string-array name="daily_meal">
+        <item>早 餐</item>
+        <item>午 餐</item>
+        <item>晚 餐</item>
+    </string-array>
 </resources>
 

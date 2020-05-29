@@ -28,16 +28,6 @@
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_choice_cookbook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:visibility="invisible"
-                android:clickable="true"
-                android:src="@drawable/ic_check_black_24dp"
-                app:rippleColor="#e7d161" />
+
     </RelativeLayout>
 </layout>

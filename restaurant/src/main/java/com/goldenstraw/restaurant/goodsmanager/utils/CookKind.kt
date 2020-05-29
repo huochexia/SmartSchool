@@ -7,3 +7,9 @@ enum class CookKind(val kindName: String) {
     SoutPorri("汤粥"),
     Snackdetail("明档")
 }
+
+enum class MealTime(val time: String) {
+    Breakfast("早餐"),
+    Lunch("午餐"),
+    Dinner("晚餐")
+}

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.goldenstraw.restaurant.goodsmanager.utils.CookKind" />
+
+        <variable
+                name="fragment"
+                type="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyMealTimeFragment" />
+
+        <variable
+                name="addDailyMeal"
+                type="com.owner.basemodule.functional.Consumer" />
+    </data>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_cold_food"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{CookKind.ColdFood.kindName}"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                                android:id="@+id/rlw_cold_food"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:bind_recyclerView_adapter="@{fragment.coldAdapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_meal_item" />
+
+                        <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:onClick="@{()->addDailyMeal.accept(CookKind.ColdFood)}"
+                                    android:text="添加"
+                                    android:textAppearance="?attr/textAppearanceBody2" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_hot_food"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{CookKind.HotFood.kindName}"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                                android:id="@+id/rlw_hot_food"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:bind_recyclerView_adapter="@{fragment.hotAdapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_meal_item" />
+
+                        <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:onClick="@{()->addDailyMeal.accept(CookKind.HotFood)}"
+                                    android:text="添加"
+                                    android:textAppearance="?attr/textAppearanceBody2" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_flour_food"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{CookKind.FlourFood.kindName}"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                                android:id="@+id/rlw_flour_food"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:bind_recyclerView_adapter="@{fragment.flourAdapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_meal_item" />
+
+                        <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:onClick="@{()->addDailyMeal.accept(CookKind.FlourFood)}"
+                                    android:text="添加"
+                                    android:textAppearance="?attr/textAppearanceBody2" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_soup_porridge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{CookKind.SoutPorri.kindName}"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                                android:id="@+id/rlw_soup_porri"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:bind_recyclerView_adapter="@{fragment.soupAdapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_meal_item" />
+
+                        <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:onClick="@{()->addDailyMeal.accept(CookKind.SoutPorri)}"
+                                    android:text="添加"
+                                    android:textAppearance="?attr/textAppearanceBody2" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_snack_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp">
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{CookKind.Snackdetail.kindName}"
+                                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                                android:id="@+id/rlw_snack_detail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:bind_recyclerView_adapter="@{fragment.snackAdapter}"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/layout_meal_item" />
+
+                        <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp">
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:onClick="@{()->addDailyMeal.accept(CookKind.Snackdetail)}"
+                                    android:text="添加"
+                                    android:textAppearance="?attr/textAppearanceBody2" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </RelativeLayout>
+
+</layout>

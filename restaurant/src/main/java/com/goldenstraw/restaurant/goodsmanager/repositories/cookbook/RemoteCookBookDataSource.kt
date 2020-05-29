@@ -4,6 +4,8 @@ import androidx.paging.DataSource
 import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
 import com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok.ICookBookServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.CreateObject
@@ -20,7 +22,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     生成
      */
     suspend fun createCookBook(newCookBook: CookBook): CreateObject
-    suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject
+    suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject
 
     /*
     删除
@@ -32,13 +34,13 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     更新
      */
     suspend fun updateCookBook(newCookBook: CookBook, objectId: String): UpdateObject
-    suspend fun updateDailyMeal(newDailyMeal: DailyMeal, objectId: String): UpdateObject
+    suspend fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String): UpdateObject
 
     /*
     查询
      */
     fun getCookBookOfCategory(where: String): DataSource.Factory<Int, CookBook>
-    fun getDailyMealOfDate(where: String): Deferred<ObjectList<DailyMeal>>
+    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 
 }
 
@@ -49,7 +51,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.createCookBook(newCookBook)
     }
 
-    override suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject {
+    override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return manager.createDailyMeal(newDailyMeal)
     }
 
@@ -66,7 +68,7 @@ class RemoteCookBookDataSourceImpl(
     }
 
     override suspend fun updateDailyMeal(
-        newDailyMeal: DailyMeal,
+        newDailyMeal: UpdateIsteacher,
         objectId: String
     ): UpdateObject {
         return manager.updateDailyMeal(newDailyMeal, objectId)
@@ -76,7 +78,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.getCookBookOfCategory(where)
     }
 
-    override fun getDailyMealOfDate(where: String): Deferred<ObjectList<DailyMeal>> {
+    override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return manager.getDailyMealOfDate(where)
     }
 

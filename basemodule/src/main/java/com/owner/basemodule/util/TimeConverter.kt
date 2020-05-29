@@ -1,6 +1,7 @@
 package com.owner.basemodule.util
 
 import android.text.format.DateUtils
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,6 +45,19 @@ object TimeConverter {
     fun getDateString(date: Date): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return formatter.format(date)
+    }
+
+    /**
+     * 将字符串转换成日期
+     */
+    fun strToDate(str: String): Date {
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var date = try {
+            format.parse("$str 00:00:00")
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return date as Date
     }
     /**
      * 获取当前时间的前一天时间

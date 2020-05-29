@@ -3,6 +3,8 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
@@ -19,7 +21,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.createCookBook(newCookBook)
     }
 
-    override suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject {
+    override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return serviceApi.createDailyMeal(newDailyMeal)
     }
 
@@ -36,7 +38,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
     }
 
     override suspend fun updateDailyMeal(
-        newDailyMeal: DailyMeal,
+        newDailyMeal: UpdateIsteacher,
         objectId: String
     ): UpdateObject {
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)
@@ -46,7 +48,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getCookBookOfCategory(where)
     }
 
-    override fun getDailyMealOfDate(where: String): Deferred<ObjectList<DailyMeal>> {
+    override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return serviceApi.getDailyMealOfDate(where)
     }
 

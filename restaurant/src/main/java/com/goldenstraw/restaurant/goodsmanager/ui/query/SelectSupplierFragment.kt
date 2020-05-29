@@ -35,7 +35,7 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
     }
 
 
-    val repository: QueryOrdersRepository by instance()
+    val repository  by instance<QueryOrdersRepository>()
 
     var viewModel: QueryOrdersViewModel? = null
 

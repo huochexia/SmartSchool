@@ -26,12 +26,24 @@ data class CookBook(
  */
 data class DailyMeal(
     var mealTime: String,//早、午、餐
-    var mealDate: String,//餐日期
-    var foodCategory: String,//凉，热，主食，汤粥，小吃，水果
-    var foodName: CookBook,
-    var isOfTeacher: Boolean
+    var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
+    var cookBook: CookBook,
+    var isOfTeacher: Boolean = false
 ) : BmobObject()
 
+data class NewDailyMeal(
+    var mealTime: String,//早、午、餐
+    var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
+    var cookBook: CookBook,
+    var isOfTeacher: Boolean = false
+)
+
+/*
+ *修改每日菜单当中的是否为教职工餐项
+ */
+data class UpdateIsteacher(
+    var isOfTeacher: Boolean
+)
 /*
 返回结果:使用BmobApi执行网络数据管理的返回对象。
  */

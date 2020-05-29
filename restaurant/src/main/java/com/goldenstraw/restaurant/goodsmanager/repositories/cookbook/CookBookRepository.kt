@@ -3,9 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 import androidx.paging.DataSource
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.SaveListener
-import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.Results
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
@@ -34,7 +32,7 @@ class CookBookRepository(
 
 
 
-    suspend fun createDailyMeal(newDailyMeal: DailyMeal): CreateObject {
+    suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return remote.createDailyMeal(newDailyMeal)
     }
 
@@ -56,7 +54,7 @@ class CookBookRepository(
         return remote.updateCookBook(newCookBook, objectId)
     }
 
-    suspend fun updateDailyMeal(newDailyMeal: DailyMeal, objectId: String): UpdateObject {
+    suspend fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String): UpdateObject {
         return remote.updateDailyMeal(newDailyMeal, objectId)
     }
 
@@ -67,7 +65,7 @@ class CookBookRepository(
         return remote.getCookBookOfCategory(where)
     }
 
-    fun getDailyMealOfDate(where: String): Deferred<ObjectList<DailyMeal>> {
+    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
     }
 

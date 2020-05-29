@@ -12,6 +12,9 @@
         <variable
                 name="consumer"
                 type="com.owner.basemodule.functional.Consumer" />
+        <variable
+                name="selected"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -32,6 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:visibility="invisible"
+                    android:onClick="@{()->selected.accept(cookbook)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

@@ -24,7 +24,7 @@ class QueryOrdersActivity : BaseActivity<ActivityQueryOrderBinding>() {
         import(queryordersactivitymodule)
     }
 
-    val repository: QueryOrdersRepository by instance()
+    val repository  by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     override fun initView() {
         super.initView()

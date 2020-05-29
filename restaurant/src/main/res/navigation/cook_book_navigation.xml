@@ -62,7 +62,9 @@
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyMealTimeFragment"
             android:label="DailyMealTimeFragment"
             tools:layout="@layout/fragment_daily_mealtime" >
-
+        <action
+                android:id="@+id/action_dailyMealTimeFragment_to_cookBookDetailFragment"
+                app:destination="@id/cookBookDetailFragment" />
     </fragment>
     <fragment
             android:id="@+id/searchMaterialFragment"

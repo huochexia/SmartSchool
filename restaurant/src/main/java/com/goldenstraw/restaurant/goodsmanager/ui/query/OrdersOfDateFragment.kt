@@ -34,7 +34,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         extend(parentKodein)
     }
 
-    val repository: QueryOrdersRepository by instance()
+    val repository  by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
     var orderList = mutableListOf<OrderItem>()
