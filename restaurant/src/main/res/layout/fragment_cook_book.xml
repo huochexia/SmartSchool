@@ -39,5 +39,17 @@
                 android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold" />
+        <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_analyse_meal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="16dp"
+                android:text="分析菜单"
+                android:background="@drawable/selector_button"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold" />
     </LinearLayout>
 </layout>

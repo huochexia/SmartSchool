@@ -65,6 +65,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 query.visibility = View.VISIBLE
                 manager.visibility = View.VISIBLE
                 adjustment.visibility = View.VISIBLE
+                cookbook.visibility = View.VISIBLE
             }
             "库管员" -> {
                 order.visibility = View.VISIBLE
@@ -74,6 +75,10 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
             }
             "复核员" -> {
                 confirm.visibility = View.VISIBLE
+                cookbook.visibility = View.VISIBLE
+            }
+            "厨师" -> {
+                cookbook.visibility = View.VISIBLE
             }
 
         }
@@ -140,6 +145,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
         confirm.visibility = View.GONE
         manager.visibility = View.GONE
         adjustment.visibility=View.GONE
+        cookbook.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

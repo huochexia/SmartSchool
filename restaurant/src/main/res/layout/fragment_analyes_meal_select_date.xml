@@ -137,6 +137,81 @@
                     app:year_view_month_text_size="20sp"
                     app:year_view_scheme_color="#f17706" />
 
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="12dp">
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        tools:ignore="NestedWeights">
+
+                    <TextView
+                            android:id="@+id/tv_left_week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="开始日期"
+                            android:textColor="#000000"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                            android:id="@+id/tv_left_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center_vertical"
+                            android:textColor="#000000"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+                </LinearLayout>
+
+                <View
+                        android:layout_width="1px"
+                        android:layout_height="match_parent"
+                        android:background="@color/line_color" />
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:id="@+id/tv_right_week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="结束日期"
+                            android:textColor="#000000"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                            android:id="@+id/tv_right_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center_vertical"
+                            android:textColor="#000000"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            tools:ignore="RtlSymmetry" />
+                </LinearLayout>
+            </LinearLayout>
 
             <View
                     android:layout_width="match_parent"
@@ -144,6 +219,25 @@
                     android:background="@color/colorPrimary" />
         </com.haibin.calendarview.CalendarLayout>
 
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+            <Button
+                    android:id="@+id/btn_account_orders"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_button"
+                    android:text="分析"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

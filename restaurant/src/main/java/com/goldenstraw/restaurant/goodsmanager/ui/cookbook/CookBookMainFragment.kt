@@ -25,7 +25,13 @@ class CookBookMainFragment : BaseFragment<FragmentCookBookBinding>() {
         }
         btn_daily_meal.setOnClickListener{
             bundle.putBoolean("isSelected",true)//用于选择菜谱
+
             findNavController().navigate(R.id.dailyCookBookFragment,bundle)
+        }
+
+        btn_analyse_meal.setOnClickListener {
+
+
         }
     }
 }

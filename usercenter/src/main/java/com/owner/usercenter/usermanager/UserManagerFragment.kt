@@ -33,7 +33,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
     }
     val state = ObservableField<Int>()
     private val userList = mutableListOf<User>()
-    private val repository :UserManagerRepository by instance()
+    private val repository by instance<UserManagerRepository>()
     private var viewModel: UserManagerViewModel?=null
 
     var adapter: BaseDataBindingAdapter<User, LayoutUserItemBinding>? = null

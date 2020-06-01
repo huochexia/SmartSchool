@@ -16,6 +16,7 @@ import org.kodein.di.Kodein
 class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>(),
     CalendarView.OnCalendarSelectListener {
 
+
     override val layoutId: Int
         get() = R.layout.fragment_daily_meal_select_date
 
@@ -26,7 +27,9 @@ class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>()
     override fun initView() {
         //点击小日历返回当前日期
         fl_current.setOnClickListener { calendarView.scrollToCurrent() }
+
         calendarView.setOnCalendarSelectListener(this)
+
         tv_year.text = calendarView.curYear.toString()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
@@ -63,7 +66,17 @@ class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>()
         tv_lunar.text = calendar.lunar
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
+            val month = if (calendar.month < 10) {
+                "0" + calendar.month
+            } else {
+                calendar.month
+            }
+            val day = if (calendar.day < 10) {
+                "0" + calendar.day
+            } else {
+                calendar.day
+            }
+            val date = calendar.year.toString() + "-" + month + "-" + day
             bundle.putString("mealdate", date)
             findNavController().navigate(R.id.dailyMealTimeFragment, bundle)
         }

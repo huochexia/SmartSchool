@@ -162,6 +162,13 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                     categoryCode = "-1"
                     "管理员"
                 }
+                R.id.rd_chef_right -> {
+                    district_layout.visibility =View.GONE
+                    district =0
+                    category_layout.visibility = View.GONE
+                    categoryCode="-1"
+                    "厨师"
+                }
                 R.id.rd_account_right -> {
                     district_layout.visibility = View.VISIBLE
                     category_layout.visibility = View.GONE

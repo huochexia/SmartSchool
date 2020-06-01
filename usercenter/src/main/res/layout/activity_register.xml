@@ -152,6 +152,12 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="管理者" />
+                            <RadioButton
+                                    android:id="@+id/rd_chef_right"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="厨师" />
+
 
                             <RadioButton
                                     android:id="@+id/rd_account_right"

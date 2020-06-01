@@ -34,9 +34,9 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein)
     }
-    private val repository: VerifyAndPlaceOrderRepository by instance()
+    private val repository  by instance<VerifyAndPlaceOrderRepository>()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    private val prefs:PrefsHelper by instance()
+    private val prefs by instance<PrefsHelper>()
     val map = HashMap<String, Calendar>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -29,7 +29,7 @@ class SingleSelectCalenderFragment
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    val repository: QueryOrdersRepository by instance()
+    val repository  by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

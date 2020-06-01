@@ -114,7 +114,7 @@
                     app:current_month_lunar_text_color="#CFCFCF"
                     app:current_month_text_color="#333333"
                     app:day_text_size="14sp"
-                    app:max_year="2020"
+                    app:max_year="2030"
                     app:min_year="2004"
                     app:month_view="com.owner.basemodule.util.calender.CustomMonthView"
                     app:month_view_show_mode="mode_fix"
