@@ -7,21 +7,28 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class QueryOrdersViewModel(
     private val repository: QueryOrdersRepository
 ) : BaseViewModel() {
     //所有供应商列表
     val suppliers = mutableListOf<User>() //供应商列表
+
     //用于查询某个供应商订单
     var supplier: String = ""
 
+    //商品列表
+    val goodsList = mutableListOf<Goods>()
+
     var viewState = ObservableField<Int>()
+
     init {
         getAllSupplier()
             .subscribeOn(Schedulers.io())
@@ -67,10 +74,59 @@ class QueryOrdersViewModel(
     }
 
     /**
-     * 获取商品信息
+     * 获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
      */
-    fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
-        return repository.getGoodsOfCategory(condition)
+    fun getGoodsOfCategory(categoryId: String) {
+        goodsList.clear()
+        val where = "{\"categoryCode\":\"$categoryId\"}"
+        repository.getGoodsOfCategory(where).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                goodsList.addAll(it)
+            }, {
+                defUI.toastEvent.value = it.message
+            }, {
+                defUI.refreshEvent.call()
+            }, {
+                defUI.loadingEvent.call()
+            })
+    }
+
+    /**
+     * 部分类别供货商需要了解下周学校可能使用的商品，以便对价格及时调整。
+     * 通过获取每日菜单当中的菜谱信息,最后得到商品信息
+     *
+     */
+    fun getCookBookOfDailyMeal(categoryId: String) {
+        goodsList.clear()
+        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
+            .flatMap { date ->
+                val where = "{\"mealDate\":\"$date\"}"
+                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
+            }.flatMap {
+                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
+            }
+            .map {
+                it.cookBook.material //从菜谱中得到商品列表
+            }.flatMap {
+                Observable.fromIterable(it)
+            }.filter {
+                it.categoryCode == categoryId  //过滤类别
+            }
+            .distinct() //去重复
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({ goods ->
+                goodsList.add(goods)
+            }, {
+                defUI.toastEvent.value = it.message
+            }, {
+                defUI.refreshEvent.call()
+            }, {
+                defUI.loadingEvent.call()
+            })
     }
 
     /**
@@ -79,6 +135,7 @@ class QueryOrdersViewModel(
     fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
         return repository.getTotalOfSupplier(condition)
     }
+
     /**
      * 分组求和
      */

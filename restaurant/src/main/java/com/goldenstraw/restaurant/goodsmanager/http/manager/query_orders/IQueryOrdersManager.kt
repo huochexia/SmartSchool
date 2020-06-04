@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -42,4 +43,9 @@ interface IQueryOrdersManager {
      * 提交新单价
      */
     fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable
+
+    /**
+     * 获取一周菜单当中菜谱
+     */
+     fun getCookBookOfDailyMeal(where:String):Observable<ObjectList<DailyMeal>>
 }

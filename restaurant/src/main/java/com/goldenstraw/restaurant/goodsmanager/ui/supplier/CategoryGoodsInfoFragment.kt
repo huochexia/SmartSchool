@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.ObservableField
+import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierCategoryGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -20,8 +21,6 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -58,7 +57,7 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            dataSource = { goodsList },
+            dataSource = { viewModel!!.goodsList },
             callback = { goods, binding, position ->
                 binding.goods = goods
                 binding.addSub.visibility = View.INVISIBLE
@@ -71,7 +70,32 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 }
             }
         )
-        getGoodsOfCategory(prefs.categoryCode)
+        /*
+         观察各种事件，刷新，错误提示，加载等
+         */
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            if (viewModel!!.goodsList.isEmpty()) {
+                state.set(MultiStateView.VIEW_STATE_EMPTY)
+            } else {
+                state.set(MultiStateView.VIEW_STATE_CONTENT)
+                adapter!!.forceUpdate()
+            }
+        }
+        viewModel!!.defUI.toastEvent.observe(viewLifecycleOwner) {
+            state.set(MultiStateView.VIEW_STATE_ERROR)
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create().show()
+        }
+
+        viewModel!!.defUI.loadingEvent.observe(viewLifecycleOwner) {
+            state.set(MultiStateView.VIEW_STATE_LOADING)
+        }
+        /*
+         *获取商品信息
+         */
+        viewModel!!.getCookBookOfDailyMeal(prefs.categoryCode)
+
     }
 
     /**
@@ -105,30 +129,30 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         dialog.show()
 
     }
-    /**
-     * 获取商品信息
-     */
-    fun getGoodsOfCategory(categoryId: String) {
-        val where = "{\"categoryCode\":\"$categoryId\"}"
-        viewModel!!.getGoodsOfCategory(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                if (it.isEmpty()) {
-                    state.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    state.set(MultiStateView.VIEW_STATE_CONTENT)
-                }
-                goodsList.clear()
-                goodsList.addAll(it)
-                adapter!!.forceUpdate()
-            }, {
-                state.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {}, {
-                state.set(MultiStateView.VIEW_STATE_LOADING)
-            })
-    }
+//    /**
+//     * 获取商品信息.主要是针对调料，粮油，豆乳品
+//     */
+//    fun getGoodsOfCategory(categoryId: String) {
+//        val where = "{\"categoryCode\":\"$categoryId\"}"
+//        viewModel!!.getGoodsOfCategory(where)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe({
+//                if (it.isEmpty()) {
+//                    state.set(MultiStateView.VIEW_STATE_EMPTY)
+//                } else {
+//                    state.set(MultiStateView.VIEW_STATE_CONTENT)
+//                }
+//                goodsList.clear()
+//                goodsList.addAll(it)
+//                adapter!!.forceUpdate()
+//            }, {
+//                state.set(MultiStateView.VIEW_STATE_ERROR)
+//            }, {}, {
+//                state.set(MultiStateView.VIEW_STATE_LOADING)
+//            })
+//    }
 
 
 }

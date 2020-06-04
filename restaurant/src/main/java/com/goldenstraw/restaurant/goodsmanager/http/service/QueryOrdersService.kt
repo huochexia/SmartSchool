@@ -31,7 +31,10 @@ interface QueryOrdersApi {
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
      */
     @PUT("/1/classes/OrderItem/{objectId}")
-    fun updateOrderOfSupplier(@Body newOrder: ObjectSupplier, @Path("objectId") objectId: String): Completable
+    fun updateOrderOfSupplier(
+        @Body newOrder: ObjectSupplier,
+        @Path("objectId") objectId: String
+    ): Completable
 
     //得到某个类别的所有商品
     //where = {"categoryCode":"  "}
@@ -49,6 +52,7 @@ interface QueryOrdersApi {
         @Query("where") condition: String,
         @Query("groupby") groupby: String = "goodsName"
     ): Observable<ObjectList<SumByGroup>>
+
     /**
      * 求和
      */
@@ -64,4 +68,15 @@ interface QueryOrdersApi {
     //提交新单价
     @PUT("/1/classes/Goods/{objectId}")
     fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): Completable
+
+    /**
+     * 从每日菜单库中查找菜单当中的菜谱
+     */
+    @GET("/1/classes/DailyMeal")
+     fun getCookBookOfDailyMeal(
+        @Query("where") condition: String,
+        @Query("limit") limit: Int = 500
+
+    ): Observable<ObjectList<DailyMeal>>
+
 }

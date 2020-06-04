@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.QueryOrdersApi
 import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -85,5 +86,9 @@ class QueryOrdersManagerImpl(
 
     override fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable {
         return service.updateNewPriceOfGoods(newPrice, objectId)
+    }
+
+    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+        return service.getCookBookOfDailyMeal(where)
     }
 }

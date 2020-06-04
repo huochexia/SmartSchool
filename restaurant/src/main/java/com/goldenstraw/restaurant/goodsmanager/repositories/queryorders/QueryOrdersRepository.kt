@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -60,5 +61,13 @@ class QueryOrdersRepository(
 
         return remote.updateNewPrice(newPrice, objectId)
 
+    }
+
+    /**
+     * 获取每日菜单当中的菜谱
+     */
+    fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+
+        return remote.getCookBookOfDailyMeal(where)
     }
 }

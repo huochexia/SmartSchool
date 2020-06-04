@@ -190,5 +190,6 @@ open class BaseViewModel : AutoDisposeViewModel(), Observable {
         val dismissDialog by lazy { SingleLiveEvent<Void>() }
         val toastEvent by lazy { SingleLiveEvent<String>() }
         val refreshEvent by lazy { SingleLiveEvent<Void>() }
+        val loadingEvent by lazy { SingleLiveEvent<Void>() }
     }
 }

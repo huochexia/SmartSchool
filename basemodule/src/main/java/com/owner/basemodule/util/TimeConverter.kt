@@ -118,10 +118,26 @@ object TimeConverter {
         for (day in 7..13) {
             val mondayPlus = getMondayPlus(gmtCreate)
             val currenDate = GregorianCalendar()
-            currenDate.add(GregorianCalendar.DATE,mondayPlus+day)
-            val monday =currenDate.time
+            currenDate.add(GregorianCalendar.DATE, mondayPlus + day)
+            val monday = currenDate.time
             nextWeek.add(monday)
         }
         return nextWeek
+    }
+
+    /**
+     * 获取下周的日期字符串,格式“2020-01-02”
+     */
+    fun getNextWeekToString(gmtCreate: Date): List<String> {
+        val nextWeekString = mutableListOf<String>()
+
+        for (day in 7..13) {
+            val mondayPlus = getMondayPlus(gmtCreate)
+            val currentDate = GregorianCalendar()
+            currentDate.add(GregorianCalendar.DATE, mondayPlus + day)
+            val date = currentDate.time
+            nextWeekString.add(getDateString(date))
+        }
+        return nextWeekString
     }
 }

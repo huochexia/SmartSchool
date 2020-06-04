@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders.IQueryOrdersManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -22,6 +23,8 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
     fun getTotalGroupByName(condition: String):Observable<MutableList<SumByGroup>>
 
     fun updateNewPrice(newPrice: NewPrice, objectId: String): Completable
+
+    fun getCookBookOfDailyMeal(where: String):Observable<ObjectList<DailyMeal>>
 }
 
 class RemoteQueryOrdersDataSourceImpl(
@@ -58,5 +61,9 @@ class RemoteQueryOrdersDataSourceImpl(
 
     override fun updateNewPrice(newPrice: NewPrice, objectId: String): Completable {
         return manager.updateNewPriceOfGoods(newPrice, objectId)
+    }
+
+    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+        return manager.getCookBookOfDailyMeal(where)
     }
 }
