@@ -6,10 +6,12 @@ import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.LocalCookBookDataSourceImpl
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.RemoteCookBookDataSourceImpl
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.owner.basemodule.network.RetrofitFactory
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
+import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
 /**
@@ -46,5 +48,9 @@ val cookbookactivitymodule = Kodein.Module(COOK_BOOK_ACTIVITY_MODULE) {
      */
     bind<CookBookApi>() with singleton {
         instance<RetrofitFactory>().create(CookBookApi::class.java)
+    }
+
+    bind<PrefsHelper>() with provider {
+        PrefsHelper(instance())
     }
 }

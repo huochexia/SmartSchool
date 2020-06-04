@@ -16,6 +16,9 @@
         <action
                 android:id="@+id/action_cookBookMainFragment_to_dailyCookBookFragment"
                 app:destination="@id/dailyCookBookFragment" />
+        <action
+                android:id="@+id/action_cookBookMainFragment_to_cookBookanalyesFragment"
+                app:destination="@id/cookBookanalyesFragment" />
     </fragment>
     <fragment
             android:id="@+id/classicalCookBookFragment"
@@ -75,4 +78,9 @@
                 android:id="@+id/action_searchMaterialFragment_to_inputCookBookFragment"
                 app:destination="@id/inputCookBookFragment" />
     </fragment>
+    <fragment
+            android:id="@+id/cookBookanalyesFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookanalyesFragment"
+            android:label="CookBookanalyesFragment"
+            tools:layout="@layout/fragment_analyes_meal_select_date"/>
 </navigation>

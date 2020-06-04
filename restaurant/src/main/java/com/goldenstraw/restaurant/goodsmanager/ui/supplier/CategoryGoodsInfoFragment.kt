@@ -42,8 +42,8 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
 
     }
 
-    private val prefs: PrefsHelper by instance()
-    private val repository: QueryOrdersRepository by instance()
+    private val prefs by instance<PrefsHelper>()
+    private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
     var goodsList = mutableListOf<Goods>()

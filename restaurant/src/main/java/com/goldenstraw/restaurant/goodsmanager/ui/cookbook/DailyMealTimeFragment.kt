@@ -15,6 +15,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
@@ -31,8 +32,11 @@ import org.kodein.di.generic.instance
 
 class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
+    private val prefs by instance<PrefsHelper>()
+    var isShowAdd = false //用于对除厨师之外的管理员隐藏每日菜单的添加功能
 
     private val respository by instance<CookBookRepository>()
+
     lateinit var viewModel: CookBookViewModel
 
     /*
@@ -61,6 +65,9 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     override fun initView() {
         super.initView()
+        if (prefs.role == "厨师") {
+            isShowAdd = true
+        }
         arguments?.let {
             dailyDate = it.getString("mealdate")
         }
@@ -170,8 +177,10 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         }
 
         viewModel.getDailyMealOfDate(where)
+        if (prefs.role == "厨师") {
 
-        initSwipeMenu()
+            initSwipeMenu()
+        }
     }
 
     /*
@@ -184,26 +193,32 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             dataBinding = { LayoutMealItemBinding.bind(it) },
             callback = { dailyMeal, binding, position ->
                 binding.dailymeal = dailyMeal
-                binding.clickEvent = object : Consumer<DailyMeal> {
-                    override fun accept(t: DailyMeal) {
-                        //点击是否选择
-                        AlertDialog.Builder(context)
-                            .setMessage("是否选择为教职工餐?")
-                            .setPositiveButton("是") { dialog, which ->
-                                dailyMeal.isOfTeacher = true
-                                viewModel.updateDailyMeal(UpdateIsteacher(true), dailyMeal.objectId)
-                                dialog.dismiss()
-                                viewModel.setRefreshAdapter(dailyMeal)
-                            }
-                            .setNegativeButton("否") { dialog, which ->
-                                dailyMeal.isOfTeacher = false
-                                viewModel.updateDailyMeal(
-                                    UpdateIsteacher(false),
-                                    dailyMeal.objectId
-                                )
-                                dialog.dismiss()
-                                viewModel.setRefreshAdapter(dailyMeal)
-                            }.create().show()
+                //只允许厨师修改菜单
+                if (prefs.role == "厨师") {
+                    binding.clickEvent = object : Consumer<DailyMeal> {
+                        override fun accept(t: DailyMeal) {
+                            //点击是否选择
+                            AlertDialog.Builder(context)
+                                .setMessage("是否选择为教职工餐?")
+                                .setPositiveButton("是") { dialog, which ->
+                                    dailyMeal.isOfTeacher = true
+                                    viewModel.updateDailyMeal(
+                                        UpdateIsteacher(true),
+                                        dailyMeal.objectId
+                                    )
+                                    dialog.dismiss()
+                                    viewModel.setRefreshAdapter(dailyMeal)
+                                }
+                                .setNegativeButton("否") { dialog, which ->
+                                    dailyMeal.isOfTeacher = false
+                                    viewModel.updateDailyMeal(
+                                        UpdateIsteacher(false),
+                                        dailyMeal.objectId
+                                    )
+                                    dialog.dismiss()
+                                    viewModel.setRefreshAdapter(dailyMeal)
+                                }.create().show()
+                        }
                     }
                 }
                 binding.onLongClick = object : Consumer<DailyMeal> {

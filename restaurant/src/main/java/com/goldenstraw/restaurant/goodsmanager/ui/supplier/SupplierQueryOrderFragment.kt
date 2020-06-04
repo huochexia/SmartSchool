@@ -37,10 +37,10 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository: QueryOrdersRepository by instance()
+    private val repository  by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     val map = HashMap<String, Calendar>()
-    val prefs: PrefsHelper by instance()
+    val prefs  by instance<PrefsHelper>()
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {

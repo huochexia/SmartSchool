@@ -56,6 +56,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
         calendarView.setOnMonthChangeListener { _, month ->
             tv_month.text = month.toString() + "月"
         }
+
         btn_query_order.setOnClickListener {
             findNavController().navigate(R.id.singleSelectCalender)
         }
@@ -118,7 +119,6 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
             calendar.day
         }
         if (!isEnd) {
-            //最终日期格式”2019-05-05 00:00:00"
             start = calendar.year.toString() + "-" + month + "-" + day + " 00:00:00"
             tv_left_date.text = calendar.month.toString() + "月" + calendar.day + "日"
             tv_left_week.text = WEEK[calendar.week]

@@ -49,9 +49,17 @@ data class Goods(
     var isChecked: Boolean = false,
     @ColumnInfo
     var newPrice: Float = 0.0f //用于存储供应商提交的新价格
-) {
+) : Comparable<Goods> {
     @Ignore
     var quantity: Int = 1
+
+    override fun compareTo(other: Goods): Int {
+        return if (objectId == other.objectId)
+            0
+        else
+            -1
+    }
+
 }
 
 @Entity

@@ -31,7 +31,7 @@ class CookBookMainFragment : BaseFragment<FragmentCookBookBinding>() {
 
         btn_analyse_meal.setOnClickListener {
 
-
+            findNavController().navigate(R.id.cookBookanalyesFragment)
         }
     }
 }

@@ -84,6 +84,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                     })
             }
         }
+
     }
 
     @SuppressLint("AutoDispose")

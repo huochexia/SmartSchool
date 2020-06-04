@@ -82,4 +82,46 @@ object TimeConverter {
         cl.set(Calendar.DATE, day + 10)
         return cl
     }
+
+    /**
+     * 获得当前日期与本周日相差的天数
+     */
+    fun getMondayPlus(gmtCreate: Date): Int {
+        val cd = Calendar.getInstance()
+        cd.setTime(gmtCreate)
+        val dayOfWeek = cd.get(Calendar.DAY_OF_WEEK) - 1
+        println(dayOfWeek)
+        if (dayOfWeek == 1) {
+            return 0
+        } else {
+            return 1 - dayOfWeek
+        }
+    }
+
+    /**
+     *  获得下周星期一的日期
+     */
+
+    fun getNextMonday(gmtCreate: Date): Date {
+        val mondayPlus = getMondayPlus(gmtCreate)
+        val currenDate = GregorianCalendar()
+        currenDate.add(GregorianCalendar.DATE, mondayPlus+7)
+        val monday = currenDate.time
+        return monday
+    }
+
+    /**
+     * 获取下周的所有日期
+     */
+    fun getNextWeek(gmtCreate: Date):List<Date>{
+        val nextWeek = mutableListOf<Date>()
+        for (day in 7..13) {
+            val mondayPlus = getMondayPlus(gmtCreate)
+            val currenDate = GregorianCalendar()
+            currenDate.add(GregorianCalendar.DATE,mondayPlus+day)
+            val monday =currenDate.time
+            nextWeek.add(monday)
+        }
+        return nextWeek
+    }
 }
