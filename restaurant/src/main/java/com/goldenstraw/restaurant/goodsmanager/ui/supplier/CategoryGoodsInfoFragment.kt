@@ -2,10 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
 import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
@@ -22,6 +22,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_supplier_category_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -51,9 +52,15 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        (activity as AppCompatActivity).setSupportActionBar(category_goods_toolbar)
+        setHasOptionsMenu(true)
+
+
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
+
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
@@ -92,7 +99,8 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
             state.set(MultiStateView.VIEW_STATE_LOADING)
         }
         /*
-         *获取商品信息
+         *默认是获取下周拟购商品信息
+         * 可以通过菜
          */
         viewModel!!.getCookBookOfDailyMeal(prefs.categoryCode)
 
@@ -129,30 +137,21 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         dialog.show()
 
     }
-//    /**
-//     * 获取商品信息.主要是针对调料，粮油，豆乳品
-//     */
-//    fun getGoodsOfCategory(categoryId: String) {
-//        val where = "{\"categoryCode\":\"$categoryId\"}"
-//        viewModel!!.getGoodsOfCategory(where)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(scopeProvider)
-//            .subscribe({
-//                if (it.isEmpty()) {
-//                    state.set(MultiStateView.VIEW_STATE_EMPTY)
-//                } else {
-//                    state.set(MultiStateView.VIEW_STATE_CONTENT)
-//                }
-//                goodsList.clear()
-//                goodsList.addAll(it)
-//                adapter!!.forceUpdate()
-//            }, {
-//                state.set(MultiStateView.VIEW_STATE_ERROR)
-//            }, {}, {
-//                state.set(MultiStateView.VIEW_STATE_LOADING)
-//            })
-//    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_get_goods_info, menu)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.all_goods -> {
+                viewModel!!.getGoodsOfCategory(prefs.categoryCode)
+            }
+            R.id.next_week_goods -> {
+                viewModel!!.getCookBookOfDailyMeal(prefs.categoryCode)
+            }
+        }
+        return true
+    }
 }

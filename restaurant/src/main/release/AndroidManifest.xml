@@ -11,7 +11,7 @@
         <activity android:name=".goodsmanager.Main2Activity" />
         <activity android:name=".goodsmanager.ui.goods.ShoppingCartManagerActivity" />
         <activity android:name=".goodsmanager.ui.goods.OrderManagerActivity" />
-        <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
+<!--        <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />-->
         <activity android:name=".goodsmanager.ui.query.QueryOrdersActivity" />
         <activity android:name=".goodsmanager.ui.verify.VerifyAndPlaceOrderActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
@@ -20,5 +20,6 @@
         <activity android:name=".goodsmanager.ui.confirm.ConfirmQuantityActivity" />
         <activity android:name=".goodsmanager.ui.adjustprice.AdjustPriceOfGoodsActivity" />
         <activity android:name=".goodsmanager.ui.cookbook.CookBookMainActivity" />
+        <activity android:name=".goodsmanager.ui.goods.GoodsOfNextWeekActivity"/>
     </application>
 </manifest>

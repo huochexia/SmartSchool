@@ -147,7 +147,11 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 else
                     showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
             }
+            R.id.next_week_goods -> {
+                val intent = Intent(this,GoodsOfNextWeekActivity::class.java)
+                startActivity(intent)
 
+            }
             else -> super.onOptionsItemSelected(item)
 
         }

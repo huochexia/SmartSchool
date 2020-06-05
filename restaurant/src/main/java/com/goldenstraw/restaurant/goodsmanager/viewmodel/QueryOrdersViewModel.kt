@@ -74,6 +74,13 @@ class QueryOrdersViewModel(
     }
 
     /**
+     * 根据条件获取全部商品信息
+     */
+    fun getAllGoodsOfCategory(where: String): Observable<MutableList<Goods>> {
+        return repository.getGoodsOfCategory(where)
+    }
+
+    /**
      * 获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
      */
     fun getGoodsOfCategory(categoryId: String) {
@@ -113,6 +120,37 @@ class QueryOrdersViewModel(
                 Observable.fromIterable(it)
             }.filter {
                 it.categoryCode == categoryId  //过滤类别
+
+            }
+            .distinct() //去重复
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({ goods ->
+                goodsList.add(goods)
+            }, {
+                defUI.toastEvent.value = it.message
+            }, {
+                defUI.refreshEvent.call()
+            }, {
+                defUI.loadingEvent.call()
+            })
+    }
+
+    //不过滤
+    fun getAllCookBookOfDailyMeal() {
+        goodsList.clear()
+        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
+            .flatMap { date ->
+                val where = "{\"mealDate\":\"$date\"}"
+                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
+            }.flatMap {
+                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
+            }
+            .map {
+                it.cookBook.material //从菜谱中得到商品列表
+            }.flatMap {
+                Observable.fromIterable(it)
             }
             .distinct() //去重复
             .subscribeOn(Schedulers.io())
