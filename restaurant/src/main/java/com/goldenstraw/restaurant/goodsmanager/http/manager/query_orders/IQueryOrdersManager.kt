@@ -41,6 +41,11 @@ interface IQueryOrdersManager {
     fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
 
     /**
+     *获取某个商品信息
+     */
+    fun getGoodsFromObjectId(id: String): Observable<Goods>
+
+    /**
      * 求和
      */
     fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>>

@@ -334,26 +334,36 @@ class GoodsToOrderMgViewModel(
      */
     fun getDailyMealToShoppingCar(where: String) {
         repository.getDailyMealOfDate(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .flatMap {
                 Observable.fromIterable(it.results)
             }
+            .map {
+                it.cookBook.material
+            }
             .flatMap {
-                Observable.fromIterable(it.cookBook.material)
+                Observable.fromIterable(it)
             }
             .distinct()
+            .subscribeOn(Schedulers.io())
+            .flatMap {
+                getGoodsFromObjectId(it)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
             .subscribe({ goods ->
                 goods.isChecked = true
                 materialList.add(goods)
+                addGoodsToShoppingCart(materialList)
+                defUI.refreshEvent.call()
             }, {
 
             }, {
-                addGoodsToShoppingCart(materialList)
-                defUI.refreshEvent.call()
+
             }, {
                 materialList.clear()
             })
     }
+
+    private fun getGoodsFromObjectId(it: Goods) =
+        repository.getGoodsFromObjectId(it.objectId)
 }

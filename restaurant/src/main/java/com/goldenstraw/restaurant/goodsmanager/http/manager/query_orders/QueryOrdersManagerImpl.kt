@@ -66,6 +66,9 @@ class QueryOrdersManagerImpl(
         }
     }
 
+    override fun getGoodsFromObjectId(id: String): Observable<Goods> {
+        return service.getGoodsFromObjectId(id)
+    }
     override fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
         return service.getTotalOfSupplier(condition=condition).map {
             if (!it.isSuccess()) {

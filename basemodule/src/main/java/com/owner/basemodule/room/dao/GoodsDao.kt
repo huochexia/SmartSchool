@@ -6,6 +6,7 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -44,8 +45,11 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
     fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
-    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName" )
+    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
     fun findByName(name: String): Observable<MutableList<Goods>>
+
+    @Query("SELECT * FROM Goods WHERE objectId = :id")
+    fun getGoodsFromObjectId(id: String): Flowable<Goods>
 
     /*
       使用Paging

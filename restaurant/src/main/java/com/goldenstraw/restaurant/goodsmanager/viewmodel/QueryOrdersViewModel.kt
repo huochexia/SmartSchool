@@ -103,6 +103,10 @@ class QueryOrdersViewModel(
             })
     }
 
+    fun getGoodsFromObjectId(id: String): Observable<Goods> {
+        return repository.getGoodsFromObjectId(id)
+    }
+
     /**
      * 使用类别过滤，部分类别供货商需要了解下周学校可能使用的商品，以便对价格及时调整。
      * 通过获取每日菜单当中的菜谱信息,最后得到商品信息
@@ -128,6 +132,9 @@ class QueryOrdersViewModel(
 
             }
             .distinct() //去重复
+            .flatMap {
+                getGoodsFromObjectId(it.objectId)
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
@@ -162,11 +169,15 @@ class QueryOrdersViewModel(
                 Observable.fromIterable(it)
             }
             .distinct() //去重复
+            .flatMap {
+                getGoodsFromObjectId(it.objectId)
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
             .subscribe({ goods ->
                 goodsList.add(goods)
+
             }, {
                 defUI.toastEvent.value = it.message
             }, {
@@ -174,6 +185,7 @@ class QueryOrdersViewModel(
                 goodsList.sortBy {
                     it.categoryCode
                 }
+
             }, {
                 defUI.loadingEvent.call()
             })

@@ -35,6 +35,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun insertCategoryToLocal(category: GoodsCategory): Completable
 
     fun insertSupplierToLocal(supplier: MutableList<User>): Completable
+
     /**
      * 获取
      */
@@ -42,11 +43,14 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
+    fun getGoodsFromObjectId(id: String): Observable<Goods>
+
     fun getGoodsOfPagind(code: String): DataSource.Factory<Int, Goods>
 
     fun findByName(name: String): Observable<MutableList<Goods>>
 
     fun getShoppingCartCount(): Single<Int>
+
     /**
      * 删除
      */
@@ -114,6 +118,11 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().getAllGoodsOfCategory(code)
 
     }
+
+    override fun getGoodsFromObjectId(id: String): Observable<Goods> {
+        return database.goodsDao().getGoodsFromObjectId(id).toObservable()
+    }
+
     /*
       使用Paging
      */

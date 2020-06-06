@@ -161,6 +161,13 @@ class GoodsRepository(
     }
 
     /*
+     *通过ObjectId获取商品
+     */
+    fun getGoodsFromObjectId(id: String): Observable<Goods> {
+        return local.getGoodsFromObjectId(id)
+    }
+
+    /*
          使用分页获取商品列表
         */
     fun getAllGoodsOfPaging(category: GoodsCategory): DataSource.Factory<Int, Goods> {

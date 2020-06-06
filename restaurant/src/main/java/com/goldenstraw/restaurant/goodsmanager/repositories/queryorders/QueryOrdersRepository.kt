@@ -40,6 +40,9 @@ class QueryOrdersRepository(
         return remote.getGoodsOfCategory(condition)
     }
 
+    fun getGoodsFromObjectId(id:String):Observable<Goods>{
+        return remote.getGoodsFromObjectId(id)
+    }
     /**
      * 求和
      */

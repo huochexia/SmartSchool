@@ -57,6 +57,10 @@ interface QueryOrdersApi {
     fun getGoodsOfCategory(@Query("where") condition: String, @Query("limit") limit: Int = 500)
             : Observable<ObjectList<Goods>>
 
+    //根据objectId获取单个商品信息
+    @GET("/1/classes/Goods/{objectId}")
+    fun getGoodsFromObjectId(@Path("objectId") id: String): Observable<Goods>
+
     /**
      * 按商品名称分组求和
      */
