@@ -5,4 +5,8 @@
             android:id="@+id/already_subscribe"
             android:title="已申购"
             app:showAsAction="never" />
+    <item
+            android:id="@+id/clear_shoppingcar"
+            android:title="清空购物车"
+            app:showAsAction="never" />
 </menu>

@@ -55,6 +55,14 @@ data class ObjectQuantity(
 )
 
 /*
+    修改订单数量和备注
+ */
+data class ObjectQuantityAndNote(
+    var quantity: Float,
+    var note: String
+)
+
+/*
 验货,确定数量，验货日期，改变状态为2
  */
 data class ObjectCheckGoods(

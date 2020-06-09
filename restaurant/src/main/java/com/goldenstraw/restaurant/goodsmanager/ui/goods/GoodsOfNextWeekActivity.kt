@@ -22,6 +22,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_next_week_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -50,9 +51,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
             layoutId = R.layout.layout_goods_item,
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
             dataSource = {
-                viewModel!!.goodsList.sortedBy {
-                    it.categoryCode
-                }
+                viewModel!!.goodsList
             },
             callback = { goods, binding, position ->
                 binding.goods = goods
@@ -74,6 +73,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
                 state.set(MultiStateView.VIEW_STATE_EMPTY)
             } else {
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
+                category_goods_toolbar.title = "下周拟购商品（${viewModel!!.goodsList.size}）"
                 adapter!!.forceUpdate()
             }
         }

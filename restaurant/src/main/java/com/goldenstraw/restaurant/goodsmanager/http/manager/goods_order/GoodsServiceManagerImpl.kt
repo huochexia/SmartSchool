@@ -1,13 +1,14 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.Roles
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -30,6 +31,10 @@ class GoodsServiceManagerImpl(
 
     override fun deleteGoods(goods: Goods): Completable {
         return serverApi.deleteGoods(goods.objectId)
+    }
+
+    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+        return serverApi.getCookBookOfDailyMeal(where)
     }
 
     /**

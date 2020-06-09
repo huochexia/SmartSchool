@@ -1,8 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -54,5 +56,10 @@ interface IGoodsServiceManager {
 
     //2、删除商品
     fun deleteGoods(goods: Goods): Completable
+
+    /**
+     * 获取某一天菜单当中菜谱
+     */
+    fun getCookBookOfDailyMeal(where:String):Observable<ObjectList<DailyMeal>>
 
 }

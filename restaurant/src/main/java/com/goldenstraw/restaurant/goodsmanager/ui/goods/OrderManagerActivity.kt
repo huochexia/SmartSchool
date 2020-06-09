@@ -12,12 +12,14 @@ import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
+import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy
@@ -31,6 +33,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
         import(goodsDataSourceModule)
+        import(queryordersactivitymodule)
     }
     private val repository by instance<GoodsRepository>()
 
@@ -148,8 +151,16 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                     showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
             }
             R.id.next_week_goods -> {
-                val intent = Intent(this,GoodsOfNextWeekActivity::class.java)
+                val intent = Intent(this, GoodsOfNextWeekActivity::class.java)
                 startActivity(intent)
+
+            }
+            R.id.subscribe_goods -> {
+                //TODO:后天菜单
+                //从DailyMeal中获取后天菜单中的原材料信息，并加入购物车后，跳转到购物车界面
+                val date = TimeConverter.getDateString(TimeConverter.getDayAfterTomorrow().time)
+                val where = "{\"mealDate\":\"$date\"}"
+                viewModelGoodsTo.getDailyMealToShoppingCar(where)
 
             }
             else -> super.onOptionsItemSelected(item)

@@ -289,7 +289,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {
                 0 -> {
-                    deleteDialog(viewModel.soupList[adapterPosition])
+                    deleteDialog(viewModel.flourList[adapterPosition])
                 }
 
             }

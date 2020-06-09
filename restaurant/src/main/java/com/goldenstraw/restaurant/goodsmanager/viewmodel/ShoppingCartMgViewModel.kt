@@ -19,7 +19,7 @@ class ShoppingCartMgViewModel(
     private val repository: ShoppingCartRepository
 ) : BaseViewModel() {
 
-    val goodsList = mutableListOf<GoodsOfShoppingCart>()
+    var goodsList = mutableListOf<GoodsOfShoppingCart>()
     val state = ObservableField<Int>()
 
     init {
@@ -33,11 +33,14 @@ class ShoppingCartMgViewModel(
         repository.getAllShoppingCart().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
-            .subscribe({
-                if (it.isNotEmpty()) {
+            .subscribe({ list ->
+                if (list.isNotEmpty()) {
                     state.set(MultiStateView.VIEW_STATE_CONTENT)
-                    goodsList.clear()
-                    goodsList.addAll(it)
+//                    goodsList.clear()
+                    goodsList = list
+                    goodsList.sortBy {
+                        it.categoryCode
+                    }
                 } else {
                     state.set(MultiStateView.VIEW_STATE_EMPTY)
                 }
@@ -58,15 +61,13 @@ class ShoppingCartMgViewModel(
         return repository.deleteGoodsOfShoppingCartListFromLocal(list)
     }
 
-    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart) {
-        repository.deleteGoodsOfShoppingCartFromLocal(goods)
-            .subscribeOn(Schedulers.computation())
-            .autoDisposable(this)
-            .subscribe({}, {})
+    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
+        return repository.deleteGoodsOfShoppingCartFromLocal(goods)
+
     }
 
     /**
-     * 修改购物画商品
+     * 修改购物车商品
      */
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
         return repository.updateGoodsOfShoppingCart(goods)

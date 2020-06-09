@@ -30,8 +30,22 @@ data class GoodsOfShoppingCart(
     var note: String = "",
     @ColumnInfo
     var isChecked: Boolean = false
+) : Comparable<GoodsOfShoppingCart> {
 
-    )
+    override fun compareTo(other: GoodsOfShoppingCart): Int {
+        return when {
+            categoryCode == other.categoryCode -> {
+                0
+            }
+            categoryCode > other.categoryCode -> {
+                1
+            }
+            else -> {
+                -1
+            }
+        }
+    }
+}
 
 @Entity
 data class Goods(
@@ -54,10 +68,17 @@ data class Goods(
     var quantity: Int = 1
 
     override fun compareTo(other: Goods): Int {
-        return if (objectId == other.objectId)
-            0
-        else
-            -1
+        return when {
+            categoryCode == other.categoryCode -> {
+                0
+            }
+            categoryCode > other.categoryCode -> {
+                1
+            }
+            else -> {
+                -1
+            }
+        }
     }
 
 }

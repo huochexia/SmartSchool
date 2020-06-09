@@ -1,10 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.CreateObject
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
@@ -37,13 +39,19 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
 
     fun getAllGoods(): Observable<MutableList<Goods>>
 
-    fun getAllSupplier():Observable<MutableList<User>>
+    fun getAllSupplier(): Observable<MutableList<User>>
+
     /**
      * 删除
      */
     fun deleteGoods(goods: Goods): Completable
 
     fun deleteCategory(goodsCategory: GoodsCategory): Completable
+
+    /**
+     * 获取某一天菜单
+     */
+    fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>>
 }
 
 /**
@@ -103,4 +111,7 @@ class RemoteGoodsDataSourceImpl(
         return service.updateCategory(category, objectId)
     }
 
+    override fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>> {
+        return service.getCookBookOfDailyMeal(where)
+    }
 }

@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.network.CreateObject
@@ -72,4 +73,14 @@ interface GoodsApi {
      */
     @GET("/1/users")
     fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
+
+    /**
+     * 从每日菜单库中查找菜单当中的菜谱
+     */
+    @GET("/1/classes/DailyMeal")
+    fun getCookBookOfDailyMeal(
+        @Query("where") condition: String,
+        @Query("limit") limit: Int = 500
+
+    ): Observable<ObjectList<DailyMeal>>
 }

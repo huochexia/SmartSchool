@@ -70,4 +70,12 @@ class QueryOrdersRepository(
 
         return remote.getCookBookOfDailyMeal(where)
     }
+
+    suspend fun deleteOrderItem(objectId: String) {
+        remote.deleteOrderItem(objectId)
+    }
+
+    suspend fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
+        remote.updateOrderItem(newOrderItem, objectId)
+    }
 }

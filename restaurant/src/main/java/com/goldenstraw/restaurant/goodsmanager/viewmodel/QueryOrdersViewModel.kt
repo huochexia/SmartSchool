@@ -25,7 +25,7 @@ class QueryOrdersViewModel(
     var supplier: String = ""
 
     //商品列表
-    val goodsList = mutableListOf<Goods>()
+    var goodsList = mutableListOf<Goods>()
 
     var viewState = ObservableField<Int>()
 
@@ -81,16 +81,19 @@ class QueryOrdersViewModel(
     }
 
     /**
-     * 获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
+     * 过滤类别，获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
      */
     fun getGoodsOfCategory(categoryId: String) {
-        goodsList.clear()
+
         val where = "{\"categoryCode\":\"$categoryId\"}"
         repository.getGoodsOfCategory(where).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
-            .subscribe({
-                goodsList.addAll(it)
+            .subscribe({ list ->
+                goodsList = list
+                goodsList.sortBy {
+                    it.objectId
+                }
             }, {
                 defUI.toastEvent.value = it.message
             }, {
@@ -101,12 +104,12 @@ class QueryOrdersViewModel(
     }
 
     /**
-     * 部分类别供货商需要了解下周学校可能使用的商品，以便对价格及时调整。
+     * 使用类别过滤，部分类别供货商需要了解下周学校可能使用的商品，以便对价格及时调整。
      * 通过获取每日菜单当中的菜谱信息,最后得到商品信息
      *
      */
     fun getCookBookOfDailyMeal(categoryId: String) {
-        goodsList.clear()
+
         Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
             .flatMap { date ->
                 val where = "{\"mealDate\":\"$date\"}"
@@ -135,11 +138,15 @@ class QueryOrdersViewModel(
             }, {
                 defUI.refreshEvent.call()
             }, {
+                goodsList.clear()
                 defUI.loadingEvent.call()
             })
     }
 
-    //不过滤
+    /**
+     *
+     *  不过滤,用于管理员查看下周可能需要的所有商品
+     */
     fun getAllCookBookOfDailyMeal() {
         goodsList.clear()
         Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
@@ -164,6 +171,9 @@ class QueryOrdersViewModel(
                 defUI.toastEvent.value = it.message
             }, {
                 defUI.refreshEvent.call()
+                goodsList.sortBy {
+                    it.categoryCode
+                }
             }, {
                 defUI.loadingEvent.call()
             })
@@ -186,8 +196,28 @@ class QueryOrdersViewModel(
     /**
      * 提交新单价
      */
-    fun updateNewPriceOfGoods(newPrice: NewPrice,objectId: String): Completable {
-        return repository.updateNewPrice(newPrice,objectId)
+    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable {
+        return repository.updateNewPrice(newPrice, objectId)
 
+    }
+
+    /**
+     * 删除订单
+     */
+    fun deleteOrderItem(objectId: String) {
+        launchUI {
+            repository.deleteOrderItem(objectId)
+            defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 修改订单数量和备注
+     */
+    fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
+        launchUI {
+            repository.updateOrderItem(newOrderItem, objectId)
+            defUI.refreshEvent.call()
+        }
     }
 }

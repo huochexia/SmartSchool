@@ -13,8 +13,6 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentShoppingCartBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.prefsModule
-import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
-import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
@@ -54,7 +52,6 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
     override fun initView() {
         super.initView()
 
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -69,7 +66,9 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_shopping_cart_item,
-            dataSource = { viewModel!!.goodsList },
+            dataSource = {
+                viewModel!!.goodsList
+            },
             dataBinding = { LayoutShoppingCartItemBinding.bind(it) },
             callback = { value, binding, _ ->
                 with(binding) {
@@ -221,7 +220,7 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
                 toast { "提交购物车商品：" + it.message.toString() }
             }, {
                 //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
-                deleteGoodsOfShoppingCartList(selectedList)
+                deleteGoodsOfShoppingCarList(selectedList)
             })
     }
 
@@ -240,7 +239,7 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
         adapter!!.forceUpdate()
     }
 
-    private fun deleteGoodsOfShoppingCartList(list: MutableList<GoodsOfShoppingCart>) {
+    private fun deleteGoodsOfShoppingCarList(list: MutableList<GoodsOfShoppingCart>) {
         viewModel!!.deleteGoodsOfShoppingCartList(list)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -259,6 +258,13 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
 
     private fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart) {
         viewModel!!.deleteGoodsOfShoppingCart(goods)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(scopeProvider)
+            .subscribe({
+                viewModel!!.goodsList.remove(goods)
+                adapter!!.forceUpdate()
+            }, {})
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -272,6 +278,10 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
             R.id.already_subscribe -> {
 
                 findNavController().navigate(R.id.checkSubscribFragment)
+            }
+            R.id.clear_shoppingcar -> {
+                deleteGoodsOfShoppingCarList(viewModel!!.goodsList)
+                adapter!!.forceUpdate()
             }
         }
         return true

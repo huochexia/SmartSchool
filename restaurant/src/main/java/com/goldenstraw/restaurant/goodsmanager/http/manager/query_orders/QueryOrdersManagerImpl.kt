@@ -91,4 +91,15 @@ class QueryOrdersManagerImpl(
     override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
         return service.getCookBookOfDailyMeal(where)
     }
+
+    override suspend fun deleteOrderItem(objectId: String) {
+        service.deleteOrderItem(objectId)
+    }
+
+    override suspend fun updateOrderItemQuantityAndNote(
+        newOrder: ObjectQuantityAndNote,
+        objectId: String
+    ) {
+        service.updateOrderItem(newOrder, objectId)
+    }
 }

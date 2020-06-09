@@ -25,6 +25,10 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
     fun updateNewPrice(newPrice: NewPrice, objectId: String): Completable
 
     fun getCookBookOfDailyMeal(where: String):Observable<ObjectList<DailyMeal>>
+
+    suspend fun deleteOrderItem(objectId: String)
+
+    suspend fun updateOrderItem(newOrder:ObjectQuantityAndNote,objectId: String)
 }
 
 class RemoteQueryOrdersDataSourceImpl(
@@ -65,5 +69,13 @@ class RemoteQueryOrdersDataSourceImpl(
 
     override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
         return manager.getCookBookOfDailyMeal(where)
+    }
+
+    override suspend fun deleteOrderItem(objectId: String) {
+        manager.deleteOrderItem(objectId)
+    }
+
+    override suspend fun updateOrderItem(newOrder: ObjectQuantityAndNote, objectId: String) {
+        manager.updateOrderItemQuantityAndNote(newOrder,objectId)
     }
 }

@@ -28,6 +28,21 @@ interface QueryOrdersApi {
     ): Observable<ObjectList<OrderItem>>
 
     /**
+     * 删除尚未做任何处理的订单，主要是厨师提交订单后的删除
+     */
+    @DELETE("/1/classes/OrderItem/{ObjectId}")
+    suspend fun deleteOrderItem(@Path("ObjectId") objectId: String)
+
+    /**
+     * 修改订单信息，如数量和备注
+     */
+    @PUT("/1/classes/OrderItem/{ObjectId}")
+    suspend fun updateOrderItem(
+        @Body newOrderItem: ObjectQuantityAndNote,
+        @Path("ObjectId") objectId: String
+    )
+
+    /**
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
      */
     @PUT("/1/classes/OrderItem/{objectId}")

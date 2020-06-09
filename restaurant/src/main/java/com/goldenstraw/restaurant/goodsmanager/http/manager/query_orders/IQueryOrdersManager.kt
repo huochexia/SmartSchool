@@ -26,13 +26,24 @@ interface IQueryOrdersManager {
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
 
     /**
+     * 删除未处理订单
+     */
+    suspend fun deleteOrderItem(objectId: String)
+
+    /**
+     * 修改订单数量和备注信息
+     */
+    suspend fun updateOrderItemQuantityAndNote(newOrder: ObjectQuantityAndNote, objectId: String)
+
+    /**
      * 查询商品信息
      */
     fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
+
     /**
      * 求和
      */
-    fun getTotalOfSupplier(condition:String):Observable<MutableList<SumResult>>
+    fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>>
 
     /**
      * 分组求和

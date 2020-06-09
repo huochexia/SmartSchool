@@ -1,10 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
 import androidx.paging.DataSource
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
@@ -200,5 +202,12 @@ class GoodsRepository(
      */
     fun clearAllData(): Completable {
         return local.clearGoodsAll().andThen(local.clearCategoryAll())
+    }
+
+    /**
+     * 获取某日菜单
+     */
+    fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>> {
+        return remote.getDailyMealOfDate(where)
     }
 }

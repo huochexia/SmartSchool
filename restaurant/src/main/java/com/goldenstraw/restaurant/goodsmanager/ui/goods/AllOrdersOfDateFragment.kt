@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.ViewGroup.LayoutParams
 import android.widget.EditText
 import androidx.databinding.ObservableField
+import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.R.color
 import com.goldenstraw.restaurant.databinding.FragmentAllOrdersOfDateBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
+import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantityAndNote
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
@@ -68,9 +70,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_order_item,
             dataSource = {
-                orderList.sortedBy {
-                    it.categoryCode
-                }
+                orderList
             },
             dataBinding = { LayoutOrderItemBinding.bind(it) },
             callback = { order, binding, position ->
@@ -99,6 +99,12 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
+
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+
+            adapter!!.forceUpdate()
+        }
+
         initSwipeMenu()
     }
 
@@ -132,10 +138,12 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {
                 0 -> {
-
+                    if (orderList[adapterPosition].state == 0)
+                        popUPDeleteDialog(orderList[adapterPosition])
                 }
                 1 -> {
-
+                    if (orderList[adapterPosition].state == 0)
+                        updateDialog(orderList[adapterPosition])
                 }
             }
         }
@@ -156,7 +164,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, which ->
-                //Todo：删除订单
+                deleteOrders(orders)
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -169,6 +177,8 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         val view = layoutInflater.inflate(R.layout.edit_goods_of_shoppingcart_dialog_view, null)
         val goodsQuantity = view.findViewById<EditText>(R.id.et_goods_quantity)
         val goodsOfNote = view.findViewById<EditText>(R.id.et_goods_of_note)
+        goodsQuantity.setText(orders.quantity.toString())
+        goodsOfNote.setText(orders.note)
 
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_update_name)
@@ -183,9 +193,10 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
                 if (quantity.isNullOrEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
-
-                    //Todo：修改订单
-                    adapter!!.forceUpdate()
+                    val newOrderItem = ObjectQuantityAndNote(quantity.toFloat(), note)
+                    viewModel!!.updateOrderItem(newOrderItem, orders.objectId)
+                    orders.note = note
+                    orders.quantity = quantity.toFloat()
                     dialog.dismiss()
                 }
             }.create()
@@ -193,13 +204,10 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
     }
 
     //删除订单
-    private fun deleteOrders(list: MutableList<GoodsOfShoppingCart>) {
-
-
+    private fun deleteOrders(orders: OrderItem) {
+        viewModel!!.deleteOrderItem(orders.objectId)
+        orderList.remove(orders)
     }
 
-    //修改订单
-    private fun updateOrders(goods: GoodsOfShoppingCart) {
 
-    }
 }

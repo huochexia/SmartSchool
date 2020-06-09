@@ -30,10 +30,14 @@ class GoodsToOrderMgViewModel(
 
     //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
     var categoryList = mutableListOf<GoodsCategory>()
-    var goodsList = mutableListOf<Goods>()
+
+    var goodsList = mutableListOf<Goods>() //商品列表
+    var materialList = mutableListOf<Goods>()//菜谱中原材料列表
+
     var searchGoodsResultList = mutableListOf<Goods>() //根据商品名称搜索结果列表
     val categoryState = ObservableField<Int>()
     val goodsState = ObservableField<Int>()
+
     //可观察数据
     private val isRefresh = MutableLiveData<Boolean>() //刷新类别列表
     var isGoodsListRefresh = MutableLiveData<Boolean>()//刷新商品列表
@@ -316,7 +320,7 @@ class GoodsToOrderMgViewModel(
                                     .subscribe{goodslist->
                                         repository.addGoodsListToLocal(goodslist)
                                             .autoDisposable(this)
-                                            .subscribe({},{})
+                                            .subscribe({}, {})
                                     }
                             }
                     }
@@ -325,4 +329,31 @@ class GoodsToOrderMgViewModel(
 
     }
 
+    /**
+     * 获取某日菜单，并将其保存在购物车当中
+     */
+    fun getDailyMealToShoppingCar(where: String) {
+        repository.getDailyMealOfDate(where)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap {
+                Observable.fromIterable(it.results)
+            }
+            .flatMap {
+                Observable.fromIterable(it.cookBook.material)
+            }
+            .distinct()
+            .autoDisposable(this)
+            .subscribe({ goods ->
+                goods.isChecked = true
+                materialList.add(goods)
+            }, {
+
+            }, {
+                addGoodsToShoppingCart(materialList)
+                defUI.refreshEvent.call()
+            }, {
+                materialList.clear()
+            })
+    }
 }
