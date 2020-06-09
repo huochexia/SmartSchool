@@ -110,6 +110,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                     dataSource = { viewModel.groupbyKind[group]!! },
                     dataBinding = { LayoutCoolbookItemBinding.bind(it) },
                     callback = { cookbook, itembinding, position ->
+
                         itembinding.cookbook = cookbook
                         //如果是用于选择，则显示复选框。
                         if (isSelected) {
@@ -159,7 +160,11 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
           ViewPager与TabLayout绑定
          */
         tabLayoutMediator = TabLayoutMediator(tab_cook_kind, vp_cook_kind) { tab, position ->
-            tab.text = viewModel.groupbyKind.keys.toList()[position]
+            with(viewModel.groupbyKind.keys){
+                val key =this.toList()[position]
+                val q = viewModel.groupbyKind[key]?.size
+                tab.text ="$key($q)"
+            }
         }
         tabLayoutMediator?.attach()
     }

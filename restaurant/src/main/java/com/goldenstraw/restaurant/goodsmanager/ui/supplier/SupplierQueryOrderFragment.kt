@@ -137,7 +137,7 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
      */
     private fun markDate() {
         val where = "{\"\$and\":[{\"state\":1},{\"supplier\":\"${prefs.username}\"}]}"
-        viewModel!!.getOrdersOfSupplier(where)
+        viewModel!!.getAllOfOrders(where)
             .flatMap {
                 Observable.fromIterable(it)
             }.map {

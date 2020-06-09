@@ -12,7 +12,6 @@ import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -39,6 +38,8 @@ class ShoppingCartMgViewModel(
                     state.set(MultiStateView.VIEW_STATE_CONTENT)
                     goodsList.clear()
                     goodsList.addAll(it)
+                } else {
+                    state.set(MultiStateView.VIEW_STATE_EMPTY)
                 }
 
             }, {

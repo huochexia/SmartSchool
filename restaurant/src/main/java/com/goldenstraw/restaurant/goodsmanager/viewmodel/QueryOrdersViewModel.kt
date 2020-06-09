@@ -62,8 +62,8 @@ class QueryOrdersViewModel(
      * 按日期获取供应商订单
      */
 
-    fun getOrdersOfSupplier(where: String): Observable<MutableList<OrderItem>> {
-        return repository.getOrdersOfSupplier(where)
+    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>> {
+        return repository.getAllOfOrders(where)
     }
 
     /**
@@ -116,9 +116,11 @@ class QueryOrdersViewModel(
             }
             .map {
                 it.cookBook.material //从菜谱中得到商品列表
-            }.flatMap {
+            }
+            .flatMap {
                 Observable.fromIterable(it)
-            }.filter {
+            }
+            .filter {
                 it.categoryCode == categoryId  //过滤类别
 
             }

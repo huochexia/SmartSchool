@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/subscribe_goods_navigation"
+        app:startDestination="@id/shoppingCartFragment">
+
+    <fragment
+            android:id="@+id/shoppingCartFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCartFragment"
+            android:label="ShoppingCartFragment"
+            tools:layout="@layout/fragment_shopping_cart">
+        <action
+                android:id="@+id/action_shoppingCartFragment_to_checkSubscribFragment"
+                app:destination="@id/checkSubscribFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/checkSubscribFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.goods.CheckSubscribOfDateFragment"
+            android:label="CheckSubscribFragment"
+            tools:layout="@layout/fragment_check_subscrib_date" >
+        <action
+                android:id="@+id/action_checkSubscribFragment_to_allOrdersOfDateFragment"
+                app:destination="@id/allOrdersOfDateFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/allOrdersOfDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.goods.AllOrdersOfDateFragment"
+            android:label="AllOrdersOfDateFragment"
+            tools:layout="@layout/fragment_all_orders_of_date"/>
+</navigation>

@@ -42,7 +42,7 @@ val shoppingcartdatasource = Kodein.Module(SHOPPING_CART_MANAGER_ACTIVITY_TAG) {
     }
     bind<ShoppingCartApi>() with singleton { instance<RetrofitFactory>().create(ShoppingCartApi::class.java) }
 
-    bind<PrefsHelper>() with provider {
-        PrefsHelper(instance())
-    }
+//    bind<PrefsHelper>() with provider {
+//        PrefsHelper(instance())
+//    }
 }

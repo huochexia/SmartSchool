@@ -72,16 +72,19 @@ object TimeConverter {
     }
 
     /**
-     * 获取当前时间的后一天时间
+     * 获取当前时间的后天时间
      * @param cl
      * *
      * @return
      */
-    fun getAfterDay(cl: Calendar): Calendar {
-        val day = cl.get(Calendar.DATE)
-        cl.set(Calendar.DATE, day + 10)
-        return cl
+    fun getDayAfterTomorrow(): Calendar {
+        val today = Date()
+        val c1 = Calendar.getInstance()//获取日历对象
+        c1.time = today//将日历设定为今日
+        c1.add(Calendar.DAY_OF_MONTH, 2)//将日历的天数加2
+        return c1
     }
+
 
     /**
      * 获得当前日期与本周日相差的天数

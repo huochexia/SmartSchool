@@ -7,7 +7,7 @@
             app:showAsAction="never" />
     <item
             android:id="@+id/next_week_goods"
-            android:title="拟购商品"
+            android:title="拟供商品"
             app:showAsAction="never" />
 
 </menu>

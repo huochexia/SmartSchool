@@ -49,7 +49,11 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            dataSource = { viewModel!!.goodsList },
+            dataSource = {
+                viewModel!!.goodsList.sortedBy {
+                    it.categoryCode
+                }
+            },
             callback = { goods, binding, position ->
                 binding.goods = goods
                 binding.addSub.visibility = View.INVISIBLE

@@ -70,7 +70,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         )
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
 
-        viewModel!!.getOrdersOfSupplier(where)
+        viewModel!!.getAllOfOrders(where)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)

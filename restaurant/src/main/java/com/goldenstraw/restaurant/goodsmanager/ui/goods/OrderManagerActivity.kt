@@ -138,7 +138,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
         when (item?.itemId) {
             R.id.action_shopping_cart -> {
                 var intent = Intent()
-                intent.setClass(this, ShoppingCartManagerActivity::class.java)
+                intent.setClass(this, SubscribeGoodsManagerActivity::class.java)
                 startActivityForResult(intent, 1)
             }
             R.id.action_add_goods_item -> {

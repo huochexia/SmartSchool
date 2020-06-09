@@ -18,7 +18,7 @@ interface IQueryOrdersManager {
     /**
      * 按日期查询供应商的订单
      */
-    fun getOrderOfSupplier(where: String): Observable<MutableList<OrderItem>>
+    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>>
 
     /**
      * 修改订单

@@ -12,7 +12,7 @@ import io.reactivex.Observable
 interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
     fun getAllSupplier(): Observable<MutableList<User>>
 
-    fun getOrdersOfSupplier(where: String): Observable<MutableList<OrderItem>>
+    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>>
 
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
 
@@ -33,10 +33,10 @@ class RemoteQueryOrdersDataSourceImpl(
     /**
      *
      */
-    override fun getOrdersOfSupplier(
+    override fun getAllOfOrders(
         where: String
     ): Observable<MutableList<OrderItem>> {
-        return manager.getOrderOfSupplier(where)
+        return manager.getAllOfOrders(where)
     }
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
