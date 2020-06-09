@@ -25,6 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 /**
@@ -82,12 +83,45 @@ class CookBookViewModel(
     /*
     查询，使用协程调用Bmob的Api进行查询。对结果通过groupBy进行分组。
      */
+    suspend fun getCookBookOfCategory2(category: String){
+        launchFlow {
+            val where ="\"foodCategory\":\"$category\""
+            repository.getCookBookOfCategory(where)
+        }.onStart {
+            groupbyKind.clear()
+        }.collect{
+            if(it.isSuccess()){
+                cookbookList = it.results as MutableList<CookBook>
+                Observable.fromIterable(cookbookList)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .groupBy {
+                        it.foodKind
+                    }
+                    .autoDisposable(this@CookBookViewModel)
+                    .subscribe({
+                        groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
+                        it.autoDisposable(this@CookBookViewModel)
+                            .subscribe { cookbook ->
+                                groupbyKind[it!!.key]!!.add(cookbook)//将对应分类的菜谱，存入对应的列表中
+                            }
+                    }, {}, {
+                        defUI.refreshEvent.call()//发出刷新数据通知
+                    })
+            }else{
+                defUI.showDialog.postValue(it.error)
+            }
+        }
+
+    }
     fun getCookBookOfCategory(category: String) {
         //清空原内容
         groupbyKind.clear()
         launchUI {
+
             val query = BmobQuery<CookBook>()
             query.addWhereEqualTo("foodCategory", category)
+            query.setLimit(500)
             query.findObjects(object : FindListener<CookBook>() {
                 override fun done(list: MutableList<CookBook>?, e: BmobException?) {
                     if (e == null) {

@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
-import androidx.paging.DataSource
 import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
@@ -12,7 +11,6 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import kotlinx.coroutines.Deferred
 
 /**
  * 访问远程数据接口
@@ -39,7 +37,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     /*
     查询
      */
-    fun getCookBookOfCategory(where: String): DataSource.Factory<Int, CookBook>
+    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 
 }
@@ -74,7 +72,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.updateDailyMeal(newDailyMeal, objectId)
     }
 
-    override fun getCookBookOfCategory(where: String): Factory<Int, CookBook> {
+    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook> {
         return manager.getCookBookOfCategory(where)
     }
 

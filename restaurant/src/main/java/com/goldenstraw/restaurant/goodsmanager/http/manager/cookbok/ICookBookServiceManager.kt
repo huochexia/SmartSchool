@@ -37,6 +37,6 @@ interface ICookBookServiceManager {
     /*
     查询
      */
-    fun getCookBookOfCategory(where: String): DataSource.Factory<Int, CookBook>
+    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 }

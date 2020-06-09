@@ -63,10 +63,10 @@ interface CookBookApi {
     @GET("/1/classes/DailyMeal/")
     suspend fun getDailyMealOfDate(@Query("where") where: String): ObjectList<DailyMeal>
 
-    //查询某类菜谱,这里使用PagedList
+    //查询某类菜谱
     @GET("/1/classes/CookBook/")
     fun getCookBookOfCategory(
         @Query("where") where: String,
         @Query("limit") limit: Int = 500
-    ): DataSource.Factory<Int, CookBook>
+    ):ObjectList<CookBook>
 }

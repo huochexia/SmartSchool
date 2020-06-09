@@ -61,7 +61,7 @@ class CookBookRepository(
     /*
     查询
      */
-    fun getCookBookOfCategory(where: String): DataSource.Factory<Int, CookBook> {
+    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook> {
         return remote.getCookBookOfCategory(where)
     }
 

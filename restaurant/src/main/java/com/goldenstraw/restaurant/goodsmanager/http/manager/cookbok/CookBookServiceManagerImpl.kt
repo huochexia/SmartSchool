@@ -44,7 +44,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)
     }
 
-    override fun getCookBookOfCategory(where: String): Factory<Int, CookBook> {
+    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook> {
         return serviceApi.getCookBookOfCategory(where)
     }
 
