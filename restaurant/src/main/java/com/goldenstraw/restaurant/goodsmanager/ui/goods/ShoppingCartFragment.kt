@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentShoppingCartBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
+import com.goldenstraw.restaurant.goodsmanager.di.prefsModule
+import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
@@ -41,11 +43,12 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
         get() = R.layout.fragment_shopping_cart
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
-        import(shoppingcartdatasource)
+        import(prefsModule)
     }
     private val repository by instance<ShoppingCartRepository>()
     var viewModel: ShoppingCartMgViewModel? = null
     var adapter: BaseDataBindingAdapter<GoodsOfShoppingCart, LayoutShoppingCartItemBinding>? = null
+
     private val prefs by instance<PrefsHelper>()
 
     override fun initView() {
