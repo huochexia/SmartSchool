@@ -2,7 +2,11 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.ViewGroup.LayoutParams
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -30,6 +34,9 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+/**
+ * 订制每日菜单
+ */
 class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     private val prefs by instance<PrefsHelper>()
@@ -72,7 +79,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             dailyDate = it.getString("mealdate")
         }
 
-        toolbar.title = "${dailyDate}菜单"
+        toolbar_daily_meal.title = "${dailyDate}菜单"
         mealTime = MealTime.Breakfast.time
 
         where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
@@ -136,6 +143,8 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar_daily_meal)
+        setHasOptionsMenu(true)
 
         viewModel = activity!!.getViewModel {
             CookBookViewModel(respository)
@@ -324,7 +333,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         rlw_snack_detail.setOnItemMenuClickListener(mSnackItemMenuClickListener)
     }
 
-    fun deleteDialog(dailyMeal: DailyMeal) {
+    private fun deleteDialog(dailyMeal: DailyMeal) {
         AlertDialog.Builder(context)
             .setMessage("确定要删除\"${dailyMeal.cookBook.foodName}\"吗?")
             .setNegativeButton("否") { dialog, which ->
@@ -355,5 +364,20 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     }
                 }
             }.create().show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_copy_daily_meal, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.copy_daily_meal -> {
+                viewModel.isCopy = true
+            }
+        }
+        return true
     }
 }

@@ -9,8 +9,8 @@ import cn.bmob.v3.listener.FindListener
 import cn.bmob.v3.listener.SaveListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
+import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
@@ -48,8 +48,14 @@ class CookBookViewModel(
 
     val materialList = mutableListOf<Goods>()
     var cookbookList = mutableListOf<CookBook>()
+
     //分组列表，key-value:key为小类，value为内容列表
     var groupbyKind = hashMapOf<String, MutableList<CookBook>>()
+
+    /*
+      在日期选择页面中用于区分是否是复制菜单
+     */
+    var isCopy = false
 
     /*
      一、 增加菜谱
@@ -83,14 +89,14 @@ class CookBookViewModel(
     /*
     查询，使用协程调用Bmob的Api进行查询。对结果通过groupBy进行分组。
      */
-    suspend fun getCookBookOfCategory2(category: String){
+    suspend fun getCookBookOfCategory2(category: String) {
         launchFlow {
-            val where ="\"foodCategory\":\"$category\""
+            val where = "\"foodCategory\":\"$category\""
             repository.getCookBookOfCategory(where)
         }.onStart {
             groupbyKind.clear()
-        }.collect{
-            if(it.isSuccess()){
+        }.collect {
+            if (it.isSuccess()) {
                 cookbookList = it.results as MutableList<CookBook>
                 Observable.fromIterable(cookbookList)
                     .subscribeOn(Schedulers.io())
@@ -108,12 +114,13 @@ class CookBookViewModel(
                     }, {}, {
                         defUI.refreshEvent.call()//发出刷新数据通知
                     })
-            }else{
+            } else {
                 defUI.showDialog.postValue(it.error)
             }
         }
 
     }
+
     fun getCookBookOfCategory(category: String) {
         //清空原内容
         groupbyKind.clear()
@@ -235,8 +242,37 @@ class CookBookViewModel(
         }
     }
 
+    /*
+    拷贝某一天菜单
+     */
+    fun copyDailyMeal(newDate:String,oldDate:String) {
+        launchUI {
+            launchFlow {
+                val where="{\"mealDate\":\"$oldDate\"}"
+                repository.getDailyMealOfDate(where)
+            }.flowOn(Dispatchers.IO)
+                .collect {
+                    if (it.isSuccess()) {
+                        Observable.fromIterable(it.results)
+                            .map { oldDailyMeal ->
+                                val newDailyMeal = NewDailyMeal(
+                                    oldDailyMeal.mealTime,
+                                    newDate,
+                                    oldDailyMeal.cookBook
+                                )
+                                newDailyMeal
+                            }
+                            .autoDisposable(this@CookBookViewModel)
+                            .subscribe { new ->
+                                createDailyMeal(new)
+                            }
+                    }
+                }
+        }
+    }
+
     fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String) {
-       launchUI{
+        launchUI {
             repository.updateDailyMeal(newDailyMeal, objectId)
         }
     }
@@ -246,6 +282,7 @@ class CookBookViewModel(
             repository.deleteDailyMeal(objectId)
         }
     }
+
     /*
     生成某日某时段菜单
      */

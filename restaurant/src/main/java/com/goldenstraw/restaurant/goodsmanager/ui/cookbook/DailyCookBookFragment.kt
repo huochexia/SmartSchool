@@ -6,12 +6,16 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentDailyMealSelectDateBinding
+import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
+import com.owner.basemodule.base.viewmodel.getViewModel
 import kotlinx.android.synthetic.main.fragment_single_date_select.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>(),
     CalendarView.OnCalendarSelectListener {
@@ -24,6 +28,10 @@ class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>()
         extend(parentKodein, copy = Copy.All)
     }
 
+    private val respository by instance<CookBookRepository>()
+
+    lateinit var viewModel: CookBookViewModel
+
     override fun initView() {
         //点击小日历返回当前日期
         fl_current.setOnClickListener { calendarView.scrollToCurrent() }
@@ -34,6 +42,13 @@ class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>()
         tv_month_day.text = calendarView.curMonth.toString() + "月" + calendarView.curDay + "日"
         tv_current_day.text = calendarView.curDay.toString()
         tv_lunar.text = "今日"
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = activity!!.getViewModel {
+            CookBookViewModel(respository)
+        }
     }
 
     private fun getCalendar(year: Int, month: Int, day: Int): Calendar {
@@ -78,7 +93,9 @@ class DailyCookBookFragment : BaseFragment<FragmentDailyMealSelectDateBinding>()
             }
             val date = calendar.year.toString() + "-" + month + "-" + day
             bundle.putString("mealdate", date)
+
             findNavController().navigate(R.id.dailyMealTimeFragment, bundle)
+
         }
     }
 
