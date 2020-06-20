@@ -31,7 +31,7 @@
     </fragment>
     <fragment
             android:id="@+id/dailyCookBookFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyCookBookFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.DailyMealDateFragment"
             android:label="DailyCookBookFragment"
             tools:layout="@layout/fragment_daily_meal_select_date">
         <action

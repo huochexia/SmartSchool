@@ -16,6 +16,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
+import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.Goods
 import com.uber.autodispose.autoDisposable
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 使用协程。对菜谱的管理（增删），对每日菜单的管理（增改）
@@ -52,10 +54,7 @@ class CookBookViewModel(
     //分组列表，key-value:key为小类，value为内容列表
     var groupbyKind = hashMapOf<String, MutableList<CookBook>>()
 
-    /*
-      在日期选择页面中用于区分是否是复制菜单
-     */
-    var isCopy = false
+
 
     /*
      一、 增加菜谱
@@ -258,14 +257,21 @@ class CookBookViewModel(
                                 val newDailyMeal = NewDailyMeal(
                                     oldDailyMeal.mealTime,
                                     newDate,
-                                    oldDailyMeal.cookBook
+                                    oldDailyMeal.cookBook,
+                                    oldDailyMeal.isOfTeacher
+
                                 )
                                 newDailyMeal
                             }
                             .autoDisposable(this@CookBookViewModel)
-                            .subscribe { new ->
+                            .subscribe({ new ->
                                 createDailyMeal(new)
-                            }
+                            }, {}, {
+                                val where =
+                                    "{\"\$and\":[{\"mealTime\":\"${MealTime.Breakfast.time}\"}" +
+                                            ",{\"mealDate\":\"$newDate\"}]}"
+                                getDailyMealOfDate(where)
+                            })
                     }
                 }
         }
@@ -288,7 +294,9 @@ class CookBookViewModel(
      */
     fun createDailyMeal(newDailyMeal: NewDailyMeal) {
         launchUI {
-            repository.createDailyMeal(newDailyMeal)
+            withContext(Dispatchers.IO) {
+                repository.createDailyMeal(newDailyMeal)
+            }
         }
     }
 }

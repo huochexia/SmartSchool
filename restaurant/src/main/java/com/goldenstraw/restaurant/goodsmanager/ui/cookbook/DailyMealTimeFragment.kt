@@ -1,6 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -33,6 +36,8 @@ import kotlinx.android.synthetic.main.viewpage_of_daily_meal.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+import java.util.*
+
 
 /**
  * 订制每日菜单
@@ -375,9 +380,43 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
         when (item.itemId) {
             R.id.copy_daily_meal -> {
-                viewModel.isCopy = true
+                showDatePickerDialog(activity, 0, Calendar.getInstance())
             }
         }
         return true
     }
+
+    /**
+     * 日期选择器，确定后复印选择日期的菜单到当前日期
+     */
+    private fun showDatePickerDialog(
+        activity: Activity?,
+        themeResId: Int,
+        calendar: Calendar
+    ) {
+        // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
+        DatePickerDialog(activity, themeResId,
+            OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                // 绑定监听器(How the parent is notified that the date is set.)
+                // 此处得到选择的时间，可以进行你想要的操作
+                var month = if (monthOfYear + 1 < 10) {
+                    "0${monthOfYear + 1}"
+                } else {
+                    "${monthOfYear + 1}"
+                }
+                var day = if (dayOfMonth < 10) {
+                    "0${dayOfMonth}"
+                } else {
+                    "$dayOfMonth"
+                }
+                var copyDate = "$year-$month-$day"
+                viewModel.copyDailyMeal(dailyDate, copyDate)
+
+            } // 设置初始日期
+            , calendar[Calendar.YEAR]
+            , calendar[Calendar.MONTH]
+            , calendar[Calendar.DAY_OF_MONTH]).show()
+    }
+
+
 }
