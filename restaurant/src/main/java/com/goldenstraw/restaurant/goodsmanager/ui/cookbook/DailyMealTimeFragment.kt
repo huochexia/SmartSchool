@@ -148,8 +148,10 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar_daily_meal)
-        setHasOptionsMenu(true)
+        if(prefs.role == "厨师"){
+            (activity as AppCompatActivity).setSupportActionBar(toolbar_daily_meal)
+            setHasOptionsMenu(true)
+        }
 
         viewModel = activity!!.getViewModel {
             CookBookViewModel(respository)
