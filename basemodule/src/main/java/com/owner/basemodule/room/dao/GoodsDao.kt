@@ -1,6 +1,5 @@
 package com.owner.basemodule.room.dao
 
-import androidx.paging.DataSource
 import androidx.room.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
@@ -9,6 +8,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GoodsDao {
@@ -42,8 +42,10 @@ interface GoodsDao {
     @Query("SELECT * FROM goodscategory ORDER BY categoryName")
     fun getAllCategory(): Observable<MutableList<GoodsCategory>>
 
+
     @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
     fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
+
 
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
     fun findByName(name: String): Observable<MutableList<Goods>>
@@ -51,16 +53,19 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE objectId = :id")
     fun getGoodsFromObjectId(id: String): Flowable<Goods>
 
-    /*
-      使用Paging
+    /**
+     * 使用Flow方式获取数据
      */
-    @Query("SELECT * FROM Goods WHERE categoryCode = :code ORDER BY goodsName")
-    fun getAllGoodsOfPaging(code: String): DataSource.Factory<Int, Goods>
+    @Query("SELECT * FROM goodscategory ORDER BY categoryName")
+    fun getAllCategoryFlow(): Flow<List<GoodsCategory>>
+
+    @Query("SELECT * FROM Goods WHERE categoryCode = :categoryId  ORDER BY goodsName")
+    fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
 
     /*
        使用协程进行模糊查询
      */
-    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName" )
+    @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
     suspend fun searchMaterial(name: String): MutableList<Goods>
 
     @Query("SELECT COUNT() FROM GoodsOfShoppingCart")

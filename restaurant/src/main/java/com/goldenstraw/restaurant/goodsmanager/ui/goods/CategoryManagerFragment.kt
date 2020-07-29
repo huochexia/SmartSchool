@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
@@ -39,11 +39,14 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         import(goodsDataSourceModule)
     }
     private val repository by instance<GoodsRepository>()
+
     /*
       使用同一个Activity范围下的共享ViewModel
      */
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<GoodsCategory, LayoutGoodsCategoryBinding>? = null
+
+    var categoryFlow = mutableListOf<GoodsCategory>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -53,14 +56,15 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_category,
             dataBinding = { LayoutGoodsCategoryBinding.bind(it) },
-            dataSource = { viewModelGoodsTo!!.categoryList },
+            dataSource = { categoryFlow },
             callback = { goodsCategory, binding, _ ->
                 binding.apply {
                     category = goodsCategory
                     goodsEvent = object : Consumer<GoodsCategory> {
                         override fun accept(t: GoodsCategory) {
                             viewModelGoodsTo!!.selected.value = t
-                            viewModelGoodsTo!!.categoryList.forEach {
+
+                            categoryFlow.forEach {
                                 it.isSelected = false
                             }
                             t.isSelected = true
@@ -78,10 +82,22 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
 
         )
 
-        viewModelGoodsTo!!.getIsRefresh().observe(this, Observer {
-            if (it)
-                adapter!!.forceUpdate()
-        })
+//        viewModelGoodsTo!!.getIsRefresh().observe(viewLifecycleOwner, Observer {
+//            if (it)
+//                adapter!!.forceUpdate()
+//        })
+        /*
+         * 因为从Room中得到的Flow转换LiveData后，数据库中数据的变化都会被观察到，
+         * 所以对数据的任何操作（增改删）都不需要再额外添加刷新列表的操作
+         */
+        viewModelGoodsTo!!.categoryListFlow.observe(viewLifecycleOwner) {
+            categoryFlow = it as MutableList<GoodsCategory>
+            categoryFlow.first().let { it ->
+                it.isSelected = true
+                viewModelGoodsTo!!.selected.value = it
+            }
+            adapter!!.forceUpdate()
+        }
         initSwipeMenu()
     }
 
@@ -119,7 +135,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 -1 -> {
                     when (menuBridge.position) {
                         0 -> {
-                            val category = viewModelGoodsTo!!.categoryList[adapterPosition]
+                            val category = categoryFlow[adapterPosition]
                             updateDialog(category)
                         }
                     }
@@ -159,15 +175,15 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
 
-                viewModelGoodsTo!!.deleteCategory(viewModelGoodsTo!!.categoryList[position])
+                viewModelGoodsTo!!.deleteCategory(categoryFlow[position])
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                     }, {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
                     })
-                viewModelGoodsTo!!.categoryList.removeAt(position)
-                adapter!!.forceUpdate()
+//                categoryFlow.removeAt(position)
+//                adapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -197,7 +213,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                     viewModelGoodsTo!!.updateCategory(category)
                         .subscribeOn(Schedulers.computation())
                         .subscribe()
-                    adapter!!.forceUpdate()
+//                    adapter!!.forceUpdate()
                     dialog.dismiss()
                 }
             }.create()

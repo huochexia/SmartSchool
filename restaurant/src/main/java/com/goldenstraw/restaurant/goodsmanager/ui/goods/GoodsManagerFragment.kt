@@ -9,15 +9,14 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.bumptech.glide.Glide
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
-import com.goldenstraw.restaurant.goodsmanager.adapter.PageDataBindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -47,12 +46,17 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
 
         import(goodsDataSourceModule)
     }
+
     //通过Kodein容器检索对象
-    private val repository  by instance<GoodsRepository>()
+    private val repository by instance<GoodsRepository>()
+
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
-    lateinit var pagingAdapter: PageDataBindingAdapter<LayoutGoodsItemBinding>
+//    lateinit var pagingAdapter: PageDataBindingAdapter<LayoutGoodsItemBinding>
+
+    var goodsList = mutableListOf<Goods>()
+
     val images =
         mutableListOf(R.mipmap.blueshipin, R.mipmap.zhurou, R.mipmap.shucai, R.mipmap.tiaoliao)
 
@@ -63,7 +67,9 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         }
         adapter = BaseDataBindingAdapter(
             layoutId = R.layout.layout_goods_item,
-            dataSource = { viewModelGoodsTo!!.goodsList },
+            dataSource = {
+                goodsList
+            },
             dataBinding = { LayoutGoodsItemBinding.bind(it) },
             callback = { goods, binding, position ->
                 binding.goods = goods
@@ -82,40 +88,16 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }
             }
         )
-        /*
-        分页Adapter
-         */
-        pagingAdapter = PageDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.checkEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        t.isChecked = !t.isChecked
-                        binding.cbGoods.isChecked = t.isChecked
-                    }
-                }
-                binding.cbGoods.isChecked = goods.isChecked
-                binding.addSub
-                    .setCurrentNumber(goods.quantity)
-                    .setPosition(position)
-                    .setOnChangeValueListener { value, position ->
-                        goods.quantity = value
-                    }
-            }
-        )
+
 
         viewModelGoodsTo!!.selected.observe(viewLifecycleOwner, Observer {
-            viewModelGoodsTo!!.getGoodsOfCategory(it)
-            adapter!!.forceUpdate()
+            viewModelGoodsTo!!.fetchGoodsListFlow(it.objectId).observe(viewLifecycleOwner){goodslist->
+                goodsList = goodslist as MutableList<Goods>
+                adapter!!.forceUpdate()
+            }
         })
 
-        viewModelGoodsTo!!.allGoods?.observe(viewLifecycleOwner, Observer {
-            viewModelGoodsTo!!.goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
-            pagingAdapter.submitList(it)
 
-        })
         viewModelGoodsTo!!.isGoodsListRefresh.observe(viewLifecycleOwner, Observer {
             if (it) {
                 adapter!!.forceUpdate()
@@ -174,7 +156,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 }
                 1 -> {
 
-                    updateDialog(viewModelGoodsTo!!.goodsList[adapterPosition])
+                    updateDialog(goodsList[adapterPosition])
                 }
             }
         }
@@ -197,15 +179,14 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
 
-                viewModelGoodsTo!!.deleteGoods(viewModelGoodsTo!!.goodsList[position])
+                viewModelGoodsTo!!.deleteGoods(goodsList[position])
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                     }, {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
                     })
-                viewModelGoodsTo!!.goodsList.removeAt(position)
-                adapter!!.forceUpdate()
+//
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -242,7 +223,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     goods.unitPrice = price
                     viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
                         .subscribe()
-                    adapter!!.forceUpdate()
+//                    adapter!!.forceUpdate()
                     dialog.dismiss()
                 }
             }.create()
@@ -253,17 +234,17 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCart(viewModelGoodsTo!!.goodsList)
+        viewModelGoodsTo!!.addGoodsToShoppingCart(goodsList)
         //还原商品信息
         var selectedList = mutableListOf<Goods>()
-        viewModelGoodsTo!!.goodsList.forEach {
+        goodsList.forEach {
             if (it.isChecked) {
                 it.isChecked = false
                 it.quantity = 1
                 selectedList.add(it)
             }
         }
-        viewModelGoodsTo!!.goodsList.removeAll(selectedList)
+        goodsList.removeAll(selectedList)
         adapter!!.forceUpdate()
     }
 }

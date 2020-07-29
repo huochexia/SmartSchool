@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
-import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
@@ -14,6 +13,7 @@ import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 /**
  * 商品数据源，需要处理来自本地和远程的数据，所以它要继承同时拥有两个数据源的类
@@ -167,11 +167,15 @@ class GoodsRepository(
         return local.getGoodsFromObjectId(id)
     }
 
-    /*
-         使用分页获取商品列表
-        */
-    fun getAllGoodsOfPaging(category: GoodsCategory): DataSource.Factory<Int, Goods> {
-        return local.getGoodsOfPagind(category.objectId)
+    /**
+     * 使用Flow方式从本地获取数据
+     */
+
+    val categorysFlow = local.getAllCategoryFlow()
+
+
+    suspend fun getGoodsOfCategoryFromLocalFlow(categoryId: String): Flow<List<Goods>> {
+        return local.getGoodsOfCategoryFlow(categoryId)
     }
 
     /*

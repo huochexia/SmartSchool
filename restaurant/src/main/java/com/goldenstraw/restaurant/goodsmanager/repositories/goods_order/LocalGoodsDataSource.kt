@@ -1,7 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
-import androidx.paging.DataSource
-import androidx.paging.DataSource.Factory
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.Goods
@@ -11,6 +9,7 @@ import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Administrator on 2019/10/12 0012
@@ -45,11 +44,18 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getGoodsFromObjectId(id: String): Observable<Goods>
 
-    fun getGoodsOfPagind(code: String): DataSource.Factory<Int, Goods>
-
     fun findByName(name: String): Observable<MutableList<Goods>>
 
     fun getShoppingCartCount(): Single<Int>
+
+    /**
+     * 使用Flow方式获取数据
+     *
+     */
+
+    fun getAllCategoryFlow(): Flow<List<GoodsCategory>>
+
+    suspend fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
 
     /**
      * 删除
@@ -123,12 +129,6 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().getGoodsFromObjectId(id).toObservable()
     }
 
-    /*
-      使用Paging
-     */
-    override fun getGoodsOfPagind(code: String): Factory<Int, Goods> {
-        return database.goodsDao().getAllGoodsOfPaging(code)
-    }
 
     override fun findByName(name: String): Observable<MutableList<Goods>> {
         return database.goodsDao().findByName(name)
@@ -136,6 +136,18 @@ class LocalGoodsDataSourceImpl(
 
     override fun getShoppingCartCount(): Single<Int> {
         return database.goodsDao().getShoppingCartOfCount()
+    }
+
+
+    /**
+     * 使用Flow方式获取数据
+     */
+    override fun getAllCategoryFlow(): Flow<List<GoodsCategory>> {
+        return database.goodsDao().getAllCategoryFlow()
+    }
+
+    override  suspend fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>> {
+        return database.goodsDao().getGoodsOfCategoryFlow(categoryId)
     }
 
     /**
