@@ -23,6 +23,9 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+/**
+ * 录入菜谱
+ */
 class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
 
     lateinit var cookCategory: String

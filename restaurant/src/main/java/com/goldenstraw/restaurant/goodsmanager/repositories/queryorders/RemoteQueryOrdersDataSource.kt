@@ -14,6 +14,10 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
 
     fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>>
 
+    suspend fun getUnitPriceOfOrder(where: String): ObjectList<OrderItem>
+
+    suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String)
+
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
 
     fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
@@ -43,6 +47,14 @@ class RemoteQueryOrdersDataSourceImpl(
         where: String
     ): Observable<MutableList<OrderItem>> {
         return manager.getAllOfOrders(where)
+    }
+
+    override suspend fun getUnitPriceOfOrder(where: String): ObjectList<OrderItem> {
+        return manager.getUnitPriceOfOrders(where)
+    }
+
+    override suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String) {
+        manager.updateUnitPrice(newPrice, objectId)
     }
 
     override fun getAllSupplier(): Observable<MutableList<User>> {

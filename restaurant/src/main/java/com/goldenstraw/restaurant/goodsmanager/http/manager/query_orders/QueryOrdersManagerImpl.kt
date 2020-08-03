@@ -99,6 +99,14 @@ class QueryOrdersManagerImpl(
         service.deleteOrderItem(objectId)
     }
 
+    override suspend fun getUnitPriceOfOrders(where: String): ObjectList<OrderItem> {
+        return service.getUnitPriceOfOrders(where)
+    }
+
+    override suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String) {
+        service.updateUnitPriceOfOrders(newPrice, objectId)
+    }
+
     override suspend fun updateOrderItemQuantityAndNote(
         newOrder: ObjectQuantityAndNote,
         objectId: String

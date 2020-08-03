@@ -53,6 +53,12 @@ data class ObjectState(
 data class ObjectQuantity(
     var quantity: Float
 )
+/*
+  修改订单单价
+ */
+data class ObjectUnitPrice(
+    var unitPrice: Float
+)
 
 /*
     修改订单数量和备注

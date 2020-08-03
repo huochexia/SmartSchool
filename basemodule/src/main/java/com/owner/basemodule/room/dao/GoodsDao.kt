@@ -54,7 +54,7 @@ interface GoodsDao {
     fun getGoodsFromObjectId(id: String): Flowable<Goods>
 
     /**
-     * 使用Flow方式获取数据
+     * 使用Flow方式获取数据,因为数据发生变化时要能够被观察到，所以这里将返回值设为Flow。
      */
     @Query("SELECT * FROM goodscategory ORDER BY categoryName")
     fun getAllCategoryFlow(): Flow<List<GoodsCategory>>

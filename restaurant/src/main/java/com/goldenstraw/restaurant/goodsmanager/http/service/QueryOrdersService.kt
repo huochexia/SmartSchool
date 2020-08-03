@@ -28,6 +28,24 @@ interface QueryOrdersApi {
     ): Observable<ObjectList<OrderItem>>
 
     /**
+     * 使用协程获取某个商品订单
+     */
+    @GET("/1/classes/OrderItem")
+    suspend fun getUnitPriceOfOrders(
+        @Query("where") where: String,
+        @Query("order") order: String = "-createdAt"
+    ): ObjectList<OrderItem>
+
+    /**
+     * 修改订单的单价信息
+     */
+    @PUT("/1/classes/OrderItem/{ObjectId}")
+    suspend fun updateUnitPriceOfOrders(
+        @Body newPriceOfOrders: ObjectUnitPrice,
+        @Path("ObjectId") objectId: String
+    )
+
+    /**
      * 删除尚未做任何处理的订单，主要是厨师提交订单后的删除
      */
     @DELETE("/1/classes/OrderItem/{ObjectId}")

@@ -39,6 +39,8 @@ abstract class BaseFragment<B : ViewDataBinding>
 
     abstract val layoutId: Int //由具体子类提供，所以子类必须实现这个变量
 
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mRootView = LayoutInflater.from(context).inflate(layoutId, container, false)
@@ -51,6 +53,7 @@ abstract class BaseFragment<B : ViewDataBinding>
         initBinding(view)
         initView()
     }
+
 
     /*
     对外暴露的空方法，具体类可以改写

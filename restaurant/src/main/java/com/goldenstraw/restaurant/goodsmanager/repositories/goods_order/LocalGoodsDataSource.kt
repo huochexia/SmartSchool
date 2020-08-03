@@ -55,7 +55,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getAllCategoryFlow(): Flow<List<GoodsCategory>>
 
-    suspend fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
+    fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
 
     /**
      * 删除
@@ -146,7 +146,7 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().getAllCategoryFlow()
     }
 
-    override  suspend fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>> {
+    override   fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>> {
         return database.goodsDao().getGoodsOfCategoryFlow(categoryId)
     }
 

@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.kennyc.view.MultiStateView
@@ -13,6 +14,9 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class QueryOrdersViewModel(
@@ -169,9 +173,9 @@ class QueryOrdersViewModel(
                 Observable.fromIterable(it)
             }
             .distinct() //去重复
-            .flatMap {
-                getGoodsFromObjectId(it.objectId)
-            }
+//            .flatMap {
+//                getGoodsFromObjectId(it.objectId)
+//            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
@@ -230,6 +234,23 @@ class QueryOrdersViewModel(
         launchUI {
             repository.updateOrderItem(newOrderItem, objectId)
             defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 查询到符合条件的订单，然后修改它的单价
+     */
+    fun updateUnitPriceOfOrders(where: String, newPrice: Float) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val ordersItemList = repository.getUnitPriceOfOrders(where)
+                val newPrice = ObjectUnitPrice(newPrice)
+                ordersItemList?.let {//不为null说明成功
+                    if (it.isNotEmpty()) {//不是空列表，有内容才能执行修改
+                        repository.updateUnitPriceOfOrders(newPrice, it.first().objectId)
+                    }
+                }
+            }
         }
     }
 }

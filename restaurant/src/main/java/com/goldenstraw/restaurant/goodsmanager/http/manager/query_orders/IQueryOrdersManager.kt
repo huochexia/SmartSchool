@@ -31,6 +31,16 @@ interface IQueryOrdersManager {
     suspend fun deleteOrderItem(objectId: String)
 
     /**
+     *  获取某个订单
+     */
+    suspend fun getUnitPriceOfOrders(where: String): ObjectList<OrderItem>
+
+    /**
+     * 修改订单的单价
+     */
+    suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String)
+
+    /**
      * 修改订单数量和备注信息
      */
     suspend fun updateOrderItemQuantityAndNote(newOrder: ObjectQuantityAndNote, objectId: String)

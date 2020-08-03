@@ -27,7 +27,8 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
- * 调整价格，当供应商提交新单价时，管理员对新价格进行确认、取消或重新指定价格。
+ * 调整价格，当供应商提交新单价时，管理员对新价格进行确认或取消。
+ * 当确认时需要修改两个地方的单价：一是商品信息，二是尚未录入即状态为4的订单单价
  */
 class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBinding>() {
     override val layoutId: Int
@@ -95,15 +96,25 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
                 //新价格清零，原价格改为新价格
                 val newGoods = NewPrice(0.0f, newPrice)
                 goods.unitPrice = newPrice
-
+                //修改商品信息中的单价
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
                     .subscribeOn(Schedulers.io())
                     .subscribe()
+                //修改订单中单价
+                updatePriceOfOrders(goods.goodsName, newPrice)
                 adapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
 
+    }
+
+    /**
+     * 修改订单中的单价。首先依据商品名称和状态不等于4为条件，找到订单，然后对这个订单进行修改
+     */
+    private fun updatePriceOfOrders(goodsName: String, newPrice: Float) {
+        val where = "{\"\$and\":[{\"goodsName\":\"$goodsName\"},{\"state\":{\"\$in\":[1,2,3]}}]}"
+        viewModel!!.updateUnitPriceOfOrders(where, newPrice)
     }
 
     /**

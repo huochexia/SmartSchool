@@ -174,7 +174,7 @@ class GoodsRepository(
     val categorysFlow = local.getAllCategoryFlow()
 
 
-    suspend fun getGoodsOfCategoryFromLocalFlow(categoryId: String): Flow<List<Goods>> {
+    fun getGoodsOfCategoryFromLocalFlow(categoryId: String): Flow<List<Goods>> {
         return local.getGoodsOfCategoryFlow(categoryId)
     }
 

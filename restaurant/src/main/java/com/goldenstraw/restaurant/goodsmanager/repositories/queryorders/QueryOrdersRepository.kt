@@ -20,10 +20,29 @@ class QueryOrdersRepository(
     }
 
     /**
-     *按日期获取供应商订单
+     *按条件获取供应商订单
      */
     fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>> {
         return remote.getAllOfOrders(where)
+    }
+
+    /**
+     * 使用协程的方式，按条件获取订单.
+     */
+    suspend fun getUnitPriceOfOrders(where: String): MutableList<OrderItem>?{
+        val list = remote.getUnitPriceOfOrder(where)
+        return if (list.isSuccess())
+            list.results
+        else
+            null
+
+    }
+
+    /**
+     * 修改订单的单价
+     */
+    suspend fun updateUnitPriceOfOrders(newPrice: ObjectUnitPrice, objectId: String) {
+        remote.updateUnitPrice(newPrice, objectId)
     }
 
     /**
