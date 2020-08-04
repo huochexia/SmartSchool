@@ -11,10 +11,12 @@ import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityNextWeekGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
+import com.goldenstraw.restaurant.databinding.ViewpageOfCookKindBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewPrice
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
+import com.google.android.material.tabs.TabLayoutMediator
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.activity.BaseActivity
@@ -27,6 +29,9 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+/**
+ * 获取下个月需要的商品信息。分类显示
+ */
 class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
     override val layoutId: Int
         get() = R.layout.activity_next_week_goods
@@ -38,7 +43,12 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
     private val repository by instance<QueryOrdersRepository>()
 
     var viewModel: QueryOrdersViewModel? = null
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+
+    //    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+    var vpAdapter: BaseDataBindingAdapter<String, ViewpageOfCookKindBinding>? = null
+
+    var tabLayoutMediator: TabLayoutMediator? = null
+
     var state = ObservableField<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,35 +56,44 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
         viewModel = getViewModel {
             QueryOrdersViewModel(repository)
         }
+        vpAdapter = BaseDataBindingAdapter(
+            layoutId = R.layout.viewpage_of_cook_kind,
+            dataSource = { viewModel!!.groupbyCategoryOfGoods.keys.toList() },
+            dataBinding = { ViewpageOfCookKindBinding.bind(it) },
+            callback = { category, binding, _ ->
+                var adapter = BaseDataBindingAdapter(
+                    layoutId = R.layout.layout_goods_item,
+                    dataBinding = { LayoutGoodsItemBinding.bind(it) },
+                    dataSource = {
+                        viewModel!!.groupbyCategoryOfGoods[category]!!
+                    },
+                    callback = { goods, binding, position ->
+                        binding.goods = goods
+                        binding.addSub.visibility = View.INVISIBLE
+                        binding.cbGoods.visibility = View.INVISIBLE
+                        binding.clickEvent = object : Consumer<Goods> {
+                            override fun accept(t: Goods) {
+                                popUpNewPriceDialog(goods)
+                            }
 
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            dataSource = {
-                viewModel!!.goodsList
-            },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.addSub.visibility = View.INVISIBLE
-                binding.cbGoods.visibility = View.INVISIBLE
-                binding.clickEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        popUpNewPriceDialog(goods)
+                        }
                     }
-
-                }
+                )
+                binding.rlvCookbook.adapter = adapter
             }
         )
+
+
         /*
          观察各种事件，刷新，错误提示，加载等
          */
         viewModel!!.defUI.refreshEvent.observe(this) {
-            if (viewModel!!.goodsList.isEmpty()) {
+            if (viewModel!!.groupbyCategoryOfGoods == null) {
                 state.set(MultiStateView.VIEW_STATE_EMPTY)
             } else {
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
-                category_goods_toolbar.title = "下周拟购商品（${viewModel!!.goodsList.size}）"
-                adapter!!.forceUpdate()
+                category_goods_toolbar.title = "下周拟购商品"
+                vpAdapter!!.forceUpdate()
             }
         }
         viewModel!!.defUI.toastEvent.observe(this) {
@@ -87,6 +106,13 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
         viewModel!!.defUI.loadingEvent.observe(this) {
             state.set(MultiStateView.VIEW_STATE_LOADING)
         }
+        vp_goods.adapter = vpAdapter
+        tabLayoutMediator = TabLayoutMediator(tab_goods_category, vp_goods) { tab, position ->
+
+            tab.text = "" + (position + 1)
+
+        }
+        tabLayoutMediator?.attach()
         /*
          *默认是获取下周拟购商品信息
          * 可以通过菜
@@ -119,7 +145,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
                     .subscribeOn(Schedulers.io())
                     .subscribe()
-                adapter!!.forceUpdate()
+                vpAdapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()

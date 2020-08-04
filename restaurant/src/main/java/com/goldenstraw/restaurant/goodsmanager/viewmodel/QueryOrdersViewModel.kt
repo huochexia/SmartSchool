@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
@@ -30,6 +31,9 @@ class QueryOrdersViewModel(
 
     //商品列表
     var goodsList = mutableListOf<Goods>()
+
+    //按商品类别进行分类的映射表
+    var groupbyCategoryOfGoods = hashMapOf<String, MutableList<Goods>>()
 
     var viewState = ObservableField<Int>()
 
@@ -158,8 +162,8 @@ class QueryOrdersViewModel(
      *
      *  不过滤,用于管理员查看下周可能需要的所有商品
      */
+    @SuppressLint("AutoDispose")
     fun getAllCookBookOfDailyMeal() {
-        goodsList.clear()
         Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
             .flatMap { date ->
                 val where = "{\"mealDate\":\"$date\"}"
@@ -173,22 +177,30 @@ class QueryOrdersViewModel(
                 Observable.fromIterable(it)
             }
             .distinct() //去重复
-//            .flatMap {
-//                getGoodsFromObjectId(it.objectId)
-//            }
+            .flatMap {
+                getGoodsFromObjectId(it.objectId)
+            }
+
+            .groupBy {
+                it.categoryCode
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(this)
-            .subscribe({ goods ->
-                goodsList.add(goods)
+            .subscribe({ goodsList ->
+                goodsList.key?.let {
+                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
+                    goodsList.subscribe({ goods ->
+                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
+                    }, {
+                        defUI.toastEvent.value = it.message
+                    })
+                }
 
             }, {
                 defUI.toastEvent.value = it.message
             }, {
                 defUI.refreshEvent.call()
-                goodsList.sortBy {
-                    it.categoryCode
-                }
 
             }, {
                 defUI.loadingEvent.call()
