@@ -16,7 +16,6 @@
 package com.owner.basemodule.base
 
 import android.app.Application
-import cn.bmob.push.BmobPush
 import cn.bmob.v3.Bmob
 import cn.bmob.v3.BmobInstallation
 import cn.bmob.v3.BmobInstallationManager
