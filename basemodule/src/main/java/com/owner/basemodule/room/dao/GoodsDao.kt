@@ -50,7 +50,7 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
     fun findByName(name: String): Observable<MutableList<Goods>>
 
-    @Query("SELECT * FROM Goods WHERE objectId = :id")
+    @Query("SELECT * FROM Goods WHERE goods_id = :id")
     fun getGoodsFromObjectId(id: String): Flowable<Goods>
 
     /**
@@ -80,6 +80,13 @@ interface GoodsDao {
     @Delete
     fun deleteGoods(goods: Goods): Completable
 
+    /*
+        因为与菜谱的关联关系，所在删除商品时要在关系交叉表中也删除相应的内容
+        */
+    @Query("DELETE FROM CookBookGoodsCrossRef WHERE goods_id = :goodsid")
+    fun deleteCrossRefOfGoods(goodsid: String): Completable
+
+
     @Delete
     fun deleteCategory(category: GoodsCategory): Completable
 
@@ -91,6 +98,7 @@ interface GoodsDao {
 
     @Query("DELETE FROM goods")
     fun clearGoods(): Completable
+
 
     @Query("DELETE FROM goodscategory")
     fun clearCategory(): Completable

@@ -50,6 +50,7 @@ data class GoodsOfShoppingCart(
 @Entity
 data class Goods(
     @PrimaryKey
+    @ColumnInfo(name = "goods_id",typeAffinity = ColumnInfo.TEXT)
     val objectId: String,
     @ColumnInfo
     var goodsName: String,
