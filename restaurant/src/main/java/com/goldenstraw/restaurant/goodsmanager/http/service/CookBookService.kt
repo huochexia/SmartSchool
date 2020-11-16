@@ -1,14 +1,13 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
 import androidx.paging.DataSource
-import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CookBooks
 import retrofit2.http.*
 
 /**
@@ -20,8 +19,12 @@ interface CookBookApi {
      * 生成
      */
     //增加菜谱
-    @POST("/1/classes/CookBook")
-    suspend fun createCookBook(@Body newCookBook: CookBook): CreateObject
+    @POST("/1/classes/CookBooks")
+    suspend fun createCookBook(@Body newCookBook: NewCookBook): CreateObject
+
+    //增加菜谱与商品关系
+    @POST("/1/classes/CookBookGoodsCrossRef")
+    suspend fun createCrossRef(@Body newRef: NewCrossRef): CreateObject
 
     //增加每日菜单
     @POST("/1/classes/DailyMeal")
@@ -31,8 +34,12 @@ interface CookBookApi {
      删除
      */
     //删除菜谱
-    @DELETE("/1/classes/CookBook/{objectId}")
+    @DELETE("/1/classes/CookBooks/{objectId}")
     suspend fun deleteCookBook(@Path("objectId") objectId: String): DeleteObject
+
+    //删除关系
+    @DELETE("/1/classes/CookBookGoodsCrossRef/{objectId}")
+    suspend fun deleteCrossRef(@Path("objectId") objectId: String): DeleteObject
 
     //删除每日菜单
     @DELETE("/1/classes/DailyMeal/{objectId}")
@@ -42,9 +49,9 @@ interface CookBookApi {
       修改
      */
     //修改菜谱
-    @PUT("/1/classes/CookBook/{objectId}")
+    @PUT("/1/classes/CookBooks/{objectId}")
     suspend fun updateCookBook(
-        @Body newCookBook: CookBook,
+        @Body newCookBook: CookBooks,
         @Path("objectId") objectId: String
     ): UpdateObject
 
@@ -64,9 +71,9 @@ interface CookBookApi {
     suspend fun getDailyMealOfDate(@Query("where") where: String): ObjectList<DailyMeal>
 
     //查询某类菜谱
-    @GET("/1/classes/CookBook/")
+    @GET("/1/classes/CookBooks/")
     fun getCookBookOfCategory(
         @Query("where") where: String,
         @Query("limit") limit: Int = 500
-    ):ObjectList<CookBook>
+    ): ObjectList<CookBooks>
 }

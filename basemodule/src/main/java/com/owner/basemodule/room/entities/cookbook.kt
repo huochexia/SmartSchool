@@ -30,8 +30,9 @@ data class CookBooks(
  * 实现从网络获取所有关系，然后存入本地。
  * 暂时解决办法是给关系表增加一个字段：类别。按类别分别获取。同时还要限制菜谱对应商品的数量，最多4种。
  */
-@Entity(primaryKeys = ["cb_id", "goods_id"])
+@Entity(primaryKeys = ["objectId","cb_id", "goods_id"])
 data class CookBookGoodsCrossRef(
+    val objectId: String,
     val cb_id: String,
     val goods_id: String,
     @ColumnInfo

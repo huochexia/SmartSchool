@@ -1,15 +1,13 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
 import androidx.paging.DataSource.Factory
-import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.room.entities.CookBooks
 import kotlinx.coroutines.Deferred
 
 /**
@@ -17,7 +15,7 @@ import kotlinx.coroutines.Deferred
  */
 class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBookServiceManager {
 
-    override suspend fun createCookBook(newCookBook: CookBook): CreateObject {
+    override suspend fun createCookBook(newCookBook: NewCookBook): CreateObject {
         return serviceApi.createCookBook(newCookBook)
     }
 
@@ -25,15 +23,23 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.createDailyMeal(newDailyMeal)
     }
 
+    override suspend fun createCrossRef(newRef: NewCrossRef): CreateObject {
+        return serviceApi.createCrossRef(newRef)
+    }
+
     override suspend fun deleteCookBook(objectId: String): DeleteObject {
         return serviceApi.deleteCookBook(objectId)
+    }
+
+    override suspend fun deleteCrossRef(objectId: String): DeleteObject {
+        return serviceApi.deleteCrossRef(objectId)
     }
 
     override suspend fun deleteDailyMeal(objectId: String): DeleteObject {
         return serviceApi.deleteDailyMeal(objectId)
     }
 
-    override suspend fun updateCookBook(newCookBook: CookBook, objectId: String): UpdateObject {
+    override suspend fun updateCookBook(newCookBook: CookBooks, objectId: String): UpdateObject {
         return serviceApi.updateCookBook(newCookBook, objectId)
     }
 
@@ -44,7 +50,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)
     }
 
-    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBook> {
+    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
         return serviceApi.getCookBookOfCategory(where)
     }
 

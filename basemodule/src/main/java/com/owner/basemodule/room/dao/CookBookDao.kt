@@ -4,6 +4,7 @@ import androidx.room.*
 import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
+import kotlinx.coroutines.flow.Flow
 
 /**
  * 对菜谱的操作。主要是增加和删除功能。增加时要同时增加关系。删除时要同时删除关系。
@@ -13,18 +14,18 @@ import com.owner.basemodule.room.entities.CookBooks
 @Dao
 interface CookBookDao {
     /*
-    获取所有菜谱和它所需的商品
+    获取某类别所有菜谱和它所需的商品
      */
     @Transaction
-    @Query("SELECT * FROM CookBooks")
-    suspend fun getAllCookBookWithGoods(): MutableList<CookBookWithGoods>
+    @Query("SELECT * FROM CookBooks WHERE foodCategory = :category")
+    fun getAllCookBookWithGoods(category: String): Flow<MutableList<CookBookWithGoods>>
 
     /*
      通过CookBook的名字属性进行模糊查询
      */
     @Transaction
     @Query("SELECT * FROM CookBooks WHERE foodname LIKE  '%' || :name || '%' ORDER BY foodCategory")
-    suspend fun queryCookBookWithGoods(name: String): MutableList<CookBookWithGoods>
+    fun queryCookBookWithGoods(name: String): Flow<MutableList<CookBookWithGoods>>
 
     /*
     增加菜谱,也可以用于修改菜谱
@@ -53,6 +54,11 @@ interface CookBookDao {
      */
     @Delete
     suspend fun deleteCookBook(cookbook: CookBooks)
+    /*
+    删除交叉关系
+     */
+    @Delete
+    suspend fun deleteCrossRef(crossRef: CookBookGoodsCrossRef)
 
     @Query("DELETE FROM CookBookGoodsCrossRef WHERE cb_id = :cookbookid AND goods_id =:goodsid")
     suspend fun deleteCrossRef(cookbookid: String, goodsid: String)

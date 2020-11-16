@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.entities
 
 import cn.bmob.v3.BmobObject
 import cn.bmob.v3.exception.BmobException
+import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 
 /**
@@ -11,14 +12,20 @@ import com.owner.basemodule.room.entities.Goods
 /*
 菜谱
  */
-data class CookBook(
+data class NewCookBook(
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     var foodKind: String,//素菜，小荤，大荤
     var foodName: String,
-    var material: List<Goods>,
     var isSelected: Boolean = false
-) : BmobObject()
-
+)
+/*
+  菜谱与商品的新关联关系
+ */
+data class NewCrossRef(
+    var cb_id: String,
+    var goods_id: String,
+    var foodCategory: String
+)
 
 /*
  * 每日菜单
@@ -27,14 +34,14 @@ data class CookBook(
 data class DailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: CookBook,
+    var cookBook: CookBooks,
     var isOfTeacher: Boolean = false
 ) : BmobObject()
 
 data class NewDailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: CookBook,
+    var cookBook: CookBooks,
     var isOfTeacher: Boolean = false
 )
 
@@ -44,6 +51,7 @@ data class NewDailyMeal(
 data class UpdateIsteacher(
     var isOfTeacher: Boolean
 )
+
 /*
 返回结果:使用BmobApi执行网络数据管理的返回对象。
  */
