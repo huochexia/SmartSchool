@@ -30,7 +30,7 @@ interface ICookBookServiceManager {
     /*
     更新
      */
-    suspend fun updateCookBook(newCookBook: CookBooks, objectId: String): UpdateObject
+    suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject
     suspend fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String): UpdateObject
 
     /*

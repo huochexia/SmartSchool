@@ -6,11 +6,7 @@ import androidx.lifecycle.viewModelScope
 import cn.bmob.v3.BmobQuery
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.FindListener
-import cn.bmob.v3.listener.SaveListener
-import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
-import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
-import com.goldenstraw.restaurant.goodsmanager.http.entities.UpdateIsteacher
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
@@ -18,7 +14,9 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.util.ReturnResult
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -49,30 +47,50 @@ class CookBookViewModel(
     */
 
     val materialList = mutableListOf<Goods>()
-    var cookbookList = mutableListOf<CookBook>()
+    var cookbookList = mutableListOf<CookBooks>()
 
     //分组列表，key-value:key为小类，value为内容列表
-    var groupbyKind = hashMapOf<String, MutableList<CookBook>>()
-
+    var groupbyKind = hashMapOf<String, MutableList<CookBooks>>()
 
 
     /*
-     一、 增加菜谱
+     一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
+         创建关联关系对象，保存到网络和本地。
      */
-    fun createCookBook(newCookBook: CookBook) {
+    fun createCookBook(newCookBook: NewCookBook) {
         launchUI {
-            newCookBook.save(object : SaveListener<String>() {
-                override fun done(id: String?, e: BmobException?) {
-                    if (e == null) {
-//                        cookbookList.add(newCookBook)
-                        materialList.clear()//保存成功，清除原材料列表
-                        defUI.refreshEvent.call()
-                    } else {
-                        //发出显示错误信息
-                        defUI.showDialog.postValue(e.message)
+            when (val result = repository.createCookBook(newCookBook)) {
+                is ReturnResult.Success<*> -> {
+                    materialList.forEach { goods ->
+                        val newCrossRef =
+                            NewCrossRef(
+                                (result.value as CookBooks).objectId,
+                                goods.objectId,
+                                (result.value as CookBooks).foodCategory
+                            )
+                        when (val ref = repository.createCrossRef(newCrossRef)) {
+                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)
+                        }
                     }
+                    materialList.clear()
+                    defUI.refreshEvent.call()
                 }
-            })
+                is ReturnResult.Failure -> {
+                    defUI.showDialog.postValue(result.e)
+                }
+            }
+//            newCookBook.save(object : SaveListener<String>() {
+//                override fun done(id: String?, e: BmobException?) {
+//                    if (e == null) {
+////                        cookbookList.add(newCookBook)
+//                        materialList.clear()//保存成功，清除原材料列表
+//                        defUI.refreshEvent.call()
+//                    } else {
+//                        //发出显示错误信息
+//                        defUI.showDialog.postValue(e.message)
+//                    }
+//                }
+//            })
         }
     }
 

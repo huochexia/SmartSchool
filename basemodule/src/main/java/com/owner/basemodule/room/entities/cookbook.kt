@@ -11,7 +11,7 @@ import androidx.room.*
 data class CookBooks(
     @PrimaryKey
     @ColumnInfo(name = "cb_id", typeAffinity = ColumnInfo.TEXT)
-    val objectId: String,
+    var objectId: String,
     @ColumnInfo
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     @ColumnInfo
@@ -32,11 +32,11 @@ data class CookBooks(
  */
 @Entity(primaryKeys = ["objectId","cb_id", "goods_id"])
 data class CookBookGoodsCrossRef(
-    val objectId: String,
-    val cb_id: String,
-    val goods_id: String,
+    var objectId: String,
+    var cb_id: String,
+    var goods_id: String,
     @ColumnInfo
-    val foodCategory: String
+    var foodCategory: String
 
 )
 

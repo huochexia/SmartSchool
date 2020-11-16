@@ -31,7 +31,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     /*
     更新
      */
-    suspend fun updateCookBook(newCookBook: CookBooks, objectId: String): UpdateObject
+    suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject
     suspend fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String): UpdateObject
 
     /*
@@ -70,7 +70,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.deleteDailyMeal(objectId)
     }
 
-    override suspend fun updateCookBook(newCookBook: CookBooks, objectId: String): UpdateObject {
+    override suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject {
         return manager.updateCookBook(newCookBook, objectId)
     }
 
