@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentInputCookBookBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookMainMaterialItemBinding
-import com.goldenstraw.restaurant.goodsmanager.http.entities.CookBook
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
@@ -16,6 +16,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
@@ -79,11 +80,11 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                         spinner_mingdang_kind.selectedItem.toString()
                     else -> ""
                 }
-                val newFood = CookBook(
+                val newFood = NewCookBook(
                     foodCategory = cookCategory,
                     foodName = ed_cook_name.text.toString(),
-                    foodKind = kind,
-                    material = viewModel.materialList
+                    foodKind = kind
+
                 )
                 viewModel.createCookBook(newFood)
                 findNavController().popBackStack()

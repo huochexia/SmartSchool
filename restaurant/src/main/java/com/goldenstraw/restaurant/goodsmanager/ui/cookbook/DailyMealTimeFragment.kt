@@ -239,14 +239,14 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 }
                 binding.onLongClick = object : Consumer<DailyMeal> {
                     override fun accept(t: DailyMeal) {
-                        var text = ""
-                        t.cookBook.material.forEach {
-                            text = text + it.goodsName + ","
-                        }
-                        //弹出删除对话框
-                        AlertDialog.Builder(context)
-                            .setMessage("主料是：$text")
-                            .create().show()
+//                        var text = ""
+//                        t.cookBook.material.forEach {
+//                            text = text + it.goodsName + ","
+//                        }
+//                        //弹出删除对话框
+//                        AlertDialog.Builder(context)
+//                            .setMessage("主料是：$text")
+//                            .create().show()
                     }
 
                 }

@@ -7,6 +7,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 import kotlinx.coroutines.Deferred
 
@@ -39,7 +40,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.deleteDailyMeal(objectId)
     }
 
-    override suspend fun updateCookBook(newCookBook: CookBooks, objectId: String): UpdateObject {
+    override suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject {
         return serviceApi.updateCookBook(newCookBook, objectId)
     }
 
@@ -58,5 +59,8 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getDailyMealOfDate(where)
     }
 
+    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+        return serviceApi.getCookBookGoodsCrossRef(where)
+    }
 
 }

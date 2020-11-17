@@ -14,6 +14,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.ReturnResult
@@ -47,10 +48,10 @@ class CookBookViewModel(
     */
 
     val materialList = mutableListOf<Goods>()
-    var cookbookList = mutableListOf<CookBooks>()
+    var cookbookList = mutableListOf<CookBookWithGoods>()
 
     //分组列表，key-value:key为小类，value为内容列表
-    var groupbyKind = hashMapOf<String, MutableList<CookBooks>>()
+    var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
 
 
     /*
@@ -95,90 +96,94 @@ class CookBookViewModel(
     }
 
     /*
-    二、删除
+    二、删除.成功后，删除对应的关系
      */
-    fun deleteCookBook(objectId: String) {
+    fun deleteCookBook(cookBooks: CookBooks) {
         viewModelScope.launch {
-            repository.deleteCookBook(objectId)
+            if (repository.deleteCookBook(cookBooks.objectId).isSuccess()) {
+                val where = "{\"cb_id\":\"${cookBooks.objectId}\"}"
+                val refList = repository.getCookBookGoodsCrossRef(where)
+                withContext(Dispatchers.IO) {
+                    refList.results?.forEach { ref ->
+                        repository.deleteCrossRef(ref.objectId)
+                    }
+                }
+            }
         }
     }
 
     /*
-    查询，使用协程调用Bmob的Api进行查询。对结果通过groupBy进行分组。
+    查询，对结果通过groupBy进行分组。
      */
-    suspend fun getCookBookOfCategory2(category: String) {
-        launchFlow {
-            val where = "\"foodCategory\":\"$category\""
-            repository.getCookBookOfCategory(where)
-        }.onStart {
-            groupbyKind.clear()
-        }.collect {
-            if (it.isSuccess()) {
-                cookbookList = it.results as MutableList<CookBook>
+    suspend fun getCookBookWithGoodsOfCategory(category: String) {
+        repository.getCookBookWithGoodsOfCategory(category)
+            .onStart {
+                groupbyKind.clear()
+            }.collect {
+
+                cookbookList = it
                 Observable.fromIterable(cookbookList)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .groupBy {
-                        it.foodKind
+                        it.cookBook.foodKind
                     }
                     .autoDisposable(this@CookBookViewModel)
                     .subscribe({
                         groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
                         it.autoDisposable(this@CookBookViewModel)
-                            .subscribe { cookbook ->
-                                groupbyKind[it!!.key]!!.add(cookbook)//将对应分类的菜谱，存入对应的列表中
+                            .subscribe { cookbooks ->
+                                groupbyKind[it!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
                             }
                     }, {}, {
                         defUI.refreshEvent.call()//发出刷新数据通知
                     })
-            } else {
-                defUI.showDialog.postValue(it.error)
+
             }
-        }
 
     }
-
-    fun getCookBookOfCategory(category: String) {
-        //清空原内容
-        groupbyKind.clear()
-        launchUI {
-
-            val query = BmobQuery<CookBook>()
-            query.addWhereEqualTo("foodCategory", category)
-            query.setLimit(500)
-            query.findObjects(object : FindListener<CookBook>() {
-                override fun done(list: MutableList<CookBook>?, e: BmobException?) {
-                    if (e == null) {
-                        //将列表按小类分组，使用Rxjava的groupBy按小类进行分组
-
-                        list?.let { list ->
-                            cookbookList = list
-                            Observable.fromIterable(cookbookList)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .groupBy {
-                                    it.foodKind
-                                }
-                                .autoDisposable(this@CookBookViewModel)
-                                .subscribe({
-                                    groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
-                                    it.autoDisposable(this@CookBookViewModel)
-                                        .subscribe { cookbook ->
-                                            groupbyKind[it!!.key]!!.add(cookbook)//将对应分类的菜谱，存入对应的列表中
-                                        }
-                                }, {}, {
-                                    defUI.refreshEvent.call()//发出刷新数据通知
-                                })
-                        }
-
-                    } else {
-                        defUI.showDialog.postValue(e.message!!)
-                    }
-                }
-
-            })
-        }
-    }
+//
+//    fun getCookBookOfCategory(category: String) {
+//        //清空原内容
+//        groupbyKind.clear()
+//        launchUI {
+//
+//            val query = BmobQuery<CookBook>()
+//            query.addWhereEqualTo("foodCategory", category)
+//            query.setLimit(500)
+//            query.findObjects(object : FindListener<CookBook>() {
+//                override fun done(list: MutableList<CookBook>?, e: BmobException?) {
+//                    if (e == null) {
+//                        //将列表按小类分组，使用Rxjava的groupBy按小类进行分组
+//
+//                        list?.let { list ->
+//                            cookbookList = list
+//                            Observable.fromIterable(cookbookList)
+//                                .subscribeOn(Schedulers.io())
+//                                .observeOn(AndroidSchedulers.mainThread())
+//                                .groupBy {
+//                                    it.foodKind
+//                                }
+//                                .autoDisposable(this@CookBookViewModel)
+//                                .subscribe({
+//                                    groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
+//                                    it.autoDisposable(this@CookBookViewModel)
+//                                        .subscribe { cookbook ->
+//                                            groupbyKind[it!!.key]!!.add(cookbook)//将对应分类的菜谱，存入对应的列表中
+//                                        }
+//                                }, {}, {
+//                                    defUI.refreshEvent.call()//发出刷新数据通知
+//                                })
+//                        }
+//
+//                    } else {
+//                        defUI.showDialog.postValue(e.message!!)
+//                    }
+//                }
+//
+//            })
+//        }
+//    }
 
 
     /*

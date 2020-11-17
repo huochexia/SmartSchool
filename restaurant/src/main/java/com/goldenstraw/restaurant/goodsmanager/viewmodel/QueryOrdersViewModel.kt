@@ -122,40 +122,40 @@ class QueryOrdersViewModel(
      */
     fun getCookBookOfDailyMeal(categoryId: String) {
 
-        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
-            .flatMap { date ->
-                val where = "{\"mealDate\":\"$date\"}"
-                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
-            }.flatMap {
-                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
-            }
-            .map {
-                it.cookBook.material //从菜谱中得到商品列表
-            }
-            .flatMap {
-                Observable.fromIterable(it)
-            }
-            .filter {
-                it.categoryCode == categoryId  //过滤类别
-
-            }
-            .distinct() //去重复
-            .flatMap {
-                getGoodsFromObjectId(it.objectId)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({ goods ->
-                goodsList.add(goods)
-            }, {
-                defUI.toastEvent.value = it.message
-            }, {
-                defUI.refreshEvent.call()
-            }, {
-                goodsList.clear()
-                defUI.loadingEvent.call()
-            })
+//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
+//            .flatMap { date ->
+//                val where = "{\"mealDate\":\"$date\"}"
+//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
+//            }.flatMap {
+//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
+//            }
+//            .map {
+//                it.cookBook.material //从菜谱中得到商品列表
+//            }
+//            .flatMap {
+//                Observable.fromIterable(it)
+//            }
+//            .filter {
+//                it.categoryCode == categoryId  //过滤类别
+//
+//            }
+//            .distinct() //去重复
+//            .flatMap {
+//                getGoodsFromObjectId(it.objectId)
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(this)
+//            .subscribe({ goods ->
+//                goodsList.add(goods)
+//            }, {
+//                defUI.toastEvent.value = it.message
+//            }, {
+//                defUI.refreshEvent.call()
+//            }, {
+//                goodsList.clear()
+//                defUI.loadingEvent.call()
+//            })
     }
 
     /**
@@ -164,47 +164,47 @@ class QueryOrdersViewModel(
      */
     @SuppressLint("AutoDispose")
     fun getAllCookBookOfDailyMeal() {
-        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
-            .flatMap { date ->
-                val where = "{\"mealDate\":\"$date\"}"
-                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
-            }.flatMap {
-                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
-            }
-            .map {
-                it.cookBook.material //从菜谱中得到商品列表
-            }.flatMap {
-                Observable.fromIterable(it)
-            }
-            .distinct() //去重复
-            .flatMap {
-                getGoodsFromObjectId(it.objectId)
-            }
-
-            .groupBy {
-                it.categoryCode
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({ goodsList ->
-                goodsList.key?.let {
-                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
-                    goodsList.subscribe({ goods ->
-                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
-                    }, {
-                        defUI.toastEvent.value = it.message
-                    })
-                }
-
-            }, {
-                defUI.toastEvent.value = it.message
-            }, {
-                defUI.refreshEvent.call()
-
-            }, {
-                defUI.loadingEvent.call()
-            })
+//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
+//            .flatMap { date ->
+//                val where = "{\"mealDate\":\"$date\"}"
+//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
+//            }.flatMap {
+//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
+//            }
+//            .map {
+//                it.cookBook.material //从菜谱中得到商品列表
+//            }.flatMap {
+//                Observable.fromIterable(it)
+//            }
+//            .distinct() //去重复
+//            .flatMap {
+//                getGoodsFromObjectId(it.objectId)
+//            }
+//
+//            .groupBy {
+//                it.categoryCode
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(this)
+//            .subscribe({ goodsList ->
+//                goodsList.key?.let {
+//                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
+//                    goodsList.subscribe({ goods ->
+//                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
+//                    }, {
+//                        defUI.toastEvent.value = it.message
+//                    })
+//                }
+//
+//            }, {
+//                defUI.toastEvent.value = it.message
+//            }, {
+//                defUI.refreshEvent.call()
+//
+//            }, {
+//                defUI.loadingEvent.call()
+//            })
     }
 
     /**

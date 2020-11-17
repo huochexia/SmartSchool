@@ -8,6 +8,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
 /**
@@ -39,6 +40,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
      */
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
+    suspend fun getCookBookGoodsCrossRef(where:String):ObjectList<CookBookGoodsCrossRef>
 
 }
 
@@ -89,4 +91,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.getDailyMealOfDate(where)
     }
 
+    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+        return manager.getCookBookGoodsCrossRef(where)
+    }
 }

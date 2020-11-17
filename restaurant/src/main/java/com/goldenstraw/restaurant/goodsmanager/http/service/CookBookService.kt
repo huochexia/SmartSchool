@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
-import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
@@ -51,7 +50,7 @@ interface CookBookApi {
     //修改菜谱
     @PUT("/1/classes/CookBooks/{objectId}")
     suspend fun updateCookBook(
-        @Body newCookBook: CookBooks,
+        @Body newCookBook: NewCookBook,
         @Path("objectId") objectId: String
     ): UpdateObject
 
@@ -76,4 +75,10 @@ interface CookBookApi {
         @Query("where") where: String,
         @Query("limit") limit: Int = 500
     ): ObjectList<CookBooks>
+
+    //获取某个菜谱与商品的关联关系
+    @GET("/1/classes/CookBookGoodsCrossRef/")
+    suspend fun getCookBookGoodsCrossRef(
+        @Query("where") where: String
+    ): ObjectList<CookBookGoodsCrossRef>
 }

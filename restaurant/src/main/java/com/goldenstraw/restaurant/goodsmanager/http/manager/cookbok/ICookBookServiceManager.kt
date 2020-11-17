@@ -1,13 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
-import androidx.paging.DataSource
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
 import com.owner.basemodule.room.entities.CookBooks
-import kotlinx.coroutines.Deferred
 
 /**
  * 访问远程数据库，管理数据
@@ -38,4 +37,5 @@ interface ICookBookServiceManager {
      */
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
+    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef>
 }

@@ -7,9 +7,11 @@ import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.ReturnResult
+import kotlinx.coroutines.flow.Flow
 
 /**
  * 对CookBook数据管理
@@ -82,6 +84,10 @@ class CookBookRepository(
         return remote.deleteDailyMeal(objectId)
     }
 
+    suspend fun deleteCrossRef(objectId: String): DeleteObject {
+        return remote.deleteCrossRef(objectId)
+    }
+
     /*
     更新
      */
@@ -94,14 +100,22 @@ class CookBookRepository(
     }
 
     /*
-    查询
+    查询,从本地根据分类获取菜谱和相应的商品
      */
+    fun getCookBookWithGoodsOfCategory(category: String): Flow<MutableList<CookBookWithGoods>> {
+        return local.getCookBookWithGoods(category)
+    }
+
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
         return remote.getCookBookOfCategory(where)
     }
 
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
+    }
+
+    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+        return remote.getCookBookGoodsCrossRef(where)
     }
 
     /*
