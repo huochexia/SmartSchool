@@ -2,10 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.DeleteObject
-import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
@@ -49,16 +46,16 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)
     }
 
-    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
-        return serviceApi.getCookBookOfCategory(where)
+    override suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<CookBooks> {
+        return serviceApi.getCookBookOfCategory(where,skip)
     }
 
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return serviceApi.getDailyMealOfDate(where)
     }
 
-    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
-        return serviceApi.getCookBookGoodsCrossRef(where)
+    override suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef> {
+        return serviceApi.getCookBookGoodsCrossRef(where,skip)
     }
 
 }

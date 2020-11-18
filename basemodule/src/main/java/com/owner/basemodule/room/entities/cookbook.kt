@@ -26,9 +26,7 @@ data class CookBooks(
 
 /**
  * 菜谱与商品多对多的交叉关系表。
- * 由于Bomb免费限制，一次最多可读500条记录，所以对同步网络关系表产生了难度，无法
- * 实现从网络获取所有关系，然后存入本地。
- * 暂时解决办法是给关系表增加一个字段：类别。按类别分别获取。同时还要限制菜谱对应商品的数量，最多4种。
+ *
  */
 @Entity(primaryKeys = ["objectId","cb_id", "goods_id"])
 data class CBGCrossRef(

@@ -2,10 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.DeleteObject
-import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
@@ -115,17 +112,18 @@ class CookBookRepository(
         return local.getCookBookWithGoods(objectId)
     }
 
-    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
-        return remote.getCookBookOfCategory(where)
+    suspend fun getCookBookOfCategory(where: String,skip:Int): ObjectList<CookBooks> {
+        return remote.getCookBookOfCategory(where,skip)
     }
 
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
     }
 
-    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
-        return remote.getCookBookGoodsCrossRef(where)
+    suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef> {
+        return remote.getCookBookGoodsCrossRef(where,skip)
     }
+
 
     /*
     模糊查询

@@ -48,6 +48,7 @@ class ObjectList<T>(
     fun isSuccess(): Boolean = code == 0
 }
 
+
 /**
  * 网络访问失败产生的异常封装类，通过这个封装类对异常统一处理。
  */

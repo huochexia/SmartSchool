@@ -71,14 +71,19 @@ interface CookBookApi {
 
     //查询某类菜谱
     @GET("/1/classes/CookBooks/")
-    fun getCookBookOfCategory(
+    suspend fun getCookBookOfCategory(
         @Query("where") where: String,
+        @Query("skip") skip: Int,
         @Query("limit") limit: Int = 500
     ): ObjectList<CookBooks>
 
     //获取某个菜谱与商品的关联关系
     @GET("/1/classes/CBGCrossRef/")
     suspend fun getCookBookGoodsCrossRef(
-        @Query("where") where: String
+        @Query("where") where: String,
+        @Query("skip") skip: Int,
+        @Query("limit") limit: Int = 500
     ): ObjectList<CBGCrossRef>
+
+
 }

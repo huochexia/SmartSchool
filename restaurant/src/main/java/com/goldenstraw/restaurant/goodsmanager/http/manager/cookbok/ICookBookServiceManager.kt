@@ -1,10 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.DeleteObject
-import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
@@ -35,7 +32,8 @@ interface ICookBookServiceManager {
     /*
     查询
      */
-    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
+    suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef>
+    suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef>
+
 }

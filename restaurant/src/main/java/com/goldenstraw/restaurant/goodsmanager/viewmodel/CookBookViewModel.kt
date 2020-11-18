@@ -3,6 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import cn.bmob.v3.BmobQuery
+import cn.bmob.v3.exception.BmobException
+import cn.bmob.v3.listener.CountListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
@@ -11,6 +14,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
@@ -20,6 +24,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
@@ -99,7 +104,7 @@ class CookBookViewModel(
         viewModelScope.launch {
             if (repository.deleteCookBook(cookBooks.objectId).isSuccess()) {
                 val where = "{\"cb_id\":\"${cookBooks.objectId}\"}"
-                val refList = repository.getCookBookGoodsCrossRef(where)
+                val refList = repository.getCookBookGoodsCrossRef(where, 0)
                 withContext(Dispatchers.IO) {
                     refList.results?.forEach { ref ->
                         repository.deleteCrossRef(ref.objectId)
@@ -326,25 +331,84 @@ class CookBookViewModel(
      * 先读取本地数据，然后读取网络
      */
     suspend fun asyncCookBooks(category: String) {
-        val where = "{\"foodCategory\":\"$category\"}"
-        val cookbookList = repository.getCookBookOfCategory(where)
-        if (cookbookList.isSuccess()) {
-            repository.clearCookBookOfCategory(category)
-            repository.addCookBookToLocal(cookbookList.results!!)
-        } else {
-            defUI.showDialog.postValue(cookbookList.error)
-        }
+        var skip = 0
+        val query = BmobQuery<CookBooks>()
+        query.addWhereEqualTo("foodCategory", category)
+        query.count(CookBooks::class.java, object : CountListener() {
+            override fun done(count: Int?, e: BmobException?) {
+                if (e == null) {
+                    launchUI {
+                        val f = count!! / 500
+                        val where = "{\"foodCategory\":\"$category\"}"
+                        val cookbookList = async {
+                            val allcookbook: MutableList<CookBooks> = mutableListOf()
+                            for (a in 0..f) {
+                                val list = async {
+                                    repository.getCookBookOfCategory(where, skip).results!!
+                                }
+                                allcookbook.addAll(
+                                    list.await()
+                                )
+                                skip += 500
+                            }
+                            allcookbook
+                        }
+                        repository.clearCookBookOfCategory(category)
+
+                        repository.addCookBookToLocal(cookbookList.await())
+
+                    }
+                } else {
+                    defUI.showDialog.postValue(e.message)
+                }
+            }
+
+        })
+
     }
 
+    /**
+     * 分页，一次只能获取500条数据，所以先判数据总数，然后进行分页循环，得到所有数据后，清空本地数据，然后保存新数据
+     */
     suspend fun asyncCrossRefs(category: String) {
-        val where = "{\"foodCategory\":\"$category\"}"
-        val crossRefList = repository.getCookBookGoodsCrossRef(where)
-        if (crossRefList.isSuccess()) {
-            repository.clearCrossRefOfCategory(category)
-            repository.addCrossRefToLocal(crossRefList.results!!)
-        } else {
-            defUI.showDialog.postValue(crossRefList.error)
-        }
+        var skip = 0
+        val query = BmobQuery<CBGCrossRef>()
+        query.addWhereEqualTo("foodCategory", category)
+        query.count(CBGCrossRef::class.java, object : CountListener() {
+            override fun done(count: Int?, e: BmobException?) {
+                if (e == null) {
+                    launchUI {
+                        val f = count!! / 500
+                        val where = "{\"foodCategory\":\"$category\"}"
+                        val crossRefList = async {
+                            val allRef: MutableList<CBGCrossRef> = mutableListOf()
+                            for (a in 0..f) {
+                                val list = async {
+                                    repository.getCookBookGoodsCrossRef(
+                                        where = where,
+                                        skip = skip
+                                    ).results!!
+                                }
+                                allRef.addAll(
+                                    list.await()
+                                )
+                                skip += 500
+                            }
+                            allRef
+                        }
+                        repository.clearCrossRefOfCategory(category)
+
+                        repository.addCrossRefToLocal(crossRefList.await())
+
+                    }
+                } else {
+                    defUI.showDialog.postValue(e.message)
+                }
+            }
+
+        })
+
+
     }
 
 }

@@ -3,10 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok.ICookBookServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.DeleteObject
-import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
@@ -37,9 +34,9 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     /*
     查询
      */
-    suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
+    suspend fun getCookBookOfCategory(where: String,skip:Int): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-    suspend fun getCookBookGoodsCrossRef(where:String):ObjectList<CBGCrossRef>
+    suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef>
 
 }
 
@@ -82,15 +79,17 @@ class RemoteCookBookDataSourceImpl(
         return manager.updateDailyMeal(newDailyMeal, objectId)
     }
 
-    override suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
-        return manager.getCookBookOfCategory(where)
+    override suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<CookBooks> {
+        return manager.getCookBookOfCategory(where,skip)
     }
 
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return manager.getDailyMealOfDate(where)
     }
 
-    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
-        return manager.getCookBookGoodsCrossRef(where)
+    override suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef> {
+        return manager.getCookBookGoodsCrossRef(where,skip)
     }
+
+
 }
