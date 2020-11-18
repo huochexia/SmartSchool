@@ -1,7 +1,7 @@
 package com.owner.basemodule.room.dao
 
 import androidx.room.*
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +19,14 @@ interface CookBookDao {
     @Transaction
     @Query("SELECT * FROM CookBooks WHERE foodCategory = :category")
     fun getAllCookBookWithGoods(category: String): Flow<MutableList<CookBookWithGoods>>
+
+    /*
+    获取某个菜谱和它所需的商品
+
+     */
+    @Transaction
+    @Query("SELECT * FROM CookBooks WHERE  cb_id =:objectId")
+    suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods
 
     /*
      通过CookBook的名字属性进行模糊查询
@@ -40,28 +48,33 @@ interface CookBookDao {
     增加交叉关系
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCrossRef(ref: CookBookGoodsCrossRef)
+    suspend fun addCrossRef(ref: CBGCrossRef)
 
     /*
      增加所有关系，这个表的内容暂时是按类别获取的。因为免费Bomb一次只能获取500条记录，
      所以只能按菜谱类别分别获取。
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllCrossRef(refList: MutableList<CookBookGoodsCrossRef>)
+    suspend fun addAllCrossRef(refList: MutableList<CBGCrossRef>)
 
     /*
     删除菜谱
      */
     @Delete
     suspend fun deleteCookBook(cookbook: CookBooks)
+
+    @Query("DELETE FROM CookBooks WHERE foodCategory = :category")
+    suspend fun deleteCookBookOfCategory(category: String)
+
     /*
     删除交叉关系
      */
     @Delete
-    suspend fun deleteCrossRef(crossRef: CookBookGoodsCrossRef)
+    suspend fun deleteCrossRef(crossRef: CBGCrossRef)
 
-    @Query("DELETE FROM CookBookGoodsCrossRef WHERE cb_id = :cookbookid AND goods_id =:goodsid")
-    suspend fun deleteCrossRef(cookbookid: String, goodsid: String)
+    @Query("DELETE FROM CBGCrossRef WHERE cb_id = :cookbookid ")
+    suspend fun deleteCrossRef(cookbookid: String)
 
-
+    @Query("DELETE FROM CBGCrossRef WHERE foodCategory =:category")
+    suspend fun deleteCrossRefOfCategory(category: String)
 }

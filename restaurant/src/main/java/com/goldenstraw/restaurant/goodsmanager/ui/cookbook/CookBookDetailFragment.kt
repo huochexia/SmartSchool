@@ -28,6 +28,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -98,7 +99,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             CookBookViewModel(respository)
 
         }
-
+        //根据菜谱的分类动态形成标签
         vpAdapter = BaseDataBindingAdapter(
             layoutId = R.layout.viewpage_of_cook_kind,
             dataSource = { viewModel.groupbyKind.keys.toList() },
@@ -167,13 +168,19 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             }
         }
         tabLayoutMediator?.attach()
+
+        launch(Dispatchers.IO) {
+            viewModel.asyncCookBooks(cookCategory)
+            viewModel.asyncCrossRefs(cookCategory)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
-
-//        viewModel.getCookBookWithGoodsOfCategory(cookCategory)
+        launch {
+            viewModel.getCookBookWithGoodsOfCategory(cookCategory)
+        }
 
     }
 

@@ -5,7 +5,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
 /**
@@ -37,5 +37,5 @@ interface ICookBookServiceManager {
      */
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef>
+    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef>
 }

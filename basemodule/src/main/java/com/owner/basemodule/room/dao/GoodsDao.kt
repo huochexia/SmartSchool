@@ -1,6 +1,7 @@
 package com.owner.basemodule.room.dao
 
 import androidx.room.*
+import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
@@ -9,6 +10,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface GoodsDao {
@@ -61,7 +63,8 @@ interface GoodsDao {
 
     @Query("SELECT * FROM Goods WHERE categoryCode = :categoryId  ORDER BY goodsName")
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
-
+    @Query("SELECT * FROM CookBooks WHERE cb_id = :objectId")
+    fun getCookBookWithGoods(objectId: String):CookBookWithGoods
     /*
        使用协程进行模糊查询
      */
@@ -83,7 +86,7 @@ interface GoodsDao {
     /*
         因为与菜谱的关联关系，所在删除商品时要在关系交叉表中也删除相应的内容
         */
-    @Query("DELETE FROM CookBookGoodsCrossRef WHERE goods_id = :goodsid")
+    @Query("DELETE FROM CBGCrossRef WHERE goods_id = :goodsid")
     fun deleteCrossRefOfGoods(goodsid: String): Completable
 
 

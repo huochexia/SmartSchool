@@ -6,10 +6,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
-import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -93,9 +90,11 @@ class GoodsRepository(
     fun addGoodsToShoppingCart(goodsList: MutableList<GoodsOfShoppingCart>): Completable {
         return local.addShoppingCartAll(goodsList)
     }
-    fun addSupplierTolocal(userList: MutableList<User>):Completable{
+
+    fun addSupplierTolocal(userList: MutableList<User>): Completable {
         return local.insertSupplierToLocal(userList)
     }
+
     /*
      *获取购物车内商品数量
      */
@@ -143,7 +142,7 @@ class GoodsRepository(
         return remote.getAllCategory()
     }
 
-    fun getAllGoodsOfCategoryFromNetwork(category:GoodsCategory): Observable<MutableList<Goods>> {
+    fun getAllGoodsOfCategoryFromNetwork(category: GoodsCategory): Observable<MutableList<Goods>> {
         return remote.getGoodsOfCategory(category)
     }
 
@@ -176,6 +175,10 @@ class GoodsRepository(
 
     fun getGoodsOfCategoryFromLocalFlow(categoryId: String): Flow<List<Goods>> {
         return local.getGoodsOfCategoryFlow(categoryId)
+    }
+
+    fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
+        return local.getCookBookWithGoods(objectId)
     }
 
     /*

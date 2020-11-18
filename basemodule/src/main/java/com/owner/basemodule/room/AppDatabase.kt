@@ -37,7 +37,7 @@ import com.owner.basemodule.room.entities.*
         GoodsCategory::class,
         GoodsOfShoppingCart::class,
         CookBooks::class,
-        CookBookGoodsCrossRef::class
+        CBGCrossRef::class
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

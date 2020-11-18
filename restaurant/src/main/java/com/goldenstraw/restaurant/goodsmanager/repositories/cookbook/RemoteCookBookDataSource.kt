@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
-import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok.ICookBookServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
@@ -8,7 +7,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 
 /**
@@ -40,7 +39,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
      */
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks>
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-    suspend fun getCookBookGoodsCrossRef(where:String):ObjectList<CookBookGoodsCrossRef>
+    suspend fun getCookBookGoodsCrossRef(where:String):ObjectList<CBGCrossRef>
 
 }
 
@@ -91,7 +90,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.getDailyMealOfDate(where)
     }
 
-    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
         return manager.getCookBookGoodsCrossRef(where)
     }
 }

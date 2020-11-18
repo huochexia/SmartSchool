@@ -2,10 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.goods_order
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
-import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -26,6 +23,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun addShoppingCartAll(list: MutableList<GoodsOfShoppingCart>): Completable
 
     fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
+
     /**
      * 插入
      */
@@ -56,6 +54,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun getAllCategoryFlow(): Flow<List<GoodsCategory>>
 
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
+
+     fun getCookBookWithGoods(objectId: String): CookBookWithGoods
 
     /**
      * 删除
@@ -146,8 +146,12 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().getAllCategoryFlow()
     }
 
-    override   fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>> {
+    override fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>> {
         return database.goodsDao().getGoodsOfCategoryFlow(categoryId)
+    }
+
+    override  fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
+        return database.goodsDao().getCookBookWithGoods(objectId)
     }
 
     /**

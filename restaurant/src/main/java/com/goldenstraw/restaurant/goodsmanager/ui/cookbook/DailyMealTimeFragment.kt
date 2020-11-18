@@ -33,6 +33,7 @@ import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.android.synthetic.main.fragment_daily_mealtime.*
 import kotlinx.android.synthetic.main.viewpage_of_daily_meal.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -148,7 +149,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if(prefs.role == "厨师"){
+        if (prefs.role == "厨师") {
             (activity as AppCompatActivity).setSupportActionBar(toolbar_daily_meal)
             setHasOptionsMenu(true)
         }
@@ -239,14 +240,17 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 }
                 binding.onLongClick = object : Consumer<DailyMeal> {
                     override fun accept(t: DailyMeal) {
-//                        var text = ""
-//                        t.cookBook.material.forEach {
-//                            text = text + it.goodsName + ","
-//                        }
-//                        //弹出删除对话框
-//                        AlertDialog.Builder(context)
-//                            .setMessage("主料是：$text")
-//                            .create().show()
+                        launch {
+                            var text = ""
+                            var goodsList = respository.getCookBookWithGoods(t.cookBook.objectId)
+                            goodsList.goods.forEach {
+                                text = text + it.goodsName + ","
+                            }
+                            //弹出原材料对话框
+                            AlertDialog.Builder(context)
+                                .setMessage("主料是：$text")
+                                .create().show()
+                        }
                     }
 
                 }
@@ -397,7 +401,8 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         calendar: Calendar
     ) {
         // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
-        DatePickerDialog(activity, themeResId,
+        DatePickerDialog(activity,
+            themeResId,
             OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 // 绑定监听器(How the parent is notified that the date is set.)
                 // 此处得到选择的时间，可以进行你想要的操作
@@ -415,9 +420,10 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 viewModel.copyDailyMeal(dailyDate, copyDate)
 
             } // 设置初始日期
-            , calendar[Calendar.YEAR]
-            , calendar[Calendar.MONTH]
-            , calendar[Calendar.DAY_OF_MONTH]).show()
+            ,
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]).show()
     }
 
 

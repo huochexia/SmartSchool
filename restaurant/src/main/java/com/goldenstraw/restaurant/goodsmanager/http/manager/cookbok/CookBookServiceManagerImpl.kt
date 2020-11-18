@@ -1,15 +1,13 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
-import androidx.paging.DataSource.Factory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
-import kotlinx.coroutines.Deferred
 
 /**
  * @serviceApi 网络数据管理API
@@ -59,7 +57,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getDailyMealOfDate(where)
     }
 
-    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+    override suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
         return serviceApi.getCookBookGoodsCrossRef(where)
     }
 

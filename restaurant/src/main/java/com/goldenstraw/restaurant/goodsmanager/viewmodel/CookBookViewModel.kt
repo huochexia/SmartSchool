@@ -3,9 +3,6 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import cn.bmob.v3.BmobQuery
-import cn.bmob.v3.exception.BmobException
-import cn.bmob.v3.listener.FindListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
@@ -42,8 +39,8 @@ class CookBookViewModel(
     val searchedStatusLiveData = MutableLiveData<SearchedStatus>(None)
 
     /*
-      刷新菜谱原材料列表，当在查询商品的列表中选择某一个原材料后，将该材料加入原材料列表中，
-      然后刷新列表显示。
+      共享变量：菜谱原材料列表。当在查询商品的列表中选择某一个原材料后，将该材料加入原材料列表中；
+      保存菜谱时从这里获取商品列表信息。
       通过这种共享方式实现SearchMaterialFragment中的选择，显示在InputCookBookFragment中。
     */
 
@@ -70,7 +67,7 @@ class CookBookViewModel(
                                 (result.value as CookBooks).foodCategory
                             )
                         when (val ref = repository.createCrossRef(newCrossRef)) {
-                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)
+                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
                         }
                     }
                     materialList.clear()
@@ -108,6 +105,7 @@ class CookBookViewModel(
                         repository.deleteCrossRef(ref.objectId)
                     }
                 }
+                repository.deleteLocalCookBookAndRef(cookBooks)
             }
         }
     }
@@ -125,15 +123,15 @@ class CookBookViewModel(
                 Observable.fromIterable(cookbookList)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .groupBy {
-                        it.cookBook.foodKind
+                    .groupBy { cookbooks ->
+                        cookbooks.cookBook.foodKind
                     }
                     .autoDisposable(this@CookBookViewModel)
-                    .subscribe({
-                        groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
-                        it.autoDisposable(this@CookBookViewModel)
+                    .subscribe({ group ->
+                        groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                        group.autoDisposable(this@CookBookViewModel)
                             .subscribe { cookbooks ->
-                                groupbyKind[it!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                                groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
                             }
                     }, {}, {
                         defUI.refreshEvent.call()//发出刷新数据通知
@@ -267,10 +265,10 @@ class CookBookViewModel(
     /*
     拷贝某一天菜单
      */
-    fun copyDailyMeal(newDate:String,oldDate:String) {
+    fun copyDailyMeal(newDate: String, oldDate: String) {
         launchUI {
             launchFlow {
-                val where="{\"mealDate\":\"$oldDate\"}"
+                val where = "{\"mealDate\":\"$oldDate\"}"
                 repository.getDailyMealOfDate(where)
             }.flowOn(Dispatchers.IO)
                 .collect {
@@ -322,4 +320,31 @@ class CookBookViewModel(
             }
         }
     }
+
+    /**
+     * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
+     * 先读取本地数据，然后读取网络
+     */
+    suspend fun asyncCookBooks(category: String) {
+        val where = "{\"foodCategory\":\"$category\"}"
+        val cookbookList = repository.getCookBookOfCategory(where)
+        if (cookbookList.isSuccess()) {
+            repository.clearCookBookOfCategory(category)
+            repository.addCookBookToLocal(cookbookList.results!!)
+        } else {
+            defUI.showDialog.postValue(cookbookList.error)
+        }
+    }
+
+    suspend fun asyncCrossRefs(category: String) {
+        val where = "{\"foodCategory\":\"$category\"}"
+        val crossRefList = repository.getCookBookGoodsCrossRef(where)
+        if (crossRefList.isSuccess()) {
+            repository.clearCrossRefOfCategory(category)
+            repository.addCrossRefToLocal(crossRefList.results!!)
+        } else {
+            defUI.showDialog.postValue(crossRefList.error)
+        }
+    }
+
 }

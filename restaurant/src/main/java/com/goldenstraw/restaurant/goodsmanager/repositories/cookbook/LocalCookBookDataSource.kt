@@ -2,7 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
@@ -14,19 +14,22 @@ interface ILocalCookBookDataSource : ILocalDataSource {
     fun queryCookBookWithGoods(name: String): Flow<MutableList<CookBookWithGoods>>
 
     //获得所有某分类所有菜谱
-    fun getCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>>
-
+    fun getAllCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>>
+    suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods
 
     //增加菜谱
     suspend fun addCookBooks(cookbook: CookBooks)
     suspend fun addAllCookBooksOfCategory(cookbooks: MutableList<CookBooks>)
 
     //增加关系
-    suspend fun addCrossRef(newRef: CookBookGoodsCrossRef)
-    suspend fun addCrossRefAllOfCategory(refs: MutableList<CookBookGoodsCrossRef>)
+    suspend fun addCrossRef(newRef: CBGCrossRef)
+    suspend fun addCrossRefAllOfCategory(refs: MutableList<CBGCrossRef>)
 
     //删除关系
-    suspend fun deleteCrossRef(ref: CookBookGoodsCrossRef)
+    suspend fun deleteCookBook(cookbook: CookBooks)
+    suspend fun deleteCookBookOfCategory(category: String)
+    suspend fun deleteCrossRef(cookbookId: String)
+    suspend fun deleteCrossRefOfCategory(category: String)
 }
 
 class LocalCookBookDataSourceImpl(
@@ -50,12 +53,16 @@ class LocalCookBookDataSourceImpl(
     /*
     获取某分类的所有菜谱
      */
-    override fun getCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>> {
+    override fun getAllCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>> {
         return database.cookbookDao().getAllCookBookWithGoods(foodCategory)
     }
 
+    override suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
+        return database.cookbookDao().getCookBookWithGoods(objectId)
+    }
+
     /*
-      增加菜谱
+      增加
      */
     override suspend fun addCookBooks(cookbook: CookBooks) {
         database.cookbookDao().addCookBook(cookbook)
@@ -65,21 +72,31 @@ class LocalCookBookDataSourceImpl(
         database.cookbookDao().addAllCookBook(cookbooks)
     }
 
-    /*
-      增加关系
-     */
-    override suspend fun addCrossRef(newRef: CookBookGoodsCrossRef) {
+
+    override suspend fun addCrossRef(newRef: CBGCrossRef) {
         database.cookbookDao().addCrossRef(newRef)
     }
 
-    override suspend fun addCrossRefAllOfCategory(refs: MutableList<CookBookGoodsCrossRef>) {
+    override suspend fun addCrossRefAllOfCategory(refs: MutableList<CBGCrossRef>) {
         database.cookbookDao().addAllCrossRef(refs)
     }
 
     /*
-      删除关系
+    删除
      */
-    override suspend fun deleteCrossRef(ref: CookBookGoodsCrossRef) {
-        database.cookbookDao().deleteCrossRef(ref)
+    override suspend fun deleteCookBook(cookbook: CookBooks) {
+        database.cookbookDao().deleteCookBook(cookbook)
+    }
+
+    override suspend fun deleteCookBookOfCategory(category: String) {
+        database.cookbookDao().deleteCookBookOfCategory(category)
+    }
+
+    override suspend fun deleteCrossRef(cookbookId: String) {
+        database.cookbookDao().deleteCrossRef(cookbookId)
+    }
+
+    override suspend fun deleteCrossRefOfCategory(category: String) {
+        database.cookbookDao().deleteCrossRefOfCategory(category)
     }
 }

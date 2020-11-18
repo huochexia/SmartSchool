@@ -73,6 +73,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
         btn_save_cookbook.setOnClickListener {
 
             if (ed_cook_name.text.isNotEmpty() && viewModel.materialList.isNotEmpty()) {
+                //根据菜谱种类，选择不同的分类
                 val kind = when (cookCategory) {
                     CookKind.ColdFood.kindName, CookKind.HotFood.kindName ->
                         spinner_cook_kind.selectedItem.toString()
@@ -84,7 +85,6 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                     foodCategory = cookCategory,
                     foodName = ed_cook_name.text.toString(),
                     foodKind = kind
-
                 )
                 viewModel.createCookBook(newFood)
                 findNavController().popBackStack()

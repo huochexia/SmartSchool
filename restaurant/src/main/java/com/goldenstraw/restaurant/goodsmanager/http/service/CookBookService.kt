@@ -5,7 +5,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBooks
 import retrofit2.http.*
 
@@ -22,7 +22,7 @@ interface CookBookApi {
     suspend fun createCookBook(@Body newCookBook: NewCookBook): CreateObject
 
     //增加菜谱与商品关系
-    @POST("/1/classes/CookBookGoodsCrossRef")
+    @POST("/1/classes/CBGCrossRef")
     suspend fun createCrossRef(@Body newRef: NewCrossRef): CreateObject
 
     //增加每日菜单
@@ -37,7 +37,7 @@ interface CookBookApi {
     suspend fun deleteCookBook(@Path("objectId") objectId: String): DeleteObject
 
     //删除关系
-    @DELETE("/1/classes/CookBookGoodsCrossRef/{objectId}")
+    @DELETE("/1/classes/CBGCrossRef/{objectId}")
     suspend fun deleteCrossRef(@Path("objectId") objectId: String): DeleteObject
 
     //删除每日菜单
@@ -77,8 +77,8 @@ interface CookBookApi {
     ): ObjectList<CookBooks>
 
     //获取某个菜谱与商品的关联关系
-    @GET("/1/classes/CookBookGoodsCrossRef/")
+    @GET("/1/classes/CBGCrossRef/")
     suspend fun getCookBookGoodsCrossRef(
         @Query("where") where: String
-    ): ObjectList<CookBookGoodsCrossRef>
+    ): ObjectList<CBGCrossRef>
 }

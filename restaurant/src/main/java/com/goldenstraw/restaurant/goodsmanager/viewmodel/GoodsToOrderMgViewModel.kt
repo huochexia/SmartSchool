@@ -1,10 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
@@ -28,7 +25,7 @@ import kotlinx.coroutines.flow.onStart
  * 订单管理的ViewModel
  */
 class GoodsToOrderMgViewModel(
-     val repository: GoodsRepository
+    val repository: GoodsRepository
 ) : BaseViewModel() {
 
 
@@ -48,8 +45,6 @@ class GoodsToOrderMgViewModel(
     private val state = MutableLiveData<Boolean>()  //弹出对话框
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
     var shoppingCartOfQuantity = MutableLiveData<Int>()
-
-
 
 
     /**
@@ -251,10 +246,10 @@ class GoodsToOrderMgViewModel(
                         Observable.fromIterable(it)
                             .subscribeOn(Schedulers.newThread())
                             .autoDisposable(this)
-                            .subscribe{category->
+                            .subscribe { category ->
                                 repository.getAllGoodsOfCategoryFromNetwork(category)
                                     .autoDisposable(this)
-                                    .subscribe{goodslist->
+                                    .subscribe { goodslist ->
                                         repository.addGoodsListToLocal(goodslist)
                                             .autoDisposable(this)
                                             .subscribe({}, {})
@@ -267,7 +262,7 @@ class GoodsToOrderMgViewModel(
     }
 
     /**
-     * 获取某日菜单，并将其保存在购物车当中
+     * 获取某日菜单将其所需商品，汇总后保存在购物车当中
      */
     fun getDailyMealToShoppingCar(where: String) {
         repository.getDailyMealOfDate(where)
@@ -275,7 +270,7 @@ class GoodsToOrderMgViewModel(
                 Observable.fromIterable(it.results)
             }
             .map {
-                it.cookBook.material
+                repository.getCookBookWithGoods(it.cookBook.objectId).goods
             }
             .flatMap {
                 Observable.fromIterable(it)

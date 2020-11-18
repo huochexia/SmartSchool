@@ -6,7 +6,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CookBookGoodsCrossRef
+import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
@@ -56,7 +56,7 @@ class CookBookRepository(
     suspend fun createCrossRef(newRef: NewCrossRef): ReturnResult {
         val createObject = remote.createCrossRef(newRef)
         return if (createObject.isSuccess()) {
-            val crossRef = CookBookGoodsCrossRef(
+            val crossRef = CBGCrossRef(
                 createObject.objectId!!,
                 newRef.cb_id,
                 newRef.goods_id,
@@ -88,6 +88,11 @@ class CookBookRepository(
         return remote.deleteCrossRef(objectId)
     }
 
+    suspend fun deleteLocalCookBookAndRef(cookbook: CookBooks) {
+        local.deleteCookBook(cookbook)
+        local.deleteCrossRef(cookbook.objectId)
+    }
+
     /*
     更新
      */
@@ -103,7 +108,11 @@ class CookBookRepository(
     查询,从本地根据分类获取菜谱和相应的商品
      */
     fun getCookBookWithGoodsOfCategory(category: String): Flow<MutableList<CookBookWithGoods>> {
-        return local.getCookBookWithGoods(category)
+        return local.getAllCookBookWithGoods(category)
+    }
+
+    suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
+        return local.getCookBookWithGoods(objectId)
     }
 
     suspend fun getCookBookOfCategory(where: String): ObjectList<CookBooks> {
@@ -114,7 +123,7 @@ class CookBookRepository(
         return remote.getDailyMealOfDate(where)
     }
 
-    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CookBookGoodsCrossRef> {
+    suspend fun getCookBookGoodsCrossRef(where: String): ObjectList<CBGCrossRef> {
         return remote.getCookBookGoodsCrossRef(where)
     }
 
@@ -123,5 +132,30 @@ class CookBookRepository(
      */
     suspend fun searchMaterial(name: String): MutableList<Goods> {
         return local.searchMaterial(name)
+    }
+
+    /*
+    增加菜谱列表到本地
+     */
+    suspend fun addCookBookToLocal(list: MutableList<CookBooks>) {
+        local.addAllCookBooksOfCategory(list)
+    }
+
+    /*
+    增加关系列表到本地
+     */
+    suspend fun addCrossRefToLocal(refList: MutableList<CBGCrossRef>) {
+        local.addCrossRefAllOfCategory(refList)
+    }
+
+    /*
+    清空本地某类别菜谱
+     */
+    suspend fun clearCookBookOfCategory(category: String) {
+        local.deleteCookBookOfCategory(category)
+    }
+
+    suspend fun clearCrossRefOfCategory(category: String) {
+        local.deleteCrossRefOfCategory(category)
     }
 }

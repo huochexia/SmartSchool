@@ -31,7 +31,7 @@ data class CookBooks(
  * 暂时解决办法是给关系表增加一个字段：类别。按类别分别获取。同时还要限制菜谱对应商品的数量，最多4种。
  */
 @Entity(primaryKeys = ["objectId","cb_id", "goods_id"])
-data class CookBookGoodsCrossRef(
+data class CBGCrossRef(
     var objectId: String,
     var cb_id: String,
     var goods_id: String,
@@ -46,7 +46,7 @@ data class CookBookWithGoods(
     @Relation(
         parentColumn = "cb_id",
         entityColumn = "goods_id",
-        associateBy = Junction(CookBookGoodsCrossRef::class)
+        associateBy = Junction(CBGCrossRef::class)
     )
     val goods: List<Goods>
 )
