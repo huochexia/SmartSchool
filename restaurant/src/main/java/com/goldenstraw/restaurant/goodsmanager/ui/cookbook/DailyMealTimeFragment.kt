@@ -141,7 +141,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                         bundle.putString("cookcategory", Snackdetail.kindName)
                     }
                 }
-                findNavController().navigate(R.id.cookBookDetailFragment, bundle)
+                findNavController().navigate(R.id.searchCookBookFragment, bundle)
             }
 
         }

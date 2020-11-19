@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.FragmentSearchMaterialBinding
-import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
+import com.goldenstraw.restaurant.databinding.FragmentSearchCookbookBinding
+import com.goldenstraw.restaurant.databinding.LayoutCoolbookItemBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
@@ -22,31 +22,40 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.CookBookWithGoods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
- * 通过模糊查询，从Goods中查找菜谱所需材料。
+ * 模糊查询菜谱
  */
-class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
-
-
+class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
+    var mealDate = ""
+    var mealTime = ""
+    var cookCategory = ""
     override val layoutId: Int
-        get() = R.layout.fragment_search_material
+        get() = R.layout.fragment_search_cookbook
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+
     private val repository by instance<CookBookRepository>()
 
     var viewModel: CookBookViewModel? = null
 
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+    var adapter: BaseDataBindingAdapter<CookBookWithGoods, LayoutCoolbookItemBinding>? = null
 
-    var goodsList = mutableListOf<Goods>()
+    var cookbookList = mutableListOf<CookBookWithGoods>()
+    override fun initView() {
+        arguments?.let {
+            mealDate = it.getString("mealDate")
+            mealTime = it.getString("mealTime")
+            cookCategory = it.getString("cookcategory")
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -58,32 +67,30 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
         }
         //观察LiveData的变化
         viewModel!!.searchedStatusLiveData.observe(viewLifecycleOwner) { status ->
-            goodsList.clear()
+            cookbookList.clear()
             when (status) {
                 null, None -> {
                 }
                 is Success<*> -> {
                     //刷新列表
 
-                    goodsList.addAll(status.list as MutableList<Goods>)
+                    cookbookList.addAll(status.list as MutableList<CookBookWithGoods>)
                 }
             }
             adapter!!.forceUpdate()
         }
-
         adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataSource = { goodsList },
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.addSub.visibility = View.INVISIBLE
-                binding.cbGoods.visibility = View.INVISIBLE
+            layoutId = R.layout.layout_coolbook_item,
+            dataSource = { cookbookList },
+            dataBinding = { LayoutCoolbookItemBinding.bind(it) },
+            callback = { cookbook, binding, position ->
+                binding.cookbooks = cookbook
                 //项目点击事件，返回用户的选择
-                binding.clickEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
+                binding.onClick = object : Consumer<CookBookWithGoods> {
+                    override fun accept(t: CookBookWithGoods) {
                         with(viewModel!!) {
-                            materialList.add(goods)
+                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookBook)
+                            createDailyMeal(newDailyMeal)
                             defUI.refreshEvent.call()
                         }
                         findNavController().popBackStack()
@@ -92,21 +99,22 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
                 }
             }
         )
-
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_search_material, menu)
-        searchMaterial(menu)
+        inflater.inflate(R.menu.menu_search_cookbook, menu)
+        searchCookBook(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
 
-            R.id.action_add_material -> {
+            R.id.action_add_cookbook -> {
+                val bundle = Bundle()
+                bundle.putString("cookcategory", cookCategory)
+                findNavController().navigate(R.id.inputCookBookFragment, bundle)
             }
         }
         return true
@@ -117,9 +125,9 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
     /**
      * 设置查找视图SearchView
      */
-    private fun searchMaterial(menu: Menu?) {
+    private fun searchCookBook(menu: Menu?) {
         //获取SearchView对象
-        val searchItem = menu?.findItem(R.id.action_search_material)
+        val searchItem = menu?.findItem(R.id.action_search_cookbook)
         val searchView = searchItem?.actionView as SearchView
         searchView.isIconified = false //处于展开状态
         searchView.onActionViewExpanded()
@@ -127,7 +135,7 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
         searchEdit.setTextColor(Color.BLACK)
 
         with(searchView) {
-            queryHint = "输入材料名称"
+            queryHint = "输入菜谱名称"
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return false
@@ -138,10 +146,10 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
                     //调用ViewModel当中的查询
                     newText?.let {
                         if (it.isEmpty()) {
-                            goodsList.clear()
+                            cookbookList.clear()
                             adapter!!.forceUpdate()
                         } else {
-                            viewModel!!.searchMaterial(newText.trim())
+                            viewModel!!.searchCookBookWithGoods(newText.trim(), cookCategory)
                         }
                     }
 
@@ -159,4 +167,5 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
         }
 
     }
+
 }

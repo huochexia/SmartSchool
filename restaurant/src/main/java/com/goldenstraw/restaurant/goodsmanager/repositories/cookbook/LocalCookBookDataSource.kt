@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface ILocalCookBookDataSource : ILocalDataSource {
     //模糊查找
     suspend fun searchMaterial(name: String): MutableList<Goods>
-    fun queryCookBookWithGoods(name: String): Flow<MutableList<CookBookWithGoods>>
+    suspend fun searchCookBookWithGoods(name: String,category: String): MutableList<CookBookWithGoods>
 
     //获得所有某分类所有菜谱
     fun getAllCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>>
@@ -46,8 +46,8 @@ class LocalCookBookDataSourceImpl(
     /*
       根据菜谱名称模糊查询
      */
-    override fun queryCookBookWithGoods(name: String): Flow<MutableList<CookBookWithGoods>> {
-        return database.cookbookDao().queryCookBookWithGoods(name)
+    override suspend fun searchCookBookWithGoods(name: String,category: String): MutableList<CookBookWithGoods> {
+        return database.cookbookDao().queryCookBookWithGoods(name,category)
     }
 
     /*

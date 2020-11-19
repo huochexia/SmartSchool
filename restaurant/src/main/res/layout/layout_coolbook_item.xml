@@ -10,8 +10,13 @@
                 type="com.owner.basemodule.room.entities.CookBookWithGoods" />
 
         <variable
+                name="onClick"
+                type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
                 name="consumer"
                 type="com.owner.basemodule.functional.Consumer" />
+
         <variable
                 name="selected"
                 type="com.owner.basemodule.functional.Consumer" />
@@ -47,6 +52,7 @@
                     android:text="@{cookbooks.cookBook.foodName}"
                     android:textSize="18sp"
                     android:typeface="sans"
+                    android:onClick="@{()->onClick.accept(cookbooks)}"
                     app:bind_view_onLongClick="@{()->consumer.accept(cookbooks)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cb_selected_food"

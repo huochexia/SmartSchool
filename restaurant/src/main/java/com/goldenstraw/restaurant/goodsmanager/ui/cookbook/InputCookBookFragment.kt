@@ -16,7 +16,6 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
@@ -88,6 +87,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                 )
                 viewModel.createCookBook(newFood)
                 findNavController().popBackStack()
+
             } else {
                 AlertDialog.Builder(context!!)
                     .setMessage("菜名或材料不能为空！！").create().show()

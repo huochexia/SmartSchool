@@ -2,7 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.cookbook
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.*
+import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.DeleteObject
+import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
@@ -24,7 +27,7 @@ class CookBookRepository(
     sealed class SearchedStatus {
         object None : SearchedStatus()
         class Error(val throwable: Throwable) : SearchedStatus()
-        class Success(val list: MutableList<Goods>) : SearchedStatus()
+        class Success<T>(val list: MutableList<T>) : SearchedStatus()
     }
 
     /**
@@ -131,7 +134,9 @@ class CookBookRepository(
     suspend fun searchMaterial(name: String): MutableList<Goods> {
         return local.searchMaterial(name)
     }
-
+    suspend fun searchCookBook(name:String,category: String):MutableList<CookBookWithGoods>{
+        return local.searchCookBookWithGoods(name,category)
+    }
     /*
     增加菜谱列表到本地
      */

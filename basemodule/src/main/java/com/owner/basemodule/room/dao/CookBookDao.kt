@@ -32,8 +32,11 @@ interface CookBookDao {
      通过CookBook的名字属性进行模糊查询
      */
     @Transaction
-    @Query("SELECT * FROM CookBooks WHERE foodname LIKE  '%' || :name || '%' ORDER BY foodCategory")
-    fun queryCookBookWithGoods(name: String): Flow<MutableList<CookBookWithGoods>>
+    @Query("SELECT * FROM CookBooks WHERE foodname LIKE  '%' || :name || '%' AND foodCategory =:category")
+    suspend fun queryCookBookWithGoods(
+        name: String,
+        category: String
+    ): MutableList<CookBookWithGoods>
 
     /*
     增加菜谱,也可以用于修改菜谱

@@ -82,18 +82,6 @@ class CookBookViewModel(
                     defUI.showDialog.postValue(result.e)
                 }
             }
-//            newCookBook.save(object : SaveListener<String>() {
-//                override fun done(id: String?, e: BmobException?) {
-//                    if (e == null) {
-////                        cookbookList.add(newCookBook)
-//                        materialList.clear()//保存成功，清除原材料列表
-//                        defUI.refreshEvent.call()
-//                    } else {
-//                        //发出显示错误信息
-//                        defUI.showDialog.postValue(e.message)
-//                    }
-//                }
-//            })
         }
     }
 
@@ -200,6 +188,17 @@ class CookBookViewModel(
                 searchedStatusLiveData.value = None
             } else {
                 searchedStatusLiveData.value = Success(goods)
+            }
+        }
+    }
+
+    fun searchCookBookWithGoods(name: String,category:String) {
+        launchUI {
+            val cookbookList = repository.searchCookBook(name,category)
+            if (cookbookList.isEmpty()) {
+                searchedStatusLiveData.value = None
+            } else {
+                searchedStatusLiveData.value = Success(cookbookList)
             }
         }
     }

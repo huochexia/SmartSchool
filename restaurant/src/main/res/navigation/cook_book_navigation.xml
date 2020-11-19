@@ -66,8 +66,8 @@
             android:label="DailyMealTimeFragment"
             tools:layout="@layout/fragment_daily_mealtime" >
         <action
-                android:id="@+id/action_dailyMealTimeFragment_to_cookBookDetailFragment"
-                app:destination="@id/cookBookDetailFragment" />
+                android:id="@+id/action_dailyMealTimeFragment_to_searchCookBookFragment"
+                app:destination="@id/searchCookBookFragment" />
     </fragment>
     <fragment
             android:id="@+id/searchMaterialFragment"
@@ -82,5 +82,15 @@
             android:id="@+id/cookBookanalyesFragment"
             android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookanalyesFragment"
             android:label="CookBookanalyesFragment"
-            tools:layout="@layout/fragment_analyes_meal_select_date"/>
+            tools:layout="@layout/fragment_analyes_meal_select_date" />
+    <fragment
+            android:id="@+id/searchCookBookFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.SearchCookBookFragment"
+            android:label="CookBookanalyesFragment"
+            tools:layout="@layout/fragment_search_cookbook">
+
+        <action
+                android:id="@+id/action_searchCookBookFragment_to_inputCookBookFragment"
+                app:destination="@id/inputCookBookFragment" />
+    </fragment>
 </navigation>
