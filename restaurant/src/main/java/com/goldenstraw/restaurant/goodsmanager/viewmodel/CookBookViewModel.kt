@@ -41,7 +41,9 @@ class CookBookViewModel(
     /**
      * 对菜谱的管理部分
      */
-    val searchedStatusLiveData = MutableLiveData<SearchedStatus>(None)
+    val searchedGoodsStatusLiveData = MutableLiveData<SearchedStatus>(None)
+    val searchCookbookStatusLiveDate = MutableLiveData<SearchedStatus>(None)
+
 
     /*
       共享变量：菜谱原材料列表。当在查询商品的列表中选择某一个原材料后，将该材料加入原材料列表中；
@@ -185,20 +187,20 @@ class CookBookViewModel(
         launchUI {
             val goods = repository.searchMaterial(name)
             if (goods.isEmpty()) {
-                searchedStatusLiveData.value = None
+                searchedGoodsStatusLiveData.value = None
             } else {
-                searchedStatusLiveData.value = Success(goods)
+                searchedGoodsStatusLiveData.value = Success(goods)
             }
         }
     }
 
-    fun searchCookBookWithGoods(name: String,category:String) {
+    fun searchCookBookWithGoods(name: String, category: String) {
         launchUI {
-            val cookbookList = repository.searchCookBook(name,category)
+            val cookbookList = repository.searchCookBook(name, category)
             if (cookbookList.isEmpty()) {
-                searchedStatusLiveData.value = None
+                searchCookbookStatusLiveDate.value = None
             } else {
-                searchedStatusLiveData.value = Success(cookbookList)
+                searchCookbookStatusLiveDate.value = Success(cookbookList)
             }
         }
     }

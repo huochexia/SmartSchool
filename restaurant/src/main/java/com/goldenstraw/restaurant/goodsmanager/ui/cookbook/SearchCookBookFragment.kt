@@ -55,18 +55,18 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
             mealTime = it.getString("mealTime")
             cookCategory = it.getString("cookcategory")
         }
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
-
         viewModel = activity!!.getViewModel {
             CookBookViewModel(repository)
         }
         //观察LiveData的变化
-        viewModel!!.searchedStatusLiveData.observe(viewLifecycleOwner) { status ->
+        viewModel!!.searchCookbookStatusLiveDate.observe(viewLifecycleOwner) { status ->
             cookbookList.clear()
             when (status) {
                 null, None -> {

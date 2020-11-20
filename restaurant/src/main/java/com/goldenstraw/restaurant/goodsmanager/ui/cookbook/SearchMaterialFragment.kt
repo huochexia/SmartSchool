@@ -48,6 +48,7 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
 
     var goodsList = mutableListOf<Goods>()
 
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -57,14 +58,13 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
             CookBookViewModel(repository)
         }
         //观察LiveData的变化
-        viewModel!!.searchedStatusLiveData.observe(viewLifecycleOwner) { status ->
+        viewModel!!.searchedGoodsStatusLiveData.observe(viewLifecycleOwner) { status ->
             goodsList.clear()
             when (status) {
                 null, None -> {
                 }
                 is Success<*> -> {
                     //刷新列表
-
                     goodsList.addAll(status.list as MutableList<Goods>)
                 }
             }
