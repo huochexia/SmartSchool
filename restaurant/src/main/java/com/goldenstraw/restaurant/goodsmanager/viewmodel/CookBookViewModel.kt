@@ -109,74 +109,33 @@ class CookBookViewModel(
     查询，对结果通过groupBy进行分组。
      */
     suspend fun getCookBookWithGoodsOfCategory(category: String) {
-        repository.getCookBookWithGoodsOfCategory(category)
-            .onStart {
-                groupbyKind.clear()
-            }.collect {
-
-                cookbookList = it
-                Observable.fromIterable(cookbookList)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .groupBy { cookbooks ->
-                        cookbooks.cookBook.foodKind
-                    }
-                    .autoDisposable(this@CookBookViewModel)
-                    .subscribe({ group ->
-                        groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                        group.autoDisposable(this@CookBookViewModel)
-                            .subscribe { cookbooks ->
-                                groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
-                            }
-                    }, {}, {
-                        defUI.refreshEvent.call()//发出刷新数据通知
-                    })
-
+        groupbyKind.clear()
+        cookbookList.clear()
+        launchUI {
+            val list = async {
+                repository.getCookBookWithGoodsOfCategory(category)
             }
+            cookbookList = list.await()
+            Observable.fromIterable(cookbookList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .groupBy { cookbooks ->
+                    cookbooks.cookBook.foodKind
+                }
+                .autoDisposable(this@CookBookViewModel)
+                .subscribe({ group ->
+                    groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                    group.autoDisposable(this@CookBookViewModel)
+                        .subscribe { cookbooks ->
+                            groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                        }
+                }, {}, {
+                    defUI.refreshEvent.call()//发出刷新数据通知
+                })
+
+        }
 
     }
-//
-//    fun getCookBookOfCategory(category: String) {
-//        //清空原内容
-//        groupbyKind.clear()
-//        launchUI {
-//
-//            val query = BmobQuery<CookBook>()
-//            query.addWhereEqualTo("foodCategory", category)
-//            query.setLimit(500)
-//            query.findObjects(object : FindListener<CookBook>() {
-//                override fun done(list: MutableList<CookBook>?, e: BmobException?) {
-//                    if (e == null) {
-//                        //将列表按小类分组，使用Rxjava的groupBy按小类进行分组
-//
-//                        list?.let { list ->
-//                            cookbookList = list
-//                            Observable.fromIterable(cookbookList)
-//                                .subscribeOn(Schedulers.io())
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .groupBy {
-//                                    it.foodKind
-//                                }
-//                                .autoDisposable(this@CookBookViewModel)
-//                                .subscribe({
-//                                    groupbyKind[it.key!!] = mutableListOf()//为每个分类建立key-value值
-//                                    it.autoDisposable(this@CookBookViewModel)
-//                                        .subscribe { cookbook ->
-//                                            groupbyKind[it!!.key]!!.add(cookbook)//将对应分类的菜谱，存入对应的列表中
-//                                        }
-//                                }, {}, {
-//                                    defUI.refreshEvent.call()//发出刷新数据通知
-//                                })
-//                        }
-//
-//                    } else {
-//                        defUI.showDialog.postValue(e.message!!)
-//                    }
-//                }
-//
-//            })
-//        }
-//    }
 
 
     /*

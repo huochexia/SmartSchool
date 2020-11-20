@@ -55,7 +55,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
             mealTime = it.getString("mealTime")
             cookCategory = it.getString("cookcategory")
         }
-
+        cookbookList.clear()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -99,6 +99,8 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                 }
             }
         )
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
