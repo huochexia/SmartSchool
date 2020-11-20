@@ -25,9 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -109,31 +107,32 @@ class CookBookViewModel(
     查询，对结果通过groupBy进行分组。
      */
     suspend fun getCookBookWithGoodsOfCategory(category: String) {
-        groupbyKind.clear()
-        cookbookList.clear()
-        launchUI {
-            val list = async {
-                repository.getCookBookWithGoodsOfCategory(category)
-            }
-            cookbookList = list.await()
-            Observable.fromIterable(cookbookList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .groupBy { cookbooks ->
-                    cookbooks.cookBook.foodKind
-                }
-                .autoDisposable(this@CookBookViewModel)
-                .subscribe({ group ->
-                    groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                    group.autoDisposable(this@CookBookViewModel)
-                        .subscribe { cookbooks ->
-                            groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
-                        }
-                }, {}, {
-                    defUI.refreshEvent.call()//发出刷新数据通知
-                })
 
-        }
+        repository.getCookBookWithGoodsOfCategory(category)
+            .onStart {
+                groupbyKind.clear()
+                cookbookList.clear()
+            }
+            .collectLatest {
+                cookbookList = it
+                Observable.fromIterable(cookbookList)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .groupBy { cookbooks ->
+                        cookbooks.cookBook.foodKind
+                    }
+                    .autoDisposable(this@CookBookViewModel)
+                    .subscribe({ group ->
+                        groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                        group.autoDisposable(this@CookBookViewModel)
+                            .subscribe { cookbooks ->
+                                groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                            }
+                    }, {}, {
+                        defUI.refreshEvent.call()//发出刷新数据通知
+                    })
+
+            }
 
     }
 

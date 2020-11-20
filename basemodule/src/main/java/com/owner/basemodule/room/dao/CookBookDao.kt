@@ -18,7 +18,7 @@ interface CookBookDao {
      */
     @Transaction
     @Query("SELECT * FROM CookBooks WHERE foodCategory = :category")
-    suspend fun getAllCookBookWithGoods(category: String): MutableList<CookBookWithGoods>
+    fun getAllCookBookWithGoods(category: String): Flow<MutableList<CookBookWithGoods>>
 
     /*
     获取某个菜谱和它所需的商品

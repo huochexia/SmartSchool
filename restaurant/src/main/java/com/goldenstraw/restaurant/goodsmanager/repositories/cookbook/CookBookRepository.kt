@@ -107,7 +107,7 @@ class CookBookRepository(
     /*
     查询,从本地根据分类获取菜谱和相应的商品
      */
-    suspend fun getCookBookWithGoodsOfCategory(category: String): MutableList<CookBookWithGoods> {
+    fun getCookBookWithGoodsOfCategory(category: String): Flow<MutableList<CookBookWithGoods>> {
         return local.getAllCookBookWithGoods(category)
     }
 

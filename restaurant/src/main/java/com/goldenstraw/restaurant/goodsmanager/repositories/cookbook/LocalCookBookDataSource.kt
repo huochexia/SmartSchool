@@ -14,7 +14,7 @@ interface ILocalCookBookDataSource : ILocalDataSource {
     suspend fun searchCookBookWithGoods(name: String,category: String): MutableList<CookBookWithGoods>
 
     //获得所有某分类所有菜谱
-    suspend fun getAllCookBookWithGoods(foodCategory: String): MutableList<CookBookWithGoods>
+    fun getAllCookBookWithGoods(foodCategory: String):Flow<MutableList<CookBookWithGoods>>
     suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods
 
     //增加菜谱
@@ -53,7 +53,7 @@ class LocalCookBookDataSourceImpl(
     /*
     获取某分类的所有菜谱
      */
-    override suspend fun getAllCookBookWithGoods(foodCategory: String): MutableList<CookBookWithGoods> {
+    override  fun getAllCookBookWithGoods(foodCategory: String): Flow<MutableList<CookBookWithGoods>> {
         return database.cookbookDao().getAllCookBookWithGoods(foodCategory)
     }
 
