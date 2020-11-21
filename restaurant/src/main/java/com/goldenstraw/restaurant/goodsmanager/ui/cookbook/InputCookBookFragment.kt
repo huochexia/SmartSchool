@@ -19,6 +19,7 @@ import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -85,8 +86,19 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                     foodName = ed_cook_name.text.toString(),
                     foodKind = kind
                 )
-                viewModel.createCookBook(newFood)
-                findNavController().popBackStack()
+                /**
+                 * 这里启动一个协程非常必要，即使createCook()这个方法本身不是挂起函数。
+                 * 因为在createCookBook（）方法中一定是有一个协程来处理数据工作的，也
+                 * 就是里面有挂起函数，它不会阻塞当前进程。这样findNavController会继
+                 * 续运行，此时保存数据可能还没有完成，于是在返回前一Fragment时，它无法
+                 * 得到新加入的数据。所以要把createCook（）定义为挂起函数，将其与返回方
+                 * 法findNavController置与同一协程当中。
+                 *
+                 */
+                launch {
+                    viewModel.createCookBook(newFood)
+                    findNavController().popBackStack()
+                }
 
             } else {
                 AlertDialog.Builder(context!!)

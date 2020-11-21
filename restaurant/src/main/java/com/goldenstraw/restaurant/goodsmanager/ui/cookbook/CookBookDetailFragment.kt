@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -23,13 +24,11 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.CookBookWithGoods
-import com.owner.basemodule.room.entities.CookBooks
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -178,7 +177,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     override fun onResume() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
-        launch {
+        lifecycleScope.launchWhenResumed {
             viewModel.getCookBookWithGoodsOfCategory(cookCategory)
         }
 
