@@ -4,6 +4,11 @@
 <item
         android:title="复制菜单"
         android:id="@+id/copy_daily_meal"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:icon="@drawable/ic_baseline_file_copy_24"/>
+    <item
+        android:title="生成菜单"
+        android:id="@+id/create_daily_meal"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_baseline_text_snippet_24"/>
 </menu>

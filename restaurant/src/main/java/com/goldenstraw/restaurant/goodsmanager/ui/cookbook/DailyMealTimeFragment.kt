@@ -388,6 +388,12 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             R.id.copy_daily_meal -> {
                 showDatePickerDialog(activity, 0, Calendar.getInstance())
             }
+            R.id.create_daily_meal -> {
+                launch {
+                    viewModel.createStyledTable(dailyDate)
+                }
+
+            }
         }
         return true
     }
