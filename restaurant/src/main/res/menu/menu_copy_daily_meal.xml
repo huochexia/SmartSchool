@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-<item
-        android:title="复制菜单"
-        android:id="@+id/copy_daily_meal"
-        app:showAsAction="never"
-        android:icon="@drawable/ic_baseline_file_copy_24"/>
     <item
-        android:title="生成菜单"
-        android:id="@+id/create_daily_meal"
-        app:showAsAction="never"
-        android:icon="@drawable/ic_baseline_text_snippet_24"/>
+            android:id="@+id/copy_daily_meal"
+            android:icon="@drawable/ic_baseline_file_copy_24"
+            android:title="复制"
+            app:showAsAction="never" />
+    <item
+            android:id="@+id/delete_daily_meal"
+            android:title="删除"
+            app:showAsAction="never" />
+    <item
+            android:id="@+id/create_daily_meal"
+            android:icon="@drawable/ic_baseline_text_snippet_24"
+            android:title="生成文档"
+            app:showAsAction="never" />
 </menu>

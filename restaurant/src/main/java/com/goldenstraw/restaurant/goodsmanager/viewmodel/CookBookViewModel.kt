@@ -280,6 +280,31 @@ class CookBookViewModel(
         }
     }
 
+    /*
+     * 删除一日菜单
+     */
+    suspend fun deleteDailyMealOfDate(date: String) {
+        launchFlow {
+            val where = "{\"mealDate\":\"$date\"}"
+            repository.getDailyMealOfDate(where)
+        }.onCompletion {
+            clearAllList()
+            _refreshAdapter.value = "All"
+        }
+            .collect {
+                if (it.isSuccess()) {
+                    it.results?.forEach { meal ->
+                        deleteDailyMeal(meal.objectId)
+                    }
+                } else {
+                    defUI.showDialog.value = it.error
+                }
+            }
+    }
+
+    /*
+     * 删除某项菜单
+     */
     fun deleteDailyMeal(objectId: String) {
         launchUI {
             repository.deleteDailyMeal(objectId)
@@ -297,7 +322,7 @@ class CookBookViewModel(
         }
     }
 
-    /*
+    /**
      *将每日菜单转换成Word表格
      */
     //定义三个Map变量，分别对应早，中，晚三餐

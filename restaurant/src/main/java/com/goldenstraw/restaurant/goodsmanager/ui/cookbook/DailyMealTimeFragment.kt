@@ -347,10 +347,10 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
     private fun deleteDialog(dailyMeal: DailyMeal) {
         AlertDialog.Builder(context)
             .setMessage("确定要删除\"${dailyMeal.cookBook.foodName}\"吗?")
-            .setNegativeButton("否") { dialog, which ->
+            .setNegativeButton("否") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("是") { dialog, which ->
+            .setPositiveButton("是") { _, _ ->
                 viewModel.deleteDailyMeal(dailyMeal.objectId)
                 when (dailyMeal.cookBook.foodCategory) {
                     ColdFood.kindName -> {
@@ -392,6 +392,21 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 launch {
                     viewModel.createStyledTable(dailyDate)
                 }
+
+            }
+            R.id.delete_daily_meal -> {
+                AlertDialog.Builder(context)
+                    .setMessage("确定要删除这天的菜单吗？")
+                    .setNegativeButton("否") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("是") { dialog, _ ->
+                        launch {
+                            viewModel.deleteDailyMealOfDate(dailyDate)
+                        }
+                        dialog.dismiss()
+                    }
+                    .create().show()
 
             }
         }
