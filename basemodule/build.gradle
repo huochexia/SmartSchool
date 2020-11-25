@@ -78,6 +78,16 @@ dependencies {
     //room
     api libs.arch_comp_room
     api libs.arch_comp_room_rxjava
+    implementation files('libs/activation-1.1.1.jar')
+    implementation files('libs/commons-codec-1.13.jar')
+    implementation files('libs/commons-collections4-4.4.jar')
+    implementation files('libs/commons-compress-1.19.jar')
+    implementation files('libs/commons-logging-1.2.jar')
+    implementation files('libs/commons-math3-3.6.1.jar')
+
+    implementation files('libs/junit-4.12.jar')
+    implementation files('libs/log4j-1.2.17.jar')
+    implementation files('libs/SparseBitSet-1.2.jar')
 
 
     kapt libs.arch_comp_room_compiler
@@ -142,11 +152,8 @@ dependencies {
     androidTestImplementation libs.espresso_core
     //文字，Word(docx格式），Excel
     api files('libs/pinyin4j-2.5.0.jar')
-    api files('libs/curvesapi-1.06.jar')
+
     api files('libs/poi-4.1.2.jar')
-    api files('libs/poi-examples-4.1.2.jar')
-    api files('libs/poi-ooxml-4.1.2.jar')
-    api files('libs/poi-excelant-4.1.2.jar')
-    api files('libs/poi-ooxml-schemas-4.1.2.jar')
-    api files('libs/xmlbeans-3.1.0.jar')
+
+    api files('libs/poi-scratchpad-4.1.2.jar')
 }

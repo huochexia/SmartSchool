@@ -31,14 +31,12 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment.CENTER
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment.LEFT
-import org.apache.poi.xwpf.usermodel.XWPFDocument
-import org.apache.xmlbeans.impl.richParser.XMLStreamReaderExt
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc
+import org.apache.poi.hwpf.HWPFDocument
+import java.io.File
 import java.io.FileOutputStream
-import java.math.BigInteger
+import java.io.IOException
+import java.io.InputStream
+
 
 /**
  * 使用协程。对菜谱的管理（增删），对每日菜单的管理（增改）
@@ -330,13 +328,13 @@ class CookBookViewModel(
     val lunch = mutableListOf<CookBooks>()
     val dinner = mutableListOf<CookBooks>()
 
-    suspend fun createStyledTable(date: String) {
+    suspend fun createStyledTable(date: String, file: InputStream) {
         launchFlow {
             val where = "{\"mealDate\":\"$date\"}"
             repository.getDailyMealOfDate(where)
         }.flowOn(Dispatchers.IO)
             .onCompletion {
-                createOutFile(date)
+                createOutFileOfWord(date, file)
                 defUI.showDialog.value = "文件生成完毕！！"
             }
             .collect {
@@ -363,6 +361,46 @@ class CookBookViewModel(
                     defUI.showDialog.value = it.error
                 }
             }
+
+    }
+
+
+    private fun createOutFileOfWord(date: String, file: InputStream) {
+
+        val doc = HWPFDocument(file)
+        val range = doc.range
+        range.replaceText("\${cookbookDate}", date)
+        range.replaceText("\${breakfast_cold}", getCookBook(CookKind.ColdFood.kindName, breakfast))
+        range.replaceText("\${breakfast_hot}", getCookBook(CookKind.HotFood.kindName, breakfast))
+        range.replaceText(
+            "\${breakfast_flour}",
+            getCookBook(CookKind.FlourFood.kindName, breakfast)
+        )
+        range.replaceText("\${breakfast_soup}", getCookBook(CookKind.SoutPorri.kindName, breakfast))
+        range.replaceText(
+            "\${breakfast_snack}",
+            getCookBook(CookKind.Snackdetail.kindName, breakfast)
+        )
+        range.replaceText("\${lunch_cold}", getCookBook(CookKind.ColdFood.kindName, lunch))
+        range.replaceText("\${lunch_hot}", getCookBook(CookKind.HotFood.kindName, lunch))
+        range.replaceText("\${lunch_flour}", getCookBook(CookKind.FlourFood.kindName, lunch))
+        range.replaceText("\${lunch_soup}", getCookBook(CookKind.SoutPorri.kindName, lunch))
+        range.replaceText("\${lunch_snack}", getCookBook(CookKind.Snackdetail.kindName, lunch))
+        range.replaceText("\${dinner_cold}", getCookBook(CookKind.ColdFood.kindName, dinner))
+        range.replaceText("\${dinner_hot}", getCookBook(CookKind.HotFood.kindName, dinner))
+        range.replaceText("\${dinner_flour}", getCookBook(CookKind.FlourFood.kindName, dinner))
+        range.replaceText("\${dinner_soup}", getCookBook(CookKind.SoutPorri.kindName, dinner))
+        range.replaceText("\${dinner_Snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
+        val outfile = File("/storage/emulated/0/$date.doc")
+        val outFile = FileOutputStream(outfile)
+        doc.write(outFile)
+        try {
+            file.close()
+            outFile.close()
+        } catch (e: IOException) {
+            defUI.showDialog.value = e.message
+        }
+
 
     }
 
@@ -452,139 +490,139 @@ class CookBookViewModel(
     /*
       生成输出文件
      */
-    private fun createOutFile(
-        date: String
-    ) {
-        val firstRow = mutableListOf(date, "早餐", "午餐", "晚餐")
-        val firstCol = mutableListOf("凉菜", "热菜", "主食", "粥/汤", "明档", "水果")
-        //创建文档对象
-        val doc = XWPFDocument()
-        try {
-
-            //生成一个7行4列的表格
-            val nRows = 7
-            val nCols = 4
-            val table = doc.createTable(nRows, nCols)
-            //设置表格风格，如果没有定义风格，则默认“Normal"
-            val tblPr = table.ctTbl.tblPr
-            val styleStr = tblPr.addNewTblStyle()
-            styleStr.`val` = "StyledTable"
-            //获取表格中所有行
-            val rows = table.rows
-            var rowCt = 0
-            var colCt = 0
-            for (row in rows) {
-                //获取表格中行的属性
-                val trPr = row.ctRow.addNewTrPr()
-                //设置行高，units = twentieth of a point 360=0.25
-                val ht = trPr.addNewTrHeight()
-                ht.`val` = BigInteger.valueOf(360)
-
-                //获取行中的单元格
-                val cells = row.tableCells
-                //给每个单元格添加内容
-                for (cell in cells) {
-                    //获取单元格的属性
-                    val tcpr = cell.ctTc.addNewTcPr()
-                    //设置垂直方向居中
-                    val va = tcpr.addNewVAlign()
-                    va.`val` = STVerticalJc.CENTER
-                    //生成单元颜色元素
-                    val ctshd = tcpr.addNewShd()
-                    ctshd.color = "auto"
-                    ctshd.`val` = STShd.CLEAR
-                    when {
-                        rowCt == 0 -> {
-                            //表头行,填充色
-                            ctshd.fill = "A7BFDE"
-                        }
-                        rowCt % 2 == 0 -> {
-                            //偶数行，填充色
-                            ctshd.fill = "D3DFEE"
-                        }
-                        else -> {
-                            ctshd.fill = "EDF2F8"
-                        }
-                    }
-
-                    //获取单元格的段落列表中的第一段
-                    val para = cell.paragraphs[0]
-                    //创建一个Run包含内容
-                    var rh = para.createRun()
-                    //按需要样式设置单元格
-                    rh.fontSize = 24
-                    rh.fontFamily = "仿体"
-                    para.alignment = LEFT
-                    when (rowCt) {
-                        0 -> {
-                            rh = para.createRun()
-                            rh.setText(firstRow[colCt])
-                            rh.fontFamily = "黑体"
-                            rh.fontSize = 26
-                            rh.isBold = true
-                            para.alignment = CENTER
-                        }
-                        1 -> {//凉菜
-                            when (colCt) {
-                                0 -> rh.setText(firstCol[colCt])
-                                1 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, breakfast))
-                                2 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, lunch))
-                                3 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, dinner))
-                            }
-                        }
-                        2 -> {//热菜
-                            when (colCt) {
-                                0 -> rh.setText(firstCol[colCt])
-                                1 -> rh.setText(getCookBook(CookKind.HotFood.kindName, breakfast))
-                                2 -> rh.setText(getCookBook(CookKind.HotFood.kindName, lunch))
-                                3 -> rh.setText(getCookBook(CookKind.HotFood.kindName, dinner))
-                            }
-                        }
-                        3 -> {//主食
-                            when (colCt) {
-                                0 -> rh.setText(firstCol[colCt])
-                                1 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, breakfast))
-                                2 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, lunch))
-                                3 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, dinner))
-                            }
-                        }
-                        4 -> {//粥汤
-                            when (colCt) {
-                                0 -> rh.setText(firstCol[colCt])
-                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
-                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
-                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
-                            }
-                        }
-                        5 -> { //明档
-                            when (colCt) {
-                                0 -> rh.setText(firstCol[colCt])
-                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
-                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
-                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
-                            }
-                        }
-                    }
-                    colCt++
-                }//单元格
-                colCt = 0
-                rowCt++
-            }//行
-            //生成文件
-            val outFile = FileOutputStream("/storage/emulated/0/菜单/$date.docx")
-            try {
-                doc.write(outFile)
-            } catch (e: Throwable) {
-                defUI.showDialog.value = e.message
-            } finally {
-                outFile.close()
-            }
-        } catch (e: Throwable) {
-            defUI.showDialog.value = e.message
-        } finally {
-            doc.close()
-        }
-    }
+//    private fun createOutFile(
+//        date: String
+//    ) {
+//        val firstRow = mutableListOf(date, "早餐", "午餐", "晚餐")
+//        val firstCol = mutableListOf("凉菜", "热菜", "主食", "粥/汤", "明档", "水果")
+//        //创建文档对象
+//        val doc = XWPFDocument()
+//        try {
+//
+//            //生成一个7行4列的表格
+//            val nRows = 7
+//            val nCols = 4
+//            val table = doc.createTable(nRows, nCols)
+//            //设置表格风格，如果没有定义风格，则默认“Normal"
+//            val tblPr = table.ctTbl.tblPr
+//            val styleStr = tblPr.addNewTblStyle()
+//            styleStr.`val` = "StyledTable"
+//            //获取表格中所有行
+//            val rows = table.rows
+//            var rowCt = 0
+//            var colCt = 0
+//            for (row in rows) {
+//                //获取表格中行的属性
+//                val trPr = row.ctRow.addNewTrPr()
+//                //设置行高，units = twentieth of a point 360=0.25
+//                val ht = trPr.addNewTrHeight()
+//                ht.`val` = BigInteger.valueOf(360)
+//
+//                //获取行中的单元格
+//                val cells = row.tableCells
+//                //给每个单元格添加内容
+//                for (cell in cells) {
+//                    //获取单元格的属性
+//                    val tcpr = cell.ctTc.addNewTcPr()
+//                    //设置垂直方向居中
+//                    val va = tcpr.addNewVAlign()
+//                    va.`val` = STVerticalJc.CENTER
+//                    //生成单元颜色元素
+//                    val ctshd = tcpr.addNewShd()
+//                    ctshd.color = "auto"
+//                    ctshd.`val` = STShd.CLEAR
+//                    when {
+//                        rowCt == 0 -> {
+//                            //表头行,填充色
+//                            ctshd.fill = "A7BFDE"
+//                        }
+//                        rowCt % 2 == 0 -> {
+//                            //偶数行，填充色
+//                            ctshd.fill = "D3DFEE"
+//                        }
+//                        else -> {
+//                            ctshd.fill = "EDF2F8"
+//                        }
+//                    }
+//
+//                    //获取单元格的段落列表中的第一段
+//                    val para = cell.paragraphs[0]
+//                    //创建一个Run包含内容
+//                    var rh = para.createRun()
+//                    //按需要样式设置单元格
+//                    rh.fontSize = 24
+//                    rh.fontFamily = "仿体"
+//                    para.alignment = LEFT
+//                    when (rowCt) {
+//                        0 -> {
+//                            rh = para.createRun()
+//                            rh.setText(firstRow[colCt])
+//                            rh.fontFamily = "黑体"
+//                            rh.fontSize = 26
+//                            rh.isBold = true
+//                            para.alignment = CENTER
+//                        }
+//                        1 -> {//凉菜
+//                            when (colCt) {
+//                                0 -> rh.setText(firstCol[colCt])
+//                                1 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, breakfast))
+//                                2 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, lunch))
+//                                3 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, dinner))
+//                            }
+//                        }
+//                        2 -> {//热菜
+//                            when (colCt) {
+//                                0 -> rh.setText(firstCol[colCt])
+//                                1 -> rh.setText(getCookBook(CookKind.HotFood.kindName, breakfast))
+//                                2 -> rh.setText(getCookBook(CookKind.HotFood.kindName, lunch))
+//                                3 -> rh.setText(getCookBook(CookKind.HotFood.kindName, dinner))
+//                            }
+//                        }
+//                        3 -> {//主食
+//                            when (colCt) {
+//                                0 -> rh.setText(firstCol[colCt])
+//                                1 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, breakfast))
+//                                2 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, lunch))
+//                                3 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, dinner))
+//                            }
+//                        }
+//                        4 -> {//粥汤
+//                            when (colCt) {
+//                                0 -> rh.setText(firstCol[colCt])
+//                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
+//                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
+//                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
+//                            }
+//                        }
+//                        5 -> { //明档
+//                            when (colCt) {
+//                                0 -> rh.setText(firstCol[colCt])
+//                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
+//                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
+//                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
+//                            }
+//                        }
+//                    }
+//                    colCt++
+//                }//单元格
+//                colCt = 0
+//                rowCt++
+//            }//行
+//            //生成文件
+//            val outFile = FileOutputStream("/storage/emulated/0/菜单/$date.docx")
+//            try {
+//                doc.write(outFile)
+//            } catch (e: Throwable) {
+//                defUI.showDialog.value = e.message
+//            } finally {
+//                outFile.close()
+//            }
+//        } catch (e: Throwable) {
+//            defUI.showDialog.value = e.message
+//        } finally {
+//            doc.close()
+//        }
+//    }
 
     /**
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。

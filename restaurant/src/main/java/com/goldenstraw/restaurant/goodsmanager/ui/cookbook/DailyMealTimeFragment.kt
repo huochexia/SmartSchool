@@ -1,15 +1,18 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -144,6 +147,27 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 findNavController().navigate(R.id.searchCookBookFragment, bundle)
             }
 
+        }
+    }
+
+    private val REQUEST_EXTERNAL_STORAGE = 1
+    private val PERMISSIONS_STORAGE = arrayOf<String>(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+    fun verifyStoragePermissions(activity: Activity?) {
+        // Check if we have write permission
+        val permission = ActivityCompat.checkSelfPermission(
+            activity!!,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                activity, PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            )
         }
     }
 
@@ -389,8 +413,10 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 showDatePickerDialog(activity, 0, Calendar.getInstance())
             }
             R.id.create_daily_meal -> {
+                verifyStoragePermissions(activity)
                 launch {
-                    viewModel.createStyledTable(dailyDate)
+
+                    viewModel.createStyledTable(dailyDate, context?.assets!!.open("菜谱模板.doc"))
                 }
 
             }
