@@ -329,10 +329,16 @@ class CookBookViewModel(
     val dinner = mutableListOf<CookBooks>()
 
     suspend fun createStyledTable(date: String, file: InputStream) {
+
         launchFlow {
             val where = "{\"mealDate\":\"$date\"}"
             repository.getDailyMealOfDate(where)
         }.flowOn(Dispatchers.IO)
+            .onStart {
+                breakfast.clear()
+                lunch.clear()
+                dinner.clear()
+            }
             .onCompletion {
                 createOutFileOfWord(date, file)
                 defUI.showDialog.value = "文件生成完毕！！"
@@ -348,12 +354,15 @@ class CookBookViewModel(
                             group.autoDisposable(this)
                                 .subscribe { meal ->
                                     when (group.key) {
-                                        MealTime.Breakfast.time ->
+                                        MealTime.Breakfast.time -> {
                                             breakfast?.add(meal.cookBook)
-                                        MealTime.Lunch.time ->
+                                        }
+                                        MealTime.Lunch.time -> {
                                             lunch?.add(meal.cookBook)
-                                        MealTime.Dinner.time ->
+                                        }
+                                        MealTime.Dinner.time -> {
                                             dinner?.add(meal.cookBook)
+                                        }
                                     }
                                 }
                         }
@@ -390,7 +399,7 @@ class CookBookViewModel(
         range.replaceText("\${dinner_hot}", getCookBook(CookKind.HotFood.kindName, dinner))
         range.replaceText("\${dinner_flour}", getCookBook(CookKind.FlourFood.kindName, dinner))
         range.replaceText("\${dinner_soup}", getCookBook(CookKind.SoutPorri.kindName, dinner))
-        range.replaceText("\${dinner_Snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
+        range.replaceText("\${dinner_snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
         val outfile = File("/storage/emulated/0/$date.doc")
         val outFile = FileOutputStream(outfile)
         doc.write(outFile)
@@ -412,73 +421,46 @@ class CookBookViewModel(
         return when (cookkind) {
             CookKind.ColdFood.kindName -> {
                 var coldfood = ""
-                var i = 0
                 cookbooksList.forEach {
                     if (it.foodCategory == CookKind.ColdFood.kindName) {
                         coldfood += it.foodName + " "
-                        i++
-                    }
-                    if (i % 4 == 0) {
-                        coldfood += "\n"
-                    }
 
+                    }
                 }
                 return coldfood
             }
             CookKind.HotFood.kindName -> {
                 var hotfood = ""
-                var i = 0
                 cookbooksList.forEach {
                     if (it.foodCategory == CookKind.HotFood.kindName) {
                         hotfood += it.foodName + " "
-                        i++
                     }
-                    if (i % 4 == 0) {
-                        hotfood += "\n"
-                    }
-
                 }
                 return hotfood
             }
             CookKind.FlourFood.kindName -> {
                 var flourfood = ""
-                var i = 0
                 cookbooksList.forEach {
                     if (it.foodCategory == CookKind.FlourFood.kindName) {
                         flourfood += it.foodName + " "
-                        i++
                     }
-                    if (i % 4 == 0) {
-                        flourfood += "\n"
-                    }
-
                 }
                 return flourfood
             }
             CookKind.SoutPorri.kindName -> {
                 var soutporri = ""
-                var i = 0
                 cookbooksList.forEach {
                     if (it.foodCategory == CookKind.SoutPorri.kindName) {
                         soutporri += it.foodName + " "
-                        i++
-                    }
-                    if (i % 4 == 0) {
-                        soutporri += "\n"
                     }
                 }
                 return soutporri
             }
             CookKind.Snackdetail.kindName -> {
                 var snackdetail = ""
-                var i = 0
                 cookbooksList.forEach {
                     if (it.foodCategory == CookKind.Snackdetail.kindName) {
                         snackdetail += it.foodName + " "
-                        i++
-                    }
-                    if (i % 4 == 0) {
-                        snackdetail += "\n"
                     }
                 }
                 return snackdetail

@@ -96,6 +96,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
         initEvent()
 
+
     }
 
     /**
@@ -221,6 +222,13 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         if (prefs.role == "厨师") {
 
             initSwipeMenu()
+        }
+
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner){
+            androidx.appcompat.app.AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
         }
     }
 
