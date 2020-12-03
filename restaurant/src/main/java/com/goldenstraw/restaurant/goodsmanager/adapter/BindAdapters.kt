@@ -6,6 +6,7 @@ import androidx.databinding.BindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import com.owner.basemodule.room.entities.CookBookWithGoods
+import com.owner.basemodule.room.entities.CookBooks
 import java.text.DecimalFormat
 
 @BindingAdapter("bind_state_text")
@@ -35,6 +36,16 @@ fun setStateText(textView: TextView, state: Int) {
             textView.text = "记"
             textView.setTextColor(Color.BLACK)
         }
+    }
+}
+
+@BindingAdapter("bind_dailymeal_text")
+fun setDailyMealText(textView: TextView, cookbook: CookBooks) {
+    textView.text = cookbook.foodName
+    when (cookbook.foodKind) {
+        "小荤菜", "煮", "汤" -> textView.setTextColor(Color.BLUE)
+        "大荤菜", "杂粮", "煎炒" -> textView.setTextColor(Color.RED)
+        else -> textView.setTextColor(Color.BLACK)
     }
 }
 

@@ -2,12 +2,16 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentInputCookBookBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookMainMaterialItemBinding
+import com.goldenstraw.restaurant.goodsmanager.adapter.KindSpinnerAdapter
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
@@ -19,6 +23,7 @@ import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -42,25 +47,28 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
     lateinit var viewModel: CookBookViewModel
     var adapter: BaseDataBindingAdapter<Goods, LayoutCookMainMaterialItemBinding>? = null
 
+    private var spinnerList = mutableListOf<String>()
+
     override fun initView() {
         super.initView()
         arguments?.let {
             cookCategory = it.getString("cookcategory")
         }
         toolbar.title = cookCategory
-
-        when (cookCategory) {
-            CookKind.ColdFood.kindName, CookKind.HotFood.kindName -> {
-                spinner_cook_kind.visibility = View.VISIBLE
-            }
-            CookKind.FlourFood.kindName, CookKind.SoutPorri.kindName -> {
-                tv_kind_content.visibility = View.INVISIBLE
-            }
-            CookKind.Snackdetail.kindName -> {
-                spinner_mingdang_kind.visibility = View.VISIBLE
-            }
+        spinnerList = when (cookCategory) {
+            CookKind.ColdFood.kindName, CookKind.HotFood.kindName -> mutableListOf(
+                "素菜",
+                "小荤菜",
+                "大荤菜"
+            )
+            CookKind.FlourFood.kindName -> mutableListOf("面食", "杂粮")
+            CookKind.SoutPorri.kindName -> mutableListOf("粥", "汤")
+            CookKind.Snackdetail.kindName -> mutableListOf("煮", "煎炒", "油炸")
+            else -> mutableListOf()
         }
+        val adapter = KindSpinnerAdapter(context!!, spinnerList)
 
+        spinner_cook_kind.adapter = adapter
         add_main_material.setOnClickListener {
             findNavController().navigate(R.id.searchMaterialFragment)
         }
@@ -74,19 +82,14 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
 
             if (ed_cook_name.text.isNotEmpty() && viewModel.materialList.isNotEmpty()) {
                 //根据菜谱种类，选择不同的分类
-                val kind = when (cookCategory) {
-                    CookKind.ColdFood.kindName, CookKind.HotFood.kindName ->
-                        spinner_cook_kind.selectedItem.toString()
-                    CookKind.Snackdetail.kindName ->
-                        spinner_mingdang_kind.selectedItem.toString()
-                    else -> ""
-                }
+                val kind = spinner_cook_kind.selectedItem.toString()
                 val newFood = NewCookBook(
                     foodCategory = cookCategory,
                     foodName = ed_cook_name.text.toString(),
                     foodKind = kind
                 )
                 /**
+                 * 结构并发
                  * 这里启动一个协程非常必要，即使createCook()这个方法本身不是挂起函数。
                  * 因为在createCookBook（）方法中一定是有一个协程来处理数据工作的，也
                  * 就是里面有挂起函数，它不会阻塞当前进程。这样findNavController会继
@@ -96,9 +99,12 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                  *
                  */
                 launch {
-                    viewModel.createCookBook(newFood)
-                    findNavController().popBackStack()
+                    coroutineScope {
+                        viewModel.createCookBook(newFood)
+                        findNavController().popBackStack()
+                    }
                 }
+
 
             } else {
                 AlertDialog.Builder(context!!)
@@ -106,23 +112,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
             }
 
         }
-        /*
-        种类选择取值的另一种方式
-         */
-//        spinner_cook_kind.onItemSelectedListener = object : OnItemSelectedListener {
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-//                TODO("not implemented")
-//            }
-//
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?,
-//                view: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                activity!!.resources.getStringArray(R.array.cook_kind)[position]
-//            }
-//        }
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

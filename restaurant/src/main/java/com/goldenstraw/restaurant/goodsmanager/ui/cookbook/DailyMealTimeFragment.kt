@@ -422,10 +422,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             }
             R.id.create_daily_meal -> {
                 verifyStoragePermissions(activity)
-                launch {
-
-                    viewModel.createStyledTable(dailyDate, context?.assets!!.open("菜谱模板.doc"))
-                }
+                viewModel.createStyledTable(dailyDate, context?.assets!!.open("菜谱模板.doc"))
 
             }
             R.id.delete_daily_meal -> {
@@ -435,9 +432,9 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                         dialog.dismiss()
                     }
                     .setPositiveButton("是") { dialog, _ ->
-                        launch {
-                            viewModel.deleteDailyMealOfDate(dailyDate)
-                        }
+
+                        viewModel.deleteDailyMealOfDate(dailyDate)
+
                         dialog.dismiss()
                     }
                     .create().show()

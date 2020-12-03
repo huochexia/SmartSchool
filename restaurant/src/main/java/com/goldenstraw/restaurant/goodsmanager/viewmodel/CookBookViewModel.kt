@@ -23,14 +23,11 @@ import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.apache.poi.hwpf.HWPFDocument
 import java.io.File
 import java.io.FileOutputStream
@@ -69,31 +66,34 @@ class CookBookViewModel(
      一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
          创建关联关系对象，保存到网络和本地。
      */
-    suspend fun createCookBook(newCookBook: NewCookBook) {
-        launchFlow {
-            repository.createCookBook(newCookBook)
-        }.collect { result ->
-            when (result) {
-                is ReturnResult.Success<*> -> {
-                    materialList.forEach { goods ->
-                        val newCrossRef =
-                            NewCrossRef(
-                                (result.value as CookBooks).objectId,
-                                goods.objectId,
-                                (result.value as CookBooks).foodCategory
-                            )
-                        when (val ref = repository.createCrossRef(newCrossRef)) {
-                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
+    fun createCookBook(newCookBook: NewCookBook) {
+        launchUI {
+            launchFlow {
+                repository.createCookBook(newCookBook)
+            }.collect { result ->
+                when (result) {
+                    is ReturnResult.Success<*> -> {
+                        materialList.forEach { goods ->
+                            val newCrossRef =
+                                NewCrossRef(
+                                    (result.value as CookBooks).objectId,
+                                    goods.objectId,
+                                    (result.value as CookBooks).foodCategory
+                                )
+                            when (val ref = repository.createCrossRef(newCrossRef)) {
+                                is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
+                            }
                         }
-                    }
-                    materialList.clear()
+                        materialList.clear()
 //                    defUI.refreshEvent.call()
-                }
-                is ReturnResult.Failure -> {
-                    defUI.showDialog.postValue(result.e)
+                    }
+                    is ReturnResult.Failure -> {
+                        defUI.showDialog.postValue(result.e)
+                    }
                 }
             }
         }
+
     }
 
     /*
@@ -117,32 +117,35 @@ class CookBookViewModel(
     /*
     查询，对结果通过groupBy进行分组。
      */
-    suspend fun getCookBookWithGoodsOfCategory(category: String) {
-        launchFlow {
-            repository.getCookBookWithGoodsOfCategory(category)
-        }.onStart {
-            groupbyKind.clear()
-        }.collect {
-            cookbookList = it
-            Observable.fromIterable(cookbookList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .groupBy { cookbooks ->
-                    cookbooks.cookBook.foodKind
-                }
-                .autoDisposable(this@CookBookViewModel)
-                .subscribe({ group ->
-                    groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                    group.autoDisposable(this@CookBookViewModel)
-                        .subscribe { cookbooks ->
-                            groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
-                        }
-                }, {}, {
-                    defUI.refreshEvent.call()//发出刷新数据通知
-                })
+    fun getCookBookWithGoodsOfCategory(category: String) {
+        launchUI {
+            launchFlow {
+                repository.getCookBookWithGoodsOfCategory(category)
+            }.onStart {
+                groupbyKind.clear()
+            }.collect {
+                cookbookList = it
+                Observable.fromIterable(cookbookList)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .groupBy { cookbooks ->
+                        cookbooks.cookBook.foodKind
+                    }
+                    .autoDisposable(this@CookBookViewModel)
+                    .subscribe({ group ->
+                        groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                        group.autoDisposable(this@CookBookViewModel)
+                            .subscribe { cookbooks ->
+                                groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                            }
+                    }, {}, {
+                        defUI.refreshEvent.call()//发出刷新数据通知
+                    })
+
+            }
+
 
         }
-
 
     }
 
@@ -164,11 +167,13 @@ class CookBookViewModel(
 
     fun searchCookBookWithGoods(name: String, category: String) {
         launchUI {
-            val cookbookList = repository.searchCookBook(name, category)
-            if (cookbookList.isEmpty()) {
-                searchCookbookStatusLiveDate.value = None
-            } else {
-                searchCookbookStatusLiveDate.value = Success(cookbookList)
+            coroutineScope {
+                val cookbookList = repository.searchCookBook(name, category)
+                if (cookbookList.isEmpty()) {
+                    searchCookbookStatusLiveDate.value = None
+                } else {
+                    searchCookbookStatusLiveDate.value = Success(cookbookList)
+                }
             }
         }
     }
@@ -281,23 +286,26 @@ class CookBookViewModel(
     /*
      * 删除一日菜单
      */
-    suspend fun deleteDailyMealOfDate(date: String) {
-        launchFlow {
-            val where = "{\"mealDate\":\"$date\"}"
-            repository.getDailyMealOfDate(where)
-        }.onCompletion {
-            clearAllList()
-            _refreshAdapter.value = "All"
-        }
-            .collect {
-                if (it.isSuccess()) {
-                    it.results?.forEach { meal ->
-                        deleteDailyMeal(meal.objectId)
-                    }
-                } else {
-                    defUI.showDialog.value = it.error
-                }
+    fun deleteDailyMealOfDate(date: String) {
+        launchUI {
+            launchFlow {
+                val where = "{\"mealDate\":\"$date\"}"
+                repository.getDailyMealOfDate(where)
+            }.onCompletion {
+                clearAllList()
+                _refreshAdapter.value = "All"
             }
+                .collect {
+                    if (it.isSuccess()) {
+                        it.results?.forEach { meal ->
+                            deleteDailyMeal(meal.objectId)
+                        }
+                    } else {
+                        defUI.showDialog.value = it.error
+                    }
+                }
+        }
+
     }
 
     /*
@@ -328,48 +336,52 @@ class CookBookViewModel(
     val lunch = mutableListOf<CookBooks>()
     val dinner = mutableListOf<CookBooks>()
 
-    suspend fun createStyledTable(date: String, file: InputStream) {
-
-        launchFlow {
-            val where = "{\"mealDate\":\"$date\"}"
-            repository.getDailyMealOfDate(where)
-        }.flowOn(Dispatchers.IO)
-            .onStart {
-                breakfast.clear()
-                lunch.clear()
-                dinner.clear()
-            }
-            .onCompletion {
-                createOutFileOfWord(date, file)
-                defUI.showDialog.value = "文件生成完毕！！"
-            }
-            .collect {
-                if (it.isSuccess()) {
-                    Observable.fromIterable(it.results)
-                        .groupBy {
-                            it.mealTime
-                        }.subscribeOn(Schedulers.io())
-                        .autoDisposable(this)
-                        .subscribe { group ->
-                            group.autoDisposable(this)
-                                .subscribe { meal ->
-                                    when (group.key) {
-                                        MealTime.Breakfast.time -> {
-                                            breakfast?.add(meal.cookBook)
-                                        }
-                                        MealTime.Lunch.time -> {
-                                            lunch?.add(meal.cookBook)
-                                        }
-                                        MealTime.Dinner.time -> {
-                                            dinner?.add(meal.cookBook)
+    fun createStyledTable(date: String, file: InputStream) {
+        launchUI {
+            launchFlow {
+                val where = "{\"mealDate\":\"$date\"}"
+                repository.getDailyMealOfDate(where)
+            }.flowOn(Dispatchers.IO)
+                .onStart {
+                    breakfast.clear()
+                    lunch.clear()
+                    dinner.clear()
+                }
+                .onCompletion {
+                    createOutFileOfWord(date, file)
+                    defUI.showDialog.value = "文件生成完毕！！"
+                }
+                .collect {
+                    if (it.isSuccess()) {
+                        Observable.fromIterable(it.results)
+                            .groupBy {
+                                it.mealTime
+                            }.subscribeOn(Schedulers.io())
+                            .autoDisposable(this@CookBookViewModel)
+                            .subscribe { group ->
+                                group.autoDisposable(this@CookBookViewModel)
+                                    .subscribe { meal ->
+                                        when (group.key) {
+                                            MealTime.Breakfast.time -> {
+                                                breakfast?.add(meal.cookBook)
+                                            }
+                                            MealTime.Lunch.time -> {
+                                                lunch?.add(meal.cookBook)
+                                            }
+                                            MealTime.Dinner.time -> {
+                                                dinner?.add(meal.cookBook)
+                                            }
+                                            else -> {
+                                            }
                                         }
                                     }
-                                }
-                        }
-                } else {
-                    defUI.showDialog.value = it.error
+                            }
+                    } else {
+                        defUI.showDialog.value = it.error
+                    }
                 }
-            }
+
+        }
 
     }
 
@@ -469,148 +481,13 @@ class CookBookViewModel(
         }
     }
 
-    /*
-      生成输出文件
-     */
-//    private fun createOutFile(
-//        date: String
-//    ) {
-//        val firstRow = mutableListOf(date, "早餐", "午餐", "晚餐")
-//        val firstCol = mutableListOf("凉菜", "热菜", "主食", "粥/汤", "明档", "水果")
-//        //创建文档对象
-//        val doc = XWPFDocument()
-//        try {
-//
-//            //生成一个7行4列的表格
-//            val nRows = 7
-//            val nCols = 4
-//            val table = doc.createTable(nRows, nCols)
-//            //设置表格风格，如果没有定义风格，则默认“Normal"
-//            val tblPr = table.ctTbl.tblPr
-//            val styleStr = tblPr.addNewTblStyle()
-//            styleStr.`val` = "StyledTable"
-//            //获取表格中所有行
-//            val rows = table.rows
-//            var rowCt = 0
-//            var colCt = 0
-//            for (row in rows) {
-//                //获取表格中行的属性
-//                val trPr = row.ctRow.addNewTrPr()
-//                //设置行高，units = twentieth of a point 360=0.25
-//                val ht = trPr.addNewTrHeight()
-//                ht.`val` = BigInteger.valueOf(360)
-//
-//                //获取行中的单元格
-//                val cells = row.tableCells
-//                //给每个单元格添加内容
-//                for (cell in cells) {
-//                    //获取单元格的属性
-//                    val tcpr = cell.ctTc.addNewTcPr()
-//                    //设置垂直方向居中
-//                    val va = tcpr.addNewVAlign()
-//                    va.`val` = STVerticalJc.CENTER
-//                    //生成单元颜色元素
-//                    val ctshd = tcpr.addNewShd()
-//                    ctshd.color = "auto"
-//                    ctshd.`val` = STShd.CLEAR
-//                    when {
-//                        rowCt == 0 -> {
-//                            //表头行,填充色
-//                            ctshd.fill = "A7BFDE"
-//                        }
-//                        rowCt % 2 == 0 -> {
-//                            //偶数行，填充色
-//                            ctshd.fill = "D3DFEE"
-//                        }
-//                        else -> {
-//                            ctshd.fill = "EDF2F8"
-//                        }
-//                    }
-//
-//                    //获取单元格的段落列表中的第一段
-//                    val para = cell.paragraphs[0]
-//                    //创建一个Run包含内容
-//                    var rh = para.createRun()
-//                    //按需要样式设置单元格
-//                    rh.fontSize = 24
-//                    rh.fontFamily = "仿体"
-//                    para.alignment = LEFT
-//                    when (rowCt) {
-//                        0 -> {
-//                            rh = para.createRun()
-//                            rh.setText(firstRow[colCt])
-//                            rh.fontFamily = "黑体"
-//                            rh.fontSize = 26
-//                            rh.isBold = true
-//                            para.alignment = CENTER
-//                        }
-//                        1 -> {//凉菜
-//                            when (colCt) {
-//                                0 -> rh.setText(firstCol[colCt])
-//                                1 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, breakfast))
-//                                2 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, lunch))
-//                                3 -> rh.setText(getCookBook(CookKind.ColdFood.kindName, dinner))
-//                            }
-//                        }
-//                        2 -> {//热菜
-//                            when (colCt) {
-//                                0 -> rh.setText(firstCol[colCt])
-//                                1 -> rh.setText(getCookBook(CookKind.HotFood.kindName, breakfast))
-//                                2 -> rh.setText(getCookBook(CookKind.HotFood.kindName, lunch))
-//                                3 -> rh.setText(getCookBook(CookKind.HotFood.kindName, dinner))
-//                            }
-//                        }
-//                        3 -> {//主食
-//                            when (colCt) {
-//                                0 -> rh.setText(firstCol[colCt])
-//                                1 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, breakfast))
-//                                2 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, lunch))
-//                                3 -> rh.setText(getCookBook(CookKind.FlourFood.kindName, dinner))
-//                            }
-//                        }
-//                        4 -> {//粥汤
-//                            when (colCt) {
-//                                0 -> rh.setText(firstCol[colCt])
-//                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
-//                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
-//                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
-//                            }
-//                        }
-//                        5 -> { //明档
-//                            when (colCt) {
-//                                0 -> rh.setText(firstCol[colCt])
-//                                1 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, breakfast))
-//                                2 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, lunch))
-//                                3 -> rh.setText(getCookBook(CookKind.SoutPorri.kindName, dinner))
-//                            }
-//                        }
-//                    }
-//                    colCt++
-//                }//单元格
-//                colCt = 0
-//                rowCt++
-//            }//行
-//            //生成文件
-//            val outFile = FileOutputStream("/storage/emulated/0/菜单/$date.docx")
-//            try {
-//                doc.write(outFile)
-//            } catch (e: Throwable) {
-//                defUI.showDialog.value = e.message
-//            } finally {
-//                outFile.close()
-//            }
-//        } catch (e: Throwable) {
-//            defUI.showDialog.value = e.message
-//        } finally {
-//            doc.close()
-//        }
-//    }
+
 
     /**
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
      * 先读取本地数据，然后读取网络
      */
-    suspend fun asyncCookBooks(category: String) {
+    fun asyncCookBooks(category: String) {
         var skip = 0
         val query = BmobQuery<CookBooks>()
         query.addWhereEqualTo("foodCategory", category)
@@ -650,7 +527,7 @@ class CookBookViewModel(
     /**
      * 分页，一次只能获取500条数据，所以先判数据总数，然后进行分页循环，得到所有数据后，清空本地数据，然后保存新数据
      */
-    suspend fun asyncCrossRefs(category: String) {
+    fun asyncCrossRefs(category: String) {
         var skip = 0
         val query = BmobQuery<CBGCrossRef>()
         query.addWhereEqualTo("foodCategory", category)

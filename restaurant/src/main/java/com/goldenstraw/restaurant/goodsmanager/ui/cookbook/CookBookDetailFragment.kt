@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -27,8 +26,6 @@ import com.owner.basemodule.room.entities.CookBookWithGoods
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -168,18 +165,16 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         }
         tabLayoutMediator?.attach()
 
-        launch(Dispatchers.IO) {
-            viewModel.asyncCookBooks(cookCategory)
-            viewModel.asyncCrossRefs(cookCategory)
-        }
+
+        viewModel.asyncCookBooks(cookCategory)
+        viewModel.asyncCrossRefs(cookCategory)
+
     }
 
     override fun onResume() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
-        lifecycleScope.launchWhenResumed {
-            viewModel.getCookBookWithGoodsOfCategory(cookCategory)
-        }
+        viewModel.getCookBookWithGoodsOfCategory(cookCategory)
 
     }
 
