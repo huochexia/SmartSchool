@@ -55,11 +55,11 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     override fun initView() {
         super.initView()
         arguments?.let {
-            cookCategory = it.getString("cookcategory")
+            cookCategory = it.getString("cookcategory")!!
             isSelected = it.getBoolean("isSelected")
             if (isSelected) {
-                mealDate = it.getString("mealDate")
-                mealTime = it.getString("mealTime")
+                mealDate = it.getString("mealDate")!!
+                mealTime = it.getString("mealTime")!!
             }
         }
         toolbar.title = cookCategory
@@ -102,7 +102,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             dataBinding = { ViewpageOfCookKindBinding.bind(it) },
             callback = { group, binding, _ ->
                 //每页数据列表的适配器，每页数据是一个key-value对，列表的数据为value
-                var adapter = BaseDataBindingAdapter<CookBookWithGoods, LayoutCoolbookItemBinding>(
+                val adapter = BaseDataBindingAdapter<CookBookWithGoods, LayoutCoolbookItemBinding>(
                     layoutId = R.layout.layout_coolbook_item,
                     dataSource = { viewModel.groupbyKind[group]!! },
                     dataBinding = { LayoutCoolbookItemBinding.bind(it) },
@@ -129,7 +129,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                                     .setPositiveButton("确定") { dialog, which ->
                                         viewModel.deleteCookBook(t.cookBook)
                                         viewModel.groupbyKind[group]!!.remove(t)
-                                        viewModel.defUI.refreshEvent.call()
+                                        vpAdapter!!.forceUpdate()
                                         dialog.dismiss()
                                     }
                                     .create()
@@ -174,7 +174,10 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     override fun onResume() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
+
         viewModel.getCookBookWithGoodsOfCategory(cookCategory)
+        vpAdapter?.forceUpdate()
+
 
     }
 
@@ -191,7 +194,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_cook -> {
-                var bundle = Bundle()
+                val bundle = Bundle()
                 bundle.putString("cookcategory", cookCategory)
                 findNavController().navigate(R.id.inputCookBookFragment, bundle)
             }

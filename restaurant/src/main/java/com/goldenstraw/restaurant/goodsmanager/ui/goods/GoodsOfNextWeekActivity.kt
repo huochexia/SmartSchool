@@ -30,7 +30,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
- * 获取下个月需要的商品信息。分类显示
+ * 获取下个周需要的商品信息。分类显示
  */
 class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
     override val layoutId: Int
@@ -61,17 +61,17 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
             dataSource = { viewModel!!.groupbyCategoryOfGoods.keys.toList() },
             dataBinding = { ViewpageOfCookKindBinding.bind(it) },
             callback = { category, binding, _ ->
-                var adapter = BaseDataBindingAdapter(
+                val adapter = BaseDataBindingAdapter(
                     layoutId = R.layout.layout_goods_item,
                     dataBinding = { LayoutGoodsItemBinding.bind(it) },
                     dataSource = {
                         viewModel!!.groupbyCategoryOfGoods[category]!!
                     },
-                    callback = { goods, binding, position ->
-                        binding.goods = goods
-                        binding.addSub.visibility = View.INVISIBLE
-                        binding.cbGoods.visibility = View.INVISIBLE
-                        binding.clickEvent = object : Consumer<Goods> {
+                    callback = { goods, bind, position ->
+                        bind.goods = goods
+                        bind.addSub.visibility = View.INVISIBLE
+                        bind.cbGoods.visibility = View.INVISIBLE
+                        bind.clickEvent = object : Consumer<Goods> {
                             override fun accept(t: Goods) {
                                 popUpNewPriceDialog(goods)
                             }

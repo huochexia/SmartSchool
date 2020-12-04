@@ -2,7 +2,6 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import cn.bmob.v3.BmobQuery
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.CountListener
@@ -24,10 +23,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import org.apache.poi.hwpf.HWPFDocument
 import java.io.File
 import java.io.FileOutputStream
@@ -68,28 +63,24 @@ class CookBookViewModel(
      */
     fun createCookBook(newCookBook: NewCookBook) {
         launchUI {
-            launchFlow {
-                repository.createCookBook(newCookBook)
-            }.collect { result ->
-                when (result) {
-                    is ReturnResult.Success<*> -> {
-                        materialList.forEach { goods ->
-                            val newCrossRef =
-                                NewCrossRef(
-                                    (result.value as CookBooks).objectId,
-                                    goods.objectId,
-                                    (result.value as CookBooks).foodCategory
-                                )
-                            when (val ref = repository.createCrossRef(newCrossRef)) {
-                                is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
-                            }
+            when (val result = repository.createCookBook(newCookBook)) {
+                is ReturnResult.Success<*> -> {
+                    materialList.forEach { goods ->
+                        val newCrossRef =
+                            NewCrossRef(
+                                (result.value as CookBooks).objectId,
+                                goods.objectId,
+                                (result.value as CookBooks).foodCategory
+                            )
+                        when (val ref = repository.createCrossRef(newCrossRef)) {
+                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
                         }
-                        materialList.clear()
+                    }
+                    materialList.clear()
 //                    defUI.refreshEvent.call()
-                    }
-                    is ReturnResult.Failure -> {
-                        defUI.showDialog.postValue(result.e)
-                    }
+                }
+                is ReturnResult.Failure -> {
+                    defUI.showDialog.postValue(result.e)
                 }
             }
         }
@@ -100,7 +91,7 @@ class CookBookViewModel(
     二、删除.成功后，删除对应的关系
      */
     fun deleteCookBook(cookBooks: CookBooks) {
-        viewModelScope.launch {
+        launchUI {
             if (repository.deleteCookBook(cookBooks.objectId).isSuccess()) {
                 val where = "{\"cb_id\":\"${cookBooks.objectId}\"}"
                 val refList = repository.getCookBookGoodsCrossRef(where, 0)
@@ -119,30 +110,24 @@ class CookBookViewModel(
      */
     fun getCookBookWithGoodsOfCategory(category: String) {
         launchUI {
-            launchFlow {
-                repository.getCookBookWithGoodsOfCategory(category)
-            }.onStart {
-                groupbyKind.clear()
-            }.collect {
-                cookbookList = it
-                Observable.fromIterable(cookbookList)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .groupBy { cookbooks ->
-                        cookbooks.cookBook.foodKind
-                    }
-                    .autoDisposable(this@CookBookViewModel)
-                    .subscribe({ group ->
-                        groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                        group.autoDisposable(this@CookBookViewModel)
-                            .subscribe { cookbooks ->
-                                groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
-                            }
-                    }, {}, {
-                        defUI.refreshEvent.call()//发出刷新数据通知
-                    })
-
-            }
+            groupbyKind.clear()
+            cookbookList = repository.getCookBookWithGoodsOfCategory(category)
+            Observable.fromIterable(cookbookList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .groupBy { cookbooks ->
+                    cookbooks.cookBook.foodKind
+                }
+                .autoDisposable(this@CookBookViewModel)
+                .subscribe({ group ->
+                    groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                    group.autoDisposable(this@CookBookViewModel)
+                        .subscribe { cookbooks ->
+                            groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                        }
+                }, {}, {
+                    defUI.refreshEvent.call()//发出刷新数据通知
+                })
 
 
         }
@@ -167,14 +152,13 @@ class CookBookViewModel(
 
     fun searchCookBookWithGoods(name: String, category: String) {
         launchUI {
-            coroutineScope {
-                val cookbookList = repository.searchCookBook(name, category)
-                if (cookbookList.isEmpty()) {
-                    searchCookbookStatusLiveDate.value = None
-                } else {
-                    searchCookbookStatusLiveDate.value = Success(cookbookList)
-                }
+            val list = repository.searchCookBook(name, category)
+            if (list.isEmpty()) {
+                searchCookbookStatusLiveDate.value = None
+            } else {
+                searchCookbookStatusLiveDate.value = Success(list)
             }
+
         }
     }
 
@@ -210,33 +194,33 @@ class CookBookViewModel(
     //获取某日菜单，将结果分组存入不同的列表
     fun getDailyMealOfDate(where: String) {
         launchUI {
-            launchFlow {
-                repository.getDailyMealOfDate(where)
-            }.flowOn(Dispatchers.IO)
-                .collect {
-                    if (it.isSuccess()) {
-                        clearAllList()//先清空列表，然后将新结果加入
-                        Observable.fromIterable(it.results)
-                            .groupBy { meal ->
-                                meal.cookBook.foodCategory
-                            }
-                            .autoDisposable(this@CookBookViewModel)
-                            .subscribe({ group ->
-                                group.autoDisposable(this@CookBookViewModel)
-                                    .subscribe { dailies ->
-                                        when (group.key) {
-                                            CookKind.ColdFood.kindName -> coldList.add(dailies)
-                                            CookKind.HotFood.kindName -> hotList.add(dailies)
-                                            CookKind.FlourFood.kindName -> flourList.add(dailies)
-                                            CookKind.SoutPorri.kindName -> soupList.add(dailies)
-                                            CookKind.Snackdetail.kindName -> snackList.add(dailies)
-                                        }
-                                    }
-                            }, {}, {
-                                _refreshAdapter.value = "All"
-                            })
+            val objectList = repository.getDailyMealOfDate(where)
+
+            if (objectList.isSuccess()) {
+                clearAllList()//先清空列表，然后将新结果加入
+                Observable.fromIterable(objectList.results)
+                    .groupBy { meal ->
+                        meal.cookBook.foodCategory
                     }
-                }
+                    .autoDisposable(this@CookBookViewModel)
+                    .subscribe({ group ->
+                        group.autoDisposable(this@CookBookViewModel)
+                            .subscribe { dailies ->
+                                when (group.key) {
+                                    CookKind.ColdFood.kindName -> coldList.add(dailies)
+                                    CookKind.HotFood.kindName -> hotList.add(dailies)
+                                    CookKind.FlourFood.kindName -> flourList.add(dailies)
+                                    CookKind.SoutPorri.kindName -> soupList.add(dailies)
+                                    CookKind.Snackdetail.kindName -> snackList.add(dailies)
+                                }
+                            }
+                    }, {}, {
+                        _refreshAdapter.value = "All"
+                    })
+            } else {
+                defUI.showDialog.value = objectList.error
+            }
+
 
         }
     }
@@ -246,34 +230,35 @@ class CookBookViewModel(
      */
     fun copyDailyMeal(newDate: String, oldDate: String) {
         launchUI {
-            launchFlow {
-                val where = "{\"mealDate\":\"$oldDate\"}"
-                repository.getDailyMealOfDate(where)
-            }.flowOn(Dispatchers.IO)
-                .collect {
-                    if (it.isSuccess()) {
-                        Observable.fromIterable(it.results)
-                            .map { oldDailyMeal ->
-                                val newDailyMeal = NewDailyMeal(
-                                    oldDailyMeal.mealTime,
-                                    newDate,
-                                    oldDailyMeal.cookBook,
-                                    oldDailyMeal.isOfTeacher
+            val where = "{\"mealDate\":\"$oldDate\"}"
+            val objectList = repository.getDailyMealOfDate(where)
+            withContext(Dispatchers.Default) {
+                if (objectList.isSuccess()) {
+                    Observable.fromIterable(objectList.results)
+                        .map { oldDailyMeal ->
+                            val newDailyMeal = NewDailyMeal(
+                                oldDailyMeal.mealTime,
+                                newDate,
+                                oldDailyMeal.cookBook,
+                                oldDailyMeal.isOfTeacher
 
-                                )
-                                newDailyMeal
-                            }
-                            .autoDisposable(this@CookBookViewModel)
-                            .subscribe({ new ->
-                                createDailyMeal(new)
-                            }, {}, {
-                                val where =
-                                    "{\"\$and\":[{\"mealTime\":\"${MealTime.Breakfast.time}\"}" +
-                                            ",{\"mealDate\":\"$newDate\"}]}"
-                                getDailyMealOfDate(where)
-                            })
-                    }
+                            )
+                            newDailyMeal
+                        }
+                        .autoDisposable(this@CookBookViewModel)
+                        .subscribe({ new ->
+                            createDailyMeal(new)
+                        }, {}, {
+                            val where1 =
+                                "{\"\$and\":[{\"mealTime\":\"${MealTime.Breakfast.time}\"}" +
+                                        ",{\"mealDate\":\"$newDate\"}]}"
+                            getDailyMealOfDate(where1)
+                        })
+                } else {
+                    defUI.showDialog.value = objectList.error
                 }
+            }
+
         }
     }
 
@@ -288,22 +273,19 @@ class CookBookViewModel(
      */
     fun deleteDailyMealOfDate(date: String) {
         launchUI {
-            launchFlow {
-                val where = "{\"mealDate\":\"$date\"}"
-                repository.getDailyMealOfDate(where)
-            }.onCompletion {
-                clearAllList()
-                _refreshAdapter.value = "All"
-            }
-                .collect {
-                    if (it.isSuccess()) {
-                        it.results?.forEach { meal ->
-                            deleteDailyMeal(meal.objectId)
-                        }
-                    } else {
-                        defUI.showDialog.value = it.error
-                    }
+
+            val where = "{\"mealDate\":\"$date\"}"
+            val objectList = repository.getDailyMealOfDate(where)
+            if (objectList.isSuccess()) {
+                objectList.results?.forEach { meal ->
+                    deleteDailyMeal(meal.objectId)
                 }
+            } else {
+                defUI.showDialog.value = objectList.error
+            }
+            clearAllList()
+            _refreshAdapter.value = "All"
+
         }
 
     }
@@ -331,56 +313,51 @@ class CookBookViewModel(
     /**
      *将每日菜单转换成Word表格
      */
-    //定义三个Map变量，分别对应早，中，晚三餐
-    val breakfast = mutableListOf<CookBooks>()
-    val lunch = mutableListOf<CookBooks>()
-    val dinner = mutableListOf<CookBooks>()
+//定义三个Map变量，分别对应早，中，晚三餐
+    private val breakfast = mutableListOf<CookBooks>()
+    private val lunch = mutableListOf<CookBooks>()
+    private val dinner = mutableListOf<CookBooks>()
 
     fun createStyledTable(date: String, file: InputStream) {
         launchUI {
-            launchFlow {
+            breakfast.clear()
+            lunch.clear()
+            dinner.clear()
+            withContext(Dispatchers.Default) {
                 val where = "{\"mealDate\":\"$date\"}"
-                repository.getDailyMealOfDate(where)
-            }.flowOn(Dispatchers.IO)
-                .onStart {
-                    breakfast.clear()
-                    lunch.clear()
-                    dinner.clear()
-                }
-                .onCompletion {
-                    createOutFileOfWord(date, file)
-                    defUI.showDialog.value = "文件生成完毕！！"
-                }
-                .collect {
-                    if (it.isSuccess()) {
-                        Observable.fromIterable(it.results)
-                            .groupBy {
-                                it.mealTime
-                            }.subscribeOn(Schedulers.io())
-                            .autoDisposable(this@CookBookViewModel)
-                            .subscribe { group ->
-                                group.autoDisposable(this@CookBookViewModel)
-                                    .subscribe { meal ->
-                                        when (group.key) {
-                                            MealTime.Breakfast.time -> {
-                                                breakfast?.add(meal.cookBook)
-                                            }
-                                            MealTime.Lunch.time -> {
-                                                lunch?.add(meal.cookBook)
-                                            }
-                                            MealTime.Dinner.time -> {
-                                                dinner?.add(meal.cookBook)
-                                            }
-                                            else -> {
-                                            }
+                val objectList = repository.getDailyMealOfDate(where)
+                if (objectList.isSuccess()) {
+                    Observable.fromIterable(objectList.results)
+                        .groupBy {
+                            it.mealTime
+                        }.subscribeOn(Schedulers.io())
+                        .autoDisposable(this@CookBookViewModel)
+                        .subscribe { group ->
+                            group.autoDisposable(this@CookBookViewModel)
+                                .subscribe { meal ->
+                                    when (group.key) {
+                                        MealTime.Breakfast.time -> {
+                                            breakfast.add(meal.cookBook)
+                                        }
+                                        MealTime.Lunch.time -> {
+                                            lunch.add(meal.cookBook)
+                                        }
+                                        MealTime.Dinner.time -> {
+                                            dinner.add(meal.cookBook)
+                                        }
+                                        else -> {
                                         }
                                     }
-                            }
-                    } else {
-                        defUI.showDialog.value = it.error
-                    }
+                                }
+                        }
+                } else {
+                    defUI.showDialog.value = objectList.error
                 }
-
+            }
+            withContext(Dispatchers.IO) {
+                createOutFileOfWord(date, file)
+            }
+            defUI.showDialog.value = "文件生成完毕！！"
         }
 
     }
@@ -495,16 +472,13 @@ class CookBookViewModel(
             override fun done(count: Int?, e: BmobException?) {
                 if (e == null) {
                     launchUI {
-                        val f = count!! / 500
+                        val f = count!! / 500  //分页，500条为一页
                         val where = "{\"foodCategory\":\"$category\"}"
                         val cookbookList = async {
                             val allcookbook: MutableList<CookBooks> = mutableListOf()
                             for (a in 0..f) {
-                                val list = async {
-                                    repository.getCookBookOfCategory(where, skip).results!!
-                                }
                                 allcookbook.addAll(
-                                    list.await()
+                                    repository.getCookBookOfCategory(where, skip).results!!
                                 )
                                 skip += 500
                             }
@@ -540,14 +514,12 @@ class CookBookViewModel(
                         val crossRefList = async {
                             val allRef: MutableList<CBGCrossRef> = mutableListOf()
                             for (a in 0..f) {
-                                val list = async {
+                                allRef.addAll(
                                     repository.getCookBookGoodsCrossRef(
                                         where = where,
                                         skip = skip
                                     ).results!!
-                                }
-                                allRef.addAll(
-                                    list.await()
+
                                 )
                                 skip += 500
                             }

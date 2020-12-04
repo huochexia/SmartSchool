@@ -26,6 +26,7 @@ class KindSpinnerAdapter(private val mContext: Context, val list: MutableList<St
         val tv = TextView(mContext)
         tv.text = list[position]
         tv.textSize = 16f
+        tv.setPadding(0,12,0,0)
         ll.addView(tv)
         return ll
     }

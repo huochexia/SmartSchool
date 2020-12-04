@@ -52,7 +52,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
     override fun initView() {
         super.initView()
         arguments?.let {
-            cookCategory = it.getString("cookcategory")
+            cookCategory = it.getString("cookcategory")!!
         }
         toolbar.title = cookCategory
         spinnerList = when (cookCategory) {
@@ -61,13 +61,12 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                 "小荤菜",
                 "大荤菜"
             )
-            CookKind.FlourFood.kindName -> mutableListOf("面食", "杂粮")
+            CookKind.FlourFood.kindName -> mutableListOf("面食","馅类","杂粮")
             CookKind.SoutPorri.kindName -> mutableListOf("粥", "汤")
             CookKind.Snackdetail.kindName -> mutableListOf("煮", "煎炒", "油炸")
             else -> mutableListOf()
         }
         val adapter = KindSpinnerAdapter(context!!, spinnerList)
-
         spinner_cook_kind.adapter = adapter
         add_main_material.setOnClickListener {
             findNavController().navigate(R.id.searchMaterialFragment)
