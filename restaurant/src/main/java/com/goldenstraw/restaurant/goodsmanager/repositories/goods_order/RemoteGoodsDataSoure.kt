@@ -51,7 +51,7 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 获取某一天菜单
      */
-    fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>>
+    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 }
 
 /**
@@ -111,7 +111,7 @@ class RemoteGoodsDataSourceImpl(
         return service.updateCategory(category, objectId)
     }
 
-    override fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>> {
+    override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return service.getCookBookOfDailyMeal(where)
     }
 }

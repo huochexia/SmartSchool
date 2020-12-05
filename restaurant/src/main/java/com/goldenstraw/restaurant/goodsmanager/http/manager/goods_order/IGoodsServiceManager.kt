@@ -60,6 +60,6 @@ interface IGoodsServiceManager {
     /**
      * 获取某一天菜单当中菜谱
      */
-    fun getCookBookOfDailyMeal(where:String):Observable<ObjectList<DailyMeal>>
+    suspend fun getCookBookOfDailyMeal(where:String):ObjectList<DailyMeal>
 
 }

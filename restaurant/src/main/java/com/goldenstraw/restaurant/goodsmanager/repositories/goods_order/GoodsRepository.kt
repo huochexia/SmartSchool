@@ -221,7 +221,7 @@ class GoodsRepository(
     /**
      * 获取某日菜单
      */
-    fun getDailyMealOfDate(where: String): Observable<ObjectList<DailyMeal>> {
+    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
     }
 }

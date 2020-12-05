@@ -1,7 +1,10 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
@@ -15,10 +18,12 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -60,9 +65,6 @@ class GoodsToOrderMgViewModel(
             }
             .catch {
                 goodsState.set(MultiStateView.VIEW_STATE_ERROR)
-            }
-            .onCompletion {
-
             }
             .collectLatest {
                 if (it.isNullOrEmpty()) {
@@ -188,7 +190,7 @@ class GoodsToOrderMgViewModel(
         val selectedGoods = mutableListOf<GoodsOfShoppingCart>()
         list.forEach {
             if (it.isChecked) {
-                var goods = GoodsOfShoppingCart(
+                val goods = GoodsOfShoppingCart(
                     code = it.objectId,
                     quantity = it.quantity.toFloat(),
                     categoryCode = it.categoryCode,
@@ -265,37 +267,30 @@ class GoodsToOrderMgViewModel(
      * 获取某日菜单将其所需商品，汇总后保存在购物车当中
      */
     fun getDailyMealToShoppingCar(where: String) {
-        repository.getDailyMealOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it.results)
-            }
-            .map {
-                repository.getCookBookWithGoods(it.cookBook.objectId).goods
-            }
-            .flatMap {
-                Observable.fromIterable(it)
-            }
-            .distinct()
-            .subscribeOn(Schedulers.io())
-            .flatMap {
-                getGoodsFromObjectId(it)
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({ goods ->
-                goods.isChecked = true
-                materialList.add(goods)
-                addGoodsToShoppingCart(materialList)
-                defUI.refreshEvent.call()
-            }, {
+        materialList.clear()
+        launchUI {
+            //第一步在IO线程上获取菜单
+            withContext(Dispatchers.IO) {
+                val dailyMealList = repository.getDailyMealOfDate(where)
+                if (dailyMealList.isSuccess()) {
+                    //第二步，在Dispatchers.Default中获取商品。因为Room有自已的Dispatcher，不对Room使用IO
+                    withContext(Dispatchers.Default) {
+                        dailyMealList.results!!.forEach {
+                            val cookbook = repository.getCookBookWithGoods(it.cookBook.objectId)
+                            materialList.addAll(cookbook.goods)
+                        }
+                    }
+                    materialList.forEach {
+                        it.isChecked = true
+                    }
 
-            }, {
+                } else {
+                    defUI.showDialog.value = dailyMealList.error
+                }
+            }
+            addGoodsToShoppingCart(materialList)
+            defUI.refreshEvent.call()
+        }
 
-            }, {
-                materialList.clear()
-            })
     }
-
-    private fun getGoodsFromObjectId(it: Goods) =
-        repository.getGoodsFromObjectId(it.objectId)
 }

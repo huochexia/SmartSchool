@@ -33,7 +33,7 @@ class GoodsServiceManagerImpl(
         return serverApi.deleteGoods(goods.objectId)
     }
 
-    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+    override suspend fun getCookBookOfDailyMeal(where: String): ObjectList<DailyMeal> {
         return serverApi.getCookBookOfDailyMeal(where)
     }
 

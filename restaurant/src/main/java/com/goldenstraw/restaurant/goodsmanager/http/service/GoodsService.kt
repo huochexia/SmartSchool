@@ -78,9 +78,7 @@ interface GoodsApi {
      * 从每日菜单库中查找菜单当中的菜谱
      */
     @GET("/1/classes/DailyMeal")
-    fun getCookBookOfDailyMeal(
-        @Query("where") condition: String,
-        @Query("limit") limit: Int = 500
-
-    ): Observable<ObjectList<DailyMeal>>
+    suspend fun getCookBookOfDailyMeal(
+        @Query("where") condition: String
+    ): ObjectList<DailyMeal>
 }
