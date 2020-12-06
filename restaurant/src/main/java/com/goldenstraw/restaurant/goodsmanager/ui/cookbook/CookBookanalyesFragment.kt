@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentAnalyesMealSelectDateBinding
 import com.haibin.calendarview.Calendar
@@ -22,7 +23,7 @@ class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBindin
     }
     lateinit var start: String
     lateinit var end: String
-
+    private val dateRange = arrayListOf<String>()
 
     override fun initView() {
         calendarView.setOnCalendarRangeSelectListener(this)
@@ -39,9 +40,20 @@ class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBindin
             tv_month.text = month.toString() + "月"
         }
         btn_analyse_meal.setOnClickListener {
+            val calendars = calendarView.selectCalendarRange
+            if (calendars.isNullOrEmpty()) {
+                Toast.makeText(context, "请选择区间日期！", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            dateRange.clear()
+            calendars.forEach {
+                dateRange.add(getDateToString(it))
+            }
             val bundle = Bundle()
             bundle.putString("startDate", start)
             bundle.putString("endDate", end)
+            bundle.putStringArrayList("range", dateRange)
+            findNavController().navigate(R.id.dailyMealAnalyesResultFragment, bundle)
         }
         fl_current.setOnClickListener {
             calendarView.clearSelectRange()
@@ -52,6 +64,19 @@ class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBindin
         }
     }
 
+    private fun getDateToString(calendar: Calendar): String {
+        val month = if (calendar.month < 10) {
+            "0" + calendar.month
+        } else {
+            calendar.month
+        }
+        val day = if (calendar.day < 10) {
+            "0" + calendar.day
+        } else {
+            calendar.day
+        }
+        return calendar.year.toString() + "-" + month + "-" + day
+    }
 
     override fun onCalendarSelectOutOfRange(calendar: Calendar?) {
         TODO("not implemented")

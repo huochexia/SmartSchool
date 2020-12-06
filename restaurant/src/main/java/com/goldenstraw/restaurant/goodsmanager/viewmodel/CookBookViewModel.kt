@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.bmob.v3.BmobQuery
@@ -11,6 +12,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
+import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.CBGCrossRef
@@ -55,6 +57,7 @@ class CookBookViewModel(
 
     //分组列表，key-value:key为小类，value为内容列表
     var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
+
 
 
     /*
@@ -172,6 +175,7 @@ class CookBookViewModel(
     var soupList = mutableListOf<DailyMeal>()
     var snackList = mutableListOf<DailyMeal>()
 
+
     //清空所有列表内容
     fun clearAllList() {
         coldList.clear()
@@ -181,9 +185,79 @@ class CookBookViewModel(
         snackList.clear()
     }
 
+    //分析菜单位的统计结果a
+    private var _analyzeResult = MutableLiveData<AnalyzeMealResult>()
+
+    val analyzeResult: LiveData<AnalyzeMealResult> = _analyzeResult
+
+    //统计分析菜谱
+    fun statistcsDailyMeal(list: MutableList<String>) {
+
+        launchUI {
+            getRangeOfDateFromDailyMeal(list)
+
+            val cold_sucai = async {
+                getNumber(coldList, "素菜")
+            }
+            val cold_xiaohun = async { getNumber(coldList, "小荤菜") }
+            val cold_dahun = async { getNumber(coldList, "大荤菜") }
+            val hot_sucai = async { getNumber(hotList, "素菜") }
+            val hot_xiaohun = async { getNumber(hotList, "小荤菜") }
+            val hot_dahun = async { getNumber(hotList, "大荤菜") }
+            val flour_mianshi = async { getNumber(flourList, "面食") }
+            val flour_xianlei = async { getNumber(flourList, "馅类") }
+            val flour_zaliang = async { getNumber(flourList, "杂粮") }
+            val soup_tang = async { getNumber(soupList, "汤") }
+            val soup_zhou = async { getNumber(soupList, "粥") }
+            val snack_zhu = async { getNumber(snackList, "煮") }
+            val snack_jianchao = async { getNumber(snackList, "煎炒") }
+            val snack_youzha = async { getNumber(snackList, "油炸") }
+            _analyzeResult.value = AnalyzeMealResult(
+                cold_sucai.await(), cold_xiaohun.await(), cold_dahun.await(),
+                hot_sucai.await(), hot_xiaohun.await(), hot_dahun.await(),
+                flour_mianshi.await(), flour_xianlei.await(), flour_zaliang.await(),
+                soup_tang.await(), soup_zhou.await(),
+                snack_zhu.await(), snack_jianchao.await(), snack_youzha.await()
+            )
+
+        }
+    }
+
+    private fun getNumber(list: MutableList<DailyMeal>, kind: String): Int {
+        var shuliang = 0
+        list.forEach {
+            if (it.cookBook.foodKind == kind)
+                shuliang++
+        }
+        return shuliang
+    }
+
+
+    //获取日期范围的菜单，并分组
+    suspend fun getRangeOfDateFromDailyMeal(list: MutableList<String>) {
+        val allDailyMeal = mutableListOf<DailyMeal>()
+
+        withContext(Dispatchers.IO) {
+            allDailyMeal.clear()
+            list.forEach { date ->
+                val where = "{\"mealDate\":\"$date\"}"
+                val objectList = repository.getDailyMealOfDate(where)
+                if (objectList.isSuccess()) {
+                    allDailyMeal.addAll(objectList.results!!)
+                } else {
+                    defUI.showDialog.value = objectList.error
+                }
+            }
+            groupByKindForDailyMeal(allDailyMeal)
+        }
+
+
+    }
+
     //可观察对象，通过观察它的值来判断哪个列表需要刷新
     // 通过传入的日菜单，来通知视图现在操作的是那类列表
     private val _refreshAdapter = MutableLiveData<String>() //私有的
+
     val refreshAdapter: LiveData<String> =
         _refreshAdapter //对外暴露不可变的。因为LiveData的setValue方法是protected
 
@@ -193,36 +267,43 @@ class CookBookViewModel(
 
     //获取某日菜单，将结果分组存入不同的列表
     fun getDailyMealOfDate(where: String) {
+
         launchUI {
-            val objectList = repository.getDailyMealOfDate(where)
+            withContext(Dispatchers.IO) {
+                val objectList = repository.getDailyMealOfDate(where)
+                if (objectList.isSuccess()) {
+                    groupByKindForDailyMeal(objectList.results!!)
 
-            if (objectList.isSuccess()) {
-                clearAllList()//先清空列表，然后将新结果加入
-                Observable.fromIterable(objectList.results)
-                    .groupBy { meal ->
-                        meal.cookBook.foodCategory
-                    }
-                    .autoDisposable(this@CookBookViewModel)
-                    .subscribe({ group ->
-                        group.autoDisposable(this@CookBookViewModel)
-                            .subscribe { dailies ->
-                                when (group.key) {
-                                    CookKind.ColdFood.kindName -> coldList.add(dailies)
-                                    CookKind.HotFood.kindName -> hotList.add(dailies)
-                                    CookKind.FlourFood.kindName -> flourList.add(dailies)
-                                    CookKind.SoutPorri.kindName -> soupList.add(dailies)
-                                    CookKind.Snackdetail.kindName -> snackList.add(dailies)
-                                }
-                            }
-                    }, {}, {
-                        _refreshAdapter.value = "All"
-                    })
-            } else {
-                defUI.showDialog.value = objectList.error
+                } else {
+                    defUI.showDialog.value = objectList.error
+                }
             }
-
+            _refreshAdapter.value = "All"
 
         }
+    }
+
+
+    //对每日菜单进行分组
+    private fun groupByKindForDailyMeal(list: MutableList<DailyMeal>) {
+        clearAllList()//先清空列表，然后将新结果加入
+        Observable.fromIterable(list)
+            .groupBy { meal ->
+                meal.cookBook.foodCategory
+            }
+            .autoDisposable(this@CookBookViewModel)
+            .subscribe { group ->
+                group.autoDisposable(this@CookBookViewModel)
+                    .subscribe { dailies ->
+                        when (group.key) {
+                            ColdFood.kindName -> coldList.add(dailies)
+                            HotFood.kindName -> hotList.add(dailies)
+                            FlourFood.kindName -> flourList.add(dailies)
+                            SoutPorri.kindName -> soupList.add(dailies)
+                            Snackdetail.kindName -> snackList.add(dailies)
+                        }
+                    }
+            }
     }
 
     /*
@@ -540,4 +621,52 @@ class CookBookViewModel(
 
     }
 
+    /**
+     *
+     */
+
+    @SuppressLint("AutoDispose")
+    fun getAllCookBookOfDailyMeal() {
+//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
+//            .flatMap { date ->
+//                val where = "{\"mealDate\":\"$date\"}"
+//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
+//            }.flatMap {
+//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
+//            }
+//            .map {
+//                it.cookBook.material //从菜谱中得到商品列表
+//            }.flatMap {
+//                Observable.fromIterable(it)
+//            }
+//            .distinct() //去重复
+//            .flatMap {
+//                getGoodsFromObjectId(it.objectId)
+//            }
+//
+//            .groupBy {
+//                it.categoryCode
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(this)
+//            .subscribe({ goodsList ->
+//                goodsList.key?.let {
+//                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
+//                    goodsList.subscribe({ goods ->
+//                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
+//                    }, {
+//                        defUI.toastEvent.value = it.message
+//                    })
+//                }
+//
+//            }, {
+//                defUI.toastEvent.value = it.message
+//            }, {
+//                defUI.refreshEvent.call()
+//
+//            }, {
+//                defUI.loadingEvent.call()
+//            })
+    }
 }
