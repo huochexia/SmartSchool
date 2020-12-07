@@ -58,7 +58,8 @@ class CookBookViewModel(
     //分组列表，key-value:key为小类，value为内容列表
     var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
 
-
+    //对菜单中的菜谱分组，获得菜谱使用次数.key-value中key为菜谱名，value为次数
+    var cookbookByNameAndNumber = hashMapOf<String, Int>()
 
     /*
      一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
@@ -252,6 +253,55 @@ class CookBookViewModel(
         }
 
 
+    }
+
+    //统计某类菜品的所有菜谱及使用次数
+    fun getCookBooksOfDailyMeal(category: String, kind: String) {
+        launchUI {
+            when (category) {
+                ColdFood.kindName -> {
+                    getHashMapOfCookBook(coldList, kind)
+                }
+                HotFood.kindName -> {
+                    getHashMapOfCookBook(hotList, kind)
+                }
+                FlourFood.kindName -> {
+                    getHashMapOfCookBook(flourList, kind)
+                }
+                SoutPorri.kindName -> {
+                    getHashMapOfCookBook(soupList, kind)
+                }
+                Snackdetail.kindName -> {
+                    getHashMapOfCookBook(snackList, kind)
+                }
+
+            }
+
+        }
+    }
+
+    private fun getHashMapOfCookBook(list: MutableList<DailyMeal>, kind: String) {
+        Observable.fromIterable(list)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .filter {
+                it.cookBook.foodKind == kind
+            }
+            .groupBy { cookbooks ->
+                cookbooks.cookBook.foodName
+            }
+            .autoDisposable(this@CookBookViewModel)
+            .subscribe({ group ->
+                cookbookByNameAndNumber[group.key!!] = 1//为每个分类建立key-value值
+                group.autoDisposable(this@CookBookViewModel)
+                    .subscribe {
+                        cookbookByNameAndNumber[group.key!!] = +1
+                    }
+            }, {
+
+            }, {
+                defUI.refreshEvent.call()
+            })
     }
 
     //可观察对象，通过观察它的值来判断哪个列表需要刷新
@@ -540,7 +590,6 @@ class CookBookViewModel(
     }
 
 
-
     /**
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
      * 先读取本地数据，然后读取网络
@@ -621,52 +670,4 @@ class CookBookViewModel(
 
     }
 
-    /**
-     *
-     */
-
-    @SuppressLint("AutoDispose")
-    fun getAllCookBookOfDailyMeal() {
-//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
-//            .flatMap { date ->
-//                val where = "{\"mealDate\":\"$date\"}"
-//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
-//            }.flatMap {
-//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
-//            }
-//            .map {
-//                it.cookBook.material //从菜谱中得到商品列表
-//            }.flatMap {
-//                Observable.fromIterable(it)
-//            }
-//            .distinct() //去重复
-//            .flatMap {
-//                getGoodsFromObjectId(it.objectId)
-//            }
-//
-//            .groupBy {
-//                it.categoryCode
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(this)
-//            .subscribe({ goodsList ->
-//                goodsList.key?.let {
-//                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
-//                    goodsList.subscribe({ goods ->
-//                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
-//                    }, {
-//                        defUI.toastEvent.value = it.message
-//                    })
-//                }
-//
-//            }, {
-//                defUI.toastEvent.value = it.message
-//            }, {
-//                defUI.refreshEvent.call()
-//
-//            }, {
-//                defUI.loadingEvent.call()
-//            })
-    }
 }
