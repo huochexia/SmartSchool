@@ -1,6 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cn.bmob.v3.BmobQuery
@@ -59,7 +58,7 @@ class CookBookViewModel(
     var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
 
     //对菜单中的菜谱分组，获得菜谱使用次数.key-value中key为菜谱名，value为次数
-    var cookbookByNameAndNumber = hashMapOf<String, Int>()
+    var cookbookByNameAndNumber = hashMapOf<String, CookBookAndNumber>()
 
     /*
      一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
@@ -125,7 +124,8 @@ class CookBookViewModel(
                 .autoDisposable(this@CookBookViewModel)
                 .subscribe({ group ->
                     groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                    group.autoDisposable(this@CookBookViewModel)
+                    group
+                        .autoDisposable(this@CookBookViewModel)
                         .subscribe { cookbooks ->
                             groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
                         }
@@ -186,12 +186,13 @@ class CookBookViewModel(
         snackList.clear()
     }
 
-    //分析菜单位的统计结果a
+    //分析菜单位的统计结果
     private var _analyzeResult = MutableLiveData<AnalyzeMealResult>()
 
     val analyzeResult: LiveData<AnalyzeMealResult> = _analyzeResult
 
-    //统计分析菜谱
+    //统计分析菜谱,将菜单按冷菜，热菜，主食，汤粥，明档等大类细分出它们中的小类，如：素菜，小荤菜等。
+    //并统计小类的数量
     fun statistcsDailyMeal(list: MutableList<String>) {
 
         launchUI {
@@ -234,19 +235,21 @@ class CookBookViewModel(
     }
 
 
-    //获取日期范围的菜单，并分组
-    suspend fun getRangeOfDateFromDailyMeal(list: MutableList<String>) {
+    /*
+    获取日期范围的菜单，并分组到大类列表对象中
+    @list为日期列表
+     */
+    suspend fun getRangeOfDateFromDailyMeal(dateList: MutableList<String>) {
+
         val allDailyMeal = mutableListOf<DailyMeal>()
 
         withContext(Dispatchers.IO) {
             allDailyMeal.clear()
-            list.forEach { date ->
+            dateList.forEach { date ->
                 val where = "{\"mealDate\":\"$date\"}"
                 val objectList = repository.getDailyMealOfDate(where)
                 if (objectList.isSuccess()) {
                     allDailyMeal.addAll(objectList.results!!)
-                } else {
-                    defUI.showDialog.value = objectList.error
                 }
             }
             groupByKindForDailyMeal(allDailyMeal)
@@ -255,24 +258,28 @@ class CookBookViewModel(
 
     }
 
-    //统计某类菜品的所有菜谱及使用次数
+    /*
+      从已经获取的某期间，某大类菜品列表当中包含的某小类菜谱的使用次数
+      @category:大类
+      @kind:小类
+     */
     fun getCookBooksOfDailyMeal(category: String, kind: String) {
         launchUI {
             when (category) {
                 ColdFood.kindName -> {
-                    getHashMapOfCookBook(coldList, kind)
+                    getMapOfCookBook(coldList, kind)
                 }
                 HotFood.kindName -> {
-                    getHashMapOfCookBook(hotList, kind)
+                    getMapOfCookBook(hotList, kind)
                 }
                 FlourFood.kindName -> {
-                    getHashMapOfCookBook(flourList, kind)
+                    getMapOfCookBook(flourList, kind)
                 }
                 SoutPorri.kindName -> {
-                    getHashMapOfCookBook(soupList, kind)
+                    getMapOfCookBook(soupList, kind)
                 }
                 Snackdetail.kindName -> {
-                    getHashMapOfCookBook(snackList, kind)
+                    getMapOfCookBook(snackList, kind)
                 }
 
             }
@@ -280,7 +287,7 @@ class CookBookViewModel(
         }
     }
 
-    private fun getHashMapOfCookBook(list: MutableList<DailyMeal>, kind: String) {
+    private fun getMapOfCookBook(list: MutableList<DailyMeal>, kind: String) {
         Observable.fromIterable(list)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -292,10 +299,11 @@ class CookBookViewModel(
             }
             .autoDisposable(this@CookBookViewModel)
             .subscribe({ group ->
-                cookbookByNameAndNumber[group.key!!] = 1//为每个分类建立key-value值
-                group.autoDisposable(this@CookBookViewModel)
+                cookbookByNameAndNumber[group.key!!] = CookBookAndNumber(group.key!!)
+                group
+                    .autoDisposable(this@CookBookViewModel)
                     .subscribe {
-                        cookbookByNameAndNumber[group.key!!] = +1
+                        cookbookByNameAndNumber[group.key]?.used_number = +1
                     }
             }, {
 

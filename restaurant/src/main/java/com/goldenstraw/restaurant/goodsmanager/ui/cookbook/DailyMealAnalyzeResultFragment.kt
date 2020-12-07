@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 import android.os.Bundle
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentMealAnalyzeResultBindingImpl
+import com.goldenstraw.restaurant.generated.callback.OnClickListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.AnalyzeMealResult
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
@@ -42,6 +43,7 @@ class DailyMealAnalyzeResultFragment : BaseFragment<FragmentMealAnalyzeResultBin
         }
         meal_analyze_toolbar.title = "菜单综合分析"
         meal_analyze_toolbar.subtitle = "$startDate--$endDate"
+        initEvent()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -57,5 +59,8 @@ class DailyMealAnalyzeResultFragment : BaseFragment<FragmentMealAnalyzeResultBin
         viewModel.analyzeResult.observe(viewLifecycleOwner) { data ->
             results = data
         }
+    }
+    fun initEvent(){
+
     }
 }

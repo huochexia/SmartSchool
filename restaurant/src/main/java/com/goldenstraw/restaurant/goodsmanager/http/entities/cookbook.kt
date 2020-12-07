@@ -78,3 +78,11 @@ data class AnalyzeMealResult(
     var snack_jianchao: Int = 0,
     var snack_youzha: Int = 0
 )
+
+/*
+  记录菜谱名称和使用次数
+ */
+data class CookBookAndNumber(
+    var cookbook_name: String,
+    var used_number: Int = 0
+)

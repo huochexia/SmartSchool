@@ -102,5 +102,13 @@
             android:label="DailyMealAnalyesResultFragment"
             tools:layout="@layout/fragment_meal_analyze_result">
 
+        <action
+                android:id="@+id/action_dailyMealAnalyesResultFragment_to_statisticsCookBookNumFragment"
+                app:destination="@id/statisticsCookBookNumFragment" />
     </fragment>
+    <fragment
+            android:id="@+id/statisticsCookBookNumFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.StatisticsCookBookNumFragment"
+            android:label="StatisticsCookBookNumFragment"
+            tools:layout="@layout/fragment_cookbook_number_list"/>
 </navigation>
