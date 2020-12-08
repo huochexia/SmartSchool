@@ -111,10 +111,10 @@ class CookBookViewModel(
     /*
     查询，对结果通过groupBy进行分组。
      */
-    fun getCookBookWithGoodsOfCategory(category: String) {
+    fun getCookBookWithGoodsOfCategory(category: String, isStandby: Boolean) {
         launchUI {
             groupbyKind.clear()
-            cookbookList = repository.getCookBookWithGoodsOfCategory(category)
+            cookbookList = repository.getCookBookWithGoodsOfCategory(category, isStandby)
             Observable.fromIterable(cookbookList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

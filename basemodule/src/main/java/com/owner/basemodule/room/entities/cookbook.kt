@@ -15,9 +15,13 @@ data class CookBooks(
     @ColumnInfo
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     @ColumnInfo
-    var foodKind: String,//素菜，小荤，大荤
+    var foodKind: String, //素菜，小荤，大荤
     @ColumnInfo
-    var foodName: String
+    var usedNumber:Int ,//使用次数
+    @ColumnInfo
+    var foodName: String,
+    @ColumnInfo
+    var isStandby: Boolean //是否备用菜谱
 
 ) {
     @Ignore

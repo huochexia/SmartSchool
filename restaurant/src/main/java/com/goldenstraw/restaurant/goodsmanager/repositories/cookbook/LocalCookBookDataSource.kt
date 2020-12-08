@@ -6,15 +6,21 @@ import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
-import kotlinx.coroutines.flow.Flow
 
 interface ILocalCookBookDataSource : ILocalDataSource {
     //模糊查找
     suspend fun searchMaterial(name: String): MutableList<Goods>
-    suspend fun searchCookBookWithGoods(name: String,category: String): MutableList<CookBookWithGoods>
+    suspend fun searchCookBookWithGoods(
+        name: String,
+        category: String
+    ): MutableList<CookBookWithGoods>
 
     //获得所有某分类所有菜谱
-    suspend fun getAllCookBookWithGoods(foodCategory: String):MutableList<CookBookWithGoods>
+    suspend fun getAllCookBookWithGoods(
+        foodCategory: String,
+        isStandby: Boolean
+    ): MutableList<CookBookWithGoods>
+
     suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods
 
     //增加菜谱
@@ -53,8 +59,11 @@ class LocalCookBookDataSourceImpl(
     /*
     获取某分类的所有菜谱
      */
-    override  suspend fun getAllCookBookWithGoods(foodCategory: String): MutableList<CookBookWithGoods> {
-        return database.cookbookDao().getAllCookBookWithGoods(foodCategory)
+    override suspend fun getAllCookBookWithGoods(
+        foodCategory: String,
+        isStandby: Boolean
+    ): MutableList<CookBookWithGoods> {
+        return database.cookbookDao().getAllCookBookWithGoods(foodCategory,isStandby)
     }
 
     override suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {

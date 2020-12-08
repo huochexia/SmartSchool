@@ -34,6 +34,7 @@ import kotlin.properties.Delegates
 class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
 
     lateinit var cookCategory: String
+    var isStandby = false
     var isSelected by Delegates.notNull<Boolean>() //判断是用于选择还是查看
     var mealDate = ""
     var mealTime = ""
@@ -56,6 +57,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         super.initView()
         arguments?.let {
             cookCategory = it.getString("cookcategory")!!
+            isStandby = it.getBoolean("isStandby")
             isSelected = it.getBoolean("isSelected")
             if (isSelected) {
                 mealDate = it.getString("mealDate")!!
@@ -175,7 +177,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
 
-        viewModel.getCookBookWithGoodsOfCategory(cookCategory)
+        viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
         vpAdapter?.forceUpdate()
 
 
@@ -197,6 +199,16 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                 val bundle = Bundle()
                 bundle.putString("cookcategory", cookCategory)
                 findNavController().navigate(R.id.inputCookBookFragment, bundle)
+            }
+            R.id.menu_use_cook -> {
+                isStandby = false
+                viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
+                vpAdapter?.forceUpdate()
+            }
+            R.id.menu_standby_cook -> {
+                isStandby = true
+                viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
+                vpAdapter?.forceUpdate()
             }
         }
         return true

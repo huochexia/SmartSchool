@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
                 name="cookbooks"
                 type="com.owner.basemodule.room.entities.CookBookWithGoods" />
@@ -24,7 +24,7 @@
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="2dp"
@@ -80,6 +80,18 @@
                     app:layout_constraintStart_toEndOf="@+id/textView1"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="去骨鸡腿肉" />
+
+            <TextView
+                    android:id="@+id/tv_use_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/blue"
+                    android:text="@{String.valueOf(cookbooks.cookBook.usedNumber)}"
+                    android:visibility="@{cookbooks.cookBook.usedNumber>0?View.VISIBLE:View.INVISIBLE}"
+                    app:layout_constraintStart_toStartOf="@+id/tv_food_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_food_name"
+                    tools:text="10" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

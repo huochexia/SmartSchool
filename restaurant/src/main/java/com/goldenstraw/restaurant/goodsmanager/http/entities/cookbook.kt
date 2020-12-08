@@ -15,7 +15,10 @@ data class NewCookBook(
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     var foodKind: String,//素菜，小荤，大荤
     var foodName: String,
-    var isSelected: Boolean = false
+    var usedNumber: Int = 0,
+    var isSelected: Boolean = false,
+    var isStandby: Boolean = false
+
 )
 
 /*
@@ -50,6 +53,20 @@ data class NewDailyMeal(
  */
 data class UpdateIsteacher(
     var isOfTeacher: Boolean
+)
+
+/*
+ *修改菜谱的状态，常用或备用
+ */
+data class UpdateIsStandby(
+    var isStandby: Boolean
+)
+
+/*
+  修改菜谱的使用次数
+ */
+data class UpdateUsedNumber(
+    var usedNumber: Int
 )
 
 /*

@@ -4,7 +4,6 @@ import androidx.room.*
 import com.owner.basemodule.room.entities.CBGCrossRef
 import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
-import kotlinx.coroutines.flow.Flow
 
 /**
  * 对菜谱的操作。主要是增加和删除功能。增加时要同时增加关系。删除时要同时删除关系。
@@ -17,8 +16,11 @@ interface CookBookDao {
     获取某类别所有菜谱和它所需的商品
      */
     @Transaction
-    @Query("SELECT * FROM CookBooks WHERE foodCategory = :category")
-    suspend fun getAllCookBookWithGoods(category: String): MutableList<CookBookWithGoods>
+    @Query("SELECT * FROM CookBooks WHERE foodCategory = :category AND isStandby =:used")
+    suspend fun getAllCookBookWithGoods(
+        category: String,
+        used: Boolean
+    ): MutableList<CookBookWithGoods>
 
     /*
     获取某个菜谱和它所需的商品

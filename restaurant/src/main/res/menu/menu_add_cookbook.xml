@@ -5,5 +5,13 @@
             android:id="@+id/menu_add_cook"
             android:title="增加菜谱"
             app:showAsAction="never" />
+    <item
+            android:id="@+id/menu_use_cook"
+            android:title="常用"
+            app:showAsAction="never" />
+    <item
+            android:id="@+id/menu_standby_cook"
+            android:title="备用"
+            app:showAsAction="never" />
 
 </menu>

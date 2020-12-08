@@ -11,7 +11,6 @@ import com.owner.basemodule.room.entities.CookBookWithGoods
 import com.owner.basemodule.room.entities.CookBooks
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.ReturnResult
-import kotlinx.coroutines.flow.Flow
 
 /**
  * 对CookBook数据管理
@@ -38,10 +37,12 @@ class CookBookRepository(
         val createObject = remote.createCookBook(newCookBook)
         return if (createObject.isSuccess()) {
             val cookbook = CookBooks(
-                createObject.objectId!!,
-                newCookBook.foodCategory,
-                newCookBook.foodKind,
-                newCookBook.foodName
+                objectId = createObject.objectId!!,
+                foodCategory = newCookBook.foodCategory,
+                foodKind = newCookBook.foodKind,
+                foodName = newCookBook.foodName,
+                usedNumber = newCookBook.usedNumber,
+                isStandby = false
             )
             local.addCookBooks(cookbook)
             ReturnResult.Success(cookbook)
@@ -107,8 +108,11 @@ class CookBookRepository(
     /*
     查询,从本地根据分类获取菜谱和相应的商品
      */
-    suspend fun getCookBookWithGoodsOfCategory(category: String): MutableList<CookBookWithGoods> {
-        return local.getAllCookBookWithGoods(category)
+    suspend fun getCookBookWithGoodsOfCategory(
+        category: String,
+        isStandby: Boolean
+    ): MutableList<CookBookWithGoods> {
+        return local.getAllCookBookWithGoods(category, isStandby)
     }
 
     suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
