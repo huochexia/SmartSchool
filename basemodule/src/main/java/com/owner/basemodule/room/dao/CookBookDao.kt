@@ -82,4 +82,7 @@ interface CookBookDao {
 
     @Query("DELETE FROM CBGCrossRef WHERE foodCategory =:category")
     suspend fun deleteCrossRefOfCategory(category: String)
+
+
+
 }

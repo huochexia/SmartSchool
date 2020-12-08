@@ -121,6 +121,22 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                             }
 
                         }
+                        itembinding.onClick = object : Consumer<CookBookWithGoods> {
+                            override fun accept(t: CookBookWithGoods) {
+                                AlertDialog.Builder(context!!)
+                                    .setMessage("改变这个菜谱的状态吗?")
+                                    .setNegativeButton("取消") { dialog, which ->
+                                        dialog.dismiss()
+                                    }
+                                    .setPositiveButton("确实") { dialog, which ->
+                                        t.cookBook.isStandby = !t.cookBook.isStandby
+                                        viewModel.updateCookBookState(t.cookBook)
+                                        dialog.dismiss()
+                                    }
+                                    .create().show()
+                            }
+
+                        }
                         itembinding.consumer = object : Consumer<CookBookWithGoods> {
                             override fun accept(t: CookBookWithGoods) {
                                 AlertDialog.Builder(context!!)

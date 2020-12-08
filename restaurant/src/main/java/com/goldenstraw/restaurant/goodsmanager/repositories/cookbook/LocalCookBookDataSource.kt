@@ -36,6 +36,7 @@ interface ILocalCookBookDataSource : ILocalDataSource {
     suspend fun deleteCookBookOfCategory(category: String)
     suspend fun deleteCrossRef(cookbookId: String)
     suspend fun deleteCrossRefOfCategory(category: String)
+
 }
 
 class LocalCookBookDataSourceImpl(
@@ -108,4 +109,6 @@ class LocalCookBookDataSourceImpl(
     override suspend fun deleteCrossRefOfCategory(category: String) {
         database.cookbookDao().deleteCrossRefOfCategory(category)
     }
+
+
 }

@@ -46,6 +46,17 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.updateDailyMeal(newDailyMeal, objectId)
     }
 
+    override suspend fun updateCookBookState(
+        newCookBook: UpdateIsStandby,
+        objectId: String
+    ): UpdateObject {
+        return serviceApi.updateCookBookState(newCookBook,objectId)
+    }
+
+    override suspend fun updateUsedOfNumber(newCookBook: UpdateUsedNumber,objectId: String): UpdateObject {
+        return serviceApi.updateNumberOfUsed(newCookBook,objectId)
+    }
+
     override suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<CookBooks> {
         return serviceApi.getCookBookOfCategory(where,skip)
     }

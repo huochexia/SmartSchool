@@ -106,6 +106,23 @@ class CookBookRepository(
     }
 
     /*
+      更新菜谱状态为常用或备用
+     */
+    suspend fun updateCookBookState(newCookBook: UpdateIsStandby, objectId: String): UpdateObject {
+        return remote.updateCookBookState(newCookBook, objectId)
+    }
+    suspend fun addCookBookToLocal(cookbook: CookBooks){
+        local.addCookBooks(cookbook)
+    }
+
+    /*
+    更新菜谱使用次数
+     */
+    suspend fun updateNumberOfUsed(newCookBook: UpdateUsedNumber, objectId: String): UpdateObject {
+        return remote.updateNumberOfUsed(newCookBook, objectId)
+    }
+
+    /*
     查询,从本地根据分类获取菜谱和相应的商品
      */
     suspend fun getCookBookWithGoodsOfCategory(

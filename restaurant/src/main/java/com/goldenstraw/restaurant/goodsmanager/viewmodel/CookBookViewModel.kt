@@ -166,6 +166,35 @@ class CookBookViewModel(
         }
     }
 
+    /*
+     * 修改菜谱状态
+     */
+    fun updateCookBookState(cookbook: CookBooks) {
+        launchUI {
+            withContext(Dispatchers.Default) {
+                val newCookBooks = UpdateIsStandby(cookbook.isStandby)
+                val result = repository.updateCookBookState(newCookBooks, cookbook.objectId)
+                if (result.isSuccess()) {
+                    repository.addCookBookToLocal(cookbook)
+                }
+            }
+        }
+    }
+    /*
+     * 修改菜谱使用次数
+     */
+    fun updateNumberOfUsed(cookbook: CookBooks) {
+        launchUI {
+            withContext(Dispatchers.Default) {
+                val newCookBook = UpdateUsedNumber(cookbook.usedNumber)
+                val result = repository.updateNumberOfUsed(newCookBook, cookbook.objectId)
+                if (result.isSuccess()) {
+                    repository.addCookBookToLocal(cookbook)
+                }
+            }
+        }
+    }
+
     /**
      * 对每日菜单的管理部分
      */

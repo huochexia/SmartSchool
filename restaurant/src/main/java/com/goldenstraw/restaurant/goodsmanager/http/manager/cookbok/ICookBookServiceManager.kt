@@ -28,6 +28,8 @@ interface ICookBookServiceManager {
      */
     suspend fun updateCookBook(newCookBook: NewCookBook, objectId: String): UpdateObject
     suspend fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String): UpdateObject
+    suspend fun updateCookBookState(newCookBook: UpdateIsStandby,objectId: String):UpdateObject
+    suspend fun updateUsedOfNumber(newCookBook:UpdateUsedNumber,objectId: String):UpdateObject
 
     /*
     查询

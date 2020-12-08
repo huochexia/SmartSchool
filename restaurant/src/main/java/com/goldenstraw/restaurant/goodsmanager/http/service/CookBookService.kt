@@ -61,6 +61,20 @@ interface CookBookApi {
         @Path("objectId") objectId: String
     ): UpdateObject
 
+    //修改菜谱状态
+    @PUT("/1/classes/CookBooks/{objectId}")
+    suspend fun updateCookBookState(
+        @Body newCookBook: UpdateIsStandby,
+        @Path("objectId") objectId: String
+    ): UpdateObject
+
+    //修改菜谱使用次数
+    @PUT("/1/classes/CookBooks/{objectId}")
+    suspend fun updateNumberOfUsed(
+        @Body newCookBook: UpdateUsedNumber,
+        @Path("objectId") objectId: String
+    ): UpdateObject
+
     /*
       查询
      */
