@@ -58,7 +58,7 @@ class CookBookViewModel(
     var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
 
     //对菜单中的菜谱分组，获得菜谱使用次数.key-value中key为菜谱名，value为次数
-    var cookbookByNameAndNumber = hashMapOf<String, CookBookAndNumber>()
+    var cookbookByNameAndNumber = hashMapOf<String, Int>()
 
     /*
      一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
@@ -288,26 +288,26 @@ class CookBookViewModel(
     }
 
     private fun getMapOfCookBook(list: MutableList<DailyMeal>, kind: String) {
+        cookbookByNameAndNumber.clear()
         Observable.fromIterable(list)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .filter {
                 it.cookBook.foodKind == kind
             }
-            .groupBy { cookbooks ->
-                cookbooks.cookBook.foodName
-            }
+
             .autoDisposable(this@CookBookViewModel)
-            .subscribe({ group ->
-                cookbookByNameAndNumber[group.key!!] = CookBookAndNumber(group.key!!)
-                group
-                    .autoDisposable(this@CookBookViewModel)
-                    .subscribe {
-                        cookbookByNameAndNumber[group.key]?.used_number = +1
-                    }
+            .subscribe({ dailymeal ->
+                if (!cookbookByNameAndNumber.containsKey(dailymeal.cookBook.foodName)) {
+                    cookbookByNameAndNumber[dailymeal.cookBook.foodName] = 1
+                } else {
+                    val count = cookbookByNameAndNumber[dailymeal.cookBook.foodName]!! + 1
+                    cookbookByNameAndNumber[dailymeal.cookBook.foodName] = count
+                }
             }, {
 
             }, {
+
                 defUI.refreshEvent.call()
             })
     }

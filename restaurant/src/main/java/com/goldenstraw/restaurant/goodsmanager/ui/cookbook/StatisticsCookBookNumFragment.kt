@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 import android.os.Bundle
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookNumberListBinding
+import com.goldenstraw.restaurant.databinding.LayoutCookbookAndNumberItemBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookbookAndNumberItemBindingImpl
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
@@ -45,7 +46,8 @@ class StatisticsCookBookNumFragment : BaseFragment<FragmentCookbookNumberListBin
 
     lateinit var viewModel: CookBookViewModel
 
-    val adapter: BaseDataBindingAdapter<String, LayoutCookbookAndNumberItemBindingImpl>? = null
+    var adapter: BaseDataBindingAdapter<Pair<String, Int>, LayoutCookbookAndNumberItemBinding>? =
+        null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
@@ -54,6 +56,19 @@ class StatisticsCookBookNumFragment : BaseFragment<FragmentCookbookNumberListBin
         viewModel = activity!!.getViewModel {
             CookBookViewModel(repository)
         }
+        adapter = BaseDataBindingAdapter(
+            layoutId = R.layout.layout_cookbook_and_number_item,
+            dataSource = { viewModel.cookbookByNameAndNumber.toList() },
+            dataBinding = { LayoutCookbookAndNumberItemBinding.bind(it) },
+            callback = { pair, binding, _ ->
+                binding.tvMealName.text = pair.first
+                binding.tvCookbookNumber.text = pair.second.toString()
+            }
+        )
+        viewModel.getCookBooksOfDailyMeal(category, kind)
 
+        viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter!!.forceUpdate()
+        }
     }
 }

@@ -1,11 +1,15 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentMealAnalyzeResultBindingImpl
 import com.goldenstraw.restaurant.generated.callback.OnClickListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.AnalyzeMealResult
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -43,7 +47,6 @@ class DailyMealAnalyzeResultFragment : BaseFragment<FragmentMealAnalyzeResultBin
         }
         meal_analyze_toolbar.title = "菜单综合分析"
         meal_analyze_toolbar.subtitle = "$startDate--$endDate"
-        initEvent()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -55,12 +58,70 @@ class DailyMealAnalyzeResultFragment : BaseFragment<FragmentMealAnalyzeResultBin
 
         viewModel.statistcsDailyMeal(dateRange.toMutableList())
 
-
-        viewModel.analyzeResult.observe(viewLifecycleOwner) { data ->
-            results = data
-        }
     }
-    fun initEvent(){
 
+    fun onClickCookbook(view: View) {
+        val bundle = Bundle()
+        bundle.putString("startDate", startDate)
+        bundle.putString("endDate", endDate)
+        when (view.id) {
+            R.id.cold_sucai->{
+                bundle.putString("Category",CookKind.ColdFood.kindName)
+                bundle.putString("Kind","素菜")
+            }
+            R.id.cold_xiaohun->{
+                bundle.putString("Category",CookKind.ColdFood.kindName)
+                bundle.putString("Kind","小荤菜")
+            }
+            R.id.cold_dahun->{
+                bundle.putString("Category",CookKind.ColdFood.kindName)
+                bundle.putString("Kind","大荤菜")
+            }
+            R.id.hot_sucai->{
+                bundle.putString("Category",CookKind.HotFood.kindName)
+                bundle.putString("Kind","素菜")
+            }
+            R.id.hot_xiaohun->{
+                bundle.putString("Category",CookKind.HotFood.kindName)
+                bundle.putString("Kind","小荤菜")
+            }
+            R.id.hot_dahun->{
+                bundle.putString("Category",CookKind.HotFood.kindName)
+                bundle.putString("Kind","大荤菜")
+            }
+            R.id.flour_mianshi->{
+                bundle.putString("Category",CookKind.FlourFood.kindName)
+                bundle.putString("Kind","面食")
+            }
+            R.id.flour_xianlei->{
+                bundle.putString("Category",CookKind.FlourFood.kindName)
+                bundle.putString("Kind","馅类")
+            }
+            R.id.flour_zaliang->{
+                bundle.putString("Category",CookKind.FlourFood.kindName)
+                bundle.putString("Kind","杂粮")
+            }
+            R.id.soup_tang->{
+                bundle.putString("Category",CookKind.SoutPorri.kindName)
+                bundle.putString("Kind","汤")
+            }
+            R.id.soup_zhou->{
+                bundle.putString("Category",CookKind.SoutPorri.kindName)
+                bundle.putString("Kind","粥")
+            }
+            R.id.snack_zhu->{
+                bundle.putString("Category",CookKind.Snackdetail.kindName)
+                bundle.putString("Kind","煮")
+            }
+            R.id.snack_jianchao->{
+                bundle.putString("Category",CookKind.Snackdetail.kindName)
+                bundle.putString("Kind","煎炒")
+            }
+            R.id.snack_youzha->{
+                bundle.putString("Category",CookKind.Snackdetail.kindName)
+                bundle.putString("Kind","油炸")
+            }
+        }
+        findNavController().navigate(R.id.statisticsCookBookNumFragment,bundle)
     }
 }

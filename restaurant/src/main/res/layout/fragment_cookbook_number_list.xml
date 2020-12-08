@@ -22,12 +22,6 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary" />
 
-        <com.kennyc.view.MultiStateView
-                style="@style/MultiStateStyle"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                app:msv_viewState="content">
 
             <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
@@ -42,6 +36,5 @@
                         tools:listitem="@layout/layout_cookbook_and_number_item" />
             </androidx.core.widget.NestedScrollView>
 
-        </com.kennyc.view.MultiStateView>
     </LinearLayout>
 </layout>

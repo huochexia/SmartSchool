@@ -17,6 +17,7 @@ data class NewCookBook(
     var foodName: String,
     var isSelected: Boolean = false
 )
+
 /*
   菜谱与商品的新关联关系
  */
@@ -79,10 +80,3 @@ data class AnalyzeMealResult(
     var snack_youzha: Int = 0
 )
 
-/*
-  记录菜谱名称和使用次数
- */
-data class CookBookAndNumber(
-    var cookbook_name: String,
-    var used_number: Int = 0
-)

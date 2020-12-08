@@ -277,7 +277,9 @@ class GoodsToOrderMgViewModel(
                     withContext(Dispatchers.Default) {
                         dailyMealList.results!!.forEach {
                             val cookbook = repository.getCookBookWithGoods(it.cookBook.objectId)
-                            materialList.addAll(cookbook.goods)
+                            cookbook?.let {
+                                materialList.addAll(cookbook.goods)
+                            }
                         }
                     }
                     materialList.forEach {
