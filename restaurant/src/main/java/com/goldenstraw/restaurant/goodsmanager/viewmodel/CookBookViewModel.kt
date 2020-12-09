@@ -178,6 +178,11 @@ class CookBookViewModel(
                     repository.addCookBookToLocal(cookbook)
                 }
             }
+            if (!cookbook.isStandby){
+                cookbook.usedNumber = 0
+                updateNumberOfUsed(cookbook)
+            }
+
         }
     }
 

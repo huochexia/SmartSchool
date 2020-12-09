@@ -12,7 +12,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookDetailBinding
-import com.goldenstraw.restaurant.databinding.LayoutCoolbookItemBinding
+import com.goldenstraw.restaurant.databinding.LayoutCookbookItemBinding
 import com.goldenstraw.restaurant.databinding.ViewpageOfCookKindBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
@@ -104,10 +104,10 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             dataBinding = { ViewpageOfCookKindBinding.bind(it) },
             callback = { group, binding, _ ->
                 //每页数据列表的适配器，每页数据是一个key-value对，列表的数据为value
-                val adapter = BaseDataBindingAdapter<CookBookWithGoods, LayoutCoolbookItemBinding>(
-                    layoutId = R.layout.layout_coolbook_item,
+                val adapter = BaseDataBindingAdapter<CookBookWithGoods, LayoutCookbookItemBinding>(
+                    layoutId = R.layout.layout_cookbook_item,
                     dataSource = { viewModel.groupbyKind[group]!! },
-                    dataBinding = { LayoutCoolbookItemBinding.bind(it) },
+                    dataBinding = { LayoutCookbookItemBinding.bind(it) },
                     callback = { cookbooks, itembinding, position ->
 
                         itembinding.cookbooks = cookbooks

@@ -159,7 +159,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
 
             }
             R.id.subscribe_goods -> {
-                //TODO:后天菜单
+
                 //从DailyMeal中获取后天菜单中的原材料信息，并加入购物车后，跳转到购物车界面
 
                 showDatePickerDialog(this,0, Calendar.getInstance())

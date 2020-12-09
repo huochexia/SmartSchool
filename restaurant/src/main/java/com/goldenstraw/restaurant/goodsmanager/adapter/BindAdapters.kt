@@ -39,6 +39,15 @@ fun setStateText(textView: TextView, state: Int) {
     }
 }
 
+@BindingAdapter("bind_cookbook_color")
+fun setCookBookColor(textView: TextView, isStandby: Boolean) {
+    if (isStandby) {
+        textView.setTextColor(Color.BLUE)
+    } else {
+        textView.setTextColor(Color.BLACK)
+    }
+}
+
 @BindingAdapter("bind_dailymeal_text")
 fun setDailyMealText(textView: TextView, cookbook: CookBooks) {
     textView.text = cookbook.foodName

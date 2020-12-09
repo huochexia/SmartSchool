@@ -12,7 +12,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSearchCookbookBinding
-import com.goldenstraw.restaurant.databinding.LayoutCoolbookItemBinding
+import com.goldenstraw.restaurant.databinding.LayoutCookbookItemBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
@@ -46,7 +46,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
 
     var viewModel: CookBookViewModel? = null
 
-    var adapter: BaseDataBindingAdapter<CookBookWithGoods, LayoutCoolbookItemBinding>? = null
+    var adapter: BaseDataBindingAdapter<CookBookWithGoods, LayoutCookbookItemBinding>? = null
 
     var cookbookList = mutableListOf<CookBookWithGoods>()
     override fun initView() {
@@ -80,9 +80,9 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
             adapter!!.forceUpdate()
         }
         adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_coolbook_item,
+            layoutId = R.layout.layout_cookbook_item,
             dataSource = { cookbookList },
-            dataBinding = { LayoutCoolbookItemBinding.bind(it) },
+            dataBinding = { LayoutCookbookItemBinding.bind(it) },
             callback = { cookbook, binding, position ->
                 binding.cookbooks = cookbook
                 //项目点击事件，返回用户的选择
