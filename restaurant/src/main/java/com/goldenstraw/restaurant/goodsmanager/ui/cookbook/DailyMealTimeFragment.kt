@@ -383,7 +383,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("是") { _, _ ->
-                viewModel.deleteDailyMeal(dailyMeal.objectId)
+                viewModel.deleteDailyMeal(dailyMeal)
                 when (dailyMeal.cookBook.foodCategory) {
                     ColdFood.kindName -> {
                         viewModel.coldList.remove(dailyMeal)

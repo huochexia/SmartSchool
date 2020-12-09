@@ -61,6 +61,9 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getCookBookOfCategory(where,skip)
     }
 
+    override suspend fun getCookBooks(objectId: String): CookBooks {
+        return serviceApi.getCookBook(objectId)
+    }
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return serviceApi.getDailyMealOfDate(where)
     }

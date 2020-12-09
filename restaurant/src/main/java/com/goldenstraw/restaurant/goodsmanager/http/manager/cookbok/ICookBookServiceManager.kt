@@ -35,6 +35,7 @@ interface ICookBookServiceManager {
     查询
      */
     suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<CookBooks>
+    suspend fun getCookBooks(objectId: String):CookBooks
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
     suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef>
 

@@ -111,7 +111,8 @@ class CookBookRepository(
     suspend fun updateCookBookState(newCookBook: UpdateIsStandby, objectId: String): UpdateObject {
         return remote.updateCookBookState(newCookBook, objectId)
     }
-    suspend fun addCookBookToLocal(cookbook: CookBooks){
+
+    suspend fun addCookBookToLocal(cookbook: CookBooks) {
         local.addCookBooks(cookbook)
     }
 
@@ -132,20 +133,24 @@ class CookBookRepository(
         return local.getAllCookBookWithGoods(category, isStandby)
     }
 
+    suspend fun getCookbook(objectId: String): CookBooks {
+        return remote.getCookBook(objectId)
+    }
+
     suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
         return local.getCookBookWithGoods(objectId)
     }
 
-    suspend fun getCookBookOfCategory(where: String,skip:Int): ObjectList<CookBooks> {
-        return remote.getCookBookOfCategory(where,skip)
+    suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<CookBooks> {
+        return remote.getCookBookOfCategory(where, skip)
     }
 
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
     }
 
-    suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef> {
-        return remote.getCookBookGoodsCrossRef(where,skip)
+    suspend fun getCookBookGoodsCrossRef(where: String, skip: Int): ObjectList<CBGCrossRef> {
+        return remote.getCookBookGoodsCrossRef(where, skip)
     }
 
 
@@ -155,9 +160,11 @@ class CookBookRepository(
     suspend fun searchMaterial(name: String): MutableList<Goods> {
         return local.searchMaterial(name)
     }
-    suspend fun searchCookBook(name:String,category: String):MutableList<CookBookWithGoods>{
-        return local.searchCookBookWithGoods(name,category)
+
+    suspend fun searchCookBook(name: String, category: String): MutableList<CookBookWithGoods> {
+        return local.searchCookBookWithGoods(name, category)
     }
+
     /*
     增加菜谱列表到本地
      */

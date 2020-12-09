@@ -180,25 +180,26 @@ class CookBookViewModel(
             }
         }
     }
+
     /*
-     * 修改菜谱使用次数
+     * 修改菜谱使用次数。
+     *
      */
-    fun updateNumberOfUsed(cookbook: CookBooks) {
-        launchUI {
-            withContext(Dispatchers.Default) {
-                val newCookBook = UpdateUsedNumber(cookbook.usedNumber)
-                val result = repository.updateNumberOfUsed(newCookBook, cookbook.objectId)
-                if (result.isSuccess()) {
-                    repository.addCookBookToLocal(cookbook)
-                }
+    private suspend fun updateNumberOfUsed(cookbook: CookBooks) {
+        val newNumber = UpdateUsedNumber(cookbook.usedNumber)
+        cookbook.objectId?.let{
+            val result = repository.updateNumberOfUsed(newNumber, it)
+            if (result.isSuccess()) {
+                repository.addCookBookToLocal(cookbook)
             }
         }
+
     }
 
     /**
      * 对每日菜单的管理部分
      */
-    //五个类型菜品的列表
+//五个类型菜品的列表
     var coldList = mutableListOf<DailyMeal>()
     var hotList = mutableListOf<DailyMeal>()
     var flourList = mutableListOf<DailyMeal>()
@@ -221,7 +222,7 @@ class CookBookViewModel(
     val analyzeResult: LiveData<AnalyzeMealResult> = _analyzeResult
 
     //统计分析菜谱,将菜单按冷菜，热菜，主食，汤粥，明档等大类细分出它们中的小类，如：素菜，小荤菜等。
-    //并统计小类的数量
+//并统计小类的数量
     fun statistcsDailyMeal(list: MutableList<String>) {
 
         launchUI {
@@ -342,7 +343,7 @@ class CookBookViewModel(
     }
 
     //可观察对象，通过观察它的值来判断哪个列表需要刷新
-    // 通过传入的日菜单，来通知视图现在操作的是那类列表
+// 通过传入的日菜单，来通知视图现在操作的是那类列表
     private val _refreshAdapter = MutableLiveData<String>() //私有的
 
     val refreshAdapter: LiveData<String> =
@@ -404,12 +405,14 @@ class CookBookViewModel(
                 if (objectList.isSuccess()) {
                     Observable.fromIterable(objectList.results)
                         .map { oldDailyMeal ->
+                            //菜谱使用次数加1
+                            oldDailyMeal.cookBook.usedNumber = +1
+
                             val newDailyMeal = NewDailyMeal(
                                 oldDailyMeal.mealTime,
                                 newDate,
                                 oldDailyMeal.cookBook,
                                 oldDailyMeal.isOfTeacher
-
                             )
                             newDailyMeal
                         }
@@ -446,7 +449,7 @@ class CookBookViewModel(
             val objectList = repository.getDailyMealOfDate(where)
             if (objectList.isSuccess()) {
                 objectList.results?.forEach { meal ->
-                    deleteDailyMeal(meal.objectId)
+                    deleteDailyMeal(meal)
                 }
             } else {
                 defUI.showDialog.value = objectList.error
@@ -459,21 +462,38 @@ class CookBookViewModel(
     }
 
     /*
-     * 删除某项菜单
+     * 删除某项菜单,同时将菜谱使用次数减1
      */
-    fun deleteDailyMeal(objectId: String) {
+    fun deleteDailyMeal(dailyMeal: DailyMeal) {
         launchUI {
-            repository.deleteDailyMeal(objectId)
+            val cookbook = repository.getCookbook(dailyMeal.cookBook.objectId)
+            cookbook.usedNumber = cookbook.usedNumber - 1
+            withContext(Dispatchers.IO) {
+                val result = repository.deleteDailyMeal(dailyMeal.objectId)
+                if (result.isSuccess()) {
+                    //获取最新菜谱使用数量，减量
+                    updateNumberOfUsed(cookbook)
+                }
+            }
+
         }
     }
 
     /*
-    生成某日某时段菜单
+      生成某日某时段菜单，同时将菜谱使用次数加1
+      因为菜单和菜谱没有建立关联关系，菜单中的菜谱使用数量是原始的，
+      所以需要从菜谱库中获取最近的菜谱，然后修改数量。
      */
     fun createDailyMeal(newDailyMeal: NewDailyMeal) {
         launchUI {
             withContext(Dispatchers.IO) {
-                repository.createDailyMeal(newDailyMeal)
+                val result = repository.createDailyMeal(newDailyMeal)
+                if (result.isSuccess()) {
+                    //获取最新菜谱使用数量，增加
+                    val cookbook = repository.getCookbook(newDailyMeal.cookBook.objectId)
+                    cookbook.usedNumber = cookbook.usedNumber + 1
+                    updateNumberOfUsed(cookbook)
+                }
             }
         }
     }

@@ -91,6 +91,9 @@ interface CookBookApi {
         @Query("limit") limit: Int = 500
     ): ObjectList<CookBooks>
 
+    @GET("/1/classes/CookBooks/{objectId}")
+    suspend fun getCookBook(@Path("objectId") objectId: String):CookBooks
+
     //获取某个菜谱与商品的关联关系
     @GET("/1/classes/CBGCrossRef/")
     suspend fun getCookBookGoodsCrossRef(

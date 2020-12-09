@@ -40,6 +40,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     查询
      */
     suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<CookBooks>
+    suspend fun getCookBook(objectId: String):CookBooks
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
     suspend fun getCookBookGoodsCrossRef(where: String, skip: Int): ObjectList<CBGCrossRef>
 
@@ -102,6 +103,9 @@ class RemoteCookBookDataSourceImpl(
         return manager.getCookBookOfCategory(where, skip)
     }
 
+    override suspend fun getCookBook(objectId: String): CookBooks {
+        return manager.getCookBooks(objectId)
+    }
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return manager.getDailyMealOfDate(where)
     }
