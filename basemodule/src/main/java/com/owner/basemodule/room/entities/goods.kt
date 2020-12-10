@@ -14,8 +14,10 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class GoodsOfShoppingCart(
-    @PrimaryKey
-    var code: String,
+    @PrimaryKey(autoGenerate = true)
+    var code:Int=0,
+    @ColumnInfo
+    var objectId: String,
     @ColumnInfo
     var goodsName: String,
     @ColumnInfo
@@ -29,7 +31,9 @@ data class GoodsOfShoppingCart(
     @ColumnInfo
     var note: String = "",
     @ColumnInfo
-    var isChecked: Boolean = false
+    var isChecked: Boolean = false,
+    @ColumnInfo
+    var foodCategory: String
 ) : Comparable<GoodsOfShoppingCart> {
 
     override fun compareTo(other: GoodsOfShoppingCart): Int {
@@ -50,7 +54,7 @@ data class GoodsOfShoppingCart(
 @Entity
 data class Goods(
     @PrimaryKey
-    @ColumnInfo(name = "goods_id",typeAffinity = ColumnInfo.TEXT)
+    @ColumnInfo(name = "goods_id", typeAffinity = ColumnInfo.TEXT)
     val objectId: String,
     @ColumnInfo
     var goodsName: String,
