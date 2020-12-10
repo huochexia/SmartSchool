@@ -5,15 +5,13 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.util.TimeConverter
-import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class ShoppingCartMgViewModel(
     private val repository: ShoppingCartRepository
@@ -22,36 +20,42 @@ class ShoppingCartMgViewModel(
     var goodsList = mutableListOf<GoodsOfShoppingCart>()
     val state = ObservableField<Int>()
 
-    init {
-        getAllGoodsOfShoppingCart()
-    }
+//    init {
+////        getAllGoodsOfShoppingCart()
+//        getAllGoodsOfShoppingCart(CookKind.HotFood.kindName)
+//    }
 
     /**
      * 获取购物车中的商品信息
      */
-    private fun getAllGoodsOfShoppingCart() {
-        repository.getAllShoppingCart().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({ list ->
-                if (list.isNotEmpty()) {
-                    state.set(MultiStateView.VIEW_STATE_CONTENT)
+    fun getAllGoodsOfShoppingCart(foodCategory: String) {
+        launchUI {
+            val list = repository.getGoodsOfShoppingCart(foodCategory)
+            if (list.isNotEmpty()) {
+                state.set(MultiStateView.VIEW_STATE_CONTENT)
 //                    goodsList.clear()
-                    goodsList = list
-                    goodsList.sortBy {
-                        it.categoryCode
-                    }
-                } else {
-                    state.set(MultiStateView.VIEW_STATE_EMPTY)
+                goodsList = list
+                goodsList.sortBy {
+                    it.categoryCode
                 }
-
-            }, {
-                state.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {
-
-            }, {
-                state.set(MultiStateView.VIEW_STATE_LOADING)
-            })
+                defUI.refreshEvent.call()
+            } else {
+                state.set(MultiStateView.VIEW_STATE_EMPTY)
+            }
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .autoDisposable(this)
+//                .subscribe({ list ->
+//
+//
+//                }, {
+//                    state.set(MultiStateView.VIEW_STATE_ERROR)
+//                }, {
+//
+//                }, {
+//                    state.set(MultiStateView.VIEW_STATE_LOADING)
+//                })
+        }
     }
 
     /**

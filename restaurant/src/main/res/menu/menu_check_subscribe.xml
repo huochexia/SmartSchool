@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+            android:id="@+id/collect_and_commit"
+            android:title="汇总"
+            app:showAsAction="never" />
+    <item
             android:id="@+id/already_subscribe"
             android:title="已申购"
             app:showAsAction="never" />

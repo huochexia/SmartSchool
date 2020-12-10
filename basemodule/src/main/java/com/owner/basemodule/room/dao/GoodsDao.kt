@@ -10,7 +10,6 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 @Dao
 interface GoodsDao {
@@ -76,6 +75,9 @@ interface GoodsDao {
 
     @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY goodsName")
     fun getAllShoppingCart(): Observable<MutableList<GoodsOfShoppingCart>>
+
+    @Query("SELECT  * FROM GoodsOfShoppingCart WHERE foodCategory =:foodCategory")
+    suspend fun getShoppingCartOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart>
 
     /**
      * 删除

@@ -15,6 +15,8 @@ interface ILocalShoppingCartDataSource : ILocalDataSource {
     fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
+
+    suspend fun getGoodsOfFoodCategory(foodCategory:String):MutableList<GoodsOfShoppingCart>
 }
 
 /**
@@ -40,5 +42,9 @@ class LocalShoppingCartDataSourceImpl(
 
     override fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
         return database.goodsDao().insertShoppingCart(goods)
+    }
+
+    override suspend fun getGoodsOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart> {
+        return database.goodsDao().getShoppingCartOfFoodCategory(foodCategory)
     }
 }

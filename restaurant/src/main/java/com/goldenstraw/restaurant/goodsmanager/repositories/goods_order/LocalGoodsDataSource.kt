@@ -46,6 +46,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getShoppingCartCount(): Single<Int>
 
+
+
     /**
      * 使用Flow方式获取数据
      *

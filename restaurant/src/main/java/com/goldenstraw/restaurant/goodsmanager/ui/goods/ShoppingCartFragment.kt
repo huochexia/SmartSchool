@@ -2,10 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.goods
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
@@ -14,6 +11,7 @@ import com.goldenstraw.restaurant.databinding.FragmentShoppingCartBinding
 import com.goldenstraw.restaurant.databinding.LayoutShoppingCartItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.prefsModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
 import com.kennyc.view.MultiStateView
@@ -84,6 +82,11 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
                 }
             }
         )
+        viewModel!!.getAllGoodsOfShoppingCart(CookKind.ColdFood.kindName)
+        toolbar.subtitle = CookKind.ColdFood.kindName
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter!!.forceUpdate()
+        }
         initSwipeMenu()
     }
 
@@ -128,6 +131,35 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
         4、给RecyclerView添加监听器
          */
         rlw_shopping_cart.setOnItemMenuClickListener(mItemMenuClickListener)
+    }
+
+    fun onClick(view: View) {
+        when (view.id) {
+            R.id.cold_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart(CookKind.ColdFood.kindName)
+                toolbar.subtitle = CookKind.ColdFood.kindName
+            }
+            R.id.hot_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart(CookKind.HotFood.kindName)
+                toolbar.subtitle = CookKind.HotFood.kindName
+            }
+            R.id.flour_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart(CookKind.FlourFood.kindName)
+                toolbar.subtitle = CookKind.FlourFood.kindName
+            }
+            R.id.soup_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart(CookKind.SoutPorri.kindName)
+                toolbar.subtitle = CookKind.SoutPorri.kindName
+            }
+            R.id.snack_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart(CookKind.Snackdetail.kindName)
+                toolbar.subtitle = CookKind.Snackdetail.kindName
+            }
+            R.id.common_food -> {
+                viewModel!!.getAllGoodsOfShoppingCart("通用")
+                toolbar.subtitle = "通用"
+            }
+        }
     }
 
     /**
@@ -275,6 +307,9 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
+            R.id.collect_and_commit -> {
+
+            }
             R.id.already_subscribe -> {
 
                 findNavController().navigate(R.id.checkSubscribFragment)

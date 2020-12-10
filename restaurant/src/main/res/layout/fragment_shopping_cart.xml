@@ -82,15 +82,81 @@
 
         </com.kennyc.view.MultiStateView>
 
-        <Button
-                android:id="@+id/btn_commit_shopping_cart"
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:background="@drawable/selector_button"
-                android:onClick="@{()->fragment.commitOrderItem()}"
-                android:text="@string/commit_shopping_cart"
-                android:textSize="18sp" />
+                android:orientation="horizontal">
+            <Button
+                    android:id="@+id/cold_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="凉菜"/>
+            <Button
+                    android:id="@+id/hot_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="热菜"/>
+            <Button
+                    android:id="@+id/flour_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="主食"/>
+
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <Button
+                    android:id="@+id/soup_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="汤粥"/>
+            <Button
+                    android:id="@+id/snack_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="明档"/>
+
+            <Button
+                    android:id="@+id/common_food"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
+                    android:onClick="@{fragment::onClick}"
+                    android:background="@drawable/selector_button"
+                    android:text="通用"/>
+        </LinearLayout>
+<!--        <Button-->
+<!--                android:id="@+id/btn_commit_shopping_cart"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="4dp"-->
+<!--                android:layout_marginEnd="4dp"-->
+<!--                android:background="@drawable/selector_button"-->
+<!--                android:onClick="@{()->fragment.commitOrderItem()}"-->
+<!--                android:text="@string/commit_shopping_cart"-->
+<!--                android:textSize="18sp" />-->
     </LinearLayout>
 </layout>
