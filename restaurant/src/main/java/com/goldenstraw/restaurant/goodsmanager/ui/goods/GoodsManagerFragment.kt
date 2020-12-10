@@ -234,7 +234,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCart(goodsList)
+        viewModelGoodsTo!!.addGoodsToShoppingCart("通用",goodsList)
         //还原商品信息
         var selectedList = mutableListOf<Goods>()
         goodsList.forEach {

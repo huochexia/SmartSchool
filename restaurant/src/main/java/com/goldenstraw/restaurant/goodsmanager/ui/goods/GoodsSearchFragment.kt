@@ -190,7 +190,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCart(viewModelGoodsTo!!.searchGoodsResultList)
+        viewModelGoodsTo!!.addGoodsToShoppingCart("通用",viewModelGoodsTo!!.searchGoodsResultList)
         //还原商品信息
         val selectedList = mutableListOf<Goods>()
         viewModelGoodsTo!!.searchGoodsResultList.forEach {
