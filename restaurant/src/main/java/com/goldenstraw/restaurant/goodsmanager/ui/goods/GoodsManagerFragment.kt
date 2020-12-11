@@ -53,7 +53,6 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
-//    lateinit var pagingAdapter: PageDataBindingAdapter<LayoutGoodsItemBinding>
 
     var goodsList = mutableListOf<Goods>()
 

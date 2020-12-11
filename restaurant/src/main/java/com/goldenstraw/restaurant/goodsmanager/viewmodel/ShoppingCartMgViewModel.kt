@@ -5,11 +5,11 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.util.TimeConverter
+import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 
@@ -33,7 +33,6 @@ class ShoppingCartMgViewModel(
             val list = repository.getGoodsOfShoppingCart(foodCategory)
             if (list.isNotEmpty()) {
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
-//                    goodsList.clear()
                 goodsList = list
                 goodsList.sortBy {
                     it.categoryCode
@@ -42,19 +41,38 @@ class ShoppingCartMgViewModel(
             } else {
                 state.set(MultiStateView.VIEW_STATE_EMPTY)
             }
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .autoDisposable(this)
-//                .subscribe({ list ->
-//
-//
-//                }, {
-//                    state.set(MultiStateView.VIEW_STATE_ERROR)
-//                }, {
-//
-//                }, {
-//                    state.set(MultiStateView.VIEW_STATE_LOADING)
-//                })
+
+        }
+    }
+
+    /**
+     * 将汇总所有拟购商品，合计重复商品数量，商品数量为0的删除
+     */
+    fun collectAllOfFoodCategory() {
+        launchUI {
+            val allList = repository.getAllOfShoppingCart()
+            val collect = hashMapOf<String, GoodsOfShoppingCart>()
+            Observable.fromIterable(allList)
+                .filter {
+                    !it.quantity.equals(0)
+                }
+                .autoDisposable(this@ShoppingCartMgViewModel)
+                .subscribe({
+                    if (collect.contains(it.goodsName)) {
+                        collect[it.goodsName]!!.quantity =
+                            collect[it.goodsName]!!.quantity + it.quantity
+
+                    } else {
+                        collect[it.goodsName] = it
+                    }
+                }, {}, {
+                    goodsList = collect.values.toMutableList()
+                    goodsList.sortBy {
+                        it.categoryCode
+                    }
+                    defUI.refreshEvent.call()
+                })
+
         }
     }
 
@@ -68,6 +86,10 @@ class ShoppingCartMgViewModel(
     fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
         return repository.deleteGoodsOfShoppingCartFromLocal(goods)
 
+    }
+
+    fun deleteAllOfShoppingCart(): Completable {
+        return repository.deleteAllOfShoppingCart()
     }
 
     /**

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/collect_and_commit"
+            android:id="@+id/collect_all_goods"
             android:title="汇总"
             app:showAsAction="never" />
     <item

@@ -21,7 +21,6 @@ import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_order_manager.*
 import org.kodein.di.Copy

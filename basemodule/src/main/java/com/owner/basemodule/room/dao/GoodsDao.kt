@@ -73,10 +73,10 @@ interface GoodsDao {
     @Query("SELECT COUNT() FROM GoodsOfShoppingCart")
     fun getShoppingCartOfCount(): Single<Int>
 
-    @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY goodsName")
-    fun getAllShoppingCart(): Observable<MutableList<GoodsOfShoppingCart>>
+    @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY categoryCode")
+    suspend fun getAllShoppingCart(): MutableList<GoodsOfShoppingCart>
 
-    @Query("SELECT  * FROM GoodsOfShoppingCart WHERE foodCategory =:foodCategory")
+    @Query("SELECT  * FROM GoodsOfShoppingCart WHERE foodCategory =:foodCategory ORDER BY categoryCode")
     suspend fun getShoppingCartOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart>
 
     /**
@@ -97,6 +97,10 @@ interface GoodsDao {
 
     @Delete
     fun deleteShoppingCartList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
+
+    @Query("DELETE FROM goodsofshoppingcart")
+     fun delteAllShoppingCart():Completable
+
 
     @Delete
     fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable

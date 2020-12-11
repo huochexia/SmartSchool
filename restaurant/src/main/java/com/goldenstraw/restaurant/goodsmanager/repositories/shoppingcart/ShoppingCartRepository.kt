@@ -5,7 +5,6 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 class ShoppingCartRepository(
     private val remote: IRemoteShoppingCartDataSource,
@@ -14,9 +13,9 @@ class ShoppingCartRepository(
     /*
       获取购物车内所有商品
      */
-    fun getAllShoppingCart(): Observable<MutableList<GoodsOfShoppingCart>> {
+    suspend fun getAllOfShoppingCart(): MutableList<GoodsOfShoppingCart> {
 
-        return local.getAllGoods()
+        return local.getAllGoodsOfFoodCategory()
     }
 
     fun deleteGoodsOfShoppingCartFromLocal(goods: GoodsOfShoppingCart): Completable {
@@ -25,6 +24,10 @@ class ShoppingCartRepository(
 
     fun deleteGoodsOfShoppingCartListFromLocal(list: MutableList<GoodsOfShoppingCart>): Completable {
         return local.deleteShoppingCartList(list)
+    }
+
+    fun deleteAllOfShoppingCart(): Completable {
+        return local.deleteAllShoppingCart()
     }
 
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {

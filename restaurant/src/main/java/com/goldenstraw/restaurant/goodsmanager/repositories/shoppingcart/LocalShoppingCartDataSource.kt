@@ -8,13 +8,15 @@ import io.reactivex.Observable
 
 interface ILocalShoppingCartDataSource : ILocalDataSource {
 
-    fun getAllGoods(): Observable<MutableList<GoodsOfShoppingCart>>
+    suspend fun getAllGoodsOfFoodCategory(): MutableList<GoodsOfShoppingCart>
 
     fun deleteShoppingCartList(goodslist: MutableList<GoodsOfShoppingCart>): Completable
 
     fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
+
+    fun deleteAllShoppingCart():Completable
 
     suspend fun getGoodsOfFoodCategory(foodCategory:String):MutableList<GoodsOfShoppingCart>
 }
@@ -28,7 +30,7 @@ class LocalShoppingCartDataSourceImpl(
     /*
      * 获取购物车内所有商品
      */
-    override fun getAllGoods(): Observable<MutableList<GoodsOfShoppingCart>> {
+    override suspend fun getAllGoodsOfFoodCategory(): MutableList<GoodsOfShoppingCart>{
         return database.goodsDao().getAllShoppingCart()
     }
 
@@ -40,6 +42,10 @@ class LocalShoppingCartDataSourceImpl(
         return database.goodsDao().deleteGoodsOfShoppingCart(goods)
     }
 
+    override fun deleteAllShoppingCart(): Completable {
+        return database.goodsDao().delteAllShoppingCart()
+    }
+
     override fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
         return database.goodsDao().insertShoppingCart(goods)
     }
@@ -47,4 +53,5 @@ class LocalShoppingCartDataSourceImpl(
     override suspend fun getGoodsOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart> {
         return database.goodsDao().getShoppingCartOfFoodCategory(foodCategory)
     }
+
 }

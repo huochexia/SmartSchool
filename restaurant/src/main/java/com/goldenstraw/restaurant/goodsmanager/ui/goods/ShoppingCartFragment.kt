@@ -47,10 +47,6 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
 
     private val prefs by instance<PrefsHelper>()
 
-    override fun initView() {
-        super.initView()
-
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
 
@@ -82,8 +78,10 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
                 }
             }
         )
+
         viewModel!!.getAllGoodsOfShoppingCart(CookKind.ColdFood.kindName)
         toolbar.subtitle = CookKind.ColdFood.kindName
+
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter!!.forceUpdate()
         }
@@ -215,15 +213,10 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
         dialog.show()
     }
 
+
     fun commitOrderItem() {
-        val selectedList = mutableListOf<GoodsOfShoppingCart>()
-        viewModel!!.goodsList.forEach { goods ->
-            if (goods.isChecked) {
-                selectedList.add(goods)
-            }
-        }
-        commitAllGoodsOfShoppingCart(selectedList, prefs.district)
-        cb_all.isChecked = false
+
+        commitAllGoodsOfShoppingCart(viewModel!!.goodsList, prefs.district)
     }
 
     /**
@@ -252,32 +245,18 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
                 toast { "提交购物车商品：" + it.message.toString() }
             }, {
                 //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
-                deleteGoodsOfShoppingCarList(selectedList)
+                deleteGoodsOfShoppingCarList()
             })
     }
 
-    /**
-     * 全选事件
-     */
-    fun allSelect() {
-        if (cb_all.isChecked)
-            viewModel!!.goodsList.forEach {
-                it.isChecked = true
-            }
-        else
-            viewModel!!.goodsList.forEach {
-                it.isChecked = false
-            }
-        adapter!!.forceUpdate()
-    }
 
-    private fun deleteGoodsOfShoppingCarList(list: MutableList<GoodsOfShoppingCart>) {
-        viewModel!!.deleteGoodsOfShoppingCartList(list)
+    private fun deleteGoodsOfShoppingCarList() {
+        viewModel!!.deleteAllOfShoppingCart()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
-                viewModel!!.goodsList.removeAll(list)
+                viewModel!!.goodsList.clear()
                 if (viewModel!!.goodsList.isEmpty()) {
                     viewModel!!.state.set(MultiStateView.VIEW_STATE_EMPTY)
                 }
@@ -307,15 +286,20 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.collect_and_commit -> {
+            R.id.collect_all_goods -> {
 
+                ll_food_category_btn.visibility = View.GONE
+                btn_commit_shopping_cart.visibility = View.VISIBLE
+
+                toolbar.subtitle = "汇总结果"
+                viewModel!!.collectAllOfFoodCategory()
             }
             R.id.already_subscribe -> {
 
                 findNavController().navigate(R.id.checkSubscribFragment)
             }
             R.id.clear_shoppingcar -> {
-                deleteGoodsOfShoppingCarList(viewModel!!.goodsList)
+                deleteGoodsOfShoppingCarList()
                 adapter!!.forceUpdate()
             }
         }
