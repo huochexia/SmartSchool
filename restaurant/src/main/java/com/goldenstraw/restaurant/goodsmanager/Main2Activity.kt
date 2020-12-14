@@ -71,7 +71,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 order.visibility = View.VISIBLE
                 check.visibility = View.VISIBLE
                 record.visibility = View.VISIBLE
-
+                cookbook.visibility = View.VISIBLE
             }
             "复核员" -> {
                 confirm.visibility = View.VISIBLE

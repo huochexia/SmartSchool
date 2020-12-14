@@ -70,7 +70,7 @@ data class Goods(
     var newPrice: Float = 0.0f //用于存储供应商提交的新价格
 ) : Comparable<Goods> {
     @Ignore
-    var quantity: Int = 1
+    var quantity: Int = 0
 
     override fun compareTo(other: Goods): Int {
         return when {

@@ -80,7 +80,8 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 }
                 binding.cbGoods.isChecked = goods.isChecked
                 binding.addSub
-                    .setCurrentNumber(goods.quantity)
+                    .setBuyMin(0)
+                    .setCurrentNumber(0)
                     .setPosition(position)
                     .setOnChangeValueListener { value, position ->
                         goods.quantity = value

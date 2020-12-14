@@ -54,7 +54,7 @@ class ShoppingCartMgViewModel(
             val collect = hashMapOf<String, GoodsOfShoppingCart>()
             Observable.fromIterable(allList)
                 .filter {
-                    !it.quantity.equals(0)
+                    !it.quantity.equals(0.0f)
                 }
                 .autoDisposable(this@ShoppingCartMgViewModel)
                 .subscribe({
