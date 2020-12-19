@@ -186,7 +186,6 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     }, {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
                     })
-//
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -223,7 +222,6 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     goods.unitPrice = price
                     viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
                         .subscribe()
-//                    adapter!!.forceUpdate()
                     dialog.dismiss()
                 }
             }.create()
@@ -234,7 +232,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCart("通用",goodsList)
+        viewModelGoodsTo!!.addGoodsToShoppingCar(goodsList)
         //还原商品信息
         var selectedList = mutableListOf<Goods>()
         goodsList.forEach {

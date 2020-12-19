@@ -37,7 +37,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:background="@drawable/selector_button"
-                android:onClick="@{()->fragment.addGoodsToShoppingCart()}"
+                android:onClick="@{()->fragment.addGoodsToShoppingCar()}"
                 android:text="@{`加入购物车` +`(`+ fragment.viewModelGoodsTo.shoppingCartOfQuantity +`)`}"
                 android:textSize="18sp" />
     </LinearLayout>
