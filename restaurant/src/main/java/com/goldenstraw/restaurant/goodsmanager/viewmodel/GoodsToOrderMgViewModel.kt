@@ -10,9 +10,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -21,7 +19,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 
@@ -183,6 +180,10 @@ class GoodsToOrderMgViewModel(
             })
     }
 
+
+    /**购物车部分**/
+
+
     /**
      * 将所选择商品加入购物车
      */
@@ -234,48 +235,43 @@ class GoodsToOrderMgViewModel(
             }, {})
     }
 
-    /**
-     * 同步类别和商品信息
-     */
-    fun syncAllData() {
-        repository.clearAllData()
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                repository.getAllCategoryFromNetwork()
-                    .subscribeOn(Schedulers.io())
-                    .autoDisposable(this)
-                    .subscribe {
-                        repository.addCategoryListToLocal(it)
-                            .subscribeOn(Schedulers.newThread())
-                            .autoDisposable(this)
-                            .subscribe({
-                            }, {
-
-                            })
-                        Observable.fromIterable(it)
-                            .subscribeOn(Schedulers.newThread())
-                            .autoDisposable(this)
-                            .subscribe { category ->
-                                repository.getAllGoodsOfCategoryFromNetwork(category)
-                                    .autoDisposable(this)
-                                    .subscribe { goodslist ->
-                                        repository.addGoodsListToLocal(goodslist)
-                                            .autoDisposable(this)
-                                            .subscribe({}, {})
-                                    }
-                            }
-                    }
-
-            }, {})
-
-    }
 
     /**
      * 获取某日菜单将其所需商品，汇总后保存在购物车当中
      */
     val groupbyFoodCategory = hashMapOf<String, MutableList<Goods>>()
+
+    /**
+     * 新版本加入购物车
+     */
+    fun getFoodOfDailyToShoppingCar(where: String) {
+        launchUI {
+            withContext(Dispatchers.IO) {
+                //第一步：获取每日菜单
+                val dailyMeal = repository.getDailyMealOfDate(where)
+                if (dailyMeal.isSuccess()) {
+                    //第二步：遍历每日菜单将其转换为购物车食物和原材料
+                    dailyMeal.results?.forEach { dailyMeal ->
+                        val food = FoodOfShoppingCar(
+                            foodId = dailyMeal.cookBook.objectId,
+                            foodName = dailyMeal.cookBook.foodName,
+                            foodCategory = dailyMeal.cookBook.foodCategory,
+                            foodTime = dailyMeal.mealTime
+                        )
+
+                        val goodsList =
+                            repository.getCookBookWithGoods(dailyMeal.cookBook.objectId).goods
+                        val materialList = mutableListOf<MaterialOfShoppingCar>()
+                        goodsList?.forEach { goods ->
+                            val material = goodsToMaterial(dailyMeal.cookBook.objectId, goods)
+                            materialList.add(materialToShoppingCar(material))
+                        }
+                        repository.addFoodAndMaterialsToShoppingCar(food, materialList)
+                    }
+                }
+            }
+        }
+    }
 
     fun getDailyMealToShoppingCar(where: String) {
 //        materialList.clear()
@@ -349,4 +345,43 @@ class GoodsToOrderMgViewModel(
 //        }
 
     }
+
+    /**
+     * 同步类别和商品信息
+     */
+    fun syncAllData() {
+        repository.clearAllData()
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(this)
+            .subscribe({
+                repository.getAllCategoryFromNetwork()
+                    .subscribeOn(Schedulers.io())
+                    .autoDisposable(this)
+                    .subscribe {
+                        repository.addCategoryListToLocal(it)
+                            .subscribeOn(Schedulers.newThread())
+                            .autoDisposable(this)
+                            .subscribe({
+                            }, {
+
+                            })
+                        Observable.fromIterable(it)
+                            .subscribeOn(Schedulers.newThread())
+                            .autoDisposable(this)
+                            .subscribe { category ->
+                                repository.getAllGoodsOfCategoryFromNetwork(category)
+                                    .autoDisposable(this)
+                                    .subscribe { goodslist ->
+                                        repository.addGoodsListToLocal(goodslist)
+                                            .autoDisposable(this)
+                                            .subscribe({}, {})
+                                    }
+                            }
+                    }
+
+            }, {})
+
+    }
+
 }

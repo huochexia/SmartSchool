@@ -22,6 +22,7 @@ import androidx.room.RoomDatabase
 import com.owner.basemodule.base.ROOM_DATABASE_FILE
 import com.owner.basemodule.room.dao.CookBookDao
 import com.owner.basemodule.room.dao.GoodsDao
+import com.owner.basemodule.room.dao.ShoppingCarDao
 import com.owner.basemodule.room.dao.UserDao
 import com.owner.basemodule.room.entities.*
 
@@ -37,7 +38,10 @@ import com.owner.basemodule.room.entities.*
         GoodsCategory::class,
         GoodsOfShoppingCart::class,
         CookBooks::class,
-        CBGCrossRef::class
+        CBGCrossRef::class,
+        FoodOfShoppingCar::class,
+        MaterialOfShoppingCar::class,
+
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -45,6 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao //用户管理
     abstract fun goodsDao(): GoodsDao //商品管理
     abstract fun cookbookDao(): CookBookDao //菜谱管理
+    abstract fun shoppingCarDao():ShoppingCarDao //购物车管理
 
     companion object {
         @Volatile

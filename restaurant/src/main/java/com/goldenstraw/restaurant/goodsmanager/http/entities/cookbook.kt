@@ -38,14 +38,16 @@ data class DailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
     var cookBook: CookBooks,
-    var isOfTeacher: Boolean = false
+    var isOfTeacher: Boolean = false,
+    var direct: Int = 0  //0:新石校区，1：西山校区
 ) : BmobObject()
 
 data class NewDailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
     var cookBook: CookBooks,
-    var isOfTeacher: Boolean = false
+    var isOfTeacher: Boolean = false,
+    var direct: Int = 0  //0：新石校区，1：西山校区
 )
 
 /*
@@ -69,13 +71,6 @@ data class UpdateUsedNumber(
     var usedNumber: Int
 )
 
-/*
-返回结果:使用BmobApi执行网络数据管理的返回对象。
- */
-class Results<T>(
-    var success: T?,
-    var failure: BmobException?
-)
 
 /*
 分析菜单数据类

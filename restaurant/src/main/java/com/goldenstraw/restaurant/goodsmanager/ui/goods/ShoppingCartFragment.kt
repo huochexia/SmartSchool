@@ -249,6 +249,12 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
             })
     }
 
+    /**
+     * 新版本清空购物车
+     */
+    private fun clearShoppingCar() {
+        viewModel!!.clearShopping()
+    }
 
     private fun deleteGoodsOfShoppingCarList() {
         viewModel!!.deleteAllOfShoppingCart()
@@ -299,7 +305,8 @@ class ShoppingCartFragment : BaseFragment<FragmentShoppingCartBinding>() {
                 findNavController().navigate(R.id.checkSubscribFragment)
             }
             R.id.clear_shoppingcar -> {
-                deleteGoodsOfShoppingCarList()
+//                deleteGoodsOfShoppingCarList()
+                clearShoppingCar()
                 adapter!!.forceUpdate()
             }
         }

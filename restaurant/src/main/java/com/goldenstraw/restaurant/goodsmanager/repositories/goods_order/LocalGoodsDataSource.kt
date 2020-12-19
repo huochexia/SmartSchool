@@ -70,6 +70,17 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     fun clearGoodsAll(): Completable
     fun clearCategoryAll(): Completable
     fun clearUserAll(): Completable
+
+    /**购物车操作**/
+    /*
+       增加
+     */
+    //增加食物和它的原材料到购物车当中
+    suspend fun addFoodAndMaterial(food: FoodOfShoppingCar, list: List<MaterialOfShoppingCar>)
+
+    //增加商品到购物车里
+    suspend fun addGoodsToShoppingCar(list: List<MaterialOfShoppingCar>)
+
 }
 
 class LocalGoodsDataSourceImpl(
@@ -183,5 +194,19 @@ class LocalGoodsDataSourceImpl(
     override fun clearUserAll(): Completable {
         return database.userDao().clearUser()
     }
+
+    /**购物车部分**/
+
+    override suspend fun addFoodAndMaterial(
+        food: FoodOfShoppingCar,
+        list: List<MaterialOfShoppingCar>
+    ) {
+        database.shoppingCarDao().addFoodAndMaterial(food, list)
+    }
+
+    override suspend fun addGoodsToShoppingCar(list: List<MaterialOfShoppingCar>) {
+        database.shoppingCarDao().addMaterialOfShoppingCar(list)
+    }
+
 
 }

@@ -2,9 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
+import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.MaterialOfShoppingCar
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 interface ILocalShoppingCartDataSource : ILocalDataSource {
 
@@ -16,9 +17,38 @@ interface ILocalShoppingCartDataSource : ILocalDataSource {
 
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 
-    fun deleteAllShoppingCart():Completable
+    fun deleteAllShoppingCart(): Completable
 
-    suspend fun getGoodsOfFoodCategory(foodCategory:String):MutableList<GoodsOfShoppingCart>
+    suspend fun getGoodsOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart>
+
+    /**
+     * 新版本购物车部分
+     * 在购物车中针对数据库的业务操作主要是获取食物和原材料，获取某类比如通用的原材料，
+     * 保存原材料的用量，删除食品和原材料
+     **/
+
+    /*
+      删除
+     */
+    suspend fun clearFoodOfShoppingCar()
+
+    suspend fun clearMaterialOfShoppingCar()
+
+    suspend fun deleteMaterial(code: Int)
+
+    /*
+      获取
+     */
+    suspend fun getFoodOfShoppingCar(): List<FoodWithMaterialsOfShoppingCar>
+
+    suspend fun getMaterialOfShoppingCar(id: String): List<MaterialOfShoppingCar>
+
+    /*
+    修改
+     */
+    suspend fun batchQuantityOfMaterial(list: List<MaterialOfShoppingCar>)
+
+    suspend fun updateQuantityOfMaterial(material: MaterialOfShoppingCar)
 }
 
 /**
@@ -54,4 +84,32 @@ class LocalShoppingCartDataSourceImpl(
         return database.goodsDao().getShoppingCartOfFoodCategory(foodCategory)
     }
 
+
+    override suspend fun clearFoodOfShoppingCar() {
+        database.shoppingCarDao().clearFoods()
+    }
+
+    override suspend fun clearMaterialOfShoppingCar() {
+        database.shoppingCarDao().clearMaterials()
+    }
+
+    override suspend fun deleteMaterial(code: Int) {
+        database.shoppingCarDao().deleteMaterial(code)
+    }
+
+    override suspend fun getFoodOfShoppingCar(): List<FoodWithMaterialsOfShoppingCar> {
+        return database.shoppingCarDao().getFoodAndMaterial()
+    }
+
+    override suspend fun getMaterialOfShoppingCar(id: String): List<MaterialOfShoppingCar> {
+        return database.shoppingCarDao().getMaterialOfShopping(id)
+    }
+
+    override suspend fun batchQuantityOfMaterial(list: List<MaterialOfShoppingCar>) {
+        database.shoppingCarDao().batchUpdateQuantityOfMaterial(list)
+    }
+
+    override suspend fun updateQuantityOfMaterial(material: MaterialOfShoppingCar) {
+        database.shoppingCarDao().updateQuantityOfMaterial(material)
+    }
 }

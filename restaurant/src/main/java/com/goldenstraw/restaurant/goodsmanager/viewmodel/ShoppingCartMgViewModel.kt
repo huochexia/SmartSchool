@@ -93,6 +93,16 @@ class ShoppingCartMgViewModel(
     }
 
     /**
+     * 新版本清空购物车
+     */
+    fun clearShopping() {
+        launchUI {
+            repository.clearFoodOfShoppingCar()
+            repository.clearMaterialOfShoppingCar()
+        }
+    }
+
+    /**
      * 修改购物车商品
      */
     fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {

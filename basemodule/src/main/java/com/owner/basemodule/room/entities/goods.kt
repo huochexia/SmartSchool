@@ -1,9 +1,6 @@
 package com.owner.basemodule.room.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 /**
  * Created by Administrator on 2019/10/12 0012
@@ -50,6 +47,8 @@ data class GoodsOfShoppingCart(
         }
     }
 }
+
+
 
 @Entity
 data class Goods(

@@ -3,7 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.MaterialOfShoppingCar
 import io.reactivex.Completable
 
 class ShoppingCartRepository(
@@ -44,5 +46,32 @@ class ShoppingCartRepository(
     fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrderItem>): Completable {
 
         return remote.createNewOrderItem(orderItem)
+    }
+
+    /**
+     * 新版本购物车操作方法,获取，修改，删除。
+     */
+    suspend fun getFoodOfShoppingCar(): List<FoodWithMaterialsOfShoppingCar> {
+        return local.getFoodOfShoppingCar()
+    }
+
+    suspend fun getMaterialOfShopping(id: String): List<MaterialOfShoppingCar> {
+        return local.getMaterialOfShoppingCar(id)
+    }
+
+    suspend fun batchUpdateQuantityOfMaterial(list: List<MaterialOfShoppingCar>) {
+        local.batchQuantityOfMaterial(list)
+    }
+
+    suspend fun updateQuantityOfMaterial(material: MaterialOfShoppingCar) {
+        local.updateQuantityOfMaterial(material)
+    }
+
+    suspend fun clearFoodOfShoppingCar() {
+        local.clearFoodOfShoppingCar()
+    }
+
+    suspend fun clearMaterialOfShoppingCar() {
+        local.clearMaterialOfShoppingCar()
     }
 }

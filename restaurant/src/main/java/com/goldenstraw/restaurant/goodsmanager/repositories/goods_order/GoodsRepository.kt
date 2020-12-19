@@ -224,4 +224,18 @@ class GoodsRepository(
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)
     }
+
+    /**
+     * 新版本对购物车的操作
+     */
+    suspend fun addFoodAndMaterialsToShoppingCar(
+        food: FoodOfShoppingCar,
+        materialList: List<MaterialOfShoppingCar>
+    ) {
+        local.addFoodAndMaterial(food, materialList)
+    }
+
+    suspend fun addGoodsToShoppingCar(goods:List<MaterialOfShoppingCar>){
+        local.addGoodsToShoppingCar(goods)
+    }
 }

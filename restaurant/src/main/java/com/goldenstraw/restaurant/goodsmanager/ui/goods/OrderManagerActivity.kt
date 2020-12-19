@@ -194,8 +194,8 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 }
                 var copyDate = "$year-$month-$day"
                 val where = "{\"mealDate\":\"$copyDate\"}"
-                viewModelGoodsTo.getDailyMealToShoppingCar(where)
-
+//                viewModelGoodsTo.getDailyMealToShoppingCar(where)
+                viewModelGoodsTo.getFoodOfDailyToShoppingCar(where)
             } // 设置初始日期
             , calendar[Calendar.YEAR]
             , calendar[Calendar.MONTH]

@@ -32,7 +32,7 @@ data class CookBooks(
  * 菜谱与商品多对多的交叉关系表。
  *
  */
-@Entity(primaryKeys = ["objectId","cb_id", "goods_id"])
+@Entity(primaryKeys = ["objectId","cb_id", "goods_id"],indices = [Index("cb_id"),Index("goods_id")])
 data class CBGCrossRef(
     var objectId: String,
     var cb_id: String,
@@ -52,3 +52,59 @@ data class CookBookWithGoods(
     )
     val goods: List<Goods>
 )
+
+/**
+ * 原材料，菜谱对应的原材料，它是由商品类转换而来，增加定量即原材料在菜谱中占比（以10人量为依据）
+ * @ration:定量
+ * @materialOwnerid:对应菜谱Id
+ */
+@Entity
+data class Material(
+    @PrimaryKey(autoGenerate = true)
+    var objectId:Int =0,//自身Id
+    @ColumnInfo
+    var materialOwnerId: String,//对应食物Id
+    @ColumnInfo
+    var goodsId: String,//商品Id
+    @ColumnInfo
+    var goodsName: String,
+    @ColumnInfo
+    var unitOfMeasurement: String,
+    @ColumnInfo
+    var unitPrice: Float,
+    @ColumnInfo
+    var categoryCode: String,
+    @ColumnInfo
+    var ration: Float = 0.0f,//定量，比例量
+
+)
+
+/**
+ *菜谱与原材料的关系类
+ */
+data class CookBookWithMaterial(
+    @Embedded
+    val cookbook: CookBooks,
+    @Relation(
+        parentColumn = "cb_id",
+        entityColumn = "materialOwnerId"
+    )
+    val materials: List<Material>
+)
+
+/**
+ *  从商品转换为对应菜谱的原材料
+ *  @owner:对应菜谱的Id
+ *  @ration:占食物量的比重（以10人量为准）
+ */
+fun goodsToMaterial(owner:String,goods:Goods,ration:Float=0.0f):Material{
+    return Material(
+        materialOwnerId = owner,
+        goodsId = goods.objectId,
+        goodsName = goods.goodsName,
+        unitPrice = goods.unitPrice,
+        unitOfMeasurement = goods.unitOfMeasurement,
+        categoryCode = goods.categoryCode,
+        ration = ration
+    )
+}
