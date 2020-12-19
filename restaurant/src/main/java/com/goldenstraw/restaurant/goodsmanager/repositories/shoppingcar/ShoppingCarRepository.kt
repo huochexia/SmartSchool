@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
+package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
@@ -8,10 +8,10 @@ import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.room.entities.MaterialOfShoppingCar
 import io.reactivex.Completable
 
-class ShoppingCartRepository(
-    private val remote: IRemoteShoppingCartDataSource,
-    private val local: ILocalShoppingCartDataSource
-) : BaseRepositoryBoth<IRemoteShoppingCartDataSource, ILocalShoppingCartDataSource>(remote, local) {
+class ShoppingCarRepository(
+    private val remote: IRemoteShoppingCarDataSource,
+    private val local: ILocalShoppingCarDataSource
+) : BaseRepositoryBoth<IRemoteShoppingCarDataSource, ILocalShoppingCarDataSource>(remote, local) {
     /*
       获取购物车内所有商品
      */
@@ -73,5 +73,9 @@ class ShoppingCartRepository(
 
     suspend fun clearMaterialOfShoppingCar() {
         local.clearMaterialOfShoppingCar()
+    }
+
+    suspend fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar){
+        local.deleteMaterialOfShoppingCar(material)
     }
 }

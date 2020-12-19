@@ -7,7 +7,7 @@ import io.reactivex.Completable
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface ShoppingCartApi {
+interface ShoppingCarApi {
 
     //1、将购物车商品增加到远程
     @POST("/1/batch/")

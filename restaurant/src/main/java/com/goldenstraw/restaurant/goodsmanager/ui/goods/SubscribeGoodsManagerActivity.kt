@@ -3,16 +3,13 @@ package com.goldenstraw.restaurant.goodsmanager.ui.goods
 import android.content.Intent
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivitySubscribeGoodsBinding
-import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.di.shoppingcartdatasource
-import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart.ShoppingCartRepository
-import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCartMgViewModel
+import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar.ShoppingCarRepository
+import com.goldenstraw.restaurant.goodsmanager.viewmodel.ShoppingCarMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
-import org.kodein.di.Kodein.Companion
 import org.kodein.di.generic.instance
 
 class SubscribeGoodsManagerActivity:BaseActivity<ActivitySubscribeGoodsBinding>() {
@@ -22,13 +19,13 @@ class SubscribeGoodsManagerActivity:BaseActivity<ActivitySubscribeGoodsBinding>(
         extend(parentKodein,copy = Copy.All)
         import(shoppingcartdatasource)
     }
-    private val repository by instance<ShoppingCartRepository>()
+    private val repository by instance<ShoppingCarRepository>()
 
-    var viewModel: ShoppingCartMgViewModel? = null
+    var viewModel: ShoppingCarMgViewModel? = null
     override fun initView() {
         super.initView()
         viewModel = getViewModel{
-            ShoppingCartMgViewModel(repository)
+            ShoppingCarMgViewModel(repository)
         }
     }
 

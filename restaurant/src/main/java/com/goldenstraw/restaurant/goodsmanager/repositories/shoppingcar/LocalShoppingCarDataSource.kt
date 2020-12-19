@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcart
+package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar
 
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
@@ -7,7 +7,7 @@ import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.room.entities.MaterialOfShoppingCar
 import io.reactivex.Completable
 
-interface ILocalShoppingCartDataSource : ILocalDataSource {
+interface ILocalShoppingCarDataSource : ILocalDataSource {
 
     suspend fun getAllGoodsOfFoodCategory(): MutableList<GoodsOfShoppingCart>
 
@@ -34,7 +34,7 @@ interface ILocalShoppingCartDataSource : ILocalDataSource {
 
     suspend fun clearMaterialOfShoppingCar()
 
-    suspend fun deleteMaterial(code: Int)
+    suspend fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar)
 
     /*
       获取
@@ -56,7 +56,7 @@ interface ILocalShoppingCartDataSource : ILocalDataSource {
  */
 class LocalShoppingCartDataSourceImpl(
     private val database: AppDatabase
-) : ILocalShoppingCartDataSource {
+) : ILocalShoppingCarDataSource {
     /*
      * 获取购物车内所有商品
      */
@@ -93,8 +93,8 @@ class LocalShoppingCartDataSourceImpl(
         database.shoppingCarDao().clearMaterials()
     }
 
-    override suspend fun deleteMaterial(code: Int) {
-        database.shoppingCarDao().deleteMaterial(code)
+    override suspend fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar) {
+        database.shoppingCarDao().deleteMaterial(material)
     }
 
     override suspend fun getFoodOfShoppingCar(): List<FoodWithMaterialsOfShoppingCar> {

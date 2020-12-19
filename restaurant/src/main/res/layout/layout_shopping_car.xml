@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="foodAndMaterial"
+                type="com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            app:cardBackgroundColor="@color/secondaryLightColor"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="10dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:text="@{foodAndMaterial.food.foodName}"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:bind_food_text_color="@{foodAndMaterial.food.foodTime}"
+                    tools:text="红烧肉" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rlc_material_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginBottom="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/layout_shopping_car_item" />
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>

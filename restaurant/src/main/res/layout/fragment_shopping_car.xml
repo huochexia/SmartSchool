@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCartFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCarFragment" />
     </data>
 
     <LinearLayout
@@ -39,9 +39,9 @@
                         android:id="@+id/rlw_shopping_cart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:bind_recyclerView_adapter="@{fragment.adapter}"
+                        app:bind_recyclerView_adapter="@{fragment.foodAdapter}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/layout_goods_item" />
+                        tools:listitem="@layout/layout_shopping_car" />
             </androidx.core.widget.NestedScrollView>
 
         </com.kennyc.view.MultiStateView>

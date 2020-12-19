@@ -52,9 +52,18 @@ fun setCookBookColor(textView: TextView, isStandby: Boolean) {
 fun setDailyMealText(textView: TextView, cookbook: CookBooks) {
     textView.text = cookbook.foodName
     when (cookbook.foodKind) {
-        "小荤菜", "煮","汤","馅类" -> textView.setTextColor(Color.BLUE)
+        "小荤菜", "煮", "汤", "馅类" -> textView.setTextColor(Color.BLUE)
         "大荤菜", "杂粮", "煎炒" -> textView.setTextColor(Color.RED)
         else -> textView.setTextColor(Color.BLACK)
+    }
+}
+
+@BindingAdapter("bind_food_text_color")
+fun setFoodTextColor(textView: TextView, mealTime: String) {
+    when (mealTime) {
+        "早餐" -> textView.setTextColor(Color.GRAY)
+        "午餐" -> textView.setTextColor(Color.RED)
+        "晚餐" -> textView.setTextColor(Color.BLACK)
     }
 }
 

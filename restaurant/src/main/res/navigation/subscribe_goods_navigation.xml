@@ -7,9 +7,9 @@
 
     <fragment
             android:id="@+id/shoppingCartFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCartFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCarFragment"
             android:label="ShoppingCartFragment"
-            tools:layout="@layout/fragment_shopping_cart">
+            tools:layout="@layout/fragment_shopping_car">
         <action
                 android:id="@+id/action_shoppingCartFragment_to_checkSubscribFragment"
                 app:destination="@id/checkSubscribFragment" />

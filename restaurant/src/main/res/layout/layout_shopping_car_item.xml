@@ -7,28 +7,37 @@
     <data>
 
         <variable
-                name="goods"
-                type="com.owner.basemodule.room.entities.GoodsOfShoppingCart" />
+                name="material"
+                type="com.owner.basemodule.room.entities.MaterialOfShoppingCar" />
 
         <variable
                 name="checkEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
+                name="onLongClick"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#00F5F2F2"
-            app:cardCornerRadius="1dp">
+            android:orientation="vertical">
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorPrimary" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:onClick="@{()->checkEvent.accept(material)}">
 
                 <LinearLayout
                         android:layout_width="wrap_content"
@@ -43,24 +52,14 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                        <CheckBox
-                                android:id="@+id/cb_goods"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginBottom="8dp"
-                                android:onClick="@{()->checkEvent.accept(goods)}"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
                         <TextView
                                 android:id="@+id/tv_goods_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
-                                android:text="@{goods.goodsName}"
-                                android:textSize="18sp"
+                                android:text="@{material.goodsName}"
+                                android:textSize="15sp"
+                                app:bind_view_onLongClick="@{()->onLongClick.accept(material)}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/cb_goods"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -71,8 +70,8 @@
                             android:id="@+id/tv_note"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:text="@{goods.note}"
+                            android:layout_marginStart="15dp"
+                            android:text="@{material.note}"
                             android:textColor="@color/common_red" />
                 </LinearLayout>
 
@@ -83,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="80dp"
                         android:text="@string/goods_of_quantity"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,8 +90,8 @@
                         android:id="@+id/tv_goods_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{String.valueOf(goods.quantity)}"
-                        android:textSize="18sp"
+                        android:text="@{String.valueOf(material.quantity)}"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toEndOf="@+id/textView4"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="100" />
@@ -102,47 +101,46 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/unit_of_measure"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/unit_price" />
+                        app:layout_constraintStart_toStartOf="@+id/textView4" />
 
                 <TextView
                         android:id="@+id/tv_goods_quantity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{String.valueOf(goods.unitOfMeasurement)}"
-                        android:textSize="18sp"
+                        android:text="@{String.valueOf(material.unitOfMeasurement)}"
+                        android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView5"
                         tools:text="斤" />
 
-                <TextView
-                        android:id="@+id/unit_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:textSize="18sp"
-                        android:text="@string/unit_of_price"
-                        app:layout_constraintStart_toStartOf="@+id/textView4"
-                        app:layout_constraintTop_toBottomOf="@+id/textView4"
-                        app:layout_constraintBottom_toTopOf="@+id/textView5"/>
+                <!--                <TextView-->
+                <!--                        android:id="@+id/unit_price"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_marginTop="2dp"-->
+                <!--                        android:layout_marginBottom="2dp"-->
+                <!--                        android:textSize="18sp"-->
+                <!--                        android:text="@string/unit_of_price"-->
+                <!--                        app:layout_constraintStart_toStartOf="@+id/textView4"-->
+                <!--                        app:layout_constraintTop_toBottomOf="@+id/textView4"-->
+                <!--                        app:layout_constraintBottom_toTopOf="@+id/textView5"/>-->
 
-                <TextView
-                        android:id="@+id/textView11"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{String.valueOf(goods.unitPrice)+`元`}"
-                        android:textSize="18sp"
-                        app:layout_constraintStart_toEndOf="@+id/unit_price"
-                         app:layout_constraintBottom_toTopOf="@+id/tv_goods_quantity"/>
+                <!--                <TextView-->
+                <!--                        android:id="@+id/textView11"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="@{String.valueOf(goods.unitPrice)+`元`}"-->
+                <!--                        android:textSize="18sp"-->
+                <!--                        app:layout_constraintStart_toEndOf="@+id/unit_price"-->
+                <!--                         app:layout_constraintBottom_toTopOf="@+id/tv_goods_quantity"/>-->
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </LinearLayout>
 
 
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 </layout>
 
 

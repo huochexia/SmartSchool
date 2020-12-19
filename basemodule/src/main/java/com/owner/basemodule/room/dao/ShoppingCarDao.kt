@@ -31,8 +31,8 @@ interface ShoppingCarDao {
     @Query("DELETE FROM MaterialOfShoppingCar")
     suspend fun clearMaterials()
 
-    @Query("DELETE FROM materialofshoppingcar WHERE code =:code")
-    suspend fun deleteMaterial(code: Int)
+    @Delete
+    suspend fun deleteMaterial(material: MaterialOfShoppingCar)
 
     /*
       增加食物和它的材料
