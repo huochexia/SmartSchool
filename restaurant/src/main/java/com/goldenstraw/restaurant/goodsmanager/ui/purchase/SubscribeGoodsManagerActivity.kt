@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods
+package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
 import android.content.Intent
 import com.goldenstraw.restaurant.R

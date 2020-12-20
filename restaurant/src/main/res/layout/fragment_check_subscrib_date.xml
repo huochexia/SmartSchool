@@ -7,7 +7,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.CheckSubscribOfDateFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.purchase.CheckSubscribOfDateFragment" />
     </data>
 
     <LinearLayout

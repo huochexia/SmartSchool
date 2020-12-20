@@ -71,8 +71,6 @@ data class Material(
     @ColumnInfo
     var unitOfMeasurement: String,
     @ColumnInfo
-    var unitPrice: Float,
-    @ColumnInfo
     var categoryCode: String,
     @ColumnInfo
     var ration: Float = 0.0f,//定量，比例量
@@ -94,15 +92,14 @@ data class CookBookWithMaterial(
 
 /**
  *  从商品转换为对应菜谱的原材料
- *  @owner:对应菜谱的Id
+ *  @foodId:对应菜谱的Id
  *  @ration:占食物量的比重（以10人量为准）
  */
-fun goodsToMaterial(owner:String,goods:Goods,ration:Float=0.0f):Material{
+fun goodsToMaterial(foodId:String,goods:Goods,ration:Float=0.0f):Material{
     return Material(
-        materialOwnerId = owner,
+        materialOwnerId = foodId,
         goodsId = goods.objectId,
         goodsName = goods.goodsName,
-        unitPrice = goods.unitPrice,
         unitOfMeasurement = goods.unitOfMeasurement,
         categoryCode = goods.categoryCode,
         ration = ration

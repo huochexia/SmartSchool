@@ -6,7 +6,6 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +51,7 @@ interface GoodsDao {
     fun findByName(name: String): Observable<MutableList<Goods>>
 
     @Query("SELECT * FROM Goods WHERE goods_id = :id")
-    fun getGoodsFromObjectId(id: String): Flowable<Goods>
+    suspend fun getGoodsFromObjectId(id: String): Goods
 
     /**
      * 使用Flow方式获取数据,因为数据发生变化时要能够被观察到，所以这里将返回值设为Flow。

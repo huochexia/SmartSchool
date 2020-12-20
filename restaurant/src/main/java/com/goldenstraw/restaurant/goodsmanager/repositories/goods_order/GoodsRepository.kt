@@ -162,7 +162,7 @@ class GoodsRepository(
     /*
      *通过ObjectId获取商品
      */
-    fun getGoodsFromObjectId(id: String): Observable<Goods> {
+    suspend fun getGoodsFromObjectId(id: String): Goods {
         return local.getGoodsFromObjectId(id)
     }
 
@@ -235,7 +235,5 @@ class GoodsRepository(
         local.addFoodAndMaterial(food, materialList)
     }
 
-    suspend fun addGoodsToShoppingCar(goods:List<MaterialOfShoppingCar>){
-        local.addGoodsToShoppingCar(goods)
-    }
+
 }

@@ -253,7 +253,9 @@ class GoodsToOrderMgViewModel(
             }
         }
     }
-
+    /**
+     * 获取本地
+     */
 
     /**
      * 同步类别和商品信息

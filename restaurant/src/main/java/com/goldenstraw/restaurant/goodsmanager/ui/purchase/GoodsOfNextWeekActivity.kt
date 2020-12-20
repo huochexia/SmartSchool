@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods
+package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
 import android.annotation.SuppressLint
 import android.os.Bundle

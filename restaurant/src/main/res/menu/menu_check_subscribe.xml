@@ -6,6 +6,10 @@
             android:title="汇总"
             app:showAsAction="never" />
     <item
+            android:id="@+id/query_new_order"
+            android:title="查看新订单"
+            app:showAsAction="never" />
+    <item
             android:id="@+id/already_subscribe"
             android:title="已申购"
             app:showAsAction="never" />

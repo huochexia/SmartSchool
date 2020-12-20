@@ -40,7 +40,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
-    fun getGoodsFromObjectId(id: String): Observable<Goods>
+    suspend fun getGoodsFromObjectId(id: String): Goods
 
     fun findByName(name: String): Observable<MutableList<Goods>>
 
@@ -78,8 +78,6 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     //增加食物和它的原材料到购物车当中
     suspend fun addFoodAndMaterial(food: FoodOfShoppingCar, list: List<MaterialOfShoppingCar>)
 
-    //增加商品到购物车里
-    suspend fun addGoodsToShoppingCar(list: List<MaterialOfShoppingCar>)
 
 }
 
@@ -138,8 +136,8 @@ class LocalGoodsDataSourceImpl(
 
     }
 
-    override fun getGoodsFromObjectId(id: String): Observable<Goods> {
-        return database.goodsDao().getGoodsFromObjectId(id).toObservable()
+    override suspend fun getGoodsFromObjectId(id: String): Goods {
+        return database.goodsDao().getGoodsFromObjectId(id)
     }
 
 
@@ -204,9 +202,6 @@ class LocalGoodsDataSourceImpl(
         database.shoppingCarDao().addFoodAndMaterial(food, list)
     }
 
-    override suspend fun addGoodsToShoppingCar(list: List<MaterialOfShoppingCar>) {
-        database.shoppingCarDao().addMaterialOfShoppingCar(list)
-    }
 
 
 }

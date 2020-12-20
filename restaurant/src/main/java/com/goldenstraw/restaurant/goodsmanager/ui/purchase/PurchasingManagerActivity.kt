@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods
+package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.ActivityOrderManagerBinding
+import com.goldenstraw.restaurant.databinding.ActivityPurchasingManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
@@ -22,13 +22,16 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
-import kotlinx.android.synthetic.main.activity_order_manager.*
+import kotlinx.android.synthetic.main.activity_purchasing_manager.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 import java.util.*
 
-class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
+/**
+ * 采购管理：管理商品类别，商品，添加购物车
+ */
+class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>() {
 
     lateinit var viewModelGoodsTo: GoodsToOrderMgViewModel
 
@@ -40,7 +43,7 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
     private val repository by instance<GoodsRepository>()
 
     override val layoutId: Int
-        get() = R.layout.activity_order_manager
+        get() = R.layout.activity_purchasing_manager
 
 
     override fun initView() {
@@ -194,7 +197,6 @@ class OrderManagerActivity : BaseActivity<ActivityOrderManagerBinding>() {
                 }
                 var copyDate = "$year-$month-$day"
                 val where = "{\"mealDate\":\"$copyDate\"}"
-//                viewModelGoodsTo.getDailyMealToShoppingCar(where)
                 viewModelGoodsTo.getFoodOfDailyToShoppingCar(where)
             } // 设置初始日期
             , calendar[Calendar.YEAR]

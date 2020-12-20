@@ -45,7 +45,7 @@ import org.kodein.di.generic.instance
  * 审核订单，并发送订单
  */
 
-class VerifyAndPlaceOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding>() {
+class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding>() {
 
     override val layoutId: Int
         get() = R.layout.activity_verify_place_orders

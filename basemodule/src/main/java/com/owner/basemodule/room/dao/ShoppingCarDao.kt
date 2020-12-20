@@ -19,8 +19,10 @@ interface ShoppingCarDao {
     suspend fun getFoodAndMaterial(): List<FoodWithMaterialsOfShoppingCar>
 
     @Query("SELECT * FROM MaterialOfShoppingCar WHERE materialOwnerId =:id")
-    suspend fun getMaterialOfShopping(id: String): List<MaterialOfShoppingCar>
+    suspend fun getMaterialOfShopping(id: String): MaterialOfShoppingCar
 
+    @Query("SELECT * FROM MaterialOfShoppingCar")
+    suspend fun getAllOfMaterialOfShoppingCar(): List<MaterialOfShoppingCar>
     /*
     删除购物车里的食品和它的原材料
      */

@@ -3,31 +3,33 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar.ShoppingCarRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
-import com.owner.basemodule.room.entities.MaterialOfShoppingCar
-import com.owner.basemodule.util.TimeConverter
+import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ShoppingCarMgViewModel(
     private val repository: ShoppingCarRepository
 ) : BaseViewModel() {
 
     var goodsList = mutableListOf<GoodsOfShoppingCart>()
+
     val state = ObservableField<Int>()
+
     var foodList = mutableListOf<FoodWithMaterialsOfShoppingCar>()
+
+    var newOrderList = mutableListOf<NewOrder>()
 
     var categoryList = mutableListOf<FoodWithMaterialsOfShoppingCar>()
 
     init {
-//        getAllGoodsOfShoppingCart()
-//        getAllGoodsOfShoppingCart(CookKind.HotFood.kindName)
         launchUI {
             foodList =
                 repository.getFoodOfShoppingCar() as MutableList<FoodWithMaterialsOfShoppingCar>
@@ -64,8 +66,8 @@ class ShoppingCarMgViewModel(
      */
     fun collectAllOfFoodCategory() {
         launchUI {
-            val allList = repository.getAllOfShoppingCart()
-            val collect = hashMapOf<String, GoodsOfShoppingCart>()
+            val allList = repository.getAllOfMaterialShoppingCar()
+            val collect = hashMapOf<String, MaterialOfShoppingCar>()
             Observable.fromIterable(allList)
                 .filter {
                     !it.quantity.equals(0.0f)
@@ -74,30 +76,92 @@ class ShoppingCarMgViewModel(
                 .subscribe({
                     if (collect.contains(it.goodsName)) {
                         collect[it.goodsName]!!.quantity =
-                            collect[it.goodsName]!!.quantity + it.quantity
+                            (collect[it.goodsName]!!.quantity + it.quantity)
 
                     } else {
                         collect[it.goodsName] = it
                     }
                 }, {}, {
-                    goodsList = collect.values.toMutableList()
-                    goodsList.sortBy {
-                        it.categoryCode
-                    }
-                    defUI.refreshEvent.call()
+                    collectAllMaterialOfShoppingCar(collect.values.toMutableList())
                 })
 
         }
     }
 
+    /**
+     * 将汇总去重后的食物材料
+     */
+    private fun collectAllMaterialOfShoppingCar(list: List<MaterialOfShoppingCar>) {
+        categoryList.clear()
+        val food = FoodOfShoppingCar("collect", "共${list.size}种商品", "", "")
+        list.forEach {
+            it.materialOwnerId = "collect"
+        }
+        categoryList.add(FoodWithMaterialsOfShoppingCar(food, list))
 
-    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
-        return repository.deleteGoodsOfShoppingCartFromLocal(goods)
-
+        defUI.refreshEvent.call()
     }
 
-    fun deleteAllOfShoppingCart(): Completable {
-        return repository.deleteAllOfShoppingCart()
+    /**
+     * 生成订单
+     */
+    fun createNewOrder(list: List<NewOrder>) {
+        launchUI {
+            repository.createNewOrder(list)
+            repository.clearFoodOfShoppingCar()
+            repository.clearMaterialOfShoppingCar()
+            categoryList.clear()
+            defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 修改订单
+     */
+    fun updateNewOrder(newOrder: NewOrder) {
+        launchUI {
+            repository.updateLocalNewOrder(newOrder)
+            defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 删除订单
+     */
+    fun deleteNewOrder(newOrder: NewOrder) {
+        launchUI {
+            repository.deleteLocalNewOrder(newOrder)
+            newOrderList.remove(newOrder)
+            defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 清空本地订单
+     */
+    fun clearAllNewOrder() {
+        launchUI {
+            repository.clearLocalNewOrder()
+            newOrderList.clear()
+            defUI.refreshEvent.call()
+        }
+    }
+
+    /**
+     * 获取本地保存的新订单
+     */
+    fun getLocalNewOrder() {
+        launchUI {
+            newOrderList = repository.getLocalNewOrder() as MutableList<NewOrder>
+            withContext(Dispatchers.Default) {
+                newOrderList.forEach {
+                    val goods = repository.getPriceOfGoods(it.goodsId)
+                    it.unitPrice = goods.unitPrice
+                }
+                createNewOrder(newOrderList)
+            }
+            defUI.refreshEvent.call()
+        }
     }
 
     /**
@@ -131,27 +195,48 @@ class ShoppingCarMgViewModel(
         }
     }
 
+    fun commitNewOrderToRemote() {
+        launchUI {
+            transGoodsOfShoppingCartToNewOrderItem(newOrderList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .autoDisposable(this@ShoppingCarMgViewModel)
+                .subscribe({
+                    createNewOrderItem(it)
+                        .subscribeOn(Schedulers.io())
+                        .autoDisposable(this@ShoppingCarMgViewModel)
+                        .subscribe({
+
+                        }, {
+
+                        })
+                }, {}, {
+                    clearAllNewOrder()
+                })
+        }
+
+    }
+
     /**
      * 转换
      */
     fun transGoodsOfShoppingCartToNewOrderItem(
-        list: MutableList<GoodsOfShoppingCart>,
-        dist: Int
-    ): Observable<BatchOrdersRequest<NewOrderItem>> {
+        list: MutableList<NewOrder>
+    ): Observable<BatchOrdersRequest<NewOrder>> {
         return Observable.fromIterable(list)
-            .map {
-                val order = NewOrderItem(
-                    district = dist,
-                    goodsName = it.goodsName,
-                    unitOfMeasurement = it.unitOfMeasurement,
-                    unitPrice = it.unitPrice,
-                    quantity = it.quantity,
-                    note = it.note,
-                    categoryCode = it.categoryCode,
-                    orderDate = TimeConverter.getCurrentDateString(),
-                    state = 0
-                )
-                val batchItem = BatchOrderItem<NewOrderItem>(
+            .map { order ->
+//                val order = NewOrderItem(
+//                    district = dist,
+//                    goodsName = it.goodsName,
+//                    unitOfMeasurement = it.unitOfMeasurement,
+//                    unitPrice = it.unitPrice,
+//                    quantity = it.quantity,
+//                    note = it.note,
+//                    categoryCode = it.categoryCode,
+//                    orderDate = TimeConverter.getCurrentDateString(),
+//                    state = 0
+//                )
+                val batchItem = BatchOrderItem(
                     method = "POST",
                     path = "/1/classes/OrderItem/",
                     body = order
@@ -160,7 +245,7 @@ class ShoppingCarMgViewModel(
             }
             .buffer(45)
             .map {
-                var batch = BatchOrdersRequest<NewOrderItem>(requests = it)
+                var batch = BatchOrdersRequest(requests = it)
                 batch
             }
     }
@@ -168,7 +253,7 @@ class ShoppingCarMgViewModel(
     /**
      * 将购物车内商品信息提交网络
      */
-    fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrderItem>): Completable {
+    fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrder>): Completable {
         return repository.createNewOrderItem(orderItem)
     }
 

@@ -4,46 +4,22 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.MaterialOfShoppingCar
+import com.owner.basemodule.room.entities.NewOrder
+
 import io.reactivex.Completable
 
 class ShoppingCarRepository(
     private val remote: IRemoteShoppingCarDataSource,
     private val local: ILocalShoppingCarDataSource
 ) : BaseRepositoryBoth<IRemoteShoppingCarDataSource, ILocalShoppingCarDataSource>(remote, local) {
-    /*
-      获取购物车内所有商品
-     */
-    suspend fun getAllOfShoppingCart(): MutableList<GoodsOfShoppingCart> {
 
-        return local.getAllGoodsOfFoodCategory()
-    }
-
-    fun deleteGoodsOfShoppingCartFromLocal(goods: GoodsOfShoppingCart): Completable {
-        return local.deleteGoodsOfShoppingCart(goods)
-    }
-
-    fun deleteGoodsOfShoppingCartListFromLocal(list: MutableList<GoodsOfShoppingCart>): Completable {
-        return local.deleteShoppingCartList(list)
-    }
-
-    fun deleteAllOfShoppingCart(): Completable {
-        return local.deleteAllShoppingCart()
-    }
-
-    fun updateGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable {
-        return local.updateGoodsOfShoppingCart(goods)
-    }
-
-    suspend fun getGoodsOfShoppingCart(foodCategory: String): MutableList<GoodsOfShoppingCart> {
-        return local.getGoodsOfFoodCategory(foodCategory)
-    }
     /*
      将本地购物车中商品提交成订单
      */
 
-    fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrderItem>): Completable {
+    fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrder>): Completable {
 
         return remote.createNewOrderItem(orderItem)
     }
@@ -55,8 +31,12 @@ class ShoppingCarRepository(
         return local.getFoodOfShoppingCar()
     }
 
-    suspend fun getMaterialOfShopping(id: String): List<MaterialOfShoppingCar> {
+    suspend fun getMaterialOfShoppingCar(id: String): MaterialOfShoppingCar {
         return local.getMaterialOfShoppingCar(id)
+    }
+
+    suspend fun getAllOfMaterialShoppingCar(): List<MaterialOfShoppingCar> {
+        return local.getAllOfMaterialOfShoppingCar()
     }
 
     suspend fun batchUpdateQuantityOfMaterial(list: List<MaterialOfShoppingCar>) {
@@ -75,7 +55,32 @@ class ShoppingCarRepository(
         local.clearMaterialOfShoppingCar()
     }
 
-    suspend fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar){
+    suspend fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar) {
         local.deleteMaterialOfShoppingCar(material)
+    }
+
+    suspend fun createNewOrder(list: List<NewOrder>) {
+        local.createNewOrder(list)
+    }
+
+
+    suspend fun getLocalNewOrder(): List<NewOrder> {
+        return local.getLocalNewOrder()
+    }
+
+    suspend fun getPriceOfGoods(goodsId: String): Goods {
+        return local.getPriceOfGoods(goodsId)
+    }
+
+    suspend fun updateLocalNewOrder(newOrder: NewOrder) {
+        return local.updateLocalNewOrder(newOrder)
+    }
+
+    suspend fun clearLocalNewOrder() {
+        return local.clearAllNewOrder()
+    }
+
+    suspend fun deleteLocalNewOrder(newOrder: NewOrder) {
+        return local.deleteLocalNewOrder(newOrder)
     }
 }

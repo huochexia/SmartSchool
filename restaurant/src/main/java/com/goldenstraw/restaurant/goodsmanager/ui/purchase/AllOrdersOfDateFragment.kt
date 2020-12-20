@@ -1,13 +1,13 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods
+package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
-import android.app.AlertDialog
+import android.app.AlertDialog.Builder
 import android.os.Bundle
 import android.view.ViewGroup.LayoutParams
 import android.widget.EditText
 import androidx.databinding.ObservableField
 import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.R.color
+import com.goldenstraw.restaurant.R.*
 import com.goldenstraw.restaurant.databinding.FragmentAllOrdersOfDateBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
@@ -19,7 +19,7 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
+import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
@@ -27,17 +27,17 @@ import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_all_orders_of_date.*
-import org.kodein.di.Copy
+import org.kodein.di.Copy.All
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
 
     override val layoutId: Int
-        get() = R.layout.fragment_all_orders_of_date
+        get() = layout.fragment_all_orders_of_date
 
     override val kodein: Kodein = Kodein.lazy {
-        extend(parentKodein, copy = Copy.All)
+        extend(parentKodein, copy = All)
         import(queryordersactivitymodule)
     }
 
@@ -68,7 +68,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         }
 
         adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
+            layoutId = layout.layout_order_item,
             dataSource = {
                 orderList
             },
@@ -157,8 +157,8 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
      * 弹出删除对话框
      */
     private fun popUPDeleteDialog(orders: OrderItem) {
-        val dialog = AlertDialog.Builder(context)
-            .setIcon(R.drawable.ic_alert_name)
+        val dialog = Builder(context)
+            .setIcon(drawable.ic_alert_name)
             .setTitle("确定要删除吗！！")
             .setNegativeButton("取消") { dialog, which ->
                 dialog.dismiss()
@@ -174,14 +174,14 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
      * 修改购物车商品信息，主要是数量和增加备注
      */
     private fun updateDialog(orders: OrderItem) {
-        val view = layoutInflater.inflate(R.layout.edit_goods_of_shoppingcart_dialog_view, null)
+        val view = layoutInflater.inflate(layout.edit_goods_of_shoppingcart_dialog_view, null)
         val goodsQuantity = view.findViewById<EditText>(R.id.et_goods_quantity)
         val goodsOfNote = view.findViewById<EditText>(R.id.et_goods_of_note)
         goodsQuantity.setText(orders.quantity.toString())
         goodsOfNote.setText(orders.note)
 
-        val dialog = AlertDialog.Builder(context)
-            .setIcon(R.drawable.ic_update_name)
+        val dialog = Builder(context)
+            .setIcon(drawable.ic_update_name)
             .setTitle("修改商品信息")
             .setView(view)
             .setNegativeButton("取消") { dialog, _ ->
@@ -191,7 +191,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
                 val quantity = goodsQuantity.text.toString().trim()
                 val note = goodsOfNote.text.toString().trim()
                 if (quantity.isNullOrEmpty()) {
-                    com.owner.basemodule.util.toast { "请填写必须内容！！" }
+                    toast { "请填写必须内容！！" }
                 } else {
                     val newOrderItem = ObjectQuantityAndNote(quantity.toFloat(), note)
                     viewModel!!.updateOrderItem(newOrderItem, orders.objectId)

@@ -15,11 +15,11 @@ import com.goldenstraw.restaurant.goodsmanager.ui.adjustprice.AdjustPriceOfGoods
 import com.goldenstraw.restaurant.goodsmanager.ui.check.CheckQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.confirm.ConfirmQuantityActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookMainActivity
-import com.goldenstraw.restaurant.goodsmanager.ui.goods.OrderManagerActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.purchase.PurchasingManagerActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.query.QueryOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.record.RecordOrdersActivity
 import com.goldenstraw.restaurant.goodsmanager.ui.supplier.SupplierApplyActivity
-import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndPlaceOrderActivity
+import com.goldenstraw.restaurant.goodsmanager.ui.verify.VerifyAndSendOrderActivity
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.arouter.RouterPath
@@ -94,11 +94,11 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
 
     private fun initEvent() {
         order.setOnClickListener {
-            val intent = Intent(this, OrderManagerActivity::class.java)
+            val intent = Intent(this, PurchasingManagerActivity::class.java)
             startActivity(intent)
         }
         send.setOnClickListener {
-            val intent1 = Intent(this, VerifyAndPlaceOrderActivity::class.java)
+            val intent1 = Intent(this, VerifyAndSendOrderActivity::class.java)
             startActivity(intent1)
         }
         query.setOnClickListener {

@@ -40,8 +40,6 @@ data class MaterialOfShoppingCar(
     @ColumnInfo
     var unitOfMeasurement: String,
     @ColumnInfo
-    var unitPrice: Float,
-    @ColumnInfo
     var categoryCode: String,
     @ColumnInfo
     var quantity: Float,//购买数量
@@ -71,7 +69,6 @@ fun materialToShoppingCar(material: Material): MaterialOfShoppingCar {
         goodsId = material.goodsId,
         goodsName = material.goodsName,
         unitOfMeasurement = material.unitOfMeasurement,
-        unitPrice = material.unitPrice,
         categoryCode = material.categoryCode,
         quantity = 0.0f,
         ration = material.ration,
@@ -87,9 +84,9 @@ fun goodsToShoppingCar(goods: Goods): MaterialOfShoppingCar {
         goodsId = goods.objectId,
         goodsName = goods.goodsName,
         unitOfMeasurement = goods.unitOfMeasurement,
-        unitPrice = goods.unitPrice,
         categoryCode = goods.categoryCode,
         quantity = 0.0f,
         ration = 0.0f
     )
 }
+

@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.goods.ShoppingCarFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.purchase.ShoppingCarFragment" />
     </data>
 
     <LinearLayout
@@ -126,8 +126,8 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:background="@drawable/selector_button"
-                android:onClick="@{()->fragment.commitOrderItem()}"
-                android:text="@string/commit_shopping_cart"
+                android:onClick="@{()->fragment.createNewOrder()}"
+                android:text="生成订单"
                 android:textSize="18sp" />
     </LinearLayout>
 </layout>

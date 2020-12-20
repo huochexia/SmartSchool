@@ -1,4 +1,4 @@
-package com.goldenstraw.restaurant.goodsmanager.ui.goods
+package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -23,12 +23,9 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import com.owner.basemodule.room.entities.MaterialOfShoppingCar
-import com.owner.basemodule.util.toast
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.owner.basemodule.room.entities.NewOrder
+import com.owner.basemodule.room.entities.materialToOrder
 import kotlinx.android.synthetic.main.fragment_shopping_car.*
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
@@ -185,38 +182,48 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
     }
 
 
-    fun commitOrderItem() {
-        commitAllGoodsOfShoppingCart(viewModel!!.goodsList, prefs.district)
+    fun createNewOrder() {
+        val materialList = viewModel!!.categoryList.first().materials
+        materialOfShoppingCarToNewOrder(materialList, prefs.district)
+
     }
 
     /**
-     * 提交所有选择的购物车商品到网络数据库
+     * 将汇总的材料转换成订单保存，同时清空购物车
      */
-    private fun commitAllGoodsOfShoppingCart(
-        selectedList: MutableList<GoodsOfShoppingCart>,
+    private fun materialOfShoppingCarToNewOrder(
+        materialList: List<MaterialOfShoppingCar>,
         district: Int
     ) {
-        viewModel!!.transGoodsOfShoppingCartToNewOrderItem(selectedList, district)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                viewModel!!.createNewOrderItem(it)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(scopeProvider)
-                    .subscribe({
-
-                    }, {
-                        toast { "批量处理购物车商品：" + it.message.toString() }
-                    })
-
-            }, {
-                toast { "提交购物车商品：" + it.message.toString() }
-            }, {
-                //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
-                clearShoppingCar()
-            })
+        val newOrderList = mutableListOf<NewOrder>()
+        materialList.forEach {
+            newOrderList.add(materialToOrder(it, district))
+        }
+        launch {
+            viewModel!!.createNewOrder(newOrderList)
+            findNavController().navigate(R.id.localNewOrderFragment)
+        }
+//        viewModel!!.transGoodsOfShoppingCartToNewOrderItem(selectedList, district)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(scopeProvider)
+//            .subscribe({
+//                viewModel!!.createNewOrderItem(it)
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .autoDisposable(scopeProvider)
+//                    .subscribe({
+//
+//                    }, {
+//                        toast { "批量处理购物车商品：" + it.message.toString() }
+//                    })
+//
+//            }, {
+//                toast { "提交购物车商品：" + it.message.toString() }
+//            }, {
+//                //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
+//                clearShoppingCar()
+//            })
     }
 
     /**
@@ -246,6 +253,10 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             R.id.already_subscribe -> {
 
                 findNavController().navigate(R.id.checkSubscribFragment)
+            }
+            R.id.query_new_order -> {
+
+                findNavController().navigate(R.id.localNewOrderFragment)
             }
             R.id.clear_shoppingcar -> {
                 clearShoppingCar()

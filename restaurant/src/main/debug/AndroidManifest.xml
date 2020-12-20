@@ -25,11 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".goodsmanager.ui.goods.ShoppingCarFragment" />
-        <activity android:name=".goodsmanager.ui.goods.OrderManagerActivity" />
+        <activity android:name=".goodsmanager.ui.purchase.ShoppingCarFragment" />
+        <activity android:name=".goodsmanager.ui.purchase.PurchasingManagerActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierAccountFragment" />
         <activity android:name=".goodsmanager.ui.query.QueryOrdersActivity" />
-        <activity android:name=".goodsmanager.ui.verify.VerifyAndPlaceOrderActivity" />
+        <activity android:name=".goodsmanager.ui.verify.VerifyAndSendOrderActivity" />
         <activity android:name=".goodsmanager.ui.supplier.SupplierApplyActivity" />
         <activity android:name=".goodsmanager.ui.check.CheckQuantityActivity" />
         <activity android:name=".goodsmanager.ui.record.RecordOrdersActivity"/>
