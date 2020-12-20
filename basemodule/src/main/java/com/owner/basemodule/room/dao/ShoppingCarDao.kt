@@ -57,4 +57,7 @@ interface ShoppingCarDao {
 
     @Update
     suspend fun updateQuantityOfMaterial(material: MaterialOfShoppingCar)
+
+    @Query("SELECT COUNT() FROM MaterialOfShoppingCar")
+    suspend fun getNumberOfMaterialOfShoppingCar(): Int
 }

@@ -69,8 +69,7 @@ interface GoodsDao {
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
     suspend fun searchMaterial(name: String): MutableList<Goods>
 
-    @Query("SELECT COUNT() FROM GoodsOfShoppingCart")
-    fun getShoppingCartOfCount(): Single<Int>
+
 
     @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY categoryCode")
     suspend fun getAllShoppingCart(): MutableList<GoodsOfShoppingCart>

@@ -203,29 +203,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             viewModel!!.createNewOrder(newOrderList)
             findNavController().navigate(R.id.localNewOrderFragment)
         }
-//        viewModel!!.transGoodsOfShoppingCartToNewOrderItem(selectedList, district)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(scopeProvider)
-//            .subscribe({
-//                viewModel!!.createNewOrderItem(it)
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .autoDisposable(scopeProvider)
-//                    .subscribe({
-//
-//                    }, {
-//                        toast { "批量处理购物车商品：" + it.message.toString() }
-//                    })
-//
-//            }, {
-//                toast { "提交购物车商品：" + it.message.toString() }
-//            }, {
-//                //完成网络操作后，进行本地数据处理，从购物车中删除已加入订单的商品信息
-//                clearShoppingCar()
-//            })
     }
-
     /**
      * 新版本清空购物车
      */

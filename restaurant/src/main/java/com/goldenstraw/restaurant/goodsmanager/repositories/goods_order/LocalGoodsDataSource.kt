@@ -44,7 +44,6 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun findByName(name: String): Observable<MutableList<Goods>>
 
-    fun getShoppingCartCount(): Single<Int>
 
 
 
@@ -77,6 +76,8 @@ interface ILocalGoodsDataSource : ILocalDataSource {
      */
     //增加食物和它的原材料到购物车当中
     suspend fun addFoodAndMaterial(food: FoodOfShoppingCar, list: List<MaterialOfShoppingCar>)
+
+    suspend fun getNumberOfMaterialOfShoppingCar():Int
 
 
 }
@@ -145,9 +146,7 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().findByName(name)
     }
 
-    override fun getShoppingCartCount(): Single<Int> {
-        return database.goodsDao().getShoppingCartOfCount()
-    }
+
 
 
     /**
@@ -201,7 +200,11 @@ class LocalGoodsDataSourceImpl(
     ) {
         database.shoppingCarDao().addFoodAndMaterial(food, list)
     }
-
-
+    /*
+      购物车原材料数量
+     */
+    override suspend fun getNumberOfMaterialOfShoppingCar(): Int {
+        return database.shoppingCarDao().getNumberOfMaterialOfShoppingCar()
+    }
 
 }

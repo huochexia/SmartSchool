@@ -7,6 +7,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar.Shopping
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.room.entities.*
+import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -142,8 +143,11 @@ class ShoppingCarMgViewModel(
     fun clearAllNewOrder() {
         launchUI {
             repository.clearLocalNewOrder()
-            newOrderList.clear()
-            defUI.refreshEvent.call()
+            withContext(Dispatchers.Main) {
+                newOrderList.clear()
+                defUI.refreshEvent.call()
+            }
+
         }
     }
 
@@ -154,9 +158,12 @@ class ShoppingCarMgViewModel(
         launchUI {
             newOrderList = repository.getLocalNewOrder() as MutableList<NewOrder>
             withContext(Dispatchers.Default) {
-                newOrderList.forEach {
-                    val goods = repository.getPriceOfGoods(it.goodsId)
-                    it.unitPrice = goods.unitPrice
+                newOrderList.forEach { order ->
+                    val goods = repository.getPriceOfGoods(order.goodsId)
+                    //因为从商品得到原材料后，商品有可能被删除。而原材料中依然保留商品Id
+                    goods?.let {
+                        order.unitPrice = it.unitPrice
+                    }
                 }
                 createNewOrder(newOrderList)
             }
@@ -197,22 +204,21 @@ class ShoppingCarMgViewModel(
 
     fun commitNewOrderToRemote() {
         launchUI {
-            transGoodsOfShoppingCartToNewOrderItem(newOrderList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .autoDisposable(this@ShoppingCarMgViewModel)
-                .subscribe({
-                    createNewOrderItem(it)
-                        .subscribeOn(Schedulers.io())
-                        .autoDisposable(this@ShoppingCarMgViewModel)
-                        .subscribe({
+            withContext(Dispatchers.IO) {
+                transGoodsOfShoppingCartToNewOrderItem(newOrderList)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .autoDisposable(this@ShoppingCarMgViewModel)
+                    .subscribe({
+                        createNewOrderItem(it)
+                            .subscribeOn(Schedulers.io())
+                            .autoDisposable(this@ShoppingCarMgViewModel)
+                            .subscribe()
+                    }, {}, {
+                        clearAllNewOrder()
+                    })
+            }
 
-                        }, {
-
-                        })
-                }, {}, {
-                    clearAllNewOrder()
-                })
         }
 
     }
@@ -220,22 +226,12 @@ class ShoppingCarMgViewModel(
     /**
      * 转换
      */
-    fun transGoodsOfShoppingCartToNewOrderItem(
+    private fun transGoodsOfShoppingCartToNewOrderItem(
         list: MutableList<NewOrder>
     ): Observable<BatchOrdersRequest<NewOrder>> {
         return Observable.fromIterable(list)
             .map { order ->
-//                val order = NewOrderItem(
-//                    district = dist,
-//                    goodsName = it.goodsName,
-//                    unitOfMeasurement = it.unitOfMeasurement,
-//                    unitPrice = it.unitPrice,
-//                    quantity = it.quantity,
-//                    note = it.note,
-//                    categoryCode = it.categoryCode,
-//                    orderDate = TimeConverter.getCurrentDateString(),
-//                    state = 0
-//                )
+                order.orderDate = TimeConverter.getCurrentDateString()
                 val batchItem = BatchOrderItem(
                     method = "POST",
                     path = "/1/classes/OrderItem/",
@@ -245,7 +241,7 @@ class ShoppingCarMgViewModel(
             }
             .buffer(45)
             .map {
-                var batch = BatchOrdersRequest(requests = it)
+                val batch = BatchOrdersRequest(requests = it)
                 batch
             }
     }
@@ -253,7 +249,7 @@ class ShoppingCarMgViewModel(
     /**
      * 将购物车内商品信息提交网络
      */
-    fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrder>): Completable {
+    private fun createNewOrderItem(orderItem: BatchOrdersRequest<NewOrder>): Completable {
         return repository.createNewOrderItem(orderItem)
     }
 

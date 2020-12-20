@@ -103,7 +103,6 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 adapter!!.forceUpdate()
             }
         })
-        viewModelGoodsTo!!.getCountOfShoppingCart()
         initSwipeMenu()
         with(banner) {
             setImageLoader(object : ImageLoader() {

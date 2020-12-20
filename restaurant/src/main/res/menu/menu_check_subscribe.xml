@@ -7,11 +7,11 @@
             app:showAsAction="never" />
     <item
             android:id="@+id/query_new_order"
-            android:title="查看新订单"
+            android:title="未提交订单"
             app:showAsAction="never" />
     <item
             android:id="@+id/already_subscribe"
-            android:title="已申购"
+            android:title="已提交订单"
             app:showAsAction="never" />
     <item
             android:id="@+id/clear_shoppingcar"

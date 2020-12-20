@@ -247,11 +247,4 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
 
     }
 
-    /**
-     * 通过返回结果刷新购物车商品数量
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        viewModelGoodsTo.shoppingCartOfQuantity.value = data?.getIntExtra("quantity", 0)
-    }
 }

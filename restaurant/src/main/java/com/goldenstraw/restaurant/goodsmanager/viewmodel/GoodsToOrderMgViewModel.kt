@@ -31,9 +31,6 @@ class GoodsToOrderMgViewModel(
 ) : BaseViewModel() {
 
 
-    //因为在这里得到数据，所有将列表适配器的创建也定义在ViewModel中
-//    var categoryList = mutableListOf<GoodsCategory>()
-
     var goodsList = mutableListOf<Goods>() //商品列表
     var materialList = mutableListOf<Goods>()//菜谱中原材料列表
 
@@ -46,7 +43,6 @@ class GoodsToOrderMgViewModel(
     var isGoodsListRefresh = MutableLiveData<Boolean>()//刷新商品列表
     private val state = MutableLiveData<Boolean>()  //弹出对话框
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
-    var shoppingCartOfQuantity = MutableLiveData<Int>()
 
 
     /**
@@ -88,11 +84,11 @@ class GoodsToOrderMgViewModel(
                 isRefresh.value = true
             }, {}, {})
     }
-
-    private fun getSearchResultList(results: MutableList<Goods>) {
-        searchGoodsResultList.clear()
-        searchGoodsResultList.addAll(results)
-    }
+//
+//    private fun getSearchResultList(results: MutableList<Goods>) {
+//        searchGoodsResultList.clear()
+//        searchGoodsResultList.addAll(results)
+//    }
 
     /**
      * 删除商品信息或类别
@@ -173,8 +169,7 @@ class GoodsToOrderMgViewModel(
                     .autoDisposable(this)
                     .subscribe()
                 goodsState.set(MultiStateView.VIEW_STATE_CONTENT)
-//                goodsList.add(it)
-//                isGoodsListRefresh.value = true
+
             }, {
 
             })
@@ -207,20 +202,6 @@ class GoodsToOrderMgViewModel(
         }
 
     }
-
-    /**
-     * 获取购物车中商品数量
-     */
-    fun getCountOfShoppingCart() {
-        repository.getShoppingCartOfCount()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                shoppingCartOfQuantity.value = it
-            }, {})
-    }
-
 
     /**
      * 新版本加入购物车

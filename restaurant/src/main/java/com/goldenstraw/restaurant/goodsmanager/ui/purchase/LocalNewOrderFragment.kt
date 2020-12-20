@@ -3,6 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 import android.app.ActionBar.LayoutParams
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
@@ -51,7 +54,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(new_order_toolbar)
         setHasOptionsMenu(true)
 
         viewModel = activity!!.getViewModel {
@@ -183,11 +186,19 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
     fun commitNewOrderToNet() {
         viewModel!!.commitNewOrderToRemote()
     }
-//    //删除订单
-//    private fun deleteOrders(orders: OrderItem) {
-//        viewModel!!.deleteOrderItem(orders.objectId)
-//        orderList.remove(orders)
-//    }
 
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_new_order, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.clear_new_order -> {
+                viewModel!!.clearAllNewOrder()
+            }
+        }
+        return true
+    }
 }
