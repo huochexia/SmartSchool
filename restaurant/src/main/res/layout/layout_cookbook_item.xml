@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
                 name="cookbooks"
-                type="com.owner.basemodule.room.entities.CookBookWithGoods" />
+                type="com.owner.basemodule.room.entities.CookBookWithMaterials" />
 
         <variable
                 name="onClick"
@@ -49,7 +49,7 @@
                     android:id="@+id/tv_food_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{cookbooks.cookBook.foodName}"
+                    android:text="@{cookbooks.cookbook.foodName}"
                     android:textSize="18sp"
                     android:typeface="sans"
                     android:onClick="@{()->onClick.accept(cookbooks)}"
@@ -57,7 +57,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cb_selected_food"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:bind_cookbook_color="@{cookbooks.cookBook.isStandby}"
+                    app:bind_cookbook_color="@{cookbooks.cookbook.isStandby}"
                     tools:text="宫保鸡丁" />
 
             <TextView
@@ -88,8 +88,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:textColor="@color/blue"
-                    android:text="@{String.valueOf(cookbooks.cookBook.usedNumber)}"
-                    android:visibility="@{cookbooks.cookBook.usedNumber>0?View.VISIBLE:View.INVISIBLE}"
+                    android:text="@{String.valueOf(cookbooks.cookbook.usedNumber)}"
+                    android:visibility="@{cookbooks.cookbook.usedNumber>0?View.VISIBLE:View.INVISIBLE}"
                     app:layout_constraintStart_toStartOf="@+id/tv_food_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_food_name"
                     tools:text="10" />

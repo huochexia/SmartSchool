@@ -1,10 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -12,7 +9,7 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentInputCookBookBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookMainMaterialItemBinding
 import com.goldenstraw.restaurant.goodsmanager.adapter.KindSpinnerAdapter
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCookBook
+import com.goldenstraw.restaurant.goodsmanager.http.entities.RemoteCookBook
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
@@ -20,7 +17,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.Material
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.toolbar
 import kotlinx.android.synthetic.main.fragment_input_cook_book.*
 import kotlinx.coroutines.coroutineScope
@@ -45,7 +42,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
 
     private val repository by instance<CookBookRepository>()
     lateinit var viewModel: CookBookViewModel
-    var adapter: BaseDataBindingAdapter<Goods, LayoutCookMainMaterialItemBinding>? = null
+    var adapter: BaseDataBindingAdapter<Material, LayoutCookMainMaterialItemBinding>? = null
 
     private var spinnerList = mutableListOf<String>()
 
@@ -82,11 +79,13 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
             if (ed_cook_name.text.isNotEmpty() && viewModel.materialList.isNotEmpty()) {
                 //根据菜谱种类，选择不同的分类
                 val kind = spinner_cook_kind.selectedItem.toString()
-                val newFood = NewCookBook(
+                val newFood = RemoteCookBook(
                     foodCategory = cookCategory,
                     foodName = ed_cook_name.text.toString(),
-                    foodKind = kind
+                    foodKind = kind,
+                    material = viewModel.materialList
                 )
+
                 /**
                  * 结构并发
                  * 这里启动一个协程非常必要，即使createCook()这个方法本身不是挂起函数。
@@ -97,6 +96,9 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                  * 法findNavController置与同一协程当中。
                  *
                  */
+                //保存过程是，先将不含原材料列表的菜谱保存在网络，然后获取它的objectId,将这个
+                //ObjectId加入Material对应属性，然后将原材料列表加入菜谱，再次保存网络。
+                //另一种思路：给菜谱多定义一个主键，用这个主键与原材料关联
                 launch {
                     coroutineScope {
                         viewModel.createCookBook(newFood)
@@ -124,12 +126,18 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
             layoutId = R.layout.layout_cook_main_material_item,
             dataSource = { viewModel.materialList },
             dataBinding = { LayoutCookMainMaterialItemBinding.bind(it) },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.clickEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        viewModel.materialList.remove(goods)
+            callback = { material, binding, _ ->
+                binding.material = material
+                binding.clickEvent = object : Consumer<Material> {
+                    override fun accept(t: Material) {
+                        viewModel.materialList.remove(material)
                         adapter!!.forceUpdate()
+                    }
+                }
+                binding.update = object : Consumer<Material> {
+                    override fun accept(t: Material) {
+                        //在这里弹出一个修改窗口
+                        updateDialog(material)
                     }
                 }
             }
@@ -141,4 +149,31 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
 
     }
 
+    /**
+     * 修改购物车商品信息，主要是数量和增加备注
+     */
+    private fun updateDialog(material: Material) {
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
+        val ration = view.findViewById<EditText>(R.id.dialog_edit)
+        ration.setText(material.ration.toString())
+
+        val dialog = android.app.AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_update_name)
+            .setTitle("修改${material.goodsName}的配比")
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                val quantity = ration.text.toString().trim()
+                if (quantity.isNullOrEmpty()) {
+                    com.owner.basemodule.util.toast { "请填写必须内容！！" }
+                } else {
+                    material.ration = quantity.toFloat()
+                    adapter!!.forceUpdate()
+                    dialog.dismiss()
+                }
+            }.create()
+        dialog.show()
+    }
 }

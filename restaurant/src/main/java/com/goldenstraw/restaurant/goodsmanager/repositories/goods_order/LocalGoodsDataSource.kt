@@ -20,9 +20,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun addCategoryAll(list: MutableList<GoodsCategory>): Completable
 
-    fun addShoppingCartAll(list: MutableList<GoodsOfShoppingCart>): Completable
 
-    fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
 
     /**
      * 插入
@@ -56,14 +54,13 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
 
-     fun getCookBookWithGoods(objectId: String): CookBookWithGoods
+     fun getCookBookWithGoods(objectId: String): CookBookWithMaterials
 
     /**
      * 删除
      */
     fun deleteGoodsFromLocal(goods: Goods): Completable
 
-    fun deleteShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable
 
     fun deleteCategoryFromLocal(category: GoodsCategory): Completable
     fun clearGoodsAll(): Completable
@@ -99,9 +96,7 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().insertGoodsCategoryList(list)
     }
 
-    override fun addShoppingCartAll(list: MutableList<GoodsOfShoppingCart>): Completable {
-        return database.goodsDao().insertShoppingCartGoodsList(list)
-    }
+
 
     /**
      * 插入,也可以用于修改
@@ -114,9 +109,6 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().insertNewGoods(goods)
     }
 
-    override fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable {
-        return database.goodsDao().insertShoppingCart(shoppingCart)
-    }
 
     override fun insertSupplierToLocal(supplier: MutableList<User>): Completable {
         return database.userDao().insertUsers(supplier)
@@ -160,8 +152,8 @@ class LocalGoodsDataSourceImpl(
         return database.goodsDao().getGoodsOfCategoryFlow(categoryId)
     }
 
-    override  fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
-        return database.goodsDao().getCookBookWithGoods(objectId)
+    override  fun getCookBookWithGoods(objectId: String): CookBookWithMaterials {
+        return database.goodsDao().getCookBookWithMaterials(objectId)
     }
 
     /**
@@ -176,9 +168,6 @@ class LocalGoodsDataSourceImpl(
     }
 
 
-    override fun deleteShoppingCartList(list: MutableList<GoodsOfShoppingCart>): Completable {
-        return database.goodsDao().deleteShoppingCartList(list)
-    }
 
     override fun clearCategoryAll(): Completable {
         return database.goodsDao().clearCategory()

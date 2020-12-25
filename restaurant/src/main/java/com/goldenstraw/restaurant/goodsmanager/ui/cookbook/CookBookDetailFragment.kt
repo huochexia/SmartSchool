@@ -22,7 +22,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.CookBookWithGoods
+import com.owner.basemodule.room.entities.CookBookWithMaterials
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
@@ -66,23 +66,23 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         }
         toolbar.title = cookCategory
         //如果是用于选择，则显示浮动按钮，用于确定用户的选择
-        if (isSelected) {
-            fab_choice_cookbook.visibility = View.VISIBLE
-            fab_choice_cookbook.setOnClickListener {
-                Observable.fromIterable(viewModel.cookbookList)
-                    .filter {
-                        it.cookBook.isSelected
-                    }
-                    .map {
-                        NewDailyMeal(mealTime, mealDate, it.cookBook)
-                    }.subscribeOn(Schedulers.io())
-                    .subscribe({
-                        viewModel.createDailyMeal(it)
-                    }, {}, {
-                        findNavController().popBackStack()
-                    })
-            }
-        }
+//        if (isSelected) {
+//            fab_choice_cookbook.visibility = View.VISIBLE
+//            fab_choice_cookbook.setOnClickListener {
+//                Observable.fromIterable(viewModel.cookbookList)
+//                    .filter {
+//                        it.cookbook.isSelected
+//                    }
+//                    .map {
+//                        NewDailyMeal(mealTime, mealDate, it.cookbook)
+//                    }.subscribeOn(Schedulers.io())
+//                    .subscribe({
+//                        viewModel.createDailyMeal(it)
+//                    }, {}, {
+//                        findNavController().popBackStack()
+//                    })
+//            }
+//        }
 
     }
 
@@ -104,48 +104,48 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             dataBinding = { ViewpageOfCookKindBinding.bind(it) },
             callback = { group, binding, _ ->
                 //每页数据列表的适配器，每页数据是一个key-value对，列表的数据为value
-                val adapter = BaseDataBindingAdapter<CookBookWithGoods, LayoutCookbookItemBinding>(
+                val adapter = BaseDataBindingAdapter<CookBookWithMaterials, LayoutCookbookItemBinding>(
                     layoutId = R.layout.layout_cookbook_item,
                     dataSource = { viewModel.groupbyKind[group]!! },
                     dataBinding = { LayoutCookbookItemBinding.bind(it) },
-                    callback = { cookbooks, itembinding, position ->
+                    callback = { cookbooks, itembinding, _ ->
 
                         itembinding.cookbooks = cookbooks
                         //如果是用于选择，则显示复选框。
                         if (isSelected) {
                             itembinding.cbSelectedFood.visibility = View.VISIBLE
                         }
-                        itembinding.selected = object : Consumer<CookBookWithGoods> {
-                            override fun accept(t: CookBookWithGoods) {
-                                t.cookBook.isSelected = !t.cookBook.isSelected
+                        itembinding.selected = object : Consumer<CookBookWithMaterials> {
+                            override fun accept(t: CookBookWithMaterials) {
+                                t.cookbook.isSelected = !t.cookbook.isSelected
                             }
 
                         }
-                        itembinding.onClick = object : Consumer<CookBookWithGoods> {
-                            override fun accept(t: CookBookWithGoods) {
+                        itembinding.onClick = object : Consumer<CookBookWithMaterials> {
+                            override fun accept(t: CookBookWithMaterials) {
                                 AlertDialog.Builder(context!!)
                                     .setMessage("改变这个菜谱的状态吗?")
-                                    .setNegativeButton("取消") { dialog, which ->
+                                    .setNegativeButton("取消") { dialog, _ ->
                                         dialog.dismiss()
                                     }
-                                    .setPositiveButton("确实") { dialog, which ->
-                                        t.cookBook.isStandby = !t.cookBook.isStandby
-                                        viewModel.updateCookBookState(t.cookBook)
+                                    .setPositiveButton("确实") { dialog, _ ->
+                                        t.cookbook.isStandby = !t.cookbook.isStandby
+                                        viewModel.updateCookBookState(t.cookbook)
                                         dialog.dismiss()
                                     }
                                     .create().show()
                             }
 
                         }
-                        itembinding.consumer = object : Consumer<CookBookWithGoods> {
-                            override fun accept(t: CookBookWithGoods) {
+                        itembinding.consumer = object : Consumer<CookBookWithMaterials> {
+                            override fun accept(t: CookBookWithMaterials) {
                                 AlertDialog.Builder(context!!)
                                     .setMessage("确定要删除吗?")
-                                    .setNegativeButton("取消") { dialog, which ->
+                                    .setNegativeButton("取消") { dialog, _ ->
                                         dialog.dismiss()
                                     }
-                                    .setPositiveButton("确定") { dialog, which ->
-                                        viewModel.deleteCookBook(t.cookBook)
+                                    .setPositiveButton("确定") { dialog, _ ->
+                                        viewModel.deleteCookBook(t.cookbook)
                                         viewModel.groupbyKind[group]!!.remove(t)
                                         vpAdapter!!.forceUpdate()
                                         dialog.dismiss()
@@ -193,7 +193,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         super.onResume()
         //启动和增加新菜谱后，需要重新加载内容
 
-        viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
+        viewModel.getCookBookWithMaterialsOfCategory(cookCategory, isStandby)
         vpAdapter?.forceUpdate()
 
 
@@ -218,12 +218,12 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             }
             R.id.menu_use_cook -> {
                 isStandby = false
-                viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
+                viewModel.getCookBookWithMaterialsOfCategory(cookCategory, isStandby)
                 vpAdapter?.forceUpdate()
             }
             R.id.menu_standby_cook -> {
                 isStandby = true
-                viewModel.getCookBookWithGoodsOfCategory(cookCategory, isStandby)
+                viewModel.getCookBookWithMaterialsOfCategory(cookCategory, isStandby)
                 vpAdapter?.forceUpdate()
             }
         }

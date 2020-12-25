@@ -20,7 +20,6 @@ class ShoppingCarMgViewModel(
     private val repository: ShoppingCarRepository
 ) : BaseViewModel() {
 
-    var goodsList = mutableListOf<GoodsOfShoppingCart>()
 
     val state = ObservableField<Int>()
 

@@ -1,10 +1,9 @@
 package com.owner.basemodule.room.dao
 
 import androidx.room.*
-import com.owner.basemodule.room.entities.CookBookWithGoods
+import com.owner.basemodule.room.entities.CookBookWithMaterials
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import com.owner.basemodule.room.entities.GoodsOfShoppingCart
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -20,12 +19,6 @@ interface GoodsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertGoodsCategoryList(categoryList: MutableList<GoodsCategory>): Completable
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingCartGoodsList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingCart(shoppingCart: GoodsOfShoppingCart): Completable
 
     /*
       增加一个，也可以用于修改
@@ -61,8 +54,8 @@ interface GoodsDao {
 
     @Query("SELECT * FROM Goods WHERE categoryCode = :categoryId  ORDER BY goodsName")
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
-    @Query("SELECT * FROM CookBooks WHERE cb_id = :objectId")
-    fun getCookBookWithGoods(objectId: String):CookBookWithGoods
+    @Query("SELECT * FROM LocalCookBook WHERE cb_id = :objectId")
+    fun getCookBookWithMaterials(objectId: String):CookBookWithMaterials
     /*
        使用协程进行模糊查询
      */
@@ -70,38 +63,22 @@ interface GoodsDao {
     suspend fun searchMaterial(name: String): MutableList<Goods>
 
 
-
-    @Query("SELECT * FROM GoodsOfShoppingCart ORDER BY categoryCode")
-    suspend fun getAllShoppingCart(): MutableList<GoodsOfShoppingCart>
-
-    @Query("SELECT  * FROM GoodsOfShoppingCart WHERE foodCategory =:foodCategory ORDER BY categoryCode")
-    suspend fun getShoppingCartOfFoodCategory(foodCategory: String): MutableList<GoodsOfShoppingCart>
-
     /**
      * 删除
      */
     @Delete
     fun deleteGoods(goods: Goods): Completable
 
-    /*
-        因为与菜谱的关联关系，所在删除商品时要在关系交叉表中也删除相应的内容
-        */
-    @Query("DELETE FROM CBGCrossRef WHERE goods_id = :goodsid")
-    fun deleteCrossRefOfGoods(goodsid: String): Completable
+//    /*
+//        因为与菜谱的关联关系，所在删除商品时要在关系交叉表中也删除相应的内容
+//        */
+//    @Query("DELETE FROM CBGCrossRef WHERE goods_id = :goodsid")
+//    fun deleteCrossRefOfGoods(goodsid: String): Completable
 
 
     @Delete
     fun deleteCategory(category: GoodsCategory): Completable
 
-    @Delete
-    fun deleteShoppingCartList(shoppingCart: MutableList<GoodsOfShoppingCart>): Completable
-
-    @Query("DELETE FROM goodsofshoppingcart")
-     fun delteAllShoppingCart():Completable
-
-
-    @Delete
-    fun deleteGoodsOfShoppingCart(goods: GoodsOfShoppingCart): Completable
 
     @Query("DELETE FROM goods")
     fun clearGoods(): Completable

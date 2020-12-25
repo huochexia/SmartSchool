@@ -34,7 +34,6 @@ class SubscribeGoodsManagerActivity:BaseActivity<ActivitySubscribeGoodsBinding>(
      */
     override fun onBackPressed() {
         var intent = Intent()
-        intent.putExtra("quantity", viewModel!!.goodsList.size)
         this.setResult(1, intent)
         super.onBackPressed()
     }

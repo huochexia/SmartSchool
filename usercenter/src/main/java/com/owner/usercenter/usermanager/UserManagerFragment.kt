@@ -47,7 +47,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             layoutId = R.layout.layout_user_item,
             dataSource = { userList },
             dataBinding = { LayoutUserItemBinding.bind(it) },
-            callback = { user, binding, position ->
+            callback = { user, binding, _ ->
                 binding.user = user
             }
 
@@ -83,7 +83,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
         /*
         1、生成子菜单，这里将子菜单设置在右侧
          */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
+        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, _, _ ->
             val deleteItem = SwipeMenuItem(context)
                 .setBackground(com.goldenstraw.restaurant.R.color.common_yellow)
                 .setText("删除")
@@ -104,7 +104,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
         /*
         3、定义子菜单点击事件
          */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
+        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, _ ->
             menuBridge.closeMenu()
             val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {

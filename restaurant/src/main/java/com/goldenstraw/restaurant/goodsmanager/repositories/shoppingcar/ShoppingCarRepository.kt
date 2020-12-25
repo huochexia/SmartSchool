@@ -1,7 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
-import com.goldenstraw.restaurant.goodsmanager.http.entities.NewOrderItem
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar
 import com.owner.basemodule.room.entities.Goods

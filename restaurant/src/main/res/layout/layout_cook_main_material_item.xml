@@ -4,11 +4,17 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-                name="goods"
-                type="com.owner.basemodule.room.entities.Goods" />
+                name="material"
+                type="com.owner.basemodule.room.entities.Material" />
+
         <variable
                 name="clickEvent"
+                type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
+                name="update"
                 type="com.owner.basemodule.functional.Consumer" />
     </data>
 
@@ -22,10 +28,22 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
                 android:textSize="14sp"
-                android:text="@{goods.goodsName}"
+                android:text="@{material.goodsName}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="排骨" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="40dp"
+                android:onClick="@{()->update.accept(material)}"
+                android:text="@{String.valueOf(material.ration)}"
+                android:textColor="@color/common_red"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toStartOf="@+id/img_delete_item"
+                app:layout_constraintTop_toTopOf="@+id/img_delete_item"
+                tools:text="10" />
 
         <ImageView
                 android:id="@+id/img_delete_item"
@@ -35,7 +53,7 @@
                 android:layout_margin="@dimen/activity_vertical_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:onClick="@{()->clickEvent.accept(goods)}"/>
+                android:onClick="@{()->clickEvent.accept(material)}" />
 
         <View
                 android:layout_width="match_parent"

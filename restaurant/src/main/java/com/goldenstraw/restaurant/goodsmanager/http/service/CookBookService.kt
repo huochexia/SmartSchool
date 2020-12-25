@@ -5,8 +5,7 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.CBGCrossRef
-import com.owner.basemodule.room.entities.CookBooks
+import com.owner.basemodule.room.entities.LocalCookBook
 import retrofit2.http.*
 
 /**
@@ -18,12 +17,12 @@ interface CookBookApi {
      * 生成
      */
     //增加菜谱
-    @POST("/1/classes/CookBooks")
-    suspend fun createCookBook(@Body newCookBook: NewCookBook): CreateObject
+    @POST("/1/classes/RemoteCookBook")
+    suspend fun createCookBook(@Body newCookBook: RemoteCookBook): CreateObject
 
-    //增加菜谱与商品关系
-    @POST("/1/classes/CBGCrossRef")
-    suspend fun createCrossRef(@Body newRef: NewCrossRef): CreateObject
+//    //增加菜谱与商品关系
+//    @POST("/1/classes/CBGCrossRef")
+//    suspend fun createCrossRef(@Body newRef: NewCrossRef): CreateObject
 
     //增加每日菜单
     @POST("/1/classes/DailyMeal")
@@ -33,12 +32,12 @@ interface CookBookApi {
      删除
      */
     //删除菜谱
-    @DELETE("/1/classes/CookBooks/{objectId}")
+    @DELETE("/1/classes/RemoteCookBook/{objectId}")
     suspend fun deleteCookBook(@Path("objectId") objectId: String): DeleteObject
 
-    //删除关系
-    @DELETE("/1/classes/CBGCrossRef/{objectId}")
-    suspend fun deleteCrossRef(@Path("objectId") objectId: String): DeleteObject
+//    //删除关系
+//    @DELETE("/1/classes/CBGCrossRef/{objectId}")
+//    suspend fun deleteCrossRef(@Path("objectId") objectId: String): DeleteObject
 
     //删除每日菜单
     @DELETE("/1/classes/DailyMeal/{objectId}")
@@ -48,9 +47,9 @@ interface CookBookApi {
       修改
      */
     //修改菜谱
-    @PUT("/1/classes/CookBooks/{objectId}")
+    @PUT("/1/classes/RemoteCookBook/{objectId}")
     suspend fun updateCookBook(
-        @Body newCookBook: NewCookBook,
+        @Body newCookBook: RemoteCookBook,
         @Path("objectId") objectId: String
     ): UpdateObject
 
@@ -62,14 +61,14 @@ interface CookBookApi {
     ): UpdateObject
 
     //修改菜谱状态
-    @PUT("/1/classes/CookBooks/{objectId}")
+    @PUT("/1/classes/RemoteCookBook/{objectId}")
     suspend fun updateCookBookState(
         @Body newCookBook: UpdateIsStandby,
         @Path("objectId") objectId: String
     ): UpdateObject
 
     //修改菜谱使用次数
-    @PUT("/1/classes/CookBooks/{objectId}")
+    @PUT("/1/classes/RemoteCookBook/{objectId}")
     suspend fun updateNumberOfUsed(
         @Body newCookBook: UpdateUsedNumber,
         @Path("objectId") objectId: String
@@ -84,23 +83,23 @@ interface CookBookApi {
     suspend fun getDailyMealOfDate(@Query("where") where: String): ObjectList<DailyMeal>
 
     //查询某类菜谱
-    @GET("/1/classes/CookBooks/")
+    @GET("/1/classes/RemoteCookBook/")
     suspend fun getCookBookOfCategory(
         @Query("where") where: String,
         @Query("skip") skip: Int,
         @Query("limit") limit: Int = 500
-    ): ObjectList<CookBooks>
+    ): ObjectList<RemoteCookBook>
 
-    @GET("/1/classes/CookBooks/{objectId}")
-    suspend fun getCookBook(@Path("objectId") objectId: String):CookBooks
+    @GET("/1/classes/RemoteCookBook/{objectId}")
+    suspend fun getCookBook(@Path("objectId") objectId: String):RemoteCookBook
 
-    //获取某个菜谱与商品的关联关系
-    @GET("/1/classes/CBGCrossRef/")
-    suspend fun getCookBookGoodsCrossRef(
-        @Query("where") where: String,
-        @Query("skip") skip: Int,
-        @Query("limit") limit: Int = 500
-    ): ObjectList<CBGCrossRef>
+//    //获取某个菜谱与商品的关联关系
+//    @GET("/1/classes/CBGCrossRef/")
+//    suspend fun getCookBookGoodsCrossRef(
+//        @Query("where") where: String,
+//        @Query("skip") skip: Int,
+//        @Query("limit") limit: Int = 500
+//    ): ObjectList<CBGCrossRef>
 
 
 }

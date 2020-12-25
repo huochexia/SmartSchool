@@ -5,29 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import cn.bmob.v3.BmobQuery
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.CountListener
+import cn.bmob.v3.listener.SaveListener
+import cn.bmob.v3.listener.UpdateListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
-import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
-import com.owner.basemodule.room.entities.CBGCrossRef
-import com.owner.basemodule.room.entities.CookBookWithGoods
-import com.owner.basemodule.room.entities.CookBooks
-import com.owner.basemodule.room.entities.Goods
-import com.owner.basemodule.util.ReturnResult
+import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import org.apache.poi.hwpf.HWPFDocument
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 
 
@@ -51,75 +44,102 @@ class CookBookViewModel(
       通过这种共享方式实现SearchMaterialFragment中的选择，显示在InputCookBookFragment中。
     */
 
-    val materialList = mutableListOf<Goods>()
-    var cookbookList = mutableListOf<CookBookWithGoods>()
+    val materialList = mutableListOf<Material>()
+
+    var cookbookList = mutableListOf<CookBookWithMaterials>()
 
     //分组列表，key-value:key为小类，value为内容列表
-    var groupbyKind = hashMapOf<String, MutableList<CookBookWithGoods>>()
+    var groupbyKind = hashMapOf<String, MutableList<CookBookWithMaterials>>()
 
     //对菜单中的菜谱分组，获得菜谱使用次数.key-value中key为菜谱名，value为次数
     var cookbookByNameAndNumber = hashMapOf<String, Int>()
 
     /*
-     一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后根据原材料列表中的每个原材料，
-         创建关联关系对象，保存到网络和本地。
+     一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后遍历它的原材料，
+     将原材料的materialOwnerId设为objectId。然后再保存。
      */
-    fun createCookBook(newCookBook: NewCookBook) {
+    fun createCookBook(newCookBook: RemoteCookBook) {
         launchUI {
-            when (val result = repository.createCookBook(newCookBook)) {
-                is ReturnResult.Success<*> -> {
-                    materialList.forEach { goods ->
-                        val newCrossRef =
-                            NewCrossRef(
-                                (result.value as CookBooks).objectId,
-                                goods.objectId,
-                                (result.value as CookBooks).foodCategory
-                            )
-                        when (val ref = repository.createCrossRef(newCrossRef)) {
-                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
+            newCookBook.save(object : SaveListener<String>() {
+                override fun done(id: String?, e: BmobException?) {
+                    if (e == null) {
+                        newCookBook.material.forEach {
+                            it.materialOwnerId = id!!
                         }
+                        newCookBook.update(object : UpdateListener() {
+                            override fun done(p0: BmobException?) {
+                                if (p0 == null) {
+                                    defUI.showDialog.value = "菜谱添加成功！！"
+                                    materialList.clear()
+                                }
+                            }
+                        })
+
+                    } else {
+                        defUI.showDialog.value = e.message
                     }
-                    materialList.clear()
-//                    defUI.refreshEvent.call()
                 }
-                is ReturnResult.Failure -> {
-                    defUI.showDialog.postValue(result.e)
-                }
-            }
+
+            })
+
         }
+//        launchUI {
+//            when (val result = repository.createCookBook(newCookBook)) {
+//                is ReturnResult.Success<*> -> {
+//                    goodsList.forEach { goods ->
+//                        val newCrossRef =
+//                            NewCrossRef(
+//                                (result.value as LocalCookBook).objectId,
+//                                goods.objectId,
+//                                (result.value as LocalCookBook).foodCategory
+//                            )
+//                        when (val ref = repository.createCrossRef(newCrossRef)) {
+//                            is ReturnResult.Failure -> defUI.showDialog.postValue(ref.e)//失败提示
+//                        }
+//                    }
+//                    goodsList.clear()
+////                    defUI.refreshEvent.call()
+//                }
+//                is ReturnResult.Failure -> {
+//                    defUI.showDialog.postValue(result.e)
+//                }
+//            }
+//        }
 
     }
 
     /*
     二、删除.成功后，删除对应的关系
      */
-    fun deleteCookBook(cookBooks: CookBooks) {
+    fun deleteCookBook(cookBooks: LocalCookBook) {
+
         launchUI {
-            if (repository.deleteCookBook(cookBooks.objectId).isSuccess()) {
-                val where = "{\"cb_id\":\"${cookBooks.objectId}\"}"
-                val refList = repository.getCookBookGoodsCrossRef(where, 0)
-                withContext(Dispatchers.IO) {
-                    refList.results?.forEach { ref ->
-                        repository.deleteCrossRef(ref.objectId)
-                    }
-                }
-                repository.deleteLocalCookBookAndRef(cookBooks)
-            }
+//            if (repository.deleteCookBook(cookBooks.objectId).isSuccess()) {
+//                val where = "{\"cb_id\":\"${cookBooks.objectId}\"}"
+//                val refList = repository.getCookBookGoodsCrossRef(where, 0)
+//                withContext(Dispatchers.IO) {
+//                    refList.results?.forEach { ref ->
+//                        repository.deleteCrossRef(ref.objectId)
+//                    }
+//                }
+//                repository.deleteLocalCookBookAndRef(cookBooks)
+//            }
+//        }
         }
     }
 
     /*
     查询，对结果通过groupBy进行分组。
      */
-    fun getCookBookWithGoodsOfCategory(category: String, isStandby: Boolean) {
+    fun getCookBookWithMaterialsOfCategory(category: String, isStandby: Boolean) {
         launchUI {
             groupbyKind.clear()
-            cookbookList = repository.getCookBookWithGoodsOfCategory(category, isStandby)
+            cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
             Observable.fromIterable(cookbookList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .groupBy { cookbooks ->
-                    cookbooks.cookBook.foodKind
+                .groupBy { cookBookWithMaterials ->
+                    cookBookWithMaterials.cookbook.foodKind
                 }
                 .autoDisposable(this@CookBookViewModel)
                 .subscribe({ group ->
@@ -154,7 +174,10 @@ class CookBookViewModel(
         }
     }
 
-    fun searchCookBookWithGoods(name: String, category: String) {
+    /*
+    从本地模糊查询菜谱
+     */
+    fun searchCookBookWithMaterials(name: String, category: String) {
         launchUI {
             val list = repository.searchCookBook(name, category)
             if (list.isEmpty()) {
@@ -169,7 +192,7 @@ class CookBookViewModel(
     /*
      * 修改菜谱状态
      */
-    fun updateCookBookState(cookbook: CookBooks) {
+    fun updateCookBookState(cookbook: LocalCookBook) {
         launchUI {
             withContext(Dispatchers.Default) {
                 val newCookBooks = UpdateIsStandby(cookbook.isStandby)
@@ -178,7 +201,7 @@ class CookBookViewModel(
                     repository.addCookBookToLocal(cookbook)
                 }
             }
-            if (!cookbook.isStandby){
+            if (!cookbook.isStandby) {
                 cookbook.usedNumber = 0
                 updateNumberOfUsed(cookbook)
             }
@@ -190,9 +213,9 @@ class CookBookViewModel(
      * 修改菜谱使用次数。
      *
      */
-    private suspend fun updateNumberOfUsed(cookbook: CookBooks) {
+    private suspend fun updateNumberOfUsed(cookbook: LocalCookBook) {
         val newNumber = UpdateUsedNumber(cookbook.usedNumber)
-        cookbook.objectId?.let{
+        cookbook.objectId?.let {
             val result = repository.updateNumberOfUsed(newNumber, it)
             if (result.isSuccess()) {
                 repository.addCookBookToLocal(cookbook)
@@ -477,7 +500,7 @@ class CookBookViewModel(
                 val result = repository.deleteDailyMeal(dailyMeal.objectId)
                 if (result.isSuccess()) {
                     //获取最新菜谱使用数量，减量
-                    updateNumberOfUsed(cookbook)
+//                    updateNumberOfUsed(cookbook)
                 }
             }
 
@@ -497,7 +520,7 @@ class CookBookViewModel(
                     //获取最新菜谱使用数量，增加
                     val cookbook = repository.getCookbook(newDailyMeal.cookBook.objectId)
                     cookbook.usedNumber = cookbook.usedNumber + 1
-                    updateNumberOfUsed(cookbook)
+//                    updateNumberOfUsed(cookbook)
                 }
             }
         }
@@ -507,9 +530,9 @@ class CookBookViewModel(
      *将每日菜单转换成Word表格
      */
 //定义三个Map变量，分别对应早，中，晚三餐
-    private val breakfast = mutableListOf<CookBooks>()
-    private val lunch = mutableListOf<CookBooks>()
-    private val dinner = mutableListOf<CookBooks>()
+    private val breakfast = mutableListOf<LocalCookBook>()
+    private val lunch = mutableListOf<LocalCookBook>()
+    private val dinner = mutableListOf<LocalCookBook>()
 
     fun createStyledTable(date: String, file: InputStream) {
         launchUI {
@@ -519,137 +542,137 @@ class CookBookViewModel(
             withContext(Dispatchers.Default) {
                 val where = "{\"mealDate\":\"$date\"}"
                 val objectList = repository.getDailyMealOfDate(where)
-                if (objectList.isSuccess()) {
-                    Observable.fromIterable(objectList.results)
-                        .groupBy {
-                            it.mealTime
-                        }.subscribeOn(Schedulers.io())
-                        .autoDisposable(this@CookBookViewModel)
-                        .subscribe { group ->
-                            group.autoDisposable(this@CookBookViewModel)
-                                .subscribe { meal ->
-                                    when (group.key) {
-                                        MealTime.Breakfast.time -> {
-                                            breakfast.add(meal.cookBook)
-                                        }
-                                        MealTime.Lunch.time -> {
-                                            lunch.add(meal.cookBook)
-                                        }
-                                        MealTime.Dinner.time -> {
-                                            dinner.add(meal.cookBook)
-                                        }
-                                        else -> {
-                                        }
-                                    }
-                                }
-                        }
-                } else {
-                    defUI.showDialog.value = objectList.error
-                }
+//                if (objectList.isSuccess()) {
+//                    Observable.fromIterable(objectList.results)
+//                        .groupBy {
+//                            it.mealTime
+//                        }.subscribeOn(Schedulers.io())
+//                        .autoDisposable(this@CookBookViewModel)
+//                        .subscribe { group ->
+//                            group.autoDisposable(this@CookBookViewModel)
+//                                .subscribe { meal ->
+////                                    when (group.key) {
+////                                        MealTime.Breakfast.time -> {
+////                                            breakfast.add(meal.cookBook)
+////                                        }
+////                                        MealTime.Lunch.time -> {
+////                                            lunch.add(meal.cookBook)
+////                                        }
+////                                        MealTime.Dinner.time -> {
+////                                            dinner.add(meal.cookBook)
+////                                        }
+////                                        else -> {
+////                                        }
+//                                    }
+//                                }
+//                        }
+//                } else {
+//                    defUI.showDialog.value = objectList.error
+//                }
+//            }
+//            withContext(Dispatchers.IO) {
+//                createOutFileOfWord(date, file)
+//            }
+                defUI.showDialog.value = "文件生成完毕！！"
+//            }
+
             }
-            withContext(Dispatchers.IO) {
-                createOutFileOfWord(date, file)
-            }
-            defUI.showDialog.value = "文件生成完毕！！"
-        }
-
-    }
-
-
-    private fun createOutFileOfWord(date: String, file: InputStream) {
-
-        val doc = HWPFDocument(file)
-        val range = doc.range
-        range.replaceText("\${cookbookDate}", date)
-        range.replaceText("\${breakfast_cold}", getCookBook(CookKind.ColdFood.kindName, breakfast))
-        range.replaceText("\${breakfast_hot}", getCookBook(CookKind.HotFood.kindName, breakfast))
-        range.replaceText(
-            "\${breakfast_flour}",
-            getCookBook(CookKind.FlourFood.kindName, breakfast)
-        )
-        range.replaceText("\${breakfast_soup}", getCookBook(CookKind.SoutPorri.kindName, breakfast))
-        range.replaceText(
-            "\${breakfast_snack}",
-            getCookBook(CookKind.Snackdetail.kindName, breakfast)
-        )
-        range.replaceText("\${lunch_cold}", getCookBook(CookKind.ColdFood.kindName, lunch))
-        range.replaceText("\${lunch_hot}", getCookBook(CookKind.HotFood.kindName, lunch))
-        range.replaceText("\${lunch_flour}", getCookBook(CookKind.FlourFood.kindName, lunch))
-        range.replaceText("\${lunch_soup}", getCookBook(CookKind.SoutPorri.kindName, lunch))
-        range.replaceText("\${lunch_snack}", getCookBook(CookKind.Snackdetail.kindName, lunch))
-        range.replaceText("\${dinner_cold}", getCookBook(CookKind.ColdFood.kindName, dinner))
-        range.replaceText("\${dinner_hot}", getCookBook(CookKind.HotFood.kindName, dinner))
-        range.replaceText("\${dinner_flour}", getCookBook(CookKind.FlourFood.kindName, dinner))
-        range.replaceText("\${dinner_soup}", getCookBook(CookKind.SoutPorri.kindName, dinner))
-        range.replaceText("\${dinner_snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
-        val outfile = File("/storage/emulated/0/$date.doc")
-        val outFile = FileOutputStream(outfile)
-        doc.write(outFile)
-        try {
-            file.close()
-            outFile.close()
-        } catch (e: IOException) {
-            defUI.showDialog.value = e.message
-        }
-
-
-    }
-
-    /*
-    获取菜谱
-     */
-    private fun getCookBook(cookkind: String, cookbooksList: MutableList<CookBooks>): String {
-
-        return when (cookkind) {
-            CookKind.ColdFood.kindName -> {
-                var coldfood = ""
-                cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.ColdFood.kindName) {
-                        coldfood += it.foodName + " "
-
-                    }
-                }
-                return coldfood
-            }
-            CookKind.HotFood.kindName -> {
-                var hotfood = ""
-                cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.HotFood.kindName) {
-                        hotfood += it.foodName + " "
-                    }
-                }
-                return hotfood
-            }
-            CookKind.FlourFood.kindName -> {
-                var flourfood = ""
-                cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.FlourFood.kindName) {
-                        flourfood += it.foodName + " "
-                    }
-                }
-                return flourfood
-            }
-            CookKind.SoutPorri.kindName -> {
-                var soutporri = ""
-                cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.SoutPorri.kindName) {
-                        soutporri += it.foodName + " "
-                    }
-                }
-                return soutporri
-            }
-            CookKind.Snackdetail.kindName -> {
-                var snackdetail = ""
-                cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.Snackdetail.kindName) {
-                        snackdetail += it.foodName + " "
-                    }
-                }
-                return snackdetail
-            }
-            else -> return ""
         }
     }
+//    private fun createOutFileOfWord(date: String, file: InputStream) {
+//
+//        val doc = HWPFDocument(file)
+//        val range = doc.range
+//        range.replaceText("\${cookbookDate}", date)
+//        range.replaceText("\${breakfast_cold}", getCookBook(CookKind.ColdFood.kindName, breakfast))
+//        range.replaceText("\${breakfast_hot}", getCookBook(CookKind.HotFood.kindName, breakfast))
+//        range.replaceText(
+//            "\${breakfast_flour}",
+//            getCookBook(CookKind.FlourFood.kindName, breakfast)
+//        )
+//        range.replaceText("\${breakfast_soup}", getCookBook(CookKind.SoutPorri.kindName, breakfast))
+//        range.replaceText(
+//            "\${breakfast_snack}",
+//            getCookBook(CookKind.Snackdetail.kindName, breakfast)
+//        )
+//        range.replaceText("\${lunch_cold}", getCookBook(CookKind.ColdFood.kindName, lunch))
+//        range.replaceText("\${lunch_hot}", getCookBook(CookKind.HotFood.kindName, lunch))
+//        range.replaceText("\${lunch_flour}", getCookBook(CookKind.FlourFood.kindName, lunch))
+//        range.replaceText("\${lunch_soup}", getCookBook(CookKind.SoutPorri.kindName, lunch))
+//        range.replaceText("\${lunch_snack}", getCookBook(CookKind.Snackdetail.kindName, lunch))
+//        range.replaceText("\${dinner_cold}", getCookBook(CookKind.ColdFood.kindName, dinner))
+//        range.replaceText("\${dinner_hot}", getCookBook(CookKind.HotFood.kindName, dinner))
+//        range.replaceText("\${dinner_flour}", getCookBook(CookKind.FlourFood.kindName, dinner))
+//        range.replaceText("\${dinner_soup}", getCookBook(CookKind.SoutPorri.kindName, dinner))
+//        range.replaceText("\${dinner_snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
+//        val outfile = File("/storage/emulated/0/$date.doc")
+//        val outFile = FileOutputStream(outfile)
+//        doc.write(outFile)
+//        try {
+//            file.close()
+//            outFile.close()
+//        } catch (e: IOException) {
+//            defUI.showDialog.value = e.message
+//        }
+//
+//
+//
+
+///*
+//获取菜谱
+// */
+//private fun getCookBook(cookkind: String, cookbooksList: MutableList<LocalCookBook>): String {
+//
+//    return when (cookkind) {
+//        CookKind.ColdFood.kindName -> {
+//            var coldfood = ""
+//            cookbooksList.forEach {
+//                if (it.foodCategory == CookKind.ColdFood.kindName) {
+//                    coldfood += it.foodName + " "
+//
+//                }
+//            }
+//            return coldfood
+//        }
+//        CookKind.HotFood.kindName -> {
+//            var hotfood = ""
+//            cookbooksList.forEach {
+//                if (it.foodCategory == CookKind.HotFood.kindName) {
+//                    hotfood += it.foodName + " "
+//                }
+//            }
+//            return hotfood
+//        }
+//        CookKind.FlourFood.kindName -> {
+//            var flourfood = ""
+//            cookbooksList.forEach {
+//                if (it.foodCategory == CookKind.FlourFood.kindName) {
+//                    flourfood += it.foodName + " "
+//                }
+//            }
+//            return flourfood
+//        }
+//        CookKind.SoutPorri.kindName -> {
+//            var soutporri = ""
+//            cookbooksList.forEach {
+//                if (it.foodCategory == CookKind.SoutPorri.kindName) {
+//                    soutporri += it.foodName + " "
+//                }
+//            }
+//            return soutporri
+//        }
+//        CookKind.Snackdetail.kindName -> {
+//            var snackdetail = ""
+//            cookbooksList.forEach {
+//                if (it.foodCategory == CookKind.Snackdetail.kindName) {
+//                    snackdetail += it.foodName + " "
+//                }
+//            }
+//            return snackdetail
+//        }
+//        else -> return ""
+//    }
+//    }
 
 
     /**
@@ -658,16 +681,16 @@ class CookBookViewModel(
      */
     fun asyncCookBooks(category: String) {
         var skip = 0
-        val query = BmobQuery<CookBooks>()
+        val query = BmobQuery<RemoteCookBook>()
         query.addWhereEqualTo("foodCategory", category)
-        query.count(CookBooks::class.java, object : CountListener() {
+        query.count(RemoteCookBook::class.java, object : CountListener() {
             override fun done(count: Int?, e: BmobException?) {
                 if (e == null) {
                     launchUI {
                         val f = count!! / 500  //分页，500条为一页
                         val where = "{\"foodCategory\":\"$category\"}"
                         val cookbookList = async {
-                            val allcookbook: MutableList<CookBooks> = mutableListOf()
+                            val allcookbook: MutableList<RemoteCookBook> = mutableListOf()
                             for (a in 0..f) {
                                 allcookbook.addAll(
                                     repository.getCookBookOfCategory(where, skip).results!!
@@ -676,10 +699,16 @@ class CookBookViewModel(
                             }
                             allcookbook
                         }
+                        val localList = mutableListOf<LocalCookBook>()
+                        val material = mutableListOf<Material>()
+                        //将远程菜谱转换成本地菜谱
+                        cookbookList.await().forEach {
+                            localList.add(remoteToLocalCookBook(it))
+                            material.addAll(it.material)
+                        }
                         repository.clearCookBookOfCategory(category)
-
-                        repository.addCookBookToLocal(cookbookList.await())
-
+                        repository.addCookBooksToLocal(localList)
+                        repository.addMaterialOfCookBooks(material)
                     }
                 } else {
                     defUI.showDialog.postValue(e.message)
@@ -694,42 +723,41 @@ class CookBookViewModel(
      * 分页，一次只能获取500条数据，所以先判数据总数，然后进行分页循环，得到所有数据后，清空本地数据，然后保存新数据
      */
     fun asyncCrossRefs(category: String) {
-        var skip = 0
-        val query = BmobQuery<CBGCrossRef>()
-        query.addWhereEqualTo("foodCategory", category)
-        query.count(CBGCrossRef::class.java, object : CountListener() {
-            override fun done(count: Int?, e: BmobException?) {
-                if (e == null) {
-                    launchUI {
-                        val f = count!! / 500
-                        val where = "{\"foodCategory\":\"$category\"}"
-                        val crossRefList = async {
-                            val allRef: MutableList<CBGCrossRef> = mutableListOf()
-                            for (a in 0..f) {
-                                allRef.addAll(
-                                    repository.getCookBookGoodsCrossRef(
-                                        where = where,
-                                        skip = skip
-                                    ).results!!
-
-                                )
-                                skip += 500
-                            }
-                            allRef
-                        }
-                        repository.clearCrossRefOfCategory(category)
-
-                        repository.addCrossRefToLocal(crossRefList.await())
-
-                    }
-                } else {
-                    defUI.showDialog.postValue(e.message)
-                }
-            }
-
-        })
+//        var skip = 0
+//        val query = BmobQuery<CBGCrossRef>()
+//        query.addWhereEqualTo("foodCategory", category)
+//        query.count(CBGCrossRef::class.java, object : CountListener() {
+//            override fun done(count: Int?, e: BmobException?) {
+//                if (e == null) {
+//                    launchUI {
+//                        val f = count!! / 500
+//                        val where = "{\"foodCategory\":\"$category\"}"
+//                        val crossRefList = async {
+//                            val allRef: MutableList<CBGCrossRef> = mutableListOf()
+//                            for (a in 0..f) {
+//                                allRef.addAll(
+//                                    repository.getCookBookGoodsCrossRef(
+//                                        where = where,
+//                                        skip = skip
+//                                    ).results!!
+//
+//                                )
+//                                skip += 500
+//                            }
+//                            allRef
+//                        }
+//                        repository.clearCrossRefOfCategory(category)
+//
+//                        repository.addCrossRefToLocal(crossRefList.await())
+//
+//                    }
+//                } else {
+//                    defUI.showDialog.postValue(e.message)
+//                }
+//            }
+//
+//        })
 
 
     }
-
 }

@@ -129,7 +129,7 @@ class GoodsRepository(
         return local.getGoodsOfCategoryFlow(categoryId)
     }
 
-    fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
+    fun getCookBookWithMaterials(objectId: String): CookBookWithMaterials {
         return local.getCookBookWithGoods(objectId)
     }
 

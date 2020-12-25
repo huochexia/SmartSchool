@@ -5,8 +5,8 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
-import com.owner.basemodule.room.entities.CookBookWithGoods
-import com.owner.basemodule.room.entities.CookBooks
+import com.owner.basemodule.room.entities.CookBookWithMaterials
+import com.owner.basemodule.room.entities.LocalCookBook
 import java.text.DecimalFormat
 
 @BindingAdapter("bind_state_text")
@@ -49,7 +49,7 @@ fun setCookBookColor(textView: TextView, isStandby: Boolean) {
 }
 
 @BindingAdapter("bind_dailymeal_text")
-fun setDailyMealText(textView: TextView, cookbook: CookBooks) {
+fun setDailyMealText(textView: TextView, cookbook: LocalCookBook) {
     textView.text = cookbook.foodName
     when (cookbook.foodKind) {
         "小荤菜", "煮", "汤", "馅类" -> textView.setTextColor(Color.BLUE)
@@ -105,9 +105,9 @@ fun setTextColor(textView: TextView, distinct: Int) {
  * 用于修饰菜谱中主料列表的显示。
  */
 @BindingAdapter("bind_list_content")
-fun setListContent(textView: TextView, cookbooks: CookBookWithGoods) {
+fun setListContent(textView: TextView, cookbooks: CookBookWithMaterials) {
     var text = ""
-    cookbooks.goods.forEach {
+    cookbooks.materials.forEach {
         text = text + it.goodsName + ","
     }
     textView.text = text

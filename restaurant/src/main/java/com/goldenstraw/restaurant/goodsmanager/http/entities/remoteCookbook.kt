@@ -1,8 +1,8 @@
 package com.goldenstraw.restaurant.goodsmanager.http.entities
 
 import cn.bmob.v3.BmobObject
-import cn.bmob.v3.exception.BmobException
-import com.owner.basemodule.room.entities.CookBooks
+import com.owner.basemodule.room.entities.LocalCookBook
+import com.owner.basemodule.room.entities.Material
 
 /**
  * 菜谱这个功能的设计，因为涉及到数组的存储和查询，这部分内容使用API方式比较复杂，而且也不熟悉，
@@ -11,15 +11,27 @@ import com.owner.basemodule.room.entities.CookBooks
 /*
 菜谱
  */
-data class NewCookBook(
+data class RemoteCookBook(
     var foodCategory: String,//凉菜，热菜，主食，汤粥，小吃
     var foodKind: String,//素菜，小荤，大荤
     var foodName: String,
     var usedNumber: Int = 0,
     var isSelected: Boolean = false,
-    var isStandby: Boolean = false
+    var isStandby: Boolean = false,
+    var material: List<Material>
+) : BmobObject()
 
-)
+//转换
+fun remoteToLocalCookBook(remoteCookBook: RemoteCookBook): LocalCookBook {
+    return LocalCookBook(
+        objectId = remoteCookBook.objectId,
+        foodCategory = remoteCookBook.foodCategory,
+        foodKind = remoteCookBook.foodKind,
+        foodName = remoteCookBook.foodName,
+        usedNumber = remoteCookBook.usedNumber,
+        isStandby = remoteCookBook.isStandby
+    )
+}
 
 /*
   菜谱与商品的新关联关系
@@ -37,7 +49,7 @@ data class NewCrossRef(
 data class DailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: CookBooks,
+    var cookBook: RemoteCookBook,
     var isOfTeacher: Boolean = false,
     var direct: Int = 0  //0:新石校区，1：西山校区
 ) : BmobObject()
@@ -45,7 +57,7 @@ data class DailyMeal(
 data class NewDailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: CookBooks,
+    var cookBook: RemoteCookBook,
     var isOfTeacher: Boolean = false,
     var direct: Int = 0  //0：新石校区，1：西山校区
 )

@@ -221,12 +221,11 @@ class GoodsToOrderMgViewModel(
                             foodTime = dailyMeal.mealTime
                         )
 
-                        val goodsList =
-                            repository.getCookBookWithGoods(dailyMeal.cookBook.objectId).goods
+                        val materials =
+                            repository.getCookBookWithMaterials(dailyMeal.cookBook.objectId).materials
                         val materialList = mutableListOf<MaterialOfShoppingCar>()
-                        goodsList?.forEach { goods ->
-                            val material = goodsToMaterial(dailyMeal.cookBook.objectId, goods)
-                            materialList.add(materialToShoppingCar(material))
+                        materials.forEach { materials ->
+                            materialList.add(materialToShoppingCar(materials))
                         }
                         repository.addFoodAndMaterialsToShoppingCar(food, materialList)
                     }

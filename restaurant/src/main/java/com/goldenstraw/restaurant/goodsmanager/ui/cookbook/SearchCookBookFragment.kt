@@ -22,7 +22,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.room.entities.CookBookWithGoods
+import com.owner.basemodule.room.entities.CookBookWithMaterials
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -46,9 +46,9 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
 
     var viewModel: CookBookViewModel? = null
 
-    var adapter: BaseDataBindingAdapter<CookBookWithGoods, LayoutCookbookItemBinding>? = null
+    var adapter: BaseDataBindingAdapter<CookBookWithMaterials, LayoutCookbookItemBinding>? = null
 
-    var cookbookList = mutableListOf<CookBookWithGoods>()
+    var cookbookList = mutableListOf<CookBookWithMaterials>()
     override fun initView() {
         arguments?.let {
             mealDate = it.getString("mealDate")
@@ -73,8 +73,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                 }
                 is Success<*> -> {
                     //刷新列表
-
-                    cookbookList.addAll(status.list as MutableList<CookBookWithGoods>)
+                    cookbookList.addAll(status.list as MutableList<CookBookWithMaterials>)
                 }
             }
             adapter!!.forceUpdate()
@@ -83,15 +82,15 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
             layoutId = R.layout.layout_cookbook_item,
             dataSource = { cookbookList },
             dataBinding = { LayoutCookbookItemBinding.bind(it) },
-            callback = { cookbook, binding, position ->
+            callback = { cookbook, binding, _ ->
                 binding.cookbooks = cookbook
                 //项目点击事件，返回用户的选择
-                binding.onClick = object : Consumer<CookBookWithGoods> {
-                    override fun accept(t: CookBookWithGoods) {
+                binding.onClick = object : Consumer<CookBookWithMaterials> {
+                    override fun accept(t: CookBookWithMaterials) {
                         with(viewModel!!) {
-                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookBook)
-                            createDailyMeal(newDailyMeal)
-                            defUI.refreshEvent.call()
+//                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookbook)
+//                            createDailyMeal(newDailyMeal)
+//                            defUI.refreshEvent.call()
                         }
                         findNavController().popBackStack()
                     }
@@ -151,7 +150,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                             cookbookList.clear()
                             adapter!!.forceUpdate()
                         } else {
-                            viewModel!!.searchCookBookWithGoods(newText.trim(), cookCategory)
+                            viewModel!!.searchCookBookWithMaterials(newText.trim(), cookCategory)
                         }
                     }
 

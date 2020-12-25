@@ -34,7 +34,6 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="@color/common_black"
                 android:textSize="16sp"
-                app:bind_dailymeal_text="@{dailymeal.cookBook}"
                 app:bind_view_onLongClick="@{()->onLongClick.accept(dailymeal)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

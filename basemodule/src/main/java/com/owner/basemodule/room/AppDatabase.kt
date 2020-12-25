@@ -33,12 +33,11 @@ import com.owner.basemodule.room.entities.*
     entities = [User::class,
         Goods::class,
         GoodsCategory::class,
-        GoodsOfShoppingCart::class,
-        CookBooks::class,
-        CBGCrossRef::class,
+        LocalCookBook::class,
         FoodOfShoppingCar::class,
         MaterialOfShoppingCar::class,
-        NewOrder::class
+        NewOrder::class,
+        Material::class
     ]
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -23,6 +23,7 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.goodsToMaterial
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -83,7 +84,8 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
                 binding.clickEvent = object : Consumer<Goods> {
                     override fun accept(t: Goods) {
                         with(viewModel!!) {
-                            materialList.add(goods)
+                            //将商品转换为原材料
+                            materialList.add(goodsToMaterial(goods))
                             defUI.refreshEvent.call()
                         }
                         findNavController().popBackStack()

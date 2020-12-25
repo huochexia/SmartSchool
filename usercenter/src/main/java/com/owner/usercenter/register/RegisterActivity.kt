@@ -153,7 +153,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             .autoDisposable(scopeProvider)
             .subscribe(registerIntentPublish)
         //role选择事件
-        rg_role.setOnCheckedChangeListener { group, checkedId ->
+        rg_role.setOnCheckedChangeListener { _, checkedId ->
             role = when (checkedId) {
                 R.id.rd_manager_right -> {
                     district_layout.visibility = View.GONE
@@ -187,7 +187,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
 
         }
         //district单选事件
-        rg_district.setOnCheckedChangeListener { group, checkId ->
+        rg_district.setOnCheckedChangeListener { _, checkId ->
             district = when (checkId) {
                 R.id.rd_xinshinan_district -> 0
                 R.id.rd_xishan_district -> 1

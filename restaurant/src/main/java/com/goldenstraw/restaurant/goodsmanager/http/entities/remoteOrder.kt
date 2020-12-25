@@ -1,23 +1,5 @@
 package com.goldenstraw.restaurant.goodsmanager.http.entities
 
-/**
- * 新订单,用于加入新订单
- */
-data class NewOrderItem(
-    var district: Int,//在网络上存储时需要这个来区分购物车内的商品归属
-    var orderDate: String,
-    var goodsName: String,
-    var unitOfMeasurement: String,
-    var unitPrice: Float,
-    var categoryCode: String,
-    var quantity: Float,
-    var checkQuantity: Float = 0.0f,//验货数量
-    var againCheckQuantity: Float = 0.0f,//再次确认验货数量
-    var total: Float = 0.0f,
-    var note: String = "",
-    var state: Int
-)
-
 
 /**
  * 订单、验货单、对帐单三单合一

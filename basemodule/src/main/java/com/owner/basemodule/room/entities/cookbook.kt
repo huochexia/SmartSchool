@@ -8,7 +8,7 @@ import androidx.room.*
  */
 
 @Entity
-data class CookBooks(
+data class LocalCookBook(
     @PrimaryKey
     @ColumnInfo(name = "cb_id", typeAffinity = ColumnInfo.TEXT)
     var objectId: String,
@@ -17,41 +17,41 @@ data class CookBooks(
     @ColumnInfo
     var foodKind: String, //素菜，小荤，大荤
     @ColumnInfo
-    var usedNumber:Int ,//使用次数
+    var usedNumber: Int = 0,//使用次数
     @ColumnInfo
     var foodName: String,
     @ColumnInfo
-    var isStandby: Boolean //是否备用菜谱
+    var isStandby: Boolean = false, //是否备用菜谱
 
 ) {
     @Ignore
     var isSelected: Boolean = false
 }
 
-/**
- * 菜谱与商品多对多的交叉关系表。
- *
- */
-@Entity(primaryKeys = ["objectId","cb_id", "goods_id"],indices = [Index("cb_id"),Index("goods_id")])
-data class CBGCrossRef(
-    var objectId: String,
-    var cb_id: String,
-    var goods_id: String,
-    @ColumnInfo
-    var foodCategory: String
-
-)
-
-data class CookBookWithGoods(
-    @Embedded
-    val cookBook: CookBooks,
-    @Relation(
-        parentColumn = "cb_id",
-        entityColumn = "goods_id",
-        associateBy = Junction(CBGCrossRef::class)
-    )
-    val goods: List<Goods>
-)
+///**
+// * 菜谱与商品多对多的交叉关系表。
+// *
+// */
+//@Entity(primaryKeys = ["objectId","cb_id", "goods_id"],indices = [Index("cb_id"),Index("goods_id")])
+//data class CBGCrossRef(
+//    var objectId: String,
+//    var cb_id: String,
+//    var goods_id: String,
+//    @ColumnInfo
+//    var foodCategory: String
+//
+//)
+//
+//data class CookBookWithGoods(
+//    @Embedded
+//    val cookBook: LocalCookBook,
+//    @Relation(
+//        parentColumn = "cb_id",
+//        entityColumn = "goods_id",
+//        associateBy = Junction(CBGCrossRef::class)
+//    )
+//    val goods: List<Goods>
+//)
 
 /**
  * 原材料，菜谱对应的原材料，它是由商品类转换而来，增加定量即原材料在菜谱中占比（以10人量为依据）
@@ -60,10 +60,10 @@ data class CookBookWithGoods(
  */
 @Entity
 data class Material(
-    @PrimaryKey(autoGenerate = true)
-    var objectId:Int =0,//自身Id
+    @PrimaryKey
+    var objectId: String = System.currentTimeMillis().toString(),//用系统时间保证它的唯一性
     @ColumnInfo
-    var materialOwnerId: String,//对应食物Id
+    var materialOwnerId: String = "",//对应食物Id
     @ColumnInfo
     var goodsId: String,//商品Id
     @ColumnInfo
@@ -80,9 +80,9 @@ data class Material(
 /**
  *菜谱与原材料的关系类
  */
-data class CookBookWithMaterial(
+data class CookBookWithMaterials(
     @Embedded
-    val cookbook: CookBooks,
+    val cookbook: LocalCookBook,
     @Relation(
         parentColumn = "cb_id",
         entityColumn = "materialOwnerId"
@@ -95,13 +95,11 @@ data class CookBookWithMaterial(
  *  @foodId:对应菜谱的Id
  *  @ration:占食物量的比重（以10人量为准）
  */
-fun goodsToMaterial(foodId:String,goods:Goods,ration:Float=0.0f):Material{
+fun goodsToMaterial(goods: Goods): Material {
     return Material(
-        materialOwnerId = foodId,
         goodsId = goods.objectId,
         goodsName = goods.goodsName,
         unitOfMeasurement = goods.unitOfMeasurement,
         categoryCode = goods.categoryCode,
-        ration = ration
     )
 }

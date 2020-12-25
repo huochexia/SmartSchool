@@ -5,50 +5,6 @@ import androidx.room.*
 /**
  * Created by Administrator on 2019/10/12 0012
  */
-/**
- * 购物车中的商品
- * Created by Administrator on 2019/9/6 0006
- */
-@Entity
-data class GoodsOfShoppingCart(
-    @PrimaryKey(autoGenerate = true)
-    var code:Int=0,
-    @ColumnInfo
-    var objectId: String,
-    @ColumnInfo
-    var goodsName: String,
-    @ColumnInfo
-    var unitOfMeasurement: String,
-    @ColumnInfo
-    var unitPrice: Float,
-    @ColumnInfo
-    var categoryCode: String,
-    @ColumnInfo
-    var quantity: Float,
-    @ColumnInfo
-    var note: String = "",
-    @ColumnInfo
-    var isChecked: Boolean = false,
-    @ColumnInfo
-    var foodCategory: String
-) : Comparable<GoodsOfShoppingCart> {
-
-    override fun compareTo(other: GoodsOfShoppingCart): Int {
-        return when {
-            categoryCode == other.categoryCode -> {
-                0
-            }
-            categoryCode > other.categoryCode -> {
-                1
-            }
-            else -> {
-                -1
-            }
-        }
-    }
-}
-
-
 
 @Entity
 data class Goods(
