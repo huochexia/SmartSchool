@@ -31,6 +31,7 @@ import com.youth.banner.loader.ImageLoader
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -103,18 +104,21 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 adapter!!.forceUpdate()
             }
         })
-        initSwipeMenu()
-        with(banner) {
-            setImageLoader(object : ImageLoader() {
-                override fun displayImage(context: Context, path: Any, imageView: ImageView) {
-                    Glide.with(context).load(path).into(imageView)
-                }
-            })
-            setImages(images)
-            setDelayTime(5000)
-            setIndicatorGravity(BannerConfig.RIGHT)
-            start()
+
+        launch {
+            with(banner) {
+                setImageLoader(object : ImageLoader() {
+                    override fun displayImage(context: Context, path: Any, imageView: ImageView) {
+                        Glide.with(context).load(path).into(imageView)
+                    }
+                })
+                setImages(images)
+                setDelayTime(5000)
+                setIndicatorGravity(BannerConfig.RIGHT)
+                start()
+            }
         }
+        initSwipeMenu()
 
     }
 

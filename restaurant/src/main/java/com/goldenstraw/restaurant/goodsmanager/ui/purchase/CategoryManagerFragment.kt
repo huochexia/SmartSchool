@@ -82,10 +82,6 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
 
         )
 
-//        viewModelGoodsTo!!.getIsRefresh().observe(viewLifecycleOwner, Observer {
-//            if (it)
-//                adapter!!.forceUpdate()
-//        })
         /*
          * 因为从Room中得到的Flow转换LiveData后，数据库中数据的变化都会被观察到，
          * 所以对数据的任何操作（增改删）都不需要再额外添加刷新列表的操作
@@ -182,8 +178,6 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                     }, {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
                     })
-//                categoryFlow.removeAt(position)
-//                adapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -213,7 +207,6 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                     viewModelGoodsTo!!.updateCategory(category)
                         .subscribeOn(Schedulers.computation())
                         .subscribe()
-//                    adapter!!.forceUpdate()
                     dialog.dismiss()
                 }
             }.create()

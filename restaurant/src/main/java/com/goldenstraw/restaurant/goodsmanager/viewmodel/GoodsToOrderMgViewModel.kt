@@ -233,45 +233,44 @@ class GoodsToOrderMgViewModel(
             }
         }
     }
-    /**
-     * 获取本地
-     */
 
     /**
      * 同步类别和商品信息
      */
     fun syncAllData() {
-        repository.clearAllData()
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                repository.getAllCategoryFromNetwork()
-                    .subscribeOn(Schedulers.io())
-                    .autoDisposable(this)
-                    .subscribe {
-                        repository.addCategoryListToLocal(it)
-                            .subscribeOn(Schedulers.newThread())
-                            .autoDisposable(this)
-                            .subscribe({
-                            }, {
+        launchUI {
+            repository.clearAllData()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .autoDisposable(this@GoodsToOrderMgViewModel)
+                .subscribe({
+                    repository.getAllCategoryFromNetwork()
+                        .subscribeOn(Schedulers.io())
+                        .autoDisposable(this@GoodsToOrderMgViewModel)
+                        .subscribe {
+                            repository.addCategoryListToLocal(it)
+                                .subscribeOn(Schedulers.newThread())
+                                .autoDisposable(this@GoodsToOrderMgViewModel)
+                                .subscribe({
+                                }, {
 
-                            })
-                        Observable.fromIterable(it)
-                            .subscribeOn(Schedulers.newThread())
-                            .autoDisposable(this)
-                            .subscribe { category ->
-                                repository.getAllGoodsOfCategoryFromNetwork(category)
-                                    .autoDisposable(this)
-                                    .subscribe { goodslist ->
-                                        repository.addGoodsListToLocal(goodslist)
-                                            .autoDisposable(this)
-                                            .subscribe({}, {})
-                                    }
-                            }
-                    }
+                                })
+                            Observable.fromIterable(it)
+                                .subscribeOn(Schedulers.newThread())
+                                .autoDisposable(this@GoodsToOrderMgViewModel)
+                                .subscribe { category ->
+                                    repository.getAllGoodsOfCategoryFromNetwork(category)
+                                        .autoDisposable(this@GoodsToOrderMgViewModel)
+                                        .subscribe { goodslist ->
+                                            repository.addGoodsListToLocal(goodslist)
+                                                .autoDisposable(this@GoodsToOrderMgViewModel)
+                                                .subscribe({}, {})
+                                        }
+                                }
+                        }
 
-            }, {})
+                }, {})
+        }
 
     }
 

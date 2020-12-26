@@ -14,7 +14,6 @@
     <item
             android:id="@+id/query_new_order"
             android:title="未提交订单"
-            android:icon="@drawable/ic_baseline_send_24"
             app:showAsAction="never" />
     <item
             android:id="@+id/already_subscribe"
