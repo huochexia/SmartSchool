@@ -92,7 +92,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         mealTime = MealTime.Breakfast.time
 
         where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-                ",{\"mealDate\":\"$dailyDate\"}]}"
+                ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
 
         initEvent()
 
@@ -117,7 +117,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 }
             }
             where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-                    ",{\"mealDate\":\"$dailyDate\"}]}"
+                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
             viewModel.getDailyMealOfDate(where)
         }
         //增加菜单，需要判断是增加哪类菜品

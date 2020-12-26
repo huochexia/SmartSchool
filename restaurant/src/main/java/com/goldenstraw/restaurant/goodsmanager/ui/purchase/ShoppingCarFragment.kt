@@ -220,6 +220,10 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
+            R.id.set_number_of_person -> {
+                //设定不同餐时就餐人数
+                setNumberOfPersonDialog()
+            }
             R.id.collect_all_goods -> {
 
                 ll_food_category_btn.visibility = View.GONE
@@ -238,10 +242,32 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             }
             R.id.clear_shoppingcar -> {
                 clearShoppingCar()
-                foodAdapter!!.forceUpdate()
             }
         }
         return true
     }
 
+    /**
+     * 设定就餐人数
+     */
+    private fun setNumberOfPersonDialog() {
+        val view = layoutInflater.inflate(R.layout.set_number_of_person_view, null)
+        val breakfast = view.findViewById<EditText>(R.id.et_breakfast_number)
+        val lunch = view.findViewById<EditText>(R.id.et_lunch_number)
+        val dinner = view.findViewById<EditText>(R.id.et_dinner_number)
+        androidx.appcompat.app.AlertDialog.Builder(context!!)
+            .setTitle("设置就餐人数")
+            .setView(view)
+            .setNegativeButton("放弃") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("计算") { dialog, _ ->
+                viewModel!!.computeQuantityFromPerson(
+                    breakfast.text.toString().toInt(),
+                    lunch.text.toString().toInt(),
+                    dinner.text.toString().toInt()
+                )
+            }
+            .create().show()
+    }
 }

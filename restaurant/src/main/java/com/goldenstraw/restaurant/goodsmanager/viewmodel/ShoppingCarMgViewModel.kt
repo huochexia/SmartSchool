@@ -14,12 +14,12 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 class ShoppingCarMgViewModel(
     private val repository: ShoppingCarRepository
 ) : BaseViewModel() {
-
 
     val state = ObservableField<Int>()
 
@@ -60,6 +60,39 @@ class ShoppingCarMgViewModel(
         defUI.refreshEvent.call()
     }
 
+    /**
+     * 通过设定人数，计算所需材料数
+     */
+    fun computeQuantityFromPerson(breakfast: Int, lunch: Int, dinner: Int) {
+        launchUI {
+            withContext(Dispatchers.Default) {
+                foodList.forEach {
+                    when (it.food.foodTime) {
+                        "早餐" -> {
+                            it.materials.forEach { mOfb ->
+                                mOfb.quantity = mOfb.ration * breakfast / 10
+                                updateMaterialOfShoppingCar(mOfb)
+                            }
+                        }
+                        "午餐" -> {
+                            it.materials.forEach { lOfb ->
+                                lOfb.quantity = lOfb.ration * lunch / 10
+                                updateMaterialOfShoppingCar(lOfb)
+                            }
+                        }
+                        "晚餐" -> {
+                            it.materials.forEach { dOfb ->
+                                dOfb.quantity = dOfb.ration * dinner / 10
+                                updateMaterialOfShoppingCar(dOfb)
+                            }
+                        }
+                    }
+                }
+            }
+            defUI.refreshEvent.call()
+        }
+
+    }
 
     /**
      * 将汇总所有拟购商品，合计重复商品数量，商品数量为0的删除
@@ -108,10 +141,7 @@ class ShoppingCarMgViewModel(
     fun createNewOrder(list: List<NewOrder>) {
         launchUI {
             repository.createNewOrder(list)
-            repository.clearFoodOfShoppingCar()
-            repository.clearMaterialOfShoppingCar()
-            categoryList.clear()
-            defUI.refreshEvent.call()
+            clear()
         }
     }
 
@@ -164,7 +194,7 @@ class ShoppingCarMgViewModel(
                         order.unitPrice = it.unitPrice
                     }
                 }
-                createNewOrder(newOrderList)
+                repository.createNewOrder(newOrderList)
             }
             defUI.refreshEvent.call()
         }
@@ -175,9 +205,15 @@ class ShoppingCarMgViewModel(
      */
     fun clearShopping() {
         launchUI {
-            repository.clearFoodOfShoppingCar()
-            repository.clearMaterialOfShoppingCar()
+            clear()
         }
+    }
+
+    suspend fun clear() = coroutineScope {
+        repository.clearFoodOfShoppingCar()
+        repository.clearMaterialOfShoppingCar()
+        categoryList.clear()
+        defUI.refreshEvent.call()
     }
 
     /**

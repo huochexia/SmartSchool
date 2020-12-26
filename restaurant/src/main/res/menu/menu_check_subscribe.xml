@@ -2,12 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+            android:id="@+id/set_number_of_person"
+            android:icon="@drawable/ic_baseline_people_24"
+            android:title="就餐人数"
+            app:showAsAction="always" />
+    <item
             android:id="@+id/collect_all_goods"
             android:title="汇总"
-            app:showAsAction="never" />
+            android:icon="@drawable/ic_sharp_calculate_24"
+            app:showAsAction="always" />
     <item
             android:id="@+id/query_new_order"
             android:title="未提交订单"
+            android:icon="@drawable/ic_baseline_send_24"
             app:showAsAction="never" />
     <item
             android:id="@+id/already_subscribe"

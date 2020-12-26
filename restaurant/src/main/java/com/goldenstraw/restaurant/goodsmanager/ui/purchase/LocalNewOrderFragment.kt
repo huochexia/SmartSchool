@@ -25,7 +25,6 @@ import com.owner.basemodule.room.entities.NewOrder
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
-import kotlinx.android.synthetic.main.fragment_all_orders_of_date.*
 import kotlinx.android.synthetic.main.fragment_neworder_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -88,6 +87,8 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
             new_order_toolbar.subtitle = "${size}项"
             if (size == 0) {
                 viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+            } else {
+                viewState.set(MultiStateView.VIEW_STATE_CONTENT)
             }
         }
 

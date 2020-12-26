@@ -17,6 +17,7 @@ import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -34,6 +35,8 @@ import java.util.*
 class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>() {
 
     lateinit var viewModelGoodsTo: GoodsToOrderMgViewModel
+
+    private val prefs by instance<PrefsHelper>()
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
@@ -164,14 +167,18 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
 
                 //从DailyMeal中获取后天菜单中的原材料信息，并加入购物车后，跳转到购物车界面
 
-                showDatePickerDialog(this,0, Calendar.getInstance())
+                showDatePickerDialog(this, 0, Calendar.getInstance())
 
             }
+
             else -> super.onOptionsItemSelected(item)
 
         }
         return true
     }
+
+
+
     /**
      * 日期选择器，确定后复印选择日期的菜单到当前日期
      */
@@ -181,7 +188,9 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
         calendar: Calendar
     ) {
         // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
-        DatePickerDialog(activity, themeResId,
+        DatePickerDialog(
+            activity,
+            themeResId,
             DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 // 绑定监听器(How the parent is notified that the date is set.)
                 // 此处得到选择的时间，可以进行你想要的操作
@@ -196,12 +205,14 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
                     "$dayOfMonth"
                 }
                 var copyDate = "$year-$month-$day"
-                val where = "{\"mealDate\":\"$copyDate\"}"
+                val where =
+                    "{\"\$and\":[{\"mealDate\":\"$copyDate\"},{\"direct\":${prefs.district}}]}"
                 viewModelGoodsTo.getFoodOfDailyToShoppingCar(where)
             } // 设置初始日期
-            , calendar[Calendar.YEAR]
-            , calendar[Calendar.MONTH]
-            , calendar[Calendar.DAY_OF_MONTH]).show()
+            ,
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]).show()
     }
     /**
      * 设置查找视图SearchView
