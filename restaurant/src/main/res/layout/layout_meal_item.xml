@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
                 android:onClick="@{()->clickEvent.accept(dailymeal)}"
-
+                android:text="@{dailymeal.cookBook.foodName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="@color/common_black"
                 android:textSize="16sp"

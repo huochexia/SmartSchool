@@ -88,9 +88,9 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                 binding.onClick = object : Consumer<CookBookWithMaterials> {
                     override fun accept(t: CookBookWithMaterials) {
                         with(viewModel!!) {
-//                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookbook)
-//                            createDailyMeal(newDailyMeal)
-//                            defUI.refreshEvent.call()
+                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookbook)
+                            createDailyMeal(newDailyMeal)
+                            defUI.refreshEvent.call()
                         }
                         findNavController().popBackStack()
                     }

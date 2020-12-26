@@ -16,13 +16,6 @@ interface CookBookApi {
     /*
      * 生成
      */
-    //增加菜谱
-    @POST("/1/classes/RemoteCookBook")
-    suspend fun createCookBook(@Body newCookBook: RemoteCookBook): CreateObject
-
-//    //增加菜谱与商品关系
-//    @POST("/1/classes/CBGCrossRef")
-//    suspend fun createCrossRef(@Body newRef: NewCrossRef): CreateObject
 
     //增加每日菜单
     @POST("/1/classes/DailyMeal")
@@ -35,9 +28,6 @@ interface CookBookApi {
     @DELETE("/1/classes/RemoteCookBook/{objectId}")
     suspend fun deleteCookBook(@Path("objectId") objectId: String): DeleteObject
 
-//    //删除关系
-//    @DELETE("/1/classes/CBGCrossRef/{objectId}")
-//    suspend fun deleteCrossRef(@Path("objectId") objectId: String): DeleteObject
 
     //删除每日菜单
     @DELETE("/1/classes/DailyMeal/{objectId}")
@@ -92,14 +82,6 @@ interface CookBookApi {
 
     @GET("/1/classes/RemoteCookBook/{objectId}")
     suspend fun getCookBook(@Path("objectId") objectId: String):RemoteCookBook
-
-//    //获取某个菜谱与商品的关联关系
-//    @GET("/1/classes/CBGCrossRef/")
-//    suspend fun getCookBookGoodsCrossRef(
-//        @Query("where") where: String,
-//        @Query("skip") skip: Int,
-//        @Query("limit") limit: Int = 500
-//    ): ObjectList<CBGCrossRef>
 
 
 }

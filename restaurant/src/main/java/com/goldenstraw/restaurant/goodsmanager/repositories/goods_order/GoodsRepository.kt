@@ -80,11 +80,6 @@ class GoodsRepository(
     }
 
 
-    /*
-     *获取购物车内商品数量
-     */
-    suspend fun getNumberOfMaterialOfShoppingCar(): Int = local.getNumberOfMaterialOfShoppingCar()
-
 
     /**
      * 更新

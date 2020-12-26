@@ -10,25 +10,18 @@ import com.owner.basemodule.room.entities.LocalCookBook
  */
 class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBookServiceManager {
 
-//    override suspend fun createCookBook(newCookBook: RemoteCookBook): CreateObject {
-//        return serviceApi.createCookBook(newCookBook)
-//    }
 
     override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return serviceApi.createDailyMeal(newDailyMeal)
     }
 
-//    override suspend fun createCrossRef(newRef: NewCrossRef): CreateObject {
-//        return serviceApi.createCrossRef(newRef)
-//    }
+
 
     override suspend fun deleteCookBook(objectId: String): DeleteObject {
         return serviceApi.deleteCookBook(objectId)
     }
 
-//    override suspend fun deleteCrossRef(objectId: String): DeleteObject {
-//        return serviceApi.deleteCrossRef(objectId)
-//    }
+
 
     override suspend fun deleteDailyMeal(objectId: String): DeleteObject {
         return serviceApi.deleteDailyMeal(objectId)
@@ -67,8 +60,6 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getDailyMealOfDate(where)
     }
 
-//    override suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef> {
-//        return serviceApi.getCookBookGoodsCrossRef(where,skip)
-//    }
+
 
 }

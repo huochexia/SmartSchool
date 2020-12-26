@@ -13,15 +13,12 @@ interface ICookBookServiceManager {
     /*
       生成
      */
-//    suspend fun createCookBook(newCookBook: RemoteCookBook): CreateObject
     suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject
-//    suspend fun createCrossRef(newRef:NewCrossRef):CreateObject
     /*
     删除
      */
     suspend fun deleteCookBook(objectId: String): DeleteObject
     suspend fun deleteDailyMeal(objectId: String): DeleteObject
-//    suspend fun deleteCrossRef(objectId: String):DeleteObject
 
     /*
     更新
@@ -37,6 +34,5 @@ interface ICookBookServiceManager {
     suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<RemoteCookBook>
     suspend fun getCookBooks(objectId: String):RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-//    suspend fun getCookBookGoodsCrossRef(where: String,skip:Int): ObjectList<CBGCrossRef>
 
 }

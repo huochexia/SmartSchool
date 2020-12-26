@@ -29,15 +29,11 @@ interface ILocalCookBookDataSource : ILocalDataSource {
     suspend fun addAllCookBooksOfCategory(cookbooks: MutableList<LocalCookBook>)
     suspend fun addMaterailOfCookBooks(materials: MutableList<Material>)
 
-    //增加关系
-//    suspend fun addCrossRef(newRef: CBGCrossRef)
-//    suspend fun addCrossRefAllOfCategory(refs: MutableList<CBGCrossRef>)
 
     //删除关系
-    suspend fun deleteCookBook(cookbook: LocalCookBook)
+    suspend fun deleteLocalCookBookAndMaterials(cm: CookBookWithMaterials)
     suspend fun deleteCookBookOfCategory(category: String)
-//    suspend fun deleteCrossRef(cookbookId: String)
-//    suspend fun deleteCrossRefOfCategory(category: String)
+
 
 }
 
@@ -77,26 +73,6 @@ class LocalCookBookDataSourceImpl(
         return database.cookbookDao().getCookBookAndMaterials(objectId)
     }
 
-    /*
-      根据菜谱名称模糊查询
-     */
-//    override suspend fun searchCookBookWithGoods(name: String,category: String): MutableList<CookBookWithGoods> {
-//        return database.cookbookDao().queryCookBookWithGoods(name,category)
-//    }
-
-    /*
-    获取某分类的所有菜谱
-     */
-//    override suspend fun getAllCookBookWithGoods(
-//        foodCategory: String,
-//        isStandby: Boolean
-//    ): MutableList<CookBookWithGoods> {
-//        return database.cookbookDao().getAllCookBookWithGoods(foodCategory,isStandby)
-//    }
-
-//    override suspend fun getCookBookWithGoods(objectId: String): CookBookWithGoods {
-//        return database.cookbookDao().getCookBookWithGoods(objectId)
-//    }
 
     /*
       增加
@@ -113,32 +89,18 @@ class LocalCookBookDataSourceImpl(
         database.cookbookDao().addMaterials(materials)
     }
 
-//    override suspend fun addCrossRef(newRef: CBGCrossRef) {
-//        database.cookbookDao().addCrossRef(newRef)
-//    }
-
-//    override suspend fun addCrossRefAllOfCategory(refs: MutableList<CBGCrossRef>) {
-//        database.cookbookDao().addAllCrossRef(refs)
-//    }
 
     /*
     删除
      */
-    override suspend fun deleteCookBook(cookbook: LocalCookBook) {
-        database.cookbookDao().deleteCookBook(cookbook)
+    override suspend fun deleteLocalCookBookAndMaterials(cm: CookBookWithMaterials) {
+        database.cookbookDao().deleteCookBook(cm.cookbook)
+        database.cookbookDao().deleteMaterialOfCookbook(cm.materials as MutableList<Material>)
     }
 
     override suspend fun deleteCookBookOfCategory(category: String) {
         database.cookbookDao().deleteCookBookOfCategory(category)
     }
-
-//    override suspend fun deleteCrossRef(cookbookId: String) {
-//        database.cookbookDao().deleteCrossRef(cookbookId)
-//    }
-
-//    override suspend fun deleteCrossRefOfCategory(category: String) {
-//        database.cookbookDao().deleteCrossRefOfCategory(category)
-//    }
 
 
 }

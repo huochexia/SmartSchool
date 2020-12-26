@@ -17,15 +17,12 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     /*
     生成
      */
-//    suspend fun createCookBook(newCookBook: RemoteCookBook): CreateObject
     suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject
-//    suspend fun createCrossRef(newRef: NewCrossRef): CreateObject
 
     /*
     删除
      */
     suspend fun deleteCookBook(objectId: String): DeleteObject
-//    suspend fun deleteCrossRef(objectId: String): DeleteObject
     suspend fun deleteDailyMeal(objectId: String): DeleteObject
 
     /*
@@ -42,33 +39,26 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<RemoteCookBook>
     suspend fun getCookBook(objectId: String):RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-//    suspend fun getCookBookGoodsCrossRef(where: String, skip: Int): ObjectList<CBGCrossRef>
 
 }
 
 class RemoteCookBookDataSourceImpl(
     private val manager: ICookBookServiceManager
 ) : IRemoteCookBookDataSource {
-//    override suspend fun createCookBook(newCookBook: RemoteCookBook): CreateObject {
-//        return manager.createCookBook(newCookBook)
-//    }
+
 
     override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return manager.createDailyMeal(newDailyMeal)
     }
 
-//    override suspend fun createCrossRef(newRef: NewCrossRef): CreateObject {
-//        return manager.createCrossRef(newRef)
-//    }
+
 
 
     override suspend fun deleteCookBook(objectId: String): DeleteObject {
         return manager.deleteCookBook(objectId)
     }
 
-//    override suspend fun deleteCrossRef(objectId: String): DeleteObject {
-//        return manager.deleteCrossRef(objectId)
-//    }
+
 
     override suspend fun deleteDailyMeal(objectId: String): DeleteObject {
         return manager.deleteDailyMeal(objectId)
@@ -110,12 +100,7 @@ class RemoteCookBookDataSourceImpl(
         return manager.getDailyMealOfDate(where)
     }
 
-//    override suspend fun getCookBookGoodsCrossRef(
-//        where: String,
-//        skip: Int
-//    ): ObjectList<CBGCrossRef> {
-//        return manager.getCookBookGoodsCrossRef(where,skip)
-//    }
+
 
 
 }

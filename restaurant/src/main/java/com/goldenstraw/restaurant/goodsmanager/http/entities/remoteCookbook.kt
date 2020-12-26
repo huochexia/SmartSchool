@@ -49,7 +49,7 @@ data class NewCrossRef(
 data class DailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: RemoteCookBook,
+    var cookBook: LocalCookBook,
     var isOfTeacher: Boolean = false,
     var direct: Int = 0  //0:新石校区，1：西山校区
 ) : BmobObject()
@@ -57,7 +57,7 @@ data class DailyMeal(
 data class NewDailyMeal(
     var mealTime: String,//早、午、餐
     var mealDate: String,//餐日期,比较时加上” 00:00:00"后转换成日期
-    var cookBook: RemoteCookBook,
+    var cookBook: LocalCookBook,
     var isOfTeacher: Boolean = false,
     var direct: Int = 0  //0：新石校区，1：西山校区
 )

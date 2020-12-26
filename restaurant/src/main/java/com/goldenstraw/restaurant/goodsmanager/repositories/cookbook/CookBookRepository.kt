@@ -10,7 +10,6 @@ import com.owner.basemodule.room.entities.CookBookWithMaterials
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.LocalCookBook
 import com.owner.basemodule.room.entities.Material
-import com.owner.basemodule.util.ReturnResult
 
 /**
  * 对CookBook数据管理
@@ -29,46 +28,6 @@ class CookBookRepository(
         class Success<T>(val list: MutableList<T>) : SearchedStatus()
     }
 
-    /**
-     * 先将新菜谱增加到网络数据库，成功后再添加到本地。
-     *
-     */
-//    suspend fun createCookBook(newCookBook: RemoteCookBook): ReturnResult {
-//        val createObject = remote.createCookBook(newCookBook)
-//        return if (createObject.isSuccess()) {
-//            val cookbook = LocalCookBook(
-//                objectId = createObject.objectId!!,
-//                foodCategory = newCookBook.foodCategory,
-//                foodKind = newCookBook.foodKind,
-//                foodName = newCookBook.foodName,
-//                usedNumber = newCookBook.usedNumber,
-//                isStandby = false
-//            )
-//            local.addCookBooks(cookbook)
-//            ReturnResult.Success(cookbook)
-//        } else {
-//            ReturnResult.Failure(createObject.error!!)
-//        }
-//    }
-
-    /**
-     * 生成菜谱和商品之间的关联关系,同上一样，网络保存得到objectId后，保存到本地
-     */
-//    suspend fun createCrossRef(newRef: NewCrossRef): ReturnResult {
-//        val createObject = remote.createCrossRef(newRef)
-//        return if (createObject.isSuccess()) {
-//            val crossRef = CBGCrossRef(
-//                createObject.objectId!!,
-//                newRef.cb_id,
-//                newRef.goods_id,
-//                newRef.foodCategory
-//            )
-//            local.addCrossRef(crossRef)
-//            ReturnResult.Success(crossRef)
-//        } else {
-//            ReturnResult.Failure(createObject.error!!)
-//        }
-//    }
 
     suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return remote.createDailyMeal(newDailyMeal)
@@ -77,22 +36,18 @@ class CookBookRepository(
     /*
     删除菜谱，先删除网络，成功了，删除相应的关联
      */
-    suspend fun deleteCookBook(objectId: String): DeleteObject {
+    suspend fun deleteRemoteCookBook(objectId: String): DeleteObject {
         return remote.deleteCookBook(objectId)
+    }
+
+    suspend fun deleteLocalCookBookWithMaterials(cm: CookBookWithMaterials) {
+        local.deleteLocalCookBookAndMaterials(cm)
     }
 
     suspend fun deleteDailyMeal(objectId: String): DeleteObject {
         return remote.deleteDailyMeal(objectId)
     }
 
-//    suspend fun deleteCrossRef(objectId: String): DeleteObject {
-//        return remote.deleteCrossRef(objectId)
-//    }
-
-//    suspend fun deleteLocalCookBookAndRef(cookbook: LocalCookBook) {
-//        local.deleteCookBook(cookbook)
-//        local.deleteCrossRef(cookbook.objectId)
-//    }
 
     /*
     更新
@@ -149,10 +104,6 @@ class CookBookRepository(
         return remote.getDailyMealOfDate(where)
     }
 
-//    suspend fun getCookBookGoodsCrossRef(where: String, skip: Int): ObjectList<CBGCrossRef> {
-//        return remote.getCookBookGoodsCrossRef(where, skip)
-//    }
-
 
     /*
     模糊查询
@@ -176,12 +127,7 @@ class CookBookRepository(
     suspend fun addMaterialOfCookBooks(list: MutableList<Material>) {
         local.addMaterailOfCookBooks(list)
     }
-    /*
-    增加关系列表到本地
-     */
-//    suspend fun addCrossRefToLocal(refList: MutableList<CBGCrossRef>) {
-//        local.addCrossRefAllOfCategory(refList)
-//    }
+
 
     /*
     清空本地某类别菜谱
@@ -190,7 +136,5 @@ class CookBookRepository(
         local.deleteCookBookOfCategory(category)
     }
 
-//    suspend fun clearCrossRefOfCategory(category: String) {
-//        local.deleteCrossRefOfCategory(category)
-//    }
+
 }

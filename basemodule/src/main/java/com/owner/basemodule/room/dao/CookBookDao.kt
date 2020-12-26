@@ -70,6 +70,9 @@ interface CookBookDao {
     @Delete
     suspend fun deleteCookBook(cookbook: LocalCookBook)
 
+    @Delete
+    suspend fun deleteMaterialOfCookbook(materials: MutableList<Material>)
+
     @Query("DELETE FROM LocalCookBook WHERE foodCategory = :category")
     suspend fun deleteCookBookOfCategory(category: String)
 

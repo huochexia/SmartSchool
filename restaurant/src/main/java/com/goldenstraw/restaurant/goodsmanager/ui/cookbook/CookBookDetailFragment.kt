@@ -145,7 +145,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                                         dialog.dismiss()
                                     }
                                     .setPositiveButton("确定") { dialog, _ ->
-                                        viewModel.deleteCookBook(t.cookbook)
+                                        viewModel.deleteCookBook(t)
                                         viewModel.groupbyKind[group]!!.remove(t)
                                         vpAdapter!!.forceUpdate()
                                         dialog.dismiss()
@@ -185,7 +185,6 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
 
 
         viewModel.asyncCookBooks(cookCategory)
-        viewModel.asyncCrossRefs(cookCategory)
 
     }
 
