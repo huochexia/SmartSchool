@@ -28,30 +28,6 @@ data class LocalCookBook(
     var isSelected: Boolean = false
 }
 
-///**
-// * 菜谱与商品多对多的交叉关系表。
-// *
-// */
-//@Entity(primaryKeys = ["objectId","cb_id", "goods_id"],indices = [Index("cb_id"),Index("goods_id")])
-//data class CBGCrossRef(
-//    var objectId: String,
-//    var cb_id: String,
-//    var goods_id: String,
-//    @ColumnInfo
-//    var foodCategory: String
-//
-//)
-//
-//data class CookBookWithGoods(
-//    @Embedded
-//    val cookBook: LocalCookBook,
-//    @Relation(
-//        parentColumn = "cb_id",
-//        entityColumn = "goods_id",
-//        associateBy = Junction(CBGCrossRef::class)
-//    )
-//    val goods: List<Goods>
-//)
 
 /**
  * 原材料，菜谱对应的原材料，它是由商品类转换而来，增加定量即原材料在菜谱中占比（以10人量为依据）
