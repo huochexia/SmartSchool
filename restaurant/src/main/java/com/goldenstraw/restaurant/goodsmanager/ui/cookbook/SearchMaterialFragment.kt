@@ -58,9 +58,10 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
         viewModel = activity!!.getViewModel {
             CookBookViewModel(repository)
         }
+
         //观察LiveData的变化
         viewModel!!.searchedGoodsStatusLiveData.observe(viewLifecycleOwner) { status ->
-            goodsList.clear()
+//            goodsList.clear()
             when (status) {
                 null, None -> {
                 }
@@ -97,7 +98,10 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
 
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        goodsList.clear()
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_search_material, menu)

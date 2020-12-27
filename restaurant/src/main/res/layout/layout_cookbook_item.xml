@@ -32,7 +32,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:onClick="@{()->onClick.accept(cookbooks)}">
 
             <CheckBox
                     android:id="@+id/cb_selected_food"
@@ -52,7 +53,6 @@
                     android:text="@{cookbooks.cookbook.foodName}"
                     android:textSize="18sp"
                     android:typeface="sans"
-                    android:onClick="@{()->onClick.accept(cookbooks)}"
                     app:bind_view_onLongClick="@{()->consumer.accept(cookbooks)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cb_selected_food"

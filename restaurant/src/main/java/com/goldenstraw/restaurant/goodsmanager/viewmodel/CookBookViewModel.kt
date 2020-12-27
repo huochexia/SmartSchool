@@ -60,6 +60,8 @@ class CookBookViewModel(
     /*
      一、 增加菜谱，首先保存菜谱到网络后，得到它的objectId,然后遍历它的原材料，
      将原材料的materialOwnerId设为objectId。然后再保存。
+     这是个长时间运行过程，只有它完成了，才能显示在UI上。它运行异步任务中，所以不会堵塞主线程，
+     就会影响显示结果。
      */
     fun createCookBook(newCookBook: RemoteCookBook) {
         launchUI {
@@ -69,6 +71,16 @@ class CookBookViewModel(
                         newCookBook.material.forEach {
                             it.materialOwnerId = id!!
                         }
+                        launch {
+
+                            repository.addCookBookToLocal(
+                                remoteToLocalCookBook(
+                                    newCookBook
+                                )
+                            )
+                            repository.addMaterialOfCookBooks(newCookBook.material as MutableList<Material>)
+                        }
+
                         newCookBook.update(object : UpdateListener() {
                             override fun done(p0: BmobException?) {
                                 if (p0 == null) {
@@ -77,18 +89,13 @@ class CookBookViewModel(
                                 }
                             }
                         })
-                        //保存到本地
-                        launchUI {
-                            repository.addCookBookToLocal(remoteToLocalCookBook(newCookBook))
-                            repository.addMaterialOfCookBooks(newCookBook.material as MutableList<Material>)
-                        }
                     } else {
                         defUI.showDialog.value = e.message
                     }
                 }
             })
-
         }
+
 
     }
 
@@ -106,6 +113,29 @@ class CookBookViewModel(
         }
     }
 
+    suspend fun deleteMaterialOfCookBook(material: MutableList<Material>) {
+        repository.deleteMaterialsOfCookBook(material)
+    }
+
+    /*
+       修改菜谱
+     */
+    suspend fun updateCookBook(cookbook: LocalCookBook, material: List<Material>) {
+        val remoteCookBook = localToRemoteCookBook(cookbook, material)
+        remoteCookBook.update(cookbook.objectId, object : UpdateListener() {
+            override fun done(p0: BmobException?) {
+                if (p0 == null) {
+
+                } else {
+                    throw p0  //将异常抛出
+                }
+            }
+        })
+        repository.addCookBookToLocal(cookbook)
+        repository.addMaterialOfCookBooks(material as MutableList<Material>)
+
+    }
+
     /*
     查询，对结果通过groupBy进行分组。
      */
@@ -113,30 +143,23 @@ class CookBookViewModel(
     //分组列表，key-value:key为小类，value为内容列表
     var groupbyKind = hashMapOf<String, MutableList<CookBookWithMaterials>>()
 
+    suspend fun getCookBookWithMaterialsOfCategory(category: String, isStandby: Boolean) {
+        groupbyKind.clear()
+        cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
+        Observable.fromIterable(cookbookList)
+            .groupBy { cookBookWithMaterials ->
+                cookBookWithMaterials.cookbook.foodKind
+            }
+            .autoDisposable(this@CookBookViewModel)
+            .subscribe { group ->
+                groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
+                group
+                    .autoDisposable(this@CookBookViewModel)
+                    .subscribe { cookbooks ->
+                        groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
+                    }
+            }
 
-    fun getCookBookWithMaterialsOfCategory(category: String, isStandby: Boolean) {
-        launchUI {
-            groupbyKind.clear()
-            cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
-            Observable.fromIterable(cookbookList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .groupBy { cookBookWithMaterials ->
-                    cookBookWithMaterials.cookbook.foodKind
-                }
-                .autoDisposable(this@CookBookViewModel)
-                .subscribe({ group ->
-                    groupbyKind[group.key!!] = mutableListOf()//为每个分类建立key-value值
-                    group
-                        .autoDisposable(this@CookBookViewModel)
-                        .subscribe { cookbooks ->
-                            groupbyKind[group!!.key]!!.add(cookbooks)//将对应分类的菜谱，存入对应的列表中
-                        }
-                }, {}, {
-                    defUI.refreshEvent.call()//发出刷新数据通知
-                })
-
-        }
 
     }
 
@@ -671,7 +694,7 @@ class CookBookViewModel(
                     launchUI {
                         val f = count!! / 500  //分页，500条为一页
                         val where = "{\"foodCategory\":\"$category\"}"
-                        val cookbookList = async {
+                        val deffered = async {
                             val allcookbook: MutableList<RemoteCookBook> = mutableListOf()
                             for (a in 0..f) {
                                 allcookbook.addAll(
@@ -684,7 +707,7 @@ class CookBookViewModel(
                         val localList = mutableListOf<LocalCookBook>()
                         val material = mutableListOf<Material>()
                         //将远程菜谱转换成本地菜谱
-                        cookbookList.await().forEach {
+                        deffered.await().forEach {
                             localList.add(remoteToLocalCookBook(it))
                             material.addAll(it.material)
                         }
@@ -693,7 +716,7 @@ class CookBookViewModel(
                         repository.addMaterialOfCookBooks(material)
                     }
                 } else {
-                    defUI.showDialog.postValue(e.message)
+                    throw e
                 }
             }
 

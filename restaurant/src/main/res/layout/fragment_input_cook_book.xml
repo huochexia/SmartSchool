@@ -62,17 +62,7 @@
                         android:spinnerMode="dropdown"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-<!--                <androidx.appcompat.widget.AppCompatSpinner-->
-<!--                        android:id="@+id/spinner_mingdang_kind"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:visibility="invisible"-->
-<!--                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"-->
-<!--                        android:layout_marginVertical="@dimen/activity_vertical_margin"-->
-<!--                        android:entries="@array/mingdang_kind"-->
-<!--                        android:spinnerMode="dropdown"-->
-<!--                        app:layout_constraintEnd_toEndOf="parent"-->
-<!--                        app:layout_constraintTop_toTopOf="parent" />-->
+
 
                 <TextView
                         android:id="@+id/tv_kind_content"
@@ -112,22 +102,33 @@
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 app:bind_recyclerView_adapter="@{fragment.adapter}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_cook_main_material_item"/>
-        <LinearLayout
+                tools:listitem="@layout/layout_cook_main_material_item" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end"
                 android:layout_marginTop="@dimen/activity_vertical_margin">
+
+            <CheckBox
+                    android:id="@+id/check_isStandby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="备用"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                     android:id="@+id/add_main_material"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="【+添加主料】"
                     android:textSize="16sp"
-                    android:layout_marginEnd="@dimen/activity_vertical_margin"/>
+                    app:layout_constraintBottom_toBottomOf="@+id/check_isStandby"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/check_isStandby" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <LinearLayout

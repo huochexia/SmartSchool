@@ -44,6 +44,11 @@ class CookBookRepository(
         local.deleteLocalCookBookAndMaterials(cm)
     }
 
+    suspend fun deleteMaterialsOfCookBook(material: MutableList<Material>){
+        local.deleteMaterialsOfCookBook(material)
+    }
+
+
     suspend fun deleteDailyMeal(objectId: String): DeleteObject {
         return remote.deleteDailyMeal(objectId)
     }
@@ -92,7 +97,7 @@ class CookBookRepository(
         return remote.getCookBook(objectId)
     }
 
-    suspend fun getCookBookWithMaterails(objectId: String): CookBookWithMaterials {
+    suspend fun getCookBookWithMaterials(objectId: String): CookBookWithMaterials {
         return local.getCookBookWithMaterials(objectId)
     }
 

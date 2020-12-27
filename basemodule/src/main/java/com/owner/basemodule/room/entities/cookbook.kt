@@ -1,6 +1,7 @@
 package com.owner.basemodule.room.entities
 
 import androidx.room.*
+import java.io.Serializable
 
 /**
  *  菜谱类，一道菜谱由多种商品构成，某种商品对应多个菜谱，两者为多对多关系。
@@ -23,7 +24,7 @@ data class LocalCookBook(
     @ColumnInfo
     var isStandby: Boolean = false, //是否备用菜谱
 
-) {
+) : Serializable {
     @Ignore
     var isSelected: Boolean = false
 }

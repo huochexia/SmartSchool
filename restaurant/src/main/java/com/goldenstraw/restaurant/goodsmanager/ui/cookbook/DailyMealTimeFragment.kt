@@ -274,7 +274,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     override fun accept(t: DailyMeal) {
                         launch {
                             var text = ""
-                            var materialsList = respository.getCookBookWithMaterails(t.cookBook.objectId)
+                            var materialsList = respository.getCookBookWithMaterials(t.cookBook.objectId)
                            materialsList.materials.forEach {
                                 text = text + it.goodsName + ","
                             }

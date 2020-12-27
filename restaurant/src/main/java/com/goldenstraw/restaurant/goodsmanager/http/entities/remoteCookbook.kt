@@ -33,6 +33,15 @@ fun remoteToLocalCookBook(remoteCookBook: RemoteCookBook): LocalCookBook {
     )
 }
 
+fun localToRemoteCookBook(localCookBook: LocalCookBook, materials: List<Material>): RemoteCookBook {
+    return RemoteCookBook(
+        foodCategory = localCookBook.foodCategory,
+        foodName = localCookBook.foodName,
+        foodKind = localCookBook.foodKind,
+        isStandby = localCookBook.isStandby,
+        material = materials
+    )
+}
 /*
   菜谱与商品的新关联关系
  */

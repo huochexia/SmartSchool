@@ -33,7 +33,7 @@ interface ILocalCookBookDataSource : ILocalDataSource {
     //删除关系
     suspend fun deleteLocalCookBookAndMaterials(cm: CookBookWithMaterials)
     suspend fun deleteCookBookOfCategory(category: String)
-
+    suspend fun deleteMaterialsOfCookBook(materials:MutableList<Material>)
 
 }
 
@@ -102,5 +102,7 @@ class LocalCookBookDataSourceImpl(
         database.cookbookDao().deleteCookBookOfCategory(category)
     }
 
-
+    override suspend fun deleteMaterialsOfCookBook(materials: MutableList<Material>) {
+        database.cookbookDao().deleteMaterialOfCookbook(materials)
+    }
 }
