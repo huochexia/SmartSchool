@@ -103,8 +103,10 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
                 coroutineScope {
                     if (isUpdate) { //如果是修改状态，
                         updateCookBook()
+
                     } else {
                         saveCookBook()
+
                     }
                     findNavController().popBackStack()
                 }

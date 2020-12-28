@@ -52,6 +52,9 @@
         <action
                 android:id="@+id/action_cookBookDetailFragment_to_inputCookBookFragment"
                 app:destination="@id/inputCookBookFragment" />
+        <action
+                android:id="@+id/action_cookBookDetailFragment_to_searchCookBookFragment"
+                app:destination="@id/searchCookBookFragment" />
     </fragment>
     <fragment
             android:id="@+id/inputCookBookFragment"
@@ -69,8 +72,8 @@
             android:label="DailyMealTimeFragment"
             tools:layout="@layout/fragment_daily_mealtime" >
         <action
-                android:id="@+id/action_dailyMealTimeFragment_to_searchCookBookFragment"
-                app:destination="@id/searchCookBookFragment" />
+                android:id="@+id/action_dailyMealTimeFragment_to_cookBookDetailFragment"
+                app:destination="@id/cookBookDetailFragment" />
     </fragment>
     <fragment
             android:id="@+id/searchMaterialFragment"
@@ -95,6 +98,9 @@
         <action
                 android:id="@+id/action_searchCookBookFragment_to_inputCookBookFragment"
                 app:destination="@id/inputCookBookFragment" />
+        <action
+                android:id="@+id/action_searchCookBookFragment_to_dailyMealTimeFragment"
+                app:destination="@id/dailyMealTimeFragment" />
     </fragment>
     <fragment
             android:id="@+id/dailyMealAnalyesResultFragment"

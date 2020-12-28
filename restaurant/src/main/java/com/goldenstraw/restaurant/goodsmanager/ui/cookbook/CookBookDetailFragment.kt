@@ -15,7 +15,9 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookDetailBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookbookItemBinding
 import com.goldenstraw.restaurant.databinding.ViewpageOfCookKindBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.ColdFood
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -24,6 +26,8 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.CookBookWithMaterials
 import com.owner.basemodule.util.toast
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,23 +72,23 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         }
         toolbar.title = cookCategory
         //如果是用于选择，则显示浮动按钮，用于确定用户的选择
-//        if (isSelected) {
-//            fab_choice_cookbook.visibility = View.VISIBLE
-//            fab_choice_cookbook.setOnClickListener {
-//                Observable.fromIterable(viewModel.cookbookList)
-//                    .filter {
-//                        it.cookbook.isSelected
-//                    }
-//                    .map {
-//                        NewDailyMeal(mealTime, mealDate, it.cookbook)
-//                    }.subscribeOn(Schedulers.io())
-//                    .subscribe({
-//                        viewModel.createDailyMeal(it)
-//                    }, {}, {
-//                        findNavController().popBackStack()
-//                    })
-//            }
-//        }
+        if (isSelected) {
+            fab_choice_cookbook.visibility = View.VISIBLE
+            fab_choice_cookbook.setOnClickListener {
+                Observable.fromIterable(viewModel.cookbookList)
+                    .filter {
+                        it.cookbook.isSelected
+                    }
+                    .map {
+                        NewDailyMeal(mealTime, mealDate, it.cookbook)
+                    }.subscribeOn(Schedulers.io())
+                    .subscribe({
+                        viewModel.createDailyMeal(it)
+                    }, {}, {
+                        findNavController().popBackStack()
+                    })
+            }
+        }
 
     }
 
@@ -237,6 +241,14 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.search_cookbook->{
+                val bundle = Bundle()
+                bundle.putBoolean("isSelected", true)
+                bundle.putString("mealDate", "$mealDate")
+                bundle.putString("mealTime", "$mealTime")
+                bundle.putString("cookcategory", cookCategory)
+                findNavController().navigate(R.id.searchCookBookFragment,bundle)
+            }
             R.id.menu_add_cook -> {
                 viewModel.materialList.clear()
                 val bundle = Bundle()

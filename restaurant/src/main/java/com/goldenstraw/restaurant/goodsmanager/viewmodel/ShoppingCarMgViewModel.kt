@@ -16,6 +16,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import java.text.DecimalFormat
 
 class ShoppingCarMgViewModel(
     private val repository: ShoppingCarRepository
@@ -64,25 +65,30 @@ class ShoppingCarMgViewModel(
      * 通过设定人数，计算所需材料数
      */
     fun computeQuantityFromPerson(breakfast: Int, lunch: Int, dinner: Int) {
+
+        val formate = DecimalFormat("0.0") //浮点数格式
+
         launchUI {
             withContext(Dispatchers.Default) {
                 foodList.forEach {
                     when (it.food.foodTime) {
                         "早餐" -> {
                             it.materials.forEach { mOfb ->
-                                mOfb.quantity = mOfb.ration * breakfast / 10
+                                mOfb.quantity =
+                                    formate.format(mOfb.ration * breakfast / 60).toFloat()
+
                                 updateMaterialOfShoppingCar(mOfb)
                             }
                         }
                         "午餐" -> {
                             it.materials.forEach { lOfb ->
-                                lOfb.quantity = lOfb.ration * lunch / 10
+                                lOfb.quantity = formate.format(lOfb.ration * lunch / 60).toFloat()
                                 updateMaterialOfShoppingCar(lOfb)
                             }
                         }
                         "晚餐" -> {
                             it.materials.forEach { dOfb ->
-                                dOfb.quantity = dOfb.ration * dinner / 10
+                                dOfb.quantity = formate.format(dOfb.ration * dinner / 60).toFloat()
                                 updateMaterialOfShoppingCar(dOfb)
                             }
                         }

@@ -196,25 +196,6 @@ class CookBookViewModel(
     }
 
     /*
-     * 修改菜谱状态
-     */
-    fun updateCookBookState(cookbook: LocalCookBook) {
-        launchUI {
-            withContext(Dispatchers.Default) {
-                val newCookBooks = UpdateIsStandby(cookbook.isStandby)
-                val result = repository.updateCookBookState(newCookBooks, cookbook.objectId)
-                if (result.isSuccess()) {
-                    repository.addCookBookToLocal(cookbook)
-                }
-            }
-            if (!cookbook.isStandby) {
-                UpdateUsedNumber(0)
-            }
-
-        }
-    }
-
-    /*
      * 修改远程菜谱使用次数。
      *
      */

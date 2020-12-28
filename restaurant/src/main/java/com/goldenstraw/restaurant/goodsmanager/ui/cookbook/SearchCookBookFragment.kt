@@ -23,7 +23,7 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.CookBookWithMaterials
-import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
+import kotlinx.android.synthetic.main.fragment_search_cookbook.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -55,13 +55,15 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
             mealTime = it.getString("mealTime")
             cookCategory = it.getString("cookcategory")
         }
-        cookbookList.clear()
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(search_cookbook_toolbar)
         setHasOptionsMenu(true)
+
+
         viewModel = activity!!.getViewModel {
             CookBookViewModel(repository)
         }
@@ -92,7 +94,9 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                             createDailyMeal(newDailyMeal)
                             defUI.refreshEvent.call()
                         }
-                        findNavController().popBackStack()
+                        val bundle = Bundle()
+                        bundle.putString("mealdate", "$mealDate")
+                        findNavController().navigate(R.id.dailyMealTimeFragment, bundle)
                     }
 
                 }
@@ -100,6 +104,11 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
         )
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cookbookList.clear()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
