@@ -135,7 +135,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
     private fun popUPDeleteDialog(newOrder: NewOrder) {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
-            .setTitle("确定要删除吗！！")
+            .setTitle("确定要删除-${newOrder.goodsName}吗！！")
             .setNegativeButton("取消") { dialog, which ->
                 dialog.dismiss()
             }
@@ -158,7 +158,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
 
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_update_name)
-            .setTitle("修改商品信息")
+            .setTitle("修改-${newOrder.goodsName}-信息")
             .setView(view)
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
