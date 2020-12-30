@@ -220,10 +220,10 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.set_number_of_person -> {
-                //设定不同餐时就餐人数
-                setNumberOfPersonDialog()
-            }
+//            R.id.set_number_of_person -> {
+//                //设定不同餐时就餐人数
+//                setNumberOfPersonDialog()
+//            }
             R.id.collect_all_goods -> {
 
                 ll_food_category_btn.visibility = View.GONE

@@ -144,8 +144,6 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                                             bundle.putSerializable("food", t.cookbook)
                                             bundle.putBoolean("isUpdate", true)
                                             bundle.putString("cookcategory", cookCategory)
-//                                            t.cookbook.isStandby = !t.cookbook.isStandby
-//                                            viewModel.updateCookBookState(t.cookbook)
                                             findNavController().navigate(
                                                 R.id.inputCookBookFragment,
                                                 bundle

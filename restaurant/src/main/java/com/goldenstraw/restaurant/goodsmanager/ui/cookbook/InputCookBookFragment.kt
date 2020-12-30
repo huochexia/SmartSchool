@@ -148,6 +148,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
       修改状态下，获取isStandby，spinner的值,删除临时表中的材料
      */
     private suspend fun updateCookBook() {
+        cookbook.foodName = ed_cook_name.text.toString()
         cookbook.isStandby = check_isStandby.isChecked
         cookbook.foodKind = spinner_cook_kind.selectedItem.toString()
         //因为新添加的材料，没有指定菜谱。

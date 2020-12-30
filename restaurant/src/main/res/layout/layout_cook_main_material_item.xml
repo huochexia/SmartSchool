@@ -34,9 +34,11 @@
                 tools:text="排骨" />
 
         <TextView
+                android:id="@+id/ration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="40dp"
+                android:visibility="invisible"
                 android:onClick="@{()->update.accept(material)}"
                 android:text="@{String.valueOf(material.ration)}"
                 android:textColor="@color/common_red"
