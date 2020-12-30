@@ -96,7 +96,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                         }
                         val bundle = Bundle()
                         bundle.putString("mealdate", "$mealDate")
-                        findNavController().navigate(R.id.dailyMealTimeFragment, bundle)
+                        findNavController().navigate(R.id.action_searchCookBookFragment_to_dailyMealTimeFragment, bundle)
                     }
 
                 }

@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -35,6 +36,7 @@ import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.android.synthetic.main.fragment_daily_mealtime.*
+import kotlinx.android.synthetic.main.layout_meal_item.*
 import kotlinx.android.synthetic.main.viewpage_of_daily_meal.*
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
@@ -95,7 +97,6 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
 
         initEvent()
-
 
     }
 
@@ -219,12 +220,8 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         }
 
         viewModel.getDailyMealOfDate(where)
-        if (prefs.role == "厨师") {
 
-            initSwipeMenu()
-        }
-
-        viewModel.defUI.showDialog.observe(viewLifecycleOwner){
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
             androidx.appcompat.app.AlertDialog.Builder(context!!)
                 .setMessage(it)
                 .create()
@@ -244,6 +241,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 binding.dailymeal = dailyMeal
                 //只允许厨师修改菜单
                 if (prefs.role == "厨师") {
+                    binding.deleteAction.visibility = View.VISIBLE
                     binding.clickEvent = object : Consumer<DailyMeal> {
                         override fun accept(t: DailyMeal) {
                             //点击是否选择
@@ -269,13 +267,20 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                                 }.create().show()
                         }
                     }
+                    binding.deleteEvent = object : Consumer<DailyMeal> {
+                        override fun accept(t: DailyMeal) {
+                            deleteDialog(t)
+                        }
+
+                    }
                 }
                 binding.onLongClick = object : Consumer<DailyMeal> {
                     override fun accept(t: DailyMeal) {
                         launch {
                             var text = ""
-                            var materialsList = respository.getCookBookWithMaterials(t.cookBook.objectId)
-                           materialsList.materials.forEach {
+                            var materialsList =
+                                respository.getCookBookWithMaterials(t.cookBook.objectId)
+                            materialsList.materials.forEach {
                                 text = text + it.goodsName + ","
                             }
                             //弹出原材料对话框
@@ -286,94 +291,8 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     }
 
                 }
+
             })
-    }
-
-    /**
-     * 初始化Item侧滑菜单
-     */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(color.colorAccent)
-                .setText("删除")
-                .setHeight(LayoutParams.MATCH_PARENT)
-                .setWidth(150)
-            rightMenu.addMenuItem(deleteItem)
-
-        }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_cold_food.setSwipeMenuCreator(mSwipeMenuCreator)
-        rlw_hot_food.setSwipeMenuCreator(mSwipeMenuCreator)
-        rlw_flour_food.setSwipeMenuCreator(mSwipeMenuCreator)
-        rlw_soup_porri.setSwipeMenuCreator(mSwipeMenuCreator)
-        rlw_snack_detail.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mColdItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(viewModel.coldList[adapterPosition])
-                }
-
-            }
-        }
-        val mHotItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(viewModel.hotList[adapterPosition])
-                }
-
-            }
-        }
-        val mFlourItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(viewModel.flourList[adapterPosition])
-                }
-
-            }
-        }
-        val mSoupItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(viewModel.soupList[adapterPosition])
-                }
-
-            }
-        }
-        val mSnackItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(viewModel.snackList[adapterPosition])
-                }
-
-            }
-        }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_cold_food.setOnItemMenuClickListener(mColdItemMenuClickListener)
-        rlw_hot_food.setOnItemMenuClickListener(mHotItemMenuClickListener)
-        rlw_flour_food.setOnItemMenuClickListener(mFlourItemMenuClickListener)
-        rlw_soup_porri.setOnItemMenuClickListener(mSoupItemMenuClickListener)
-        rlw_snack_detail.setOnItemMenuClickListener(mSnackItemMenuClickListener)
     }
 
     private fun deleteDialog(dailyMeal: DailyMeal) {

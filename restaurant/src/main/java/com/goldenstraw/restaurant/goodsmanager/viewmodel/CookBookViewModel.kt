@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import cn.bmob.v3.BmobQuery
 import cn.bmob.v3.exception.BmobException
 import cn.bmob.v3.listener.CountListener
@@ -71,14 +72,14 @@ class CookBookViewModel(
                         newCookBook.material.forEach {
                             it.materialOwnerId = id!!
                         }
-                        launch {
-
+                        viewModelScope.launch {
                             repository.addCookBookToLocal(
                                 remoteToLocalCookBook(
                                     newCookBook
                                 )
                             )
                             repository.addMaterialOfCookBooks(newCookBook.material as MutableList<Material>)
+                            defUI.refreshEvent.call()
                         }
 
                         newCookBook.update(object : UpdateListener() {

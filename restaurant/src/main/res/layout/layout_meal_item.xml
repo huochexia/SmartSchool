@@ -18,6 +18,9 @@
         <variable
                 name="onLongClick"
                 type="com.owner.basemodule.functional.Consumer" />
+        <variable
+                name="deleteEvent"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,7 +51,16 @@
                 android:visibility="@{dailymeal.isOfTeacher?View.VISIBLE:View.GONE}"
                 app:layout_constraintStart_toEndOf="@id/tv_meal_name"
                 app:layout_constraintTop_toTopOf="parent" />
-
+        <ImageView
+                android:id="@+id/delete_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:src="@drawable/ic_delete"
+                android:layout_marginEnd="4dp"
+                android:onClick="@{()->deleteEvent.accept(dailymeal)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"/>
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

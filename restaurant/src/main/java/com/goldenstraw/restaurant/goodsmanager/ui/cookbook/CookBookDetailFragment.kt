@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import cn.bmob.v3.exception.BmobException
@@ -104,7 +105,6 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
 
         }
 
-
         //根据菜谱的分类动态形成标签
         vpAdapter = BaseDataBindingAdapter(
             layoutId = R.layout.viewpage_of_cook_kind,
@@ -181,7 +181,10 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         )
 
         viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
-            vpAdapter!!.forceUpdate()
+            lifecycleScope.launch {
+                viewModel.getCookBookWithMaterialsOfCategory(cookCategory, isStandby)
+                vpAdapter!!.forceUpdate()
+            }
         }
         viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
             AlertDialog.Builder(context!!)
@@ -247,7 +250,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                 bundle.putString("mealDate", "$mealDate")
                 bundle.putString("mealTime", "$mealTime")
                 bundle.putString("cookcategory", cookCategory)
-                findNavController().navigate(R.id.searchCookBookFragment,bundle)
+                findNavController().navigate(R.id.action_cookBookDetailFragment_to_searchCookBookFragment,bundle)
             }
             R.id.menu_add_cook -> {
                 viewModel.materialList.clear()
