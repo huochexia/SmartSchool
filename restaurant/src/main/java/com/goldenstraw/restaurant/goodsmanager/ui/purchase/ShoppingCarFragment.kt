@@ -204,6 +204,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             findNavController().navigate(R.id.localNewOrderFragment)
         }
     }
+
     /**
      * 新版本清空购物车
      */
@@ -243,6 +244,9 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             R.id.clear_shoppingcar -> {
                 clearShoppingCar()
             }
+//            R.id.set_teacher_number -> {
+//                setNumOfTeacher()
+//            }
         }
         return true
     }
@@ -265,9 +269,35 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
                 viewModel!!.computeQuantityFromPerson(
                     breakfast.text.toString().toInt(),
                     lunch.text.toString().toInt(),
-                    dinner.text.toString().toInt()
+                    dinner.text.toString().toInt(),
+                    prefs.teachers
                 )
             }
             .create().show()
+    }
+
+    /**
+     * 设置教职工就餐人数
+     */
+    private fun setNumOfTeacher() {
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
+        val teachers = view.findViewById<EditText>(R.id.dialog_edit)
+        teachers.setText(prefs.teachers)
+        val dialog = AlertDialog.Builder(context)
+            .setIcon(R.drawable.ic_update_name)
+            .setTitle("修改教职工就餐人数：")
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                val quantity = teachers.text.toString().trim()
+                if (quantity.isNullOrEmpty()) {
+                    com.owner.basemodule.util.toast { "请填写必须内容！！" }
+                } else {
+                    prefs.teachers = quantity.toInt()
+                }
+            }.create()
+        dialog.show()
     }
 }

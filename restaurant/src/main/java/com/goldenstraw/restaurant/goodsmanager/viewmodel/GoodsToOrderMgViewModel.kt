@@ -218,7 +218,8 @@ class GoodsToOrderMgViewModel(
                             foodId = dailyMeal.cookBook.objectId,
                             foodName = dailyMeal.cookBook.foodName,
                             foodCategory = dailyMeal.cookBook.foodCategory,
-                            foodTime = dailyMeal.mealTime
+                            foodTime = dailyMeal.mealTime,
+                            isOfTearcher = dailyMeal.isOfTeacher
                         )
 
                         val materials =

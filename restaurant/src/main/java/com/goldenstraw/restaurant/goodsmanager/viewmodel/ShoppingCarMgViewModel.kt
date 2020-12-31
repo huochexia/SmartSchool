@@ -1,6 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar.ShoppingCarRepository
@@ -29,6 +32,7 @@ class ShoppingCarMgViewModel(
     var newOrderList = mutableListOf<NewOrder>()
 
     var categoryList = mutableListOf<FoodWithMaterialsOfShoppingCar>()
+
 
     init {
         launchUI {
@@ -64,25 +68,32 @@ class ShoppingCarMgViewModel(
     /**
      * 通过设定人数，计算所需材料数
      */
-    fun computeQuantityFromPerson(breakfast: Int, lunch: Int, dinner: Int) {
+    fun computeQuantityFromPerson(breakfast: Int, lunch: Int, dinner: Int, teachers: Int) {
 
         val formate = DecimalFormat("0.0") //浮点数格式
 
         launchUI {
             withContext(Dispatchers.Default) {
                 foodList.forEach {
+                    var teacherNum = 0
+                    if (it.food.isOfTearcher) {
+                        teacherNum = teachers
+                    }
                     when (it.food.foodTime) {
                         "早餐" -> {
                             it.materials.forEach { mOfb ->
                                 mOfb.quantity =
-                                    formate.format(mOfb.ration * breakfast / 60).toFloat()
+                                    formate.format(mOfb.ration * (breakfast + teacherNum) / 60)
+                                        .toFloat()
 
                                 updateMaterialOfShoppingCar(mOfb)
                             }
                         }
                         "午餐" -> {
                             it.materials.forEach { lOfb ->
-                                lOfb.quantity = formate.format(lOfb.ration * lunch / 60).toFloat()
+                                lOfb.quantity =
+                                    formate.format(lOfb.ration * (lunch + teacherNum) / 60)
+                                        .toFloat()
                                 updateMaterialOfShoppingCar(lOfb)
                             }
                         }

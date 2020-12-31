@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
-<!--    <item-->
-<!--            android:id="@+id/set_number_of_person"-->
-<!--            android:icon="@drawable/ic_baseline_people_24"-->
-<!--            android:title="就餐人数"-->
-<!--            app:showAsAction="always" />-->
+    <!--    <item-->
+    <!--            android:id="@+id/set_number_of_person"-->
+    <!--            android:icon="@drawable/ic_baseline_people_24"-->
+    <!--            android:title="就餐人数"-->
+    <!--            app:showAsAction="always" />-->
     <item
             android:id="@+id/collect_all_goods"
-            android:title="汇总"
             android:icon="@drawable/ic_sharp_calculate_24"
+            android:title="汇总"
             app:showAsAction="always" />
     <item
             android:id="@+id/query_new_order"
@@ -23,4 +23,8 @@
             android:id="@+id/clear_shoppingcar"
             android:title="清空购物车"
             app:showAsAction="never" />
+<!--    <item-->
+<!--            android:id="@+id/set_teacher_number"-->
+<!--            android:title="指定教师人数"-->
+<!--            app:showAsAction="never" />-->
 </menu>

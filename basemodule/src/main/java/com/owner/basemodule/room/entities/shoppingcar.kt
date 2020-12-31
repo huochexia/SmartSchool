@@ -16,7 +16,9 @@ data class FoodOfShoppingCar(
     @ColumnInfo
     var foodCategory: String,
     @ColumnInfo
-    var foodTime: String
+    var foodTime: String,
+    @ColumnInfo
+    var isOfTearcher:Boolean=false //如果是老师的菜，还需要加量
 
 )
 
