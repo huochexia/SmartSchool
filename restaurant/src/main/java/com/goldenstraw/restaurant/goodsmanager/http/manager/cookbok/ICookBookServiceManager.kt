@@ -35,4 +35,5 @@ interface ICookBookServiceManager {
     suspend fun getCookBooks(objectId: String):RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 
+    suspend fun getCountOfRemoteCookBook(where:String):Count<RemoteCookBook>
 }

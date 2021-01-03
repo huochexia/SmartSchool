@@ -113,3 +113,10 @@ data class AnalyzeMealResult(
     var snack_youzha: Int = 0
 )
 
+/*
+  查询结果计数
+ */
+data class Count<T>(
+    var results: List<T>,
+    var count: Int
+)

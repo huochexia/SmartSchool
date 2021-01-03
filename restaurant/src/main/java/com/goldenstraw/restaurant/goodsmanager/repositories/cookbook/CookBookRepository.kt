@@ -141,5 +141,8 @@ class CookBookRepository(
         local.deleteCookBookOfCategory(category)
     }
 
+    suspend fun getCountOfRemoteCookBook(where: String):Int{
+        return remote.getCountOfRemoteCookBook(where).count
+    }
 
 }

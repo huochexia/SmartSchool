@@ -1,6 +1,6 @@
 package com.owner.basemodule.network
 
-import com.owner.basemodule.base.error.NETERROR
+import com.owner.basemodule.base.error.HttpError
 
 
 /**
@@ -56,9 +56,9 @@ class ResponseThrowable : Exception {
     var code: Int
     var errMsg: String
 
-    constructor(NETERROR: NETERROR, e: Throwable? = null) : super(e) {
-        code = NETERROR.getKey()
-        errMsg = NETERROR.getValue()
+    constructor(HttpError: HttpError, e: Throwable? = null) : super(e) {
+        code = HttpError.getKey()
+        errMsg = HttpError.getValue()
     }
 
     constructor(code: Int, msg: String, e: Throwable? = null) : super(e) {

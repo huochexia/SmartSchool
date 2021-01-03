@@ -2,8 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.CookBookApi
-import com.owner.basemodule.network.*
-import com.owner.basemodule.room.entities.LocalCookBook
+import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.DeleteObject
+import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 
 /**
  * @serviceApi 网络数据管理API
@@ -50,16 +52,19 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
     }
 
     override suspend fun getCookBookOfCategory(where: String,skip: Int): ObjectList<RemoteCookBook> {
-        return serviceApi.getCookBookOfCategory(where,skip)
+        return serviceApi.getCookBookOfCategory(where, skip)
     }
 
     override suspend fun getCookBooks(objectId: String): RemoteCookBook {
         return serviceApi.getCookBook(objectId)
     }
+
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return serviceApi.getDailyMealOfDate(where)
     }
 
-
+    override suspend fun getCountOfRemoteCookBook(where: String): Count<RemoteCookBook> {
+        return serviceApi.getCountOfRemoteCookBook(where)
+    }
 
 }

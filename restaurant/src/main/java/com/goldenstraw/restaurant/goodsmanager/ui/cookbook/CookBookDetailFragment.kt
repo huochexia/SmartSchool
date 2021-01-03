@@ -18,7 +18,6 @@ import com.goldenstraw.restaurant.databinding.LayoutCookbookItemBinding
 import com.goldenstraw.restaurant.databinding.ViewpageOfCookKindBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.ColdFood
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owner.basemodule.adapter.BaseDataBindingAdapter

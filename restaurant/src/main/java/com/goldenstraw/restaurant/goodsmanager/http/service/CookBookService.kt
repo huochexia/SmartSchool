@@ -5,7 +5,6 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-import com.owner.basemodule.room.entities.LocalCookBook
 import retrofit2.http.*
 
 /**
@@ -81,7 +80,13 @@ interface CookBookApi {
     ): ObjectList<RemoteCookBook>
 
     @GET("/1/classes/RemoteCookBook/{objectId}")
-    suspend fun getCookBook(@Path("objectId") objectId: String):RemoteCookBook
+    suspend fun getCookBook(@Path("objectId") objectId: String): RemoteCookBook
 
-
+    //查询数量结果
+    @GET("/1/classes/RemoteCookBook/")
+    suspend fun getCountOfRemoteCookBook(
+        @Query("where") where: String,
+        @Query("count") count: Int = 1,
+        @Query("limit") limit: Int = 0
+    ):Count<RemoteCookBook>
 }

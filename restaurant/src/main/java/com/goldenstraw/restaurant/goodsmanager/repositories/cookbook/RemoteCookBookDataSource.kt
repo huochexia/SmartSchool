@@ -39,6 +39,7 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<RemoteCookBook>
     suspend fun getCookBook(objectId: String):RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
+    suspend fun getCountOfRemoteCookBook(where:String):Count<RemoteCookBook>
 
 }
 
@@ -100,7 +101,9 @@ class RemoteCookBookDataSourceImpl(
         return manager.getDailyMealOfDate(where)
     }
 
-
+    override suspend fun getCountOfRemoteCookBook(where: String): Count<RemoteCookBook> {
+        return manager.getCountOfRemoteCookBook(where)
+    }
 
 
 }

@@ -3,9 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import cn.bmob.v3.BmobQuery
 import cn.bmob.v3.exception.BmobException
-import cn.bmob.v3.listener.CountListener
 import cn.bmob.v3.listener.SaveListener
 import cn.bmob.v3.listener.UpdateListener
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
@@ -147,6 +145,13 @@ class CookBookViewModel(
     suspend fun getCookBookWithMaterialsOfCategory(category: String, isStandby: Boolean) {
         groupbyKind.clear()
         cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
+
+        //这个判断主要是用于初始使用，如果本地没有数据则从网络获取，然后，再次从本地查询。
+
+        if (cookbookList.isNullOrEmpty()) {
+            asyncCookBooks(category)
+            cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
+        }
         Observable.fromIterable(cookbookList)
             .groupBy { cookBookWithMaterials ->
                 cookBookWithMaterials.cookbook.foodKind
@@ -666,43 +671,29 @@ class CookBookViewModel(
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
      * 先读取本地数据，然后读取网络
      */
-    fun asyncCookBooks(category: String) {
-        var skip = 0
-        val query = BmobQuery<RemoteCookBook>()
-        query.addWhereEqualTo("foodCategory", category)
-        query.count(RemoteCookBook::class.java, object : CountListener() {
-            override fun done(count: Int?, e: BmobException?) {
-                if (e == null) {
-                    launchUI {
-                        val f = count!! / 500  //分页，500条为一页
-                        val where = "{\"foodCategory\":\"$category\"}"
-                        val deffered = async {
-                            val allcookbook: MutableList<RemoteCookBook> = mutableListOf()
-                            for (a in 0..f) {
-                                allcookbook.addAll(
-                                    repository.getCookBookOfCategory(where, skip).results!!
-                                )
-                                skip += 500
-                            }
-                            allcookbook
-                        }
-                        val localList = mutableListOf<LocalCookBook>()
-                        val material = mutableListOf<Material>()
-                        //将远程菜谱转换成本地菜谱
-                        deffered.await().forEach {
-                            localList.add(remoteToLocalCookBook(it))
-                            material.addAll(it.material)
-                        }
-                        repository.clearCookBookOfCategory(category)
-                        repository.addCookBooksToLocal(localList)
-                        repository.addMaterialOfCookBooks(material)
-                    }
-                } else {
-                    throw e
-                }
-            }
+    suspend fun asyncCookBooks(category: String) {
 
-        })
+        var skip = 0
+        val where = "{\"foodCategory\":\"$category\"}"
+        val count = repository.getCountOfRemoteCookBook(where)
+        val allcookbook: MutableList<RemoteCookBook> = mutableListOf()
+        for (a in 0..(count / 500)) {
+            allcookbook.addAll(
+                repository.getCookBookOfCategory(where, skip).results!!
+            )
+            skip += 500
+        }
+        val localList = mutableListOf<LocalCookBook>()
+        val material = mutableListOf<Material>()
+        //将远程菜谱转换成本地菜谱
+        allcookbook.forEach {
+            localList.add(remoteToLocalCookBook(it))
+            material.addAll(it.material)
+        }
+        repository.clearCookBookOfCategory(category)
+        repository.addCookBooksToLocal(localList)
+        repository.addMaterialOfCookBooks(material)
+
 
     }
 
