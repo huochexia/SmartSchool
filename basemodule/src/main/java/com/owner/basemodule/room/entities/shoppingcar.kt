@@ -87,7 +87,7 @@ fun goodsToShoppingCar(goods: Goods): MaterialOfShoppingCar {
         goodsName = goods.goodsName,
         unitOfMeasurement = goods.unitOfMeasurement,
         categoryCode = goods.categoryCode,
-        quantity = 0.0f,
+        quantity = goods.quantity.toFloat(),
         ration = 0.0f
     )
 }

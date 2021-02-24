@@ -241,7 +241,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         goodsList.forEach {
             if (it.isChecked) {
                 it.isChecked = false
-                it.quantity = 1
+                it.quantity = 0
                 selectedList.add(it)
             }
         }
