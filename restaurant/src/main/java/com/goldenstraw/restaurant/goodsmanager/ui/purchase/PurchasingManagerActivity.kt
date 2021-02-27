@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityPurchasingManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
@@ -53,7 +52,9 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
         super.initView()
         setSupportActionBar(toolbar)//没有这个显示不了菜单
         viewModelGoodsTo = getViewModel { GoodsToOrderMgViewModel(repository) }
-        viewModelGoodsTo.getState().observe(this, Observer { showAddCategoryDialog() })
+
+        viewModelGoodsTo.isPopupDialog.observe(this) { showAddCategoryDialog() }
+
         val categoryFragment =
             CategoryManagerFragment()
         val goodsFragment =
@@ -65,8 +66,7 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
         trans.replace(R.id.fragment_goods_container, goodsFragment)
         trans.replace(R.id.search_fragment, searchFragment)
         trans.commit()
-        //加载完页面后，同步数据
-//        viewModelGoodsTo.syncAllData()
+
     }
 
     /**
@@ -153,10 +153,10 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
                 startActivityForResult(intent, 1)
             }
             R.id.action_add_goods_item -> {
-                if (viewModelGoodsTo.selected.value == null)
-                    toast { "请先确定商品所属类别" }
-                else
-                    showAddGoodsDialog(viewModelGoodsTo.selected.value!!)
+                val category = viewModelGoodsTo.categoryList.filter {
+                    it.objectId == viewModelGoodsTo.currentCategory.value
+                }
+                showAddGoodsDialog(category[0])
             }
             R.id.next_week_goods -> {
                 val intent = Intent(this, GoodsOfNextWeekActivity::class.java)

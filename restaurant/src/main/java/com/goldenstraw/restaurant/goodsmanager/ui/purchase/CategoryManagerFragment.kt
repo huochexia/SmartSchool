@@ -14,6 +14,7 @@ import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -44,55 +45,69 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
       使用同一个Activity范围下的共享ViewModel
      */
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
-    var adapter: BaseDataBindingAdapter<GoodsCategory, LayoutGoodsCategoryBinding>? = null
 
-    var categoryFlow = mutableListOf<GoodsCategory>()
+    val adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_goods_category,
+        dataBinding = { LayoutGoodsCategoryBinding.bind(it) },
+        dataSource = { viewModelGoodsTo!!.categoryList },
+        callback = { goodsCategory, binding, _ ->
+            binding.apply {
+                category = goodsCategory
+                //选择事件要完成两个任务：一是确定当前类别，二是刷新列表显示当前选中项目状态
+                selectEvent = object : Consumer<GoodsCategory> {
+                    override fun accept(t: GoodsCategory) {
+                        viewModelGoodsTo!!.apply {
+                            //1.确定当前类别
+                            updateCurrentCategory(t.objectId)
+                            //2.还原所有项目状态，设定当前选项状态，通知刷新列表
+                            categoryList.forEach {
+                                it.isSelected = false
+                            }
+                            t.isSelected = true
+                            setRefresh(true)
+                        }
+                    }
+                }
+                tvCategoryName.isSelected = goodsCategory.isSelected
+                if (goodsCategory.isSelected) {
+                    signView.visibility = View.VISIBLE
+                } else {
+                    signView.visibility = View.INVISIBLE
+                }
+            }
+        }
+
+    )
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModelGoodsTo = activity?.getViewModel {
             GoodsToOrderMgViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_category,
-            dataBinding = { LayoutGoodsCategoryBinding.bind(it) },
-            dataSource = { categoryFlow },
-            callback = { goodsCategory, binding, _ ->
-                binding.apply {
-                    category = goodsCategory
-                    goodsEvent = object : Consumer<GoodsCategory> {
-                        override fun accept(t: GoodsCategory) {
-                            viewModelGoodsTo!!.selected.value = t
 
-                            categoryFlow.forEach {
-                                it.isSelected = false
-                            }
-                            t.isSelected = true
-                            adapter!!.forceUpdate()
-                        }
-                    }
-                    tvCategoryName.isSelected = goodsCategory.isSelected
-                    if (goodsCategory.isSelected) {
-                        view.visibility = View.VISIBLE
-                    } else {
-                        view.visibility = View.INVISIBLE
-                    }
-                }
-            }
-
-        )
 
         /*
          * 因为从Room中得到的Flow转换LiveData后，数据库中数据的变化都会被观察到，
          * 所以对数据的任何操作（增改删）都不需要再额外添加刷新列表的操作
          */
         viewModelGoodsTo!!.categoryListFlow.observe(viewLifecycleOwner) {
-            categoryFlow = it as MutableList<GoodsCategory>
-            categoryFlow.first().let { it ->
-                it.isSelected = true
-                viewModelGoodsTo!!.selected.value = it
+            if (it.isNullOrEmpty()) {
+                viewModelGoodsTo!!.categoryLoadState.set(MultiStateView.VIEW_STATE_EMPTY)
+            } else {
+                viewModelGoodsTo!!.apply {
+                    categoryLoadState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    categoryList = it as MutableList<GoodsCategory>
+                    categoryList.first().let { category ->
+                        category.isSelected = true
+                        updateCurrentCategory(category.objectId)
+                    }
+                    adapter.forceUpdate()
+                }
             }
-            adapter!!.forceUpdate()
+        }
+        viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
+            adapter.forceUpdate()
         }
         initSwipeMenu()
     }
@@ -131,7 +146,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 -1 -> {
                     when (menuBridge.position) {
                         0 -> {
-                            val category = categoryFlow[adapterPosition]
+                            val category = viewModelGoodsTo!!.categoryList[adapterPosition]
                             updateDialog(category)
                         }
                     }
@@ -171,13 +186,15 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
 
-                viewModelGoodsTo!!.deleteCategory(categoryFlow[position])
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                    }, {
-                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
-                    })
+                viewModelGoodsTo!!.apply {
+                    deleteCategory(categoryList[position])
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                        }, {
+                            Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
+                        })
+                }
                 dialog.dismiss()
             }.create()
         dialog.show()

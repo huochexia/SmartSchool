@@ -117,7 +117,7 @@ class GoodsRepository(
      * 使用Flow方式从本地获取数据
      */
 
-    val categorysFlow = local.getAllCategoryFlow()
+    val categoryFlowFromLocal = local.getAllCategoryFlow()
 
 
     fun getGoodsOfCategoryFromLocalFlow(categoryId: String): Flow<List<Goods>> {

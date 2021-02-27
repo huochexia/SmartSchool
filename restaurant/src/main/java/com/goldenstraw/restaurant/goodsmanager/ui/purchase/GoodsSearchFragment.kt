@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -62,16 +61,14 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 binding.addSub
                     .setCurrentNumber(goods.quantity)
                     .setPosition(position)
-                    .setOnChangeValueListener { value, position ->
+                    .setOnChangeValueListener { value, _ ->
                         goods.quantity = value
                     }
             }
         )
-        viewModelGoodsTo!!.getIsRefresh().observe(viewLifecycleOwner, Observer {
-            if (it) {
-                adapter!!.forceUpdate()
-            }
-        })
+        viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
+            adapter!!.forceUpdate()
+        }
         initSwipeMenu()
     }
     /**
@@ -104,7 +101,6 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
          */
         val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
             menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
             when (menuBridge.position) {
                 0 -> {
                     deleteDialog(adapterPosition)
@@ -171,7 +167,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 val name = goodsName.text.toString().trim()
                 val unit = unitOfMeasure.text.toString().trim()
                 val price = unitPrice.text.toString().trim().toFloat()
-                if (name.isNullOrEmpty() || unit.isNullOrEmpty()) {
+                if (name.isEmpty() || unit.isEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
                     goods.goodsName = name

@@ -24,7 +24,7 @@
                 android:textColor="@color/secondaryTextColor"
                 android:gravity="center"
                 android:background="@color/secondaryLightColor"
-                android:onClick="@{()->fragment.viewModelGoodsTo.setAddCategoryDialogState(true)}"/>
+                android:onClick="@{()->fragment.viewModelGoodsTo.setIsPopupDialog(true)}"/>
         <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:msv_viewState="@{fragment.viewModelGoodsTo.categoryState}">
+                app:msv_viewState="@{fragment.viewModelGoodsTo.categoryLoadState}">
 
             <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/recyclerView"

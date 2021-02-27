@@ -35,7 +35,7 @@ abstract class BaseFragment<B : ViewDataBinding>
 
     private var mRootView: View? = null
 
-    protected lateinit var binding: B
+    protected lateinit var mBinding: B
 
     abstract val layoutId: Int //由具体子类提供，所以子类必须实现这个变量
 
@@ -64,8 +64,8 @@ abstract class BaseFragment<B : ViewDataBinding>
 
     private fun initBinding(rootView: View) {
         //因为不知道具体布局的绑定类是什么，所以这里使用DataBindingUtil来实现绑定对象
-        binding = DataBindingUtil.bind(rootView)!!
-        with(binding) {
+        mBinding = DataBindingUtil.bind(rootView)!!
+        with(mBinding) {
 
             //因为本工程中Fragment视图布局绑定的变量均有对应的Fragment对象，
             //所以Fragment基础类中实现了这个基本变量绑定
@@ -79,6 +79,6 @@ abstract class BaseFragment<B : ViewDataBinding>
     override fun onDestroyView() {
         super.onDestroyView()
         mRootView = null
-        binding.unbind() //视图消毁时解除数据绑定
+        mBinding.unbind() //视图消毁时解除数据绑定
     }
 }

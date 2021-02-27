@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.bumptech.glide.Glide
 import com.goldenstraw.restaurant.R
@@ -17,6 +17,7 @@ import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -53,11 +54,35 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
 
     //使用同一个Activity范围下的共享ViewModel
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
 
-    var goodsList = mutableListOf<Goods>()
 
-    val images =
+    val adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_goods_item,
+        dataSource = {
+            viewModelGoodsTo!!.goodsList
+        },
+        dataBinding = { LayoutGoodsItemBinding.bind(it) },
+        callback = { goods, binding, position ->
+            binding.goods = goods
+            binding.checkEvent = object : Consumer<Goods> {
+                override fun accept(t: Goods) {
+                    t.isChecked = !t.isChecked
+                    binding.cbGoods.isChecked = t.isChecked
+                }
+            }
+            binding.cbGoods.isChecked = goods.isChecked
+            binding.addSub
+                .setBuyMin(0)
+                .setCurrentNumber(0)
+                .setPosition(position)
+                .setOnChangeValueListener { value, _ ->
+                    goods.quantity = value
+                }
+        }
+    )
+
+    //轮播图片
+    private val images =
         mutableListOf(R.mipmap.blueshipin, R.mipmap.zhurou, R.mipmap.shucai, R.mipmap.tiaoliao)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -65,48 +90,22 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         viewModelGoodsTo = activity?.getViewModel {
             GoodsToOrderMgViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataSource = {
-                goodsList
-            },
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.checkEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        t.isChecked = !t.isChecked
-                        binding.cbGoods.isChecked = t.isChecked
-                    }
+        viewModelGoodsTo!!.goodsListFlow.observe(viewLifecycleOwner) {
+            viewModelGoodsTo!!.apply {
+                goodsList = it as MutableList<Goods>
+                if (goodsList.isEmpty()) {
+                    goodsLoadState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    goodsLoadState.set(MultiStateView.VIEW_STATE_CONTENT)
                 }
-                binding.cbGoods.isChecked = goods.isChecked
-                binding.addSub
-                    .setBuyMin(0)
-                    .setCurrentNumber(0)
-                    .setPosition(position)
-                    .setOnChangeValueListener { value, position ->
-                        goods.quantity = value
-                    }
+                setRefresh(true)
             }
-        )
-
-
-        viewModelGoodsTo!!.selected.observe(viewLifecycleOwner, Observer {
-            viewModelGoodsTo!!.fetchGoodsListFlow(it.objectId).observe(viewLifecycleOwner){goodslist->
-                goodsList = goodslist as MutableList<Goods>
-                adapter!!.forceUpdate()
-            }
-        })
-
-
-        viewModelGoodsTo!!.isGoodsListRefresh.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                adapter!!.forceUpdate()
-            }
-        })
-
-        launch {
-            with(banner) {
+        }
+        viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
+            adapter.forceUpdate()
+        }
+        lifecycleScope.launch {
+            with(mBinding.banner) {
                 setImageLoader(object : ImageLoader() {
                     override fun displayImage(context: Context, path: Any, imageView: ImageView) {
                         Glide.with(context).load(path).into(imageView)
@@ -158,8 +157,8 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     deleteDialog(adapterPosition)
                 }
                 1 -> {
-
-                    updateDialog(goodsList[adapterPosition])
+                    val goods = viewModelGoodsTo!!.goodsList[adapterPosition]
+                    updateDialog(goods)
                 }
             }
         }
@@ -181,14 +180,15 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
-
-                viewModelGoodsTo!!.deleteGoods(goodsList[position])
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                    }, {
-                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
-                    })
+                viewModelGoodsTo!!.apply {
+                    deleteGoods(goodsList[position])
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                        }, {
+                            Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
+                        })
+                }
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -231,21 +231,23 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
         dialog.show()
     }
 
-    /**
-     * 加入购物车
-     */
+    /**************************************************
+     * 加入购物车:将选择的商品加入购物车。为了是避免重复选择，从
+     * 当前显示的列表中删除已加入的商品，并非真正删除。
+     *************************************************/
     fun addGoodsToShoppingCart() {
-        viewModelGoodsTo!!.addGoodsToShoppingCar(goodsList)
-        //还原商品信息
-        var selectedList = mutableListOf<Goods>()
-        goodsList.forEach {
-            if (it.isChecked) {
-                it.isChecked = false
-                it.quantity = 0
-                selectedList.add(it)
+        viewModelGoodsTo!!.apply {
+            //还原商品信息
+            var selectedList = mutableListOf<Goods>()
+            goodsList.forEach {
+                if (it.isChecked) {
+                    it.isChecked = false
+                    selectedList.add(it)
+                }
             }
+            addGoodsToShoppingCar(selectedList)
         }
-        goodsList.removeAll(selectedList)
-        adapter!!.forceUpdate()
+
+        adapter.forceUpdate()
     }
 }

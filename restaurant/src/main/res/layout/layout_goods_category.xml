@@ -13,7 +13,7 @@
                 type="com.owner.basemodule.room.entities.GoodsCategory" />
 
         <variable
-                name="goodsEvent"
+                name="selectEvent"
                 type="com.owner.basemodule.functional.Consumer" />
 
         <variable
@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="59dp"
                 android:background="@color/common_gray"
-                android:onClick="@{()->goodsEvent.accept(category)}">
+                android:onClick="@{()->selectEvent.accept(category)}">
 
             <TextView
                     android:id="@+id/tv_category_name"
@@ -38,7 +38,6 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/category_bg_selector"
                     android:gravity="center"
-                    android:onClick="@{()->goodsEvent.accept(category)}"
                     android:text="@{category.categoryName}"
                     android:textColor="@drawable/category_text_selector"
                     android:textSize="18sp"
@@ -48,10 +47,11 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="商品类别名" />
 
+            <!--标记当前的选择项目-->
             <View
-                    android:id="@+id/view"
-                    android:layout_width="10dp"
-                    android:layout_height="30dp"
+                    android:id="@+id/sign_view"
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
                     android:background="@color/common_red"
                     android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"

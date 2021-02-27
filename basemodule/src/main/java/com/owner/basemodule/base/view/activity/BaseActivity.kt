@@ -30,7 +30,7 @@ import kotlinx.coroutines.MainScope
 abstract class BaseActivity<B : ViewDataBinding>
     : InjectionActivity(), CoroutineScope by MainScope() {
 
-    private lateinit var binding: B
+    private lateinit var mBinding: B
 
     abstract val layoutId: Int
 
@@ -51,8 +51,8 @@ abstract class BaseActivity<B : ViewDataBinding>
      *初始化绑定
      */
     private fun initBinding() {
-        binding = DataBindingUtil.setContentView(this, layoutId)
-        with(binding) {
+        mBinding = DataBindingUtil.setContentView(this, layoutId)
+        with(mBinding) {
             //因为本工程中Activity视图布局是与Activity对象进行绑定
             // 所以Activity基础类中实现了这个基本变量绑定
             setVariable(BR.activity, this@BaseActivity)

@@ -122,7 +122,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             viewModel.getDailyMealOfDate(where)
         }
         //增加菜单，需要判断是增加哪类菜品
-        binding.dailyMeal.addDailyMeal = object : Consumer<CookKind> {
+        mBinding.dailyMeal.addDailyMeal = object : Consumer<CookKind> {
 
             override fun accept(t: CookKind) {
                 val bundle = Bundle()
