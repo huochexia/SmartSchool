@@ -31,7 +31,7 @@
                 android:padding="6dp"
                 android:text="商 品"
                 android:textColor="@color/common_black"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:drawableRightCompat="@drawable/ic_add_black_24dp" />
 

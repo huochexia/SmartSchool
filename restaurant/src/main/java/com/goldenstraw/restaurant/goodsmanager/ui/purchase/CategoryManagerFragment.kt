@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
@@ -22,12 +20,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_category_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -157,16 +150,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
-
-                viewModelGoodsTo!!.apply {
-                    deleteCategory(category)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                        }, {
-                            Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
-                        })
-                }
+                viewModelGoodsTo!!.deleteCategory(category)
                 dialog.dismiss()
             }.create()
         dialog.show()

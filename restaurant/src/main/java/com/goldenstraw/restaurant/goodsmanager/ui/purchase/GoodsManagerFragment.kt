@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.bumptech.glide.Glide
@@ -28,7 +27,6 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.toast
 import com.youth.banner.BannerConfig
 import com.youth.banner.loader.ImageLoader
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
 import kotlinx.coroutines.launch
@@ -161,15 +159,9 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
-                viewModelGoodsTo!!.apply {
-                    deleteGoods(goods)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                        }, {
-                            Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
-                        })
-                }
+
+                viewModelGoodsTo!!.deleteGoods(goods)
+
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -273,8 +265,8 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                 }
             }
             addGoodsToShoppingCar(selectedList)
+            goodsList.removeAll(selectedList)
         }
-
         adapter.forceUpdate()
     }
 }

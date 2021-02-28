@@ -3,9 +3,8 @@ package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -18,12 +17,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.toast
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_search_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -37,7 +31,34 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         get() = R.layout.fragment_search_goods
     private val repository by instance<GoodsRepository>()
     var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_goods_item,
+        dataSource = { viewModelGoodsTo!!.searchGoodsResultList },
+        dataBinding = { LayoutGoodsItemBinding.bind(it) },
+        callback = { goods, binding, position ->
+            binding.goods = goods
+            binding.checkEvent = object : Consumer<Goods> {
+                override fun accept(t: Goods) {
+                    t.isChecked = !t.isChecked
+                    binding.cbGoods.isChecked = t.isChecked
+                }
+            }
+            binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
+
+            binding.longClick = object : Consumer<Goods> {
+                override fun accept(t: Goods) {
+                    managerDialog(t)
+                }
+            }
+            binding.addSub
+                .setBuyMin(0)
+                .setCurrentNumber(0)
+                .setPosition(position)
+                .setOnChangeValueListener { value, _ ->
+                    goods.quantity = value
+                }
+        }
+    )
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -45,83 +66,42 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         viewModelGoodsTo = activity?.getViewModel {
             GoodsToOrderMgViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataSource = { viewModelGoodsTo!!.searchGoodsResultList },
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.checkEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        t.isChecked = !t.isChecked
-                        binding.cbGoods.isChecked = t.isChecked
-                    }
-                }
-                binding.cbGoods.isChecked = goods.isChecked //这里设置的是初始状态
-                binding.addSub
-                    .setCurrentNumber(goods.quantity)
-                    .setPosition(position)
-                    .setOnChangeValueListener { value, _ ->
-                        goods.quantity = value
-                    }
-            }
-        )
+
         viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
-            adapter!!.forceUpdate()
+            adapter.forceUpdate()
         }
-        initSwipeMenu()
+
     }
-    /**
-     * 初始化Item侧滑菜单
+
+    /********************************************************
+     * 管理数据对话框
+     *******************************************************/
+    /*
+    管理数据
      */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(R.color.colorAccent)
-                .setText("删除")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(150)
-            rightMenu.addMenuItem(deleteItem)
-            val updateItem = SwipeMenuItem(context)
-                .setBackground(R.color.secondaryColor)
-                .setText("修改")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(150)
-            rightMenu.addMenuItem(updateItem)
+    private fun managerDialog(goods: Goods) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        val update = view.findViewById<Button>(R.id.update_action)
+        val managerDialog = AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
+            deleteDialog(goods)
+            managerDialog.dismiss()
         }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_search_goods.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            when (menuBridge.position) {
-                0 -> {
-                    deleteDialog(adapterPosition)
-                }
-                1 -> {
-
-                    updateDialog(viewModelGoodsTo!!.searchGoodsResultList[adapterPosition])
-                }
-            }
+        update.setOnClickListener {
+            updateDialog(goods)
+            managerDialog.dismiss()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_search_goods.setOnItemMenuClickListener(mItemMenuClickListener)
     }
 
-    /**
-     * 删除对话框
+    /*
+     * 删除数据
      */
     @SuppressLint("AutoDispose")
-    private fun deleteDialog(position: Int) {
+    private fun deleteDialog(goods: Goods) {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
             .setTitle("确定删除")
@@ -129,23 +109,18 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
+                viewModelGoodsTo!!.deleteGoods(goods)
 
-                viewModelGoodsTo!!.deleteGoods(viewModelGoodsTo!!.searchGoodsResultList[position])
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                    }, {
-                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_LONG).show()
-                    })
-                viewModelGoodsTo!!.searchGoodsResultList.removeAt(position)
-                adapter!!.forceUpdate()
+                viewModelGoodsTo!!.searchGoodsResultList.remove(goods)
+
+                adapter.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
     }
 
-    /**
-     * 修改对话框
+    /*
+     * 修改数据
      */
     @SuppressLint("AutoDispose")
     private fun updateDialog(goods: Goods) {
@@ -175,7 +150,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     goods.unitPrice = price
                     viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
                         .subscribe()
-                    adapter!!.forceUpdate()
+                    adapter.forceUpdate()
                     dialog.dismiss()
                 }
             }.create()
@@ -186,17 +161,19 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
      * 加入购物车
      */
     fun addGoodsToShoppingCar() {
-        viewModelGoodsTo!!.addGoodsToShoppingCar(viewModelGoodsTo!!.searchGoodsResultList)
-        //还原商品信息
-        val selectedList = mutableListOf<Goods>()
-        viewModelGoodsTo!!.searchGoodsResultList.forEach {
-            if (it.isChecked) {
-                it.isChecked = false
-                it.quantity = 1
-                selectedList.add(it)
+        viewModelGoodsTo!!.apply {
+            //还原商品信息
+            val selectedList = mutableListOf<Goods>()
+            searchGoodsResultList.forEach {
+                if (it.isChecked) {
+                    it.isChecked = false
+                    selectedList.add(it)
+                }
             }
+            addGoodsToShoppingCar(selectedList)
+            searchGoodsResultList.removeAll(selectedList)
         }
-        viewModelGoodsTo!!.searchGoodsResultList.removeAll(selectedList)
-        adapter!!.forceUpdate()
+
+        adapter.forceUpdate()
     }
 }
