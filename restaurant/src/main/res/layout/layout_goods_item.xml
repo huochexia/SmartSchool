@@ -19,13 +19,17 @@
         <variable
                 name="clickEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+
+        <variable
+                name="longClick"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="80dp"
             app:cardBackgroundColor="#00F5F2F2"
-            android:onClick="@{()->clickEvent.accept(goods)}"
+            android:onClick="@{()->checkEvent.accept(goods)}"
             app:cardCornerRadius="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,6 +66,7 @@
                     android:layout_marginBottom="8dp"
                     android:text="@{goods.goodsName}"
                     android:textSize="18sp"
+                    app:bind_view_onLongClick="@{()->longClick.accept(goods)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/cb_goods"
                     app:layout_constraintTop_toTopOf="parent"

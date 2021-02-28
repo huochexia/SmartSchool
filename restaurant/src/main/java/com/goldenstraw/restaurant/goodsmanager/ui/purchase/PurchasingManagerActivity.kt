@@ -20,6 +20,7 @@ import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
 import kotlinx.android.synthetic.main.activity_purchasing_manager.*
@@ -53,8 +54,6 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
         setSupportActionBar(toolbar)//没有这个显示不了菜单
         viewModelGoodsTo = getViewModel { GoodsToOrderMgViewModel(repository) }
 
-        viewModelGoodsTo.isPopupDialog.observe(this) { showAddCategoryDialog() }
-
         val categoryFragment =
             CategoryManagerFragment()
         val goodsFragment =
@@ -69,75 +68,7 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
 
     }
 
-    /**
-     * 显示增加类别的对话框
-     */
-    private fun showAddCategoryDialog() {
-        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
-        val editText = view.findViewById<EditText>(R.id.dialog_edit)
-        val dialog = AlertDialog.Builder(this)
-            .setIcon(R.mipmap.add_icon)
-            .setTitle("增加商品类别")
-            .setView(view)
-            .setNegativeButton("取消") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton("确定") { dialog, _ ->
-                var content = editText.text.toString().trim()
-                if (content.isNullOrEmpty()) {
-                    toast { "请填写必须内容！！" }
-                } else {
-                    viewModelGoodsTo.addCategoryToRepository(content)
-                    dialog.dismiss()
-                }
-            }.create()
-        dialog.show()
-    }
 
-    /**
-     * 显示增加商品的对话框
-     */
-    private fun showAddGoodsDialog(category: GoodsCategory) {
-        val view = layoutInflater.inflate(R.layout.add_or_edit_more_dialog_view, null)
-        val goodsName = view.findViewById<EditText>(R.id.et_goods_name)
-        val unitOfMeasure = view.findViewById<EditText>(R.id.et_unit_of_measure)
-        val unitPrice = view.findViewById<EditText>(R.id.et_unit_price)
-        unitPrice.visibility = View.VISIBLE
-        val dialog = AlertDialog.Builder(this)
-            .setIcon(R.mipmap.add_icon)
-            .setTitle("增加商品----" + category.categoryName)
-            .setView(view)
-            .setNegativeButton("取消") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton("确定") { dialog, _ ->
-                val name = goodsName.text.toString().trim()
-                val unit = unitOfMeasure.text.toString().trim()
-                val price = unitPrice.text.toString().trim().toFloat()
-                if (name.isNullOrEmpty()) {
-                    toast { "请填写商品名称！！" }
-                    return@setPositiveButton
-                }
-                if (unit.isNullOrEmpty()) {
-                    toast { "请填写计量单位！！" }
-                    return@setPositiveButton
-                }
-                if (price == 0.0f) {
-                    toast { "请填写商品单价！！" }
-                    return@setPositiveButton
-                }
-                val goods = NewGoods(
-                    goodsName = name,
-                    unitOfMeasurement = unit,
-                    categoryCode = category.objectId,
-                    unitPrice = price
-                )
-                viewModelGoodsTo.addGoodsToRepository(goods)
-                dialog.dismiss()
-
-            }.create()
-        dialog.show()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search_goods, menu)
@@ -148,21 +79,12 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_shopping_cart -> {
-                var intent = Intent()
+                //打开购物车
+                val intent = Intent()
                 intent.setClass(this, SubscribeGoodsManagerActivity::class.java)
                 startActivityForResult(intent, 1)
             }
-            R.id.action_add_goods_item -> {
-                val category = viewModelGoodsTo.categoryList.filter {
-                    it.objectId == viewModelGoodsTo.currentCategory.value
-                }
-                showAddGoodsDialog(category[0])
-            }
-            R.id.next_week_goods -> {
-                val intent = Intent(this, GoodsOfNextWeekActivity::class.java)
-                startActivity(intent)
 
-            }
             R.id.subscribe_goods -> {
 
                 //从DailyMeal中获取后天菜单中的原材料信息，并加入购物车后，跳转到购物车界面
@@ -189,22 +111,22 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
     ) {
         // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
         DatePickerDialog(
-            activity,
+            activity!!,
             themeResId,
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            { _, year, monthOfYear, dayOfMonth ->
                 // 绑定监听器(How the parent is notified that the date is set.)
                 // 此处得到选择的时间，可以进行你想要的操作
-                var month = if (monthOfYear + 1 < 10) {
+                val month = if (monthOfYear + 1 < 10) {
                     "0${monthOfYear + 1}"
                 } else {
                     "${monthOfYear + 1}"
                 }
-                var day = if (dayOfMonth < 10) {
+                val day = if (dayOfMonth < 10) {
                     "0${dayOfMonth}"
                 } else {
                     "$dayOfMonth"
                 }
-                var copyDate = "$year-$month-$day"
+                val copyDate = "$year-$month-$day"
                 val where =
                     "{\"\$and\":[{\"mealDate\":\"$copyDate\"},{\"direct\":${prefs.district}}]}"
                 viewModelGoodsTo.getFoodOfDailyToShoppingCar(where)

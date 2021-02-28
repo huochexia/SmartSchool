@@ -17,14 +17,15 @@
             android:orientation="vertical">
         <TextView
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="类别"
-                android:drawableRight="@drawable/ic_add_black_24dp"
-                android:textSize="18sp"
-                android:textColor="@color/secondaryTextColor"
-                android:gravity="center"
-                android:background="@color/secondaryLightColor"
-                android:onClick="@{()->fragment.viewModelGoodsTo.setIsPopupDialog(true)}"/>
+                android:layout_height="wrap_content"
+                android:text="类 别"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:textColor="@color/common_black"
+                android:background="#F2F2F2"
+                android:textStyle="bold"
+                android:onClick="@{()->fragment.addDialog()}"
+                app:drawableRightCompat="@drawable/ic_add_black_24dp" />
         <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -37,7 +38,7 @@
                 android:layout_weight="1"
                 app:msv_viewState="@{fragment.viewModelGoodsTo.categoryLoadState}">
 
-            <com.yanzhenjie.recyclerview.SwipeRecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

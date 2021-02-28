@@ -12,4 +12,6 @@
     <string name="unit_of_measure">单位：</string>
     <string name="unit_of_price">单价：</string>
     <string name="total">小计：</string>
+    <string name="update_action">修  改</string>
+    <string name="delete_action">删  除</string>
 </resources>

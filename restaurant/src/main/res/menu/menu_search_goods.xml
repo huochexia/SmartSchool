@@ -3,29 +3,20 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--右侧搜索操作条目-->
     <item
-            android:id="@+id/subscribe_goods"
-            android:icon="@drawable/ic_baseline_add_shopping_cart_24"
-            android:title="申购商品"
-            app:showAsAction="always" />
-
-    <item
             android:id="@+id/action_search"
             android:title="查找商品"
             app:actionViewClass="androidx.appcompat.widget.SearchView"
-            app:showAsAction="always" />
+            app:showAsAction="ifRoom" />
+    <item
+            android:id="@+id/subscribe_goods"
+            android:icon="@drawable/ic_baseline_add_shopping_cart_24"
+            android:title="申购商品"
+            app:showAsAction="ifRoom" />
+
     <item
             android:id="@+id/action_shopping_cart"
             android:icon="@drawable/ic_shopping_cart"
             android:title="@string/add_to_shopping_cart"
-            app:showAsAction="always" />
-    <item
-            android:id="@+id/action_add_goods_item"
-            android:title="增加商品"
-            app:showAsAction="never" />
-
-    <item
-            android:id="@+id/next_week_goods"
-            android:title="下周所需商品"
-            app:showAsAction="never" />
+            app:showAsAction="ifRoom" />
 
 </menu>

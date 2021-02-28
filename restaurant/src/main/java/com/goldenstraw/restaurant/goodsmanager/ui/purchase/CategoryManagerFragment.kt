@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.observe
@@ -68,6 +69,11 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                         }
                     }
                 }
+                longClick = object : Consumer<GoodsCategory> {
+                    override fun accept(t: GoodsCategory) {
+                        managerDialog(t)
+                    }
+                }
                 tvCategoryName.isSelected = goodsCategory.isSelected
                 if (goodsCategory.isSelected) {
                     signView.visibility = View.VISIBLE
@@ -109,75 +115,41 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
-        initSwipeMenu()
     }
 
-    /**
-     * 初始化Item侧滑菜单
+
+    /*************************************************************
+     * 管理数据对话框
+     ************************************************************/
+    /*
+      管理数据
      */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(R.color.colorAccent)
-                .setText("删除")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(120)
-            leftMenu.addMenuItem(deleteItem)
-            val updateItem = SwipeMenuItem(context)
-                .setBackground(R.color.secondaryColor)
-                .setText("修改")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(120)
-            rightMenu.addMenuItem(updateItem)
-        }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        recyclerView.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            when (menuBridge.direction) {//判断 1是左侧，-1是右侧的菜单
-                -1 -> {
-                    when (menuBridge.position) {
-                        0 -> {
-                            val category = viewModelGoodsTo!!.categoryList[adapterPosition]
-                            updateDialog(category)
-                        }
-                    }
-                }
-                1 -> {
-                    when (menuBridge.position) {
-                        0 -> if (viewModelGoodsTo!!.goodsList.isEmpty()) {
-                            deleteDialog(adapterPosition)
-                        } else {
-                            Toast.makeText(
-                                context, "类别中有商品不能删除！！",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
+    private fun managerDialog(category: GoodsCategory) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        val update = view.findViewById<Button>(R.id.update_action)
+        val managerDialog = AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
 
-                }
-            }
-
+        delete.setOnClickListener {
+            deleteDialog(category)
+            managerDialog.dismiss()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        recyclerView.setOnItemMenuClickListener(mItemMenuClickListener)
+
+        update.setOnClickListener {
+            updateDialog(category)
+            managerDialog.dismiss()
+        }
+
     }
 
-    /**
-     * 删除对话框
+    /*
+     * 删除数据
      */
     @SuppressLint("AutoDispose")
-    private fun deleteDialog(position: Int) {
+    private fun deleteDialog(category: GoodsCategory) {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
             .setTitle("确定删除")
@@ -187,7 +159,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
 
                 viewModelGoodsTo!!.apply {
-                    deleteCategory(categoryList[position])
+                    deleteCategory(category)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
@@ -200,14 +172,14 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         dialog.show()
     }
 
-    /**
-     * 修改对话框
+    /*
+     * 修改数据
      */
     @SuppressLint("AutoDispose")
     private fun updateDialog(category: GoodsCategory) {
         val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
-        val name = view.findViewById<EditText>(R.id.dialog_edit)
-        name.setText(category.categoryName)
+        val input = view.findViewById<EditText>(R.id.dialog_edit)
+        input.setText(category.categoryName)
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_update_name)
             .setTitle("修改类别信息")
@@ -216,14 +188,38 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 dialog.dismiss()
             }
             .setPositiveButton("确定") { dialog, _ ->
-                val name = name.text.toString().trim()
-                if (name.isNullOrEmpty()) {
+                val name = input.text.toString().trim()
+                if (name.isEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
                     category.categoryName = name
                     viewModelGoodsTo!!.updateCategory(category)
                         .subscribeOn(Schedulers.computation())
                         .subscribe()
+                    dialog.dismiss()
+                }
+            }.create()
+        dialog.show()
+    }
+    /*
+     * 增加数据
+     */
+    fun addDialog() {
+        val view = layoutInflater.inflate(R.layout.add_or_edit_one_dialog_view, null)
+        val editText = view.findViewById<EditText>(R.id.dialog_edit)
+        val dialog = AlertDialog.Builder(context)
+            .setIcon(R.mipmap.add_icon)
+            .setTitle("增加商品类别")
+            .setView(view)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                val content = editText.text.toString().trim()
+                if (content.isEmpty()) {
+                    toast { "请填写必须内容！！" }
+                } else {
+                    viewModelGoodsTo!!.addCategoryToRepository(content)
                     dialog.dismiss()
                 }
             }.create()

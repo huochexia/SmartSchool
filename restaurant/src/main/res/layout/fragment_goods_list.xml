@@ -10,38 +10,40 @@
                 type="com.goldenstraw.restaurant.goodsmanager.ui.purchase.GoodsManagerFragment" />
     </data>
 
+
     <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_weight="5"
+            android:orientation="vertical"
+            android:baselineAligned="false">
 
+        <com.youth.banner.Banner
+                android:id="@+id/banner"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
 
-        <LinearLayout
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F2F2F2"
+                android:onClick="@{()->fragment.addDialog()}"
+                android:padding="6dp"
+                android:text="商 品"
+                android:textColor="@color/common_black"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:drawableRightCompat="@drawable/ic_add_black_24dp" />
+
+        <com.kennyc.view.MultiStateView
+                style="@style/MultiStateStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="horizontal">
-
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:orientation="vertical">
-
-                <com.youth.banner.Banner
-                        android:id="@+id/banner"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"/>
-
-                <com.kennyc.view.MultiStateView
-                        style="@style/MultiStateStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        app:msv_viewState="@{fragment.viewModelGoodsTo.goodsLoadState}">
+                app:msv_viewState="@{fragment.viewModelGoodsTo.goodsLoadState}">
 
 
-                    <androidx.core.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
@@ -70,8 +72,5 @@
                         android:textColor="@color/secondaryTextColor"/>
             </LinearLayout>
 
-        </LinearLayout>
 
-
-    </LinearLayout>
 </layout>

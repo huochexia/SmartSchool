@@ -15,7 +15,9 @@
         <variable
                 name="selectEvent"
                 type="com.owner.basemodule.functional.Consumer" />
-
+        <variable
+                name="longClick"
+                type="com.owner.basemodule.functional.Consumer" />
         <variable
                 name="tag"
                 type="Boolean" />
@@ -28,9 +30,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="59dp"
-                android:background="@color/common_gray"
-                android:onClick="@{()->selectEvent.accept(category)}">
+                android:layout_height="59dp">
 
             <TextView
                     android:id="@+id/tv_category_name"
@@ -39,8 +39,10 @@
                     android:background="@drawable/category_bg_selector"
                     android:gravity="center"
                     android:text="@{category.categoryName}"
+                    android:onClick="@{()->selectEvent.accept(category)}"
                     android:textColor="@drawable/category_text_selector"
                     android:textSize="18sp"
+                    app:bind_view_onLongClick="@{()->longClick.accept(category)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <Button
+            android:id="@+id/delete_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_action"
+            android:background="@drawable/white_to_gray_pressed"
+            android:textAlignment="textStart"
+            android:paddingStart="24dp"
+            android:textSize="16sp"
+            android:textColor="@color/common_red"
+          />
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_ccc" />
+
+    <Button
+            android:id="@+id/update_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_to_gray_pressed"
+            android:text="@string/update_action"
+            android:textSize="16sp"
+            android:textAlignment="textStart"
+            android:paddingStart="24dp"
+            android:textColor="@color/common_black"
+          />
+
+
+</LinearLayout>

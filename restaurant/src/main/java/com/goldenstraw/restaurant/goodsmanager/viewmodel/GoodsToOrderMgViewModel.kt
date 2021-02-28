@@ -42,14 +42,6 @@ class GoodsToOrderMgViewModel(
         _isRefresh.postValue(boolean)
     }
 
-    //通过这个可观察对象，Activity中对其观察，从而实现在Fragment中调用Activity的操作
-    private val _isPopupDialog = MutableLiveData<Boolean>()  //弹出对话框
-    val isPopupDialog = _isPopupDialog
-    fun setIsPopupDialog(boolean: Boolean) {
-        _isPopupDialog.postValue(boolean)
-    }
-
-
     var selected = MutableLiveData<GoodsCategory>() //当前选择的商品类别
 
 
