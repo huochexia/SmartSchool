@@ -148,8 +148,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     goods.goodsName = name
                     goods.unitOfMeasurement = unit
                     goods.unitPrice = price
-                    viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
-                        .subscribe()
+                    viewModelGoodsTo!!.updateGoods(goods)
                     adapter.forceUpdate()
                     dialog.dismiss()
                 }

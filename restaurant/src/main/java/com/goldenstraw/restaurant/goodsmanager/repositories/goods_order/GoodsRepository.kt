@@ -4,10 +4,9 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.*
-import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 
@@ -19,103 +18,103 @@ class GoodsRepository(
     private val local: ILocalGoodsDataSource
 ) : BaseRepositoryBoth<IRemoteGoodsDataSource, ILocalGoodsDataSource>(remote, local) {
 
+
+    /********************************************************
+     * 远程数据操作
+     ********************************************************/
     /**
      * 增加
      */
     //1、 增加商品到远程数据库,成功后取出objectId，赋值给Goods对象，然后保存本地库
 
-    fun addGoods(goods: NewGoods): Observable<Goods> {
-        return remote.addGoods(goods).toObservable()
-            .map {
-                if (!it.isSuccess()) {
-                    throw ApiException(it.code)
-                }
-                val newGoods = Goods(
-                    objectId = it.objectId!!,
-                    goodsName = goods.goodsName,
-                    unitOfMeasurement = goods.unitOfMeasurement,
-                    categoryCode = goods.categoryCode,
-                    unitPrice = goods.unitPrice
-                )
-                newGoods
-            }
-
+    suspend fun addGoodsToRemote(goods: NewGoods): CreateObject {
+        return remote.addGoodsToRemote(goods)
     }
 
+    //2、增加商品类别到远程数据库。
 
-    //2、增加商品类别到远程数据库，传入类别名称，成功后得到新类别的objectId,使用objectId,创建新类别，然后保存本地库
-
-    fun addGoodsCategory(category: NewCategory): Observable<GoodsCategory> {
-        return remote.addCategory(category).toObservable()
-            .map {
-                if (!it.isSuccess()) {
-                    throw ApiException(it.code)
-                }
-                val newCategory = GoodsCategory(it.objectId!!, categoryName = category.categoryName)
-                newCategory
-            }
+    suspend fun addCategoryToRemote(category: NewCategory): CreateObject {
+        return remote.addCategoryToRemote(category)
     }
-
-    /*
-      将全部商品加入到本地
-     */
-    fun addGoodsListToLocal(list: MutableList<Goods>): Completable {
-        return local.addGoodsAll(list)
-    }
-
-    fun insertGoodsToLocal(goods: Goods): Completable {
-        return local.insertNewGoodsToLocal(goods)
-    }
-
-
-    /*
-      将所有商品类别加入本地
-     */
-    fun addCategoryListToLocal(list: MutableList<GoodsCategory>): Completable {
-        return local.addCategoryAll(list)
-    }
-
-    fun insertCategoryToLocal(category: GoodsCategory): Completable {
-        return local.insertCategoryToLocal(category)
-    }
-
-
 
     /**
      * 更新
      */
     //1、更新远程数据
-    fun updateGoods(goods: Goods): Completable {
+    suspend fun updateGoodsToRemote(goods: Goods) {
         val updateGoods = NewGoods(
             goodsName = goods.goodsName,
             unitOfMeasurement = goods.unitOfMeasurement,
             categoryCode = goods.categoryCode,
             unitPrice = goods.unitPrice
         )
-        return remote.updateGoods(updateGoods, goods.objectId)
+        remote.updateGoodsToRemote(updateGoods, goods.objectId)
 
     }
 
     //2、更新类别
-    fun updateCategory(category: GoodsCategory): Completable {
+    suspend fun updateCategoryToRemote(category: GoodsCategory) {
         val updateCategory = NewCategory(
             categoryName = category.categoryName
         )
-        return remote.updateCategory(updateCategory, category.objectId)
+        remote.updateCategoryToRemote(updateCategory, category.objectId)
     }
 
-    fun getAllCategoryFromNetwork(): Observable<MutableList<GoodsCategory>> {
-        return remote.getAllCategory()
+    /**
+     * 获取远程数据
+     */
+    suspend fun getAllCategoryFromNetwork(): ObjectList<GoodsCategory> {
+        return remote.getAllOfCategory()
     }
 
-    fun getAllGoodsOfCategoryFromNetwork(category: GoodsCategory): Observable<MutableList<Goods>> {
+    suspend fun getGoodsOfCategoryFromNetwork(category: GoodsCategory): ObjectList<Goods> {
         return remote.getGoodsOfCategory(category)
     }
 
+    /**
+     * 删除
+     */
+    suspend fun deleteGoodsFromRemote(goods: Goods) {
+        remote.deleteGoods(goods)
+    }
+
+    suspend fun deleteCategoryFromRemote(category: GoodsCategory) {
+        remote.deleteCategory(category)
+    }
 
     /**
-     * 使用Flow方式从本地获取数据
+     * 获取某日菜单
      */
+    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
+        return remote.getDailyMealOfDate(where)
+    }
+
+    /*****************************************
+     * 本地数据
+     *****************************************/
+    /*
+         将商品加入到本地
+        */
+    suspend fun addGoodsListToLocal(list: List<Goods>) {
+        local.addGoodsListToLocal(list)
+    }
+
+    suspend fun addOrUpdateGoodsToLocal(goods: Goods) {
+        local.addOrUpdateGoodsToLocal(goods)
+    }
+
+
+    /*
+      将商品类别加入本地
+     */
+    suspend fun addCategoryListToLocal(list: MutableList<GoodsCategory>) {
+        local.addCategoryListToLocal(list)
+    }
+
+    suspend fun addOrUpdateCategoryToLocal(category: GoodsCategory) {
+        local.addOrUpdateCategoryToLocal(category)
+    }
+
 
     val categoryFlowFromLocal = local.getAllCategoryFlow()
 
@@ -138,36 +137,23 @@ class GoodsRepository(
     /**
      * 删除
      */
-    fun deleteGoodsFromLocal(goods: Goods): Completable {
-        return local.deleteGoodsFromLocal(goods)
+    suspend fun deleteGoodsFromLocal(goods: Goods) {
+        local.deleteGoodsFromLocal(goods)
     }
 
-    fun deleteCategoryFromLocal(categroy: GoodsCategory): Completable {
+    suspend fun deleteCategoryFromLocal(categroy: GoodsCategory) {
         return local.deleteCategoryFromLocal(categroy)
-    }
-
-    fun deleteGoodsFromRemote(goods: Goods): Completable {
-        return remote.deleteGoods(goods)
-    }
-
-    fun deleteCategoryFromRemote(category: GoodsCategory): Completable {
-        return remote.deleteCategory(category)
     }
 
 
     /**
      * 清空本地内容，主要是为了同步做准备。
      */
-    fun clearAllData(): Completable {
-        return local.clearGoodsAll().andThen(local.clearCategoryAll())
+    suspend fun clearLocalData() {
+        local.clearGoodsAll()
+        local.clearCategoryAll()
     }
 
-    /**
-     * 获取某日菜单
-     */
-    suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
-        return remote.getDailyMealOfDate(where)
-    }
 
     /**
      * 新版本对购物车的操作

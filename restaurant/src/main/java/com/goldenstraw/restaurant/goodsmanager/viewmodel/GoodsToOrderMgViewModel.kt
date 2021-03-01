@@ -1,22 +1,23 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
-import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
 
 
 /**
@@ -55,6 +56,7 @@ class GoodsToOrderMgViewModel(
         currentCategory.postValue(categoryId)
     }
 
+    @ExperimentalCoroutinesApi
     val goodsListFlow = currentCategory.switchMap {
         repository.getGoodsOfCategoryFromLocalFlow(it)
             .onStart {
@@ -65,6 +67,7 @@ class GoodsToOrderMgViewModel(
             }.asLiveData()
     }
 
+    @ExperimentalCoroutinesApi
     val categoryListFlow = repository.categoryFlowFromLocal
         .onStart {
             categoryLoadState.set(MultiStateView.VIEW_STATE_LOADING)
@@ -94,65 +97,82 @@ class GoodsToOrderMgViewModel(
     /*
      * 删除商品信息或类别
      */
-    fun deleteGoods(goods: Goods): Completable {
-        return repository.deleteGoodsFromLocal(goods)
-            .andThen(repository.deleteGoodsFromRemote(goods))
+    fun deleteGoods(goods: Goods) {
+        launchUI {
+            repository.deleteGoodsFromRemote(goods)
+            repository.deleteGoodsFromLocal(goods)
+        }
+
     }
 
-    fun deleteCategory(category: GoodsCategory): Completable {
-        return repository.deleteCategoryFromLocal(category)
-            .andThen(repository.deleteCategoryFromRemote(category))
+    fun deleteCategory(category: GoodsCategory) {
+        launchUI {
+            repository.deleteCategoryFromRemote(category)
+            repository.deleteCategoryFromLocal(category)
+        }
+
     }
 
     /*
      * 修改信息
      */
-    fun updateGoods(goods: Goods): Completable {
-        return repository.updateGoods(goods)
-            .andThen(repository.insertGoodsToLocal(goods))
+    fun updateGoods(goods: Goods) {
+        viewModelScope.launch {
+            repository.updateGoodsToRemote(goods)
+            repository.addOrUpdateGoodsToLocal(goods)
+        }
     }
 
-    fun updateCategory(category: GoodsCategory): Completable {
-        return repository.updateCategory(category)
-            .andThen(repository.insertCategoryToLocal(category))
+    fun updateCategory(category: GoodsCategory) {
+        viewModelScope.launch {
+            repository.updateCategoryToRemote(category)
+            repository.addOrUpdateCategoryToLocal(category)
+        }
     }
 
 
     /*
-      保存新增类别到数据库中
+      保存新增类别到数据库中，先保存到网络，成功后利用返回的objectId，形成新商品保存本地
      */
-    fun addCategoryToRepository(category: String) {
-        val newCategory = NewCategory(category)
-        repository.addGoodsCategory(newCategory)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                repository.insertCategoryToLocal(it).subscribeOn(Schedulers.newThread())
-                    .autoDisposable(this)
-                    .subscribe()
-            }, {
-
-            })
+    fun addCategory(categoryName: String) {
+        val newCategory = NewCategory(categoryName)
+        viewModelScope.launch {
+            val defferd = async {
+                repository.addCategoryToRemote(newCategory)
+            }
+            val result = defferd.await()
+            if (result.isSuccess()) {
+                repository.addOrUpdateCategoryToLocal(
+                    GoodsCategory(
+                        result.objectId!!, categoryName
+                    )
+                )
+            } else {
+                throw ApiException(result.code)
+            }
+        }
     }
 
     /*
-    保存新增加商品到数据库中
+    保存新增加商品到数据库中,先保存到网络，成功后利用返回的objectId，形成新商品保存本地
      */
-    fun addGoodsToRepository(goods: NewGoods) {
-        repository.addGoods(goods)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                repository.insertGoodsToLocal(it).subscribeOn(Schedulers.newThread())
-                    .autoDisposable(this)
-                    .subscribe()
-                goodsLoadState.set(MultiStateView.VIEW_STATE_CONTENT)
-
-            }, {
-
-            })
+    fun addGoods(goods: NewGoods) {
+        viewModelScope.launch {
+            val defferd = async { repository.addGoodsToRemote(goods) }
+            val result = defferd.await()
+            if (result.isSuccess()) {
+                val newGoods = Goods(
+                    objectId = result.objectId!!,
+                    goodsName = goods.goodsName,
+                    unitOfMeasurement = goods.unitOfMeasurement,
+                    categoryCode = goods.categoryCode,
+                    unitPrice = goods.unitPrice
+                )
+                repository.addOrUpdateGoodsToLocal(newGoods)
+            } else {
+                throw ApiException(result.code)
+            }
+        }
     }
 
 
@@ -216,39 +236,32 @@ class GoodsToOrderMgViewModel(
      ***************************************************/
     fun syncAllData() {
         launchUI {
-            repository.clearAllData()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .autoDisposable(this@GoodsToOrderMgViewModel)
-                .subscribe({
-                    repository.getAllCategoryFromNetwork()
-                        .subscribeOn(Schedulers.io())
-                        .autoDisposable(this@GoodsToOrderMgViewModel)
-                        .subscribe {
-                            repository.addCategoryListToLocal(it)
-                                .subscribeOn(Schedulers.newThread())
-                                .autoDisposable(this@GoodsToOrderMgViewModel)
-                                .subscribe({
-                                }, {
+            //1.清空本地数据
+            repository.clearLocalData()
+            //2.获取类别
+            val defer1 = async { repository.getAllCategoryFromNetwork() }
 
-                                })
-                            Observable.fromIterable(it)
-                                .subscribeOn(Schedulers.newThread())
-                                .autoDisposable(this@GoodsToOrderMgViewModel)
-                                .subscribe { category ->
-                                    repository.getAllGoodsOfCategoryFromNetwork(category)
-                                        .autoDisposable(this@GoodsToOrderMgViewModel)
-                                        .subscribe { goodslist ->
-                                            repository.addGoodsListToLocal(goodslist)
-                                                .autoDisposable(this@GoodsToOrderMgViewModel)
-                                                .subscribe({}, {})
-                                        }
-                                }
-                        }
-
-                }, {})
+            val categoryResult = defer1.await()
+            if (!categoryResult.isSuccess()) {
+                throw ApiException(categoryResult.code)
+            } else {
+                //3.保存数据到本地
+                repository.addCategoryListToLocal(categoryResult.results!!)
+                //4.获取商品，因为网络一次读取数据量有限，所以采用这个分别读取的方式
+                categoryResult.results!!.forEach { category ->
+                    val defer2 = async {
+                        repository.getGoodsOfCategoryFromNetwork(category)
+                    }
+                    val goodsResult = defer2.await()
+                    if (!goodsResult.isSuccess()) {
+                        throw ApiException(goodsResult.code)
+                    } else {
+                        //5.保存商品数据到本地
+                        repository.addGoodsListToLocal(goodsResult.results!!)
+                    }
+                }
+            }
         }
-
     }
 
 }

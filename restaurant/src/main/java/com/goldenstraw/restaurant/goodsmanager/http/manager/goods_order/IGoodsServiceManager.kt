@@ -18,48 +18,45 @@ interface IGoodsServiceManager {
      * 增加
      */
     //1、增加商品
-    fun addGoods(goods: NewGoods): Single<CreateObject>
+    suspend fun addGoodsToRemote(goods: NewGoods): CreateObject
 
     //2、增加类别
-    fun addCategory(category: NewCategory): Single<CreateObject>
+    suspend fun addCategoryToRemote(category: NewCategory): CreateObject
 
 
     /**
      * 更新
      */
     //1、更新商品
-    fun updateGoods(goods: NewGoods, objectId: String): Completable
+    suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String)
 
     //2、更新类别
-    fun updateCategory(category: NewCategory, objectId: String): Completable
+    suspend fun updateCategoryToRemote(category: NewCategory, objectId: String)
 
     /**
      * 查询
      */
     //1、获取所有类别,这里应该剥离出所需要的数据
-    fun getCategory(): Observable<MutableList<GoodsCategory>>
+    suspend fun getAllOfCategory(): ObjectList<GoodsCategory>
 
     //2、获取某个类别的商品列表
-    fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
-
-    //3、获取所有商品信息
-    fun getAllGoods(): Observable<MutableList<Goods>>
-
-    //4、获取所有供应商
-    fun getAllSupplier(): Observable<MutableList<User>>
+    suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods>
 
     /**
      * 删除
      */
     //1、删除类别
-    fun deleteCategory(category: GoodsCategory): Completable
+    suspend fun deleteCategory(category: GoodsCategory)
 
     //2、删除商品
-    fun deleteGoods(goods: Goods): Completable
+    suspend fun deleteGoods(goods: Goods)
 
     /**
      * 获取某一天菜单当中菜谱
      */
     suspend fun getCookBookOfDailyMeal(where:String):ObjectList<DailyMeal>
 
+
+    //获取所有供应商
+    fun getAllSupplier(): Observable<MutableList<User>>
 }

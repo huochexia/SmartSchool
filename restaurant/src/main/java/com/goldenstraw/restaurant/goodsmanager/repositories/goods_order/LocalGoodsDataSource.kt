@@ -5,7 +5,6 @@ import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -16,18 +15,17 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     /**
      * 增加
      */
-    fun addGoodsAll(list: MutableList<Goods>): Completable
+    suspend fun addGoodsListToLocal(list: List<Goods>)
 
-    fun addCategoryAll(list: MutableList<GoodsCategory>): Completable
-
+    suspend fun addCategoryListToLocal(list: List<GoodsCategory>)
 
 
     /**
      * 插入
      */
-    fun insertNewGoodsToLocal(goods: Goods): Completable
+    suspend fun addOrUpdateGoodsToLocal(goods: Goods)
 
-    fun insertCategoryToLocal(category: GoodsCategory): Completable
+    suspend fun addOrUpdateCategoryToLocal(category: GoodsCategory)
 
     fun insertSupplierToLocal(supplier: MutableList<User>): Completable
 
@@ -54,17 +52,16 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
 
-     fun getCookBookWithGoods(objectId: String): CookBookWithMaterials
+    fun getCookBookWithGoods(objectId: String): CookBookWithMaterials
 
     /**
      * 删除
      */
-    fun deleteGoodsFromLocal(goods: Goods): Completable
+    suspend fun deleteGoodsFromLocal(goods: Goods)
+    suspend fun deleteCategoryFromLocal(category: GoodsCategory)
 
-
-    fun deleteCategoryFromLocal(category: GoodsCategory): Completable
-    fun clearGoodsAll(): Completable
-    fun clearCategoryAll(): Completable
+    suspend fun clearGoodsAll()
+    suspend fun clearCategoryAll()
     fun clearUserAll(): Completable
 
     /**购物车操作**/
@@ -74,7 +71,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     //增加食物和它的原材料到购物车当中
     suspend fun addFoodAndMaterial(food: FoodOfShoppingCar, list: List<MaterialOfShoppingCar>)
 
-    suspend fun getNumberOfMaterialOfShoppingCar():Int
+    suspend fun getNumberOfMaterialOfShoppingCar(): Int
 
 
 }
@@ -83,30 +80,20 @@ class LocalGoodsDataSourceImpl(
     private val database: AppDatabase
 ) : ILocalGoodsDataSource {
 
-    /**
-     * 增加
-     */
-    override fun addGoodsAll(list: MutableList<Goods>): Completable {
-
-        return database.goodsDao().insertGoodsList(list)
+    override suspend fun addCategoryListToLocal(list: List<GoodsCategory>) {
+        database.goodsDao().insertCategoryListToLocal(list)
     }
 
-    override fun addCategoryAll(list: MutableList<GoodsCategory>): Completable {
-
-        return database.goodsDao().insertGoodsCategoryList(list)
+    override suspend fun addOrUpdateCategoryToLocal(category: GoodsCategory) {
+        database.goodsDao().insertCategoryToLocal(category)
     }
 
-
-
-    /**
-     * 插入,也可以用于修改
-     */
-    override fun insertCategoryToLocal(category: GoodsCategory): Completable {
-        return database.goodsDao().insertNewCategory(category)
+    override suspend fun addGoodsListToLocal(list: List<Goods>) {
+        database.goodsDao().insertGoodsListToLocal(list)
     }
 
-    override fun insertNewGoodsToLocal(goods: Goods): Completable {
-        return database.goodsDao().insertNewGoods(goods)
+    override suspend fun addOrUpdateGoodsToLocal(goods: Goods) {
+        database.goodsDao().insertGoodsToLocal(goods)
     }
 
 
@@ -159,22 +146,21 @@ class LocalGoodsDataSourceImpl(
     /**
      * 删除
      */
-    override fun deleteCategoryFromLocal(category: GoodsCategory): Completable {
-        return database.goodsDao().deleteCategory(category)
+    override suspend fun deleteCategoryFromLocal(category: GoodsCategory) {
+        database.goodsDao().deleteCategory(category)
     }
 
-    override fun deleteGoodsFromLocal(goods: Goods): Completable {
-        return database.goodsDao().deleteGoods(goods)
+    override suspend fun deleteGoodsFromLocal(goods: Goods) {
+        database.goodsDao().deleteGoods(goods)
     }
 
 
-
-    override fun clearCategoryAll(): Completable {
-        return database.goodsDao().clearCategory()
+    override suspend fun clearCategoryAll() {
+        database.goodsDao().clearCategory()
     }
 
-    override fun clearGoodsAll(): Completable {
-        return database.goodsDao().clearGoods()
+    override suspend fun clearGoodsAll() {
+        database.goodsDao().clearGoods()
     }
 
     override fun clearUserAll(): Completable {

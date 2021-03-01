@@ -20,7 +20,7 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.util.toast
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -79,6 +79,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
     )
 
 
+    @ExperimentalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModelGoodsTo = activity?.getViewModel {
@@ -177,9 +178,9 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                     toast { "请填写必须内容！！" }
                 } else {
                     category.categoryName = name
+                    category.isSelected = false
                     viewModelGoodsTo!!.updateCategory(category)
-                        .subscribeOn(Schedulers.computation())
-                        .subscribe()
+
                     dialog.dismiss()
                 }
             }.create()
@@ -203,7 +204,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
                 if (content.isEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
-                    viewModelGoodsTo!!.addCategoryToRepository(content)
+                    viewModelGoodsTo!!.addCategory(content)
                     dialog.dismiss()
                 }
             }.create()

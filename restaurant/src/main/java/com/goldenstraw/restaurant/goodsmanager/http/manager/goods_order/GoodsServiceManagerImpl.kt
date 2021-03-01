@@ -10,9 +10,7 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 /**
  * 网络访问远程数据库的具体实现类
@@ -20,17 +18,28 @@ import io.reactivex.Single
 class GoodsServiceManagerImpl(
     private val serverApi: GoodsApi
 ) : IGoodsServiceManager {
+    /**
+     * 获取,分离有用数据。
+     */
+    override suspend fun getAllOfCategory(): ObjectList<GoodsCategory> {
+        return serverApi.getAllCategory()
+    }
+
+    override suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods> {
+        val condition = """{"categoryCode":"${category.objectId}"}"""
+        return serverApi.getGoodsList(condition)
+    }
 
     /**
      * 删除
      */
 
-    override fun deleteCategory(category: GoodsCategory): Completable {
-        return serverApi.deleteCategory(category.objectId)
+    override suspend fun deleteCategory(category: GoodsCategory) {
+        serverApi.deleteCategory(category.objectId)
     }
 
-    override fun deleteGoods(goods: Goods): Completable {
-        return serverApi.deleteGoods(goods.objectId)
+    override suspend fun deleteGoods(goods: Goods) {
+        serverApi.deleteGoods(goods.objectId)
     }
 
     override suspend fun getCookBookOfDailyMeal(where: String): ObjectList<DailyMeal> {
@@ -38,37 +47,28 @@ class GoodsServiceManagerImpl(
     }
 
     /**
-     * 获取,分离有用数据。
+     * 增加
      */
-    override fun getCategory(): Observable<MutableList<GoodsCategory>> {
-        return serverApi.getAllCategory().map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun addGoodsToRemote(goods: NewGoods): CreateObject {
+        return serverApi.createGoods(goods)
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>> {
-
-        val condition = """{"categoryCode":"${category.objectId}"}"""
-        return serverApi.getGoodsList(condition).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
-
+    override suspend fun addCategoryToRemote(category: NewCategory): CreateObject {
+        return serverApi.createGoodsCategory(category)
     }
 
-    override fun getAllGoods(): Observable<MutableList<Goods>> {
-        return serverApi.getAllGoods().map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+
+    /**
+     * 更新
+     */
+    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String) {
+        serverApi.updateGoods(goods, objectId)
     }
+
+    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) {
+        serverApi.updateCategory(category, objectId)
+    }
+
 
     override fun getAllSupplier(): Observable<MutableList<User>> {
         val where = """{"role":"供应商"}"""
@@ -80,26 +80,5 @@ class GoodsServiceManagerImpl(
         }
     }
 
-    /**
-     * 增加
-     */
-    override fun addGoods(goods: NewGoods): Single<CreateObject> {
-        return serverApi.createGoods(goods)
-    }
 
-    override fun addCategory(category: NewCategory): Single<CreateObject> {
-        return serverApi.createGoodsCategory(category)
-    }
-
-
-    /**
-     * 更新
-     */
-    override fun updateGoods(goods: NewGoods, objectId: String): Completable {
-        return serverApi.updateGoods(goods, objectId)
-    }
-
-    override fun updateCategory(category: NewCategory, objectId: String): Completable {
-        return serverApi.updateCategory(category, objectId)
-    }
 }

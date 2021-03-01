@@ -8,9 +8,7 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import retrofit2.http.*
 
 /**
@@ -22,11 +20,11 @@ interface GoodsApi {
      */
     //1、增加商品,需要加入成功后返回的objectId。因为商品属性中的goodsCode，就是网络数据的objectId
     @POST("/1/classes/Goods")
-    fun createGoods(@Body goods: NewGoods): Single<CreateObject>
+    suspend fun createGoods(@Body goods: NewGoods): CreateObject
 
-    //2、增加类别
+    //2、增加类别，因为需要用到新增类别在数据库中产生的objectId，所以要有返回值
     @POST("/1/classes/GoodsCategory")
-    fun createGoodsCategory(@Body goodsCategory: NewCategory): Single<CreateObject>
+    suspend fun createGoodsCategory(@Body goodsCategory: NewCategory): CreateObject
 
 
     /**
@@ -34,45 +32,35 @@ interface GoodsApi {
      */
     //1、更新商品
     @PUT("/1/classes/Goods/{objectId}")
-    fun updateGoods(@Body goods: NewGoods, @Path("objectId") code: String): Completable
+    suspend fun updateGoods(@Body goods: NewGoods, @Path("objectId") code: String)
 
     //2、更新类别
     @PUT("/1/classes/GoodsCategory/{objectId}")
-    fun updateCategory(@Body category: NewCategory, @Path("objectId") code: String): Completable
+    suspend fun updateCategory(@Body category: NewCategory, @Path("objectId") code: String)
 
     /**
     DELETE
      */
     //1、删除商品
     @DELETE("/1/classes/Goods/{objectId}")
-    fun deleteGoods(@Path("objectId") objectId: String): Completable
+    suspend fun deleteGoods(@Path("objectId") objectId: String)
 
     //2、删除类别
     @DELETE("/1/classes/GoodsCategory/{objectId}")
-    fun deleteCategory(@Path("objectId") objectId: String): Completable
+    suspend fun deleteCategory(@Path("objectId") objectId: String)
 
     /**
     QUERY OR GET
      */
     //1、获得所有类别
     @GET("/1/classes/GoodsCategory/")
-    fun getAllCategory(): Observable<ObjectList<GoodsCategory>>
+    suspend fun getAllCategory(): ObjectList<GoodsCategory>
 
     //2、得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    fun getGoodsList(@Query("where") condition: String, @Query("limit") limit: Int = 500)
-            : Observable<ObjectList<Goods>>
-
-    //3、获取所有商品信息
-    @GET("/1/classes/Goods/")
-    fun getAllGoods(@Query("limit") limit: Int = 500): Observable<ObjectList<Goods>>
-
-    /**
-     * 从用户表中获取供应商信息
-     */
-    @GET("/1/users")
-    fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
+    suspend fun getGoodsList(@Query("where") condition: String, @Query("limit") limit: Int = 500)
+            : ObjectList<Goods>
 
     /**
      * 从每日菜单库中查找菜单当中的菜谱
@@ -81,4 +69,13 @@ interface GoodsApi {
     suspend fun getCookBookOfDailyMeal(
         @Query("where") condition: String
     ): ObjectList<DailyMeal>
+
+
+    /**
+     * 从用户表中获取供应商信息
+     */
+    @GET("/1/users")
+    fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
+
+
 }

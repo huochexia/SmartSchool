@@ -29,6 +29,7 @@ import com.youth.banner.BannerConfig
 import com.youth.banner.loader.ImageLoader
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -87,6 +88,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
     private val images =
         mutableListOf(R.mipmap.blueshipin, R.mipmap.zhurou, R.mipmap.shucai, R.mipmap.tiaoliao)
 
+    @ExperimentalCoroutinesApi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModelGoodsTo = activity?.getViewModel {
@@ -196,8 +198,8 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     goods.goodsName = name
                     goods.unitOfMeasurement = unit
                     goods.unitPrice = price
-                    viewModelGoodsTo!!.updateGoods(goods).subscribeOn(Schedulers.computation())
-                        .subscribe()
+                    goods.isChecked = false
+                    viewModelGoodsTo!!.updateGoods(goods)
                     dialog.dismiss()
                 }
             }.create()
@@ -243,7 +245,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     categoryCode = currentCategory!!,
                     unitPrice = price
                 )
-                viewModelGoodsTo!!.addGoodsToRepository(goods)
+                viewModelGoodsTo!!.addGoods(goods)
                 dialog.dismiss()
 
             }.create()

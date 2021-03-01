@@ -6,7 +6,6 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,19 +14,19 @@ interface GoodsDao {
      * 增加
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGoodsList(goodsList: MutableList<Goods>): Completable
+    suspend fun insertGoodsListToLocal(goodsList: List<Goods>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGoodsCategoryList(categoryList: MutableList<GoodsCategory>): Completable
+    suspend fun insertCategoryListToLocal(categoryList: List<GoodsCategory>)
 
     /*
       增加一个，也可以用于修改
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNewGoods(goods: Goods): Completable
+    suspend fun insertGoodsToLocal(goods: Goods)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNewCategory(category: GoodsCategory): Completable
+    suspend fun insertCategoryToLocal(category: GoodsCategory)
 
     /**
      * 获取
@@ -67,23 +66,16 @@ interface GoodsDao {
      * 删除
      */
     @Delete
-    fun deleteGoods(goods: Goods): Completable
-
-//    /*
-//        因为与菜谱的关联关系，所在删除商品时要在关系交叉表中也删除相应的内容
-//        */
-//    @Query("DELETE FROM CBGCrossRef WHERE goods_id = :goodsid")
-//    fun deleteCrossRefOfGoods(goodsid: String): Completable
-
+    suspend fun deleteGoods(goods: Goods)
 
     @Delete
-    fun deleteCategory(category: GoodsCategory): Completable
+    suspend fun deleteCategory(category: GoodsCategory)
 
 
     @Query("DELETE FROM goods")
-    fun clearGoods(): Completable
+    suspend fun clearGoods()
 
 
     @Query("DELETE FROM goodscategory")
-    fun clearCategory(): Completable
+    suspend fun clearCategory()
 }

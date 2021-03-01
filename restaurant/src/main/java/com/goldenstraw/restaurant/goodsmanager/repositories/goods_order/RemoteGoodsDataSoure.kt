@@ -10,9 +10,7 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 /**
  * 对商品的远程数据操作接口
@@ -21,32 +19,32 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 增加
      */
-    fun addGoods(goods: NewGoods): Single<CreateObject>
+    suspend fun addGoodsToRemote(goods: NewGoods): CreateObject
 
-    fun addCategory(category: NewCategory): Single<CreateObject>
+    suspend fun addCategoryToRemote(category: NewCategory): CreateObject
+
     /**
      * 更新
      */
-    fun updateGoods(goods: NewGoods, objectId: String): Completable
+    suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String)
 
-    fun updateCategory(category: NewCategory, objectId: String): Completable
+    suspend fun updateCategoryToRemote(category: NewCategory, objectId: String)
+
     /**
      * 获取
      */
-    fun getAllCategory(): Observable<MutableList<GoodsCategory>>
+    suspend fun getAllOfCategory(): ObjectList<GoodsCategory>
 
-    fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>>
-
-    fun getAllGoods(): Observable<MutableList<Goods>>
+    suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods>
 
     fun getAllSupplier(): Observable<MutableList<User>>
 
     /**
      * 删除
      */
-    fun deleteGoods(goods: Goods): Completable
+    suspend fun deleteGoods(goods: Goods)
 
-    fun deleteCategory(goodsCategory: GoodsCategory): Completable
+    suspend fun deleteCategory(goodsCategory: GoodsCategory)
 
     /**
      * 获取某一天菜单
@@ -63,55 +61,54 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 获取
      */
-    override fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
-        return service.getCategory()
+    override suspend fun getAllOfCategory(): ObjectList<GoodsCategory> {
+        return service.getAllOfCategory()
     }
 
-    override fun getGoodsOfCategory(category: GoodsCategory): Observable<MutableList<Goods>> {
+    override suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods> {
         return service.getGoodsOfCategory(category)
     }
 
-    override fun getAllGoods(): Observable<MutableList<Goods>> {
-        return service.getAllGoods()
-    }
 
-    override fun getAllSupplier(): Observable<MutableList<User>> {
-        return service.getAllSupplier()
-    }
     /**
      * 删除
      */
-    override fun deleteGoods(goods: Goods): Completable {
-        return service.deleteGoods(goods)
+    override suspend fun deleteGoods(goods: Goods) {
+        service.deleteGoods(goods)
     }
 
-    override fun deleteCategory(goodsCategory: GoodsCategory): Completable {
-        return service.deleteCategory(goodsCategory)
+    override suspend fun deleteCategory(goodsCategory: GoodsCategory) {
+        service.deleteCategory(goodsCategory)
     }
 
     /**
      * 增加
      */
-    override fun addGoods(goods: NewGoods): Single<CreateObject> {
-        return service.addGoods(goods)
+    override suspend fun addGoodsToRemote(goods: NewGoods): CreateObject {
+        return service.addGoodsToRemote(goods)
     }
 
-    override fun addCategory(category: NewCategory): Single<CreateObject> {
-        return service.addCategory(category)
+    override suspend fun addCategoryToRemote(category: NewCategory): CreateObject {
+        return service.addCategoryToRemote(category)
     }
 
     /**
      * 更新
      */
-    override fun updateGoods(goods: NewGoods, objectId: String): Completable {
-        return service.updateGoods(goods, objectId)
+    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String) {
+        service.updateGoodsToRemote(goods, objectId)
     }
 
-    override fun updateCategory(category: NewCategory, objectId: String): Completable {
-        return service.updateCategory(category, objectId)
+    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) {
+        service.updateCategoryToRemote(category, objectId)
     }
 
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return service.getCookBookOfDailyMeal(where)
     }
+
+    override fun getAllSupplier(): Observable<MutableList<User>> {
+        return service.getAllSupplier()
+    }
+
 }
