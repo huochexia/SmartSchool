@@ -4,8 +4,6 @@ import androidx.room.*
 import com.owner.basemodule.room.entities.CookBookWithMaterials
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
-import io.reactivex.Completable
-import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,16 +29,8 @@ interface GoodsDao {
     /**
      * 获取
      */
-    @Query("SELECT * FROM goodscategory ORDER BY categoryName")
-    fun getAllCategory(): Observable<MutableList<GoodsCategory>>
-
-
-    @Query("SELECT * FROM Goods WHERE categoryCode = :code  ORDER BY goodsName")
-    fun getAllGoodsOfCategory(code: String): Observable<MutableList<Goods>>
-
-
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
-    fun findByName(name: String): Observable<MutableList<Goods>>
+    suspend fun findByName(name: String): MutableList<Goods>
 
     @Query("SELECT * FROM Goods WHERE goods_id = :id")
     suspend fun getGoodsFromObjectId(id: String): Goods

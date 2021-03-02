@@ -4,10 +4,10 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.*
-import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -60,7 +60,7 @@ class GoodsRepository(
         remote.updateCategoryToRemote(updateCategory, category.objectId)
     }
 
-    /**
+    /*
      * 获取远程数据
      */
     suspend fun getAllCategoryFromNetwork(): ObjectList<GoodsCategory> {
@@ -71,7 +71,11 @@ class GoodsRepository(
         return remote.getGoodsOfCategory(category)
     }
 
-    /**
+    suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
+        return remote.getAllOfGoods(skip)
+    }
+
+    /*
      * 删除
      */
     suspend fun deleteGoodsFromRemote(goods: Goods) {
@@ -82,7 +86,7 @@ class GoodsRepository(
         remote.deleteCategory(category)
     }
 
-    /**
+    /*
      * 获取某日菜单
      */
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
@@ -130,11 +134,11 @@ class GoodsRepository(
     /*
       根据名字模糊查找商品
      */
-    fun findByName(name: String): Observable<MutableList<Goods>> {
+    suspend fun findByName(name: String): MutableList<Goods> {
         return local.findByName(name)
     }
 
-    /**
+    /*
      * 删除
      */
     suspend fun deleteGoodsFromLocal(goods: Goods) {
@@ -146,18 +150,46 @@ class GoodsRepository(
     }
 
 
-    /**
-     * 清空本地内容，主要是为了同步做准备。
-     */
+    /*******************************************************
+     * 同步数据
+     *******************************************************/
     suspend fun clearLocalData() {
         local.clearGoodsAll()
         local.clearCategoryAll()
     }
 
+    suspend fun syncCategory() {
+        val result = getAllCategoryFromNetwork()
+        if (!result.isSuccess()) {
+            throw ApiException(result.code)
+        } else {
+            addCategoryListToLocal(result.results!!)
+        }
+    }
 
-    /**
+    suspend fun syncGoods() {
+        var skip = 0
+        val goodsList = mutableListOf<Goods>()
+        var isContinue = true
+        while (isContinue) {
+            val result = getAllOfGoods(skip)
+            if (!result.isSuccess()) {
+                throw ApiException(result.code)
+            } else {
+                goodsList.addAll(result.results!!)
+                if (result.results!!.size == 400) {
+                    skip += 400
+                } else {
+                    isContinue = false
+                }
+            }
+        }
+        addGoodsListToLocal(goodsList)
+    }
+
+    /***********************************************
      * 新版本对购物车的操作
-     */
+     ***********************************************/
     suspend fun addFoodAndMaterialsToShoppingCar(
         food: FoodOfShoppingCar,
         materialList: List<MaterialOfShoppingCar>

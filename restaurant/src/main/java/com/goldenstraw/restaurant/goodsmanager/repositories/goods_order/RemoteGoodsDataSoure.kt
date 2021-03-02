@@ -37,6 +37,8 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
 
     suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods>
 
+    suspend fun getAllOfGoods(skip:Int):ObjectList<Goods>
+
     fun getAllSupplier(): Observable<MutableList<User>>
 
     /**
@@ -69,7 +71,9 @@ class RemoteGoodsDataSourceImpl(
         return service.getGoodsOfCategory(category)
     }
 
-
+    override suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
+        return service.getAllOfGoods(skip)
+    }
     /**
      * 删除
      */

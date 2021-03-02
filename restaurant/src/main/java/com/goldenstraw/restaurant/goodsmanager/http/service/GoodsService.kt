@@ -62,6 +62,14 @@ interface GoodsApi {
     suspend fun getGoodsList(@Query("where") condition: String, @Query("limit") limit: Int = 500)
             : ObjectList<Goods>
 
+    //3、分页获取全部商品,一次获取200
+    @GET("/1/classes/Goods/")
+    suspend fun getAllOfGoods(
+        @Query("limit") limit: Int = 400,
+        @Query("skip") skip: Int
+    ): ObjectList<Goods>
+
+
     /**
      * 从每日菜单库中查找菜单当中的菜谱
      */

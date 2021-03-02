@@ -5,10 +5,10 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.ObjectList
-import com.owner.basemodule.room.entities.*
-import io.reactivex.Completable
+import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.GoodsCategory
+import com.owner.basemodule.room.entities.User
 import io.reactivex.Observable
-import io.reactivex.Single
 
 /**
  * 远程访问数据库，管理商品对象接口
@@ -41,6 +41,9 @@ interface IGoodsServiceManager {
 
     //2、获取某个类别的商品列表
     suspend fun getGoodsOfCategory(category: GoodsCategory): ObjectList<Goods>
+
+    //3、分页获取所有商品
+    suspend fun getAllOfGoods(skip:Int): ObjectList<Goods>
 
     /**
      * 删除

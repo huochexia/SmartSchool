@@ -4,7 +4,6 @@ import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.*
 import io.reactivex.Completable
-import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -32,13 +31,11 @@ interface ILocalGoodsDataSource : ILocalDataSource {
     /**
      * 获取
      */
-    fun getAllCategory(): Observable<MutableList<GoodsCategory>>
 
-    fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>>
 
     suspend fun getGoodsFromObjectId(id: String): Goods
 
-    fun findByName(name: String): Observable<MutableList<Goods>>
+    suspend fun findByName(name: String): MutableList<Goods>
 
 
 
@@ -101,27 +98,14 @@ class LocalGoodsDataSourceImpl(
         return database.userDao().insertUsers(supplier)
     }
 
-    /**
-     * 获取
-     */
-    override fun getAllCategory(): Observable<MutableList<GoodsCategory>> {
 
-        return database.goodsDao().getAllCategory()
-
-    }
-
-    override fun getGoodsOfCategory(code: String): Observable<MutableList<Goods>> {
-
-        return database.goodsDao().getAllGoodsOfCategory(code)
-
-    }
 
     override suspend fun getGoodsFromObjectId(id: String): Goods {
         return database.goodsDao().getGoodsFromObjectId(id)
     }
 
 
-    override fun findByName(name: String): Observable<MutableList<Goods>> {
+    override suspend fun findByName(name: String): MutableList<Goods> {
         return database.goodsDao().findByName(name)
     }
 

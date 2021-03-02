@@ -30,6 +30,10 @@ class GoodsServiceManagerImpl(
         return serverApi.getGoodsList(condition)
     }
 
+    override suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
+        return serverApi.getAllOfGoods(skip = skip)
+    }
+
     /**
      * 删除
      */

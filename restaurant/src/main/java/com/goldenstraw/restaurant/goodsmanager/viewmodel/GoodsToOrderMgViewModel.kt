@@ -12,9 +12,7 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.*
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.owner.basemodule.util.toast
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -60,11 +58,11 @@ class GoodsToOrderMgViewModel(
     val goodsListFlow = currentCategory.switchMap {
         repository.getGoodsOfCategoryFromLocalFlow(it)
             .onStart {
-                goodsLoadState.set(MultiStateView.VIEW_STATE_LOADING)
+                categoryLoadState.set(MultiStateView.VIEW_STATE_LOADING)
+            }.catch {
+                categoryLoadState.set(MultiStateView.VIEW_STATE_ERROR)
             }
-            .catch {
-                goodsLoadState.set(MultiStateView.VIEW_STATE_ERROR)
-            }.asLiveData()
+            .asLiveData()
     }
 
     @ExperimentalCoroutinesApi
@@ -80,15 +78,13 @@ class GoodsToOrderMgViewModel(
     根据商品名称进行模糊查询
      */
     fun searchGoodsFromName(name: String) {
-        repository.findByName(name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                searchGoodsResultList.clear()
-                searchGoodsResultList.addAll(it)
-                isRefresh.value = true
-            }, {}, {})
+        launchUI {
+            val list = repository.findByName(name)
+            searchGoodsResultList.clear()
+            searchGoodsResultList.addAll(list)
+            isRefresh.value = true
+        }
+
     }
 
     /********************************************************
@@ -235,33 +231,24 @@ class GoodsToOrderMgViewModel(
      * 同步类别和商品信息
      ***************************************************/
     fun syncAllData() {
-        launchUI {
-            //1.清空本地数据
-            repository.clearLocalData()
-            //2.获取类别
-            val defer1 = async { repository.getAllCategoryFromNetwork() }
 
-            val categoryResult = defer1.await()
-            if (!categoryResult.isSuccess()) {
-                throw ApiException(categoryResult.code)
-            } else {
-                //3.保存数据到本地
-                repository.addCategoryListToLocal(categoryResult.results!!)
-                //4.获取商品，因为网络一次读取数据量有限，所以采用这个分别读取的方式
-                categoryResult.results!!.forEach { category ->
-                    val defer2 = async {
-                        repository.getGoodsOfCategoryFromNetwork(category)
-                    }
-                    val goodsResult = defer2.await()
-                    if (!goodsResult.isSuccess()) {
-                        throw ApiException(goodsResult.code)
-                    } else {
-                        //5.保存商品数据到本地
-                        repository.addGoodsListToLocal(goodsResult.results!!)
-                    }
+        launchUI {
+            try {
+                repository.clearLocalData()
+                launch {
+                    repository.syncGoods()
+                }
+                launch {
+                    repository.syncCategory()
+                }
+            } catch (e: ApiException) {
+                toast {
+                    e.message!!
                 }
             }
+
         }
+
     }
 
 }
