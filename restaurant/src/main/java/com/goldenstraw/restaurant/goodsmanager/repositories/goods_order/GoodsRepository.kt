@@ -134,7 +134,7 @@ class GoodsRepository(
     /*
       根据名字模糊查找商品
      */
-    suspend fun findByName(name: String): MutableList<Goods> {
+    fun findByName(name: String): Flow<MutableList<Goods>> {
         return local.findByName(name)
     }
 

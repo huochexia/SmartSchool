@@ -17,7 +17,6 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.toast
-import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -66,7 +65,10 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
         viewModelGoodsTo = activity?.getViewModel {
             GoodsToOrderMgViewModel(repository)
         }
-
+        viewModelGoodsTo!!.searchResult.observe(viewLifecycleOwner) {
+            viewModelGoodsTo!!.searchGoodsResultList = it
+            adapter.forceUpdate()
+        }
         viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }

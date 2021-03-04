@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.bumptech.glide.Glide
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
@@ -27,7 +26,6 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.util.toast
 import com.youth.banner.BannerConfig
 import com.youth.banner.loader.ImageLoader
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_goods_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

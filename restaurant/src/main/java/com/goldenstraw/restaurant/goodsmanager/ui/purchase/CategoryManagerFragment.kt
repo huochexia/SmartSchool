@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCategoryListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsCategoryBinding
@@ -92,7 +91,7 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
          * 所以对数据的任何操作（增改删）都不需要再额外添加刷新列表的操作
          */
         viewModelGoodsTo!!.categoryListFlow.observe(viewLifecycleOwner) {
-            if (it.isNullOrEmpty()) {
+            if (it.isEmpty()) {
                 viewModelGoodsTo!!.categoryLoadState.set(MultiStateView.VIEW_STATE_EMPTY)
             } else {
                 viewModelGoodsTo!!.apply {

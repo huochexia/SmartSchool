@@ -3,13 +3,13 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.ext.livedata.switchMap
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.room.entities.*
 import com.owner.basemodule.util.toast
@@ -58,9 +58,9 @@ class GoodsToOrderMgViewModel(
     val goodsListFlow = currentCategory.switchMap {
         repository.getGoodsOfCategoryFromLocalFlow(it)
             .onStart {
-                categoryLoadState.set(MultiStateView.VIEW_STATE_LOADING)
+                goodsLoadState.set(MultiStateView.VIEW_STATE_LOADING)
             }.catch {
-                categoryLoadState.set(MultiStateView.VIEW_STATE_ERROR)
+                goodsLoadState.set(MultiStateView.VIEW_STATE_ERROR)
             }
             .asLiveData()
     }
@@ -77,14 +77,10 @@ class GoodsToOrderMgViewModel(
     /*
     根据商品名称进行模糊查询
      */
+    private val searchName = MutableLiveData<String>()
+    val searchResult = searchName.switchMap { repository.findByName(it).asLiveData() }
     fun searchGoodsFromName(name: String) {
-        launchUI {
-            val list = repository.findByName(name)
-            searchGoodsResultList.clear()
-            searchGoodsResultList.addAll(list)
-            isRefresh.value = true
-        }
-
+        searchName.postValue(name)
     }
 
     /********************************************************
@@ -235,12 +231,9 @@ class GoodsToOrderMgViewModel(
         launchUI {
             try {
                 repository.clearLocalData()
-                launch {
-                    repository.syncGoods()
-                }
-                launch {
-                    repository.syncCategory()
-                }
+                repository.syncCategory()
+                repository.syncGoods()
+
             } catch (e: ApiException) {
                 toast {
                     e.message!!

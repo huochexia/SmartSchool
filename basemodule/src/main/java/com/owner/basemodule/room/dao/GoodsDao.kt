@@ -30,7 +30,7 @@ interface GoodsDao {
      * 获取
      */
     @Query("SELECT * FROM Goods WHERE goodsName LIKE '%' || :name || '%' ORDER BY goodsName")
-    suspend fun findByName(name: String): MutableList<Goods>
+    fun findByName(name: String): Flow<MutableList<Goods>>
 
     @Query("SELECT * FROM Goods WHERE goods_id = :id")
     suspend fun getGoodsFromObjectId(id: String): Goods

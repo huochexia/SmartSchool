@@ -35,7 +35,7 @@ interface ILocalGoodsDataSource : ILocalDataSource {
 
     suspend fun getGoodsFromObjectId(id: String): Goods
 
-    suspend fun findByName(name: String): MutableList<Goods>
+    fun findByName(name: String): Flow<MutableList<Goods>>
 
 
 
@@ -105,7 +105,7 @@ class LocalGoodsDataSourceImpl(
     }
 
 
-    override suspend fun findByName(name: String): MutableList<Goods> {
+    override fun findByName(name: String): Flow<MutableList<Goods>> {
         return database.goodsDao().findByName(name)
     }
 
