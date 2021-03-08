@@ -4,7 +4,9 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
@@ -32,22 +34,25 @@ interface GoodsApi {
      */
     //1、更新商品
     @PUT("/1/classes/Goods/{objectId}")
-    suspend fun updateGoods(@Body goods: NewGoods, @Path("objectId") code: String)
+    suspend fun updateGoods(@Body goods: NewGoods, @Path("objectId") code: String): UpdateObject
 
     //2、更新类别
     @PUT("/1/classes/GoodsCategory/{objectId}")
-    suspend fun updateCategory(@Body category: NewCategory, @Path("objectId") code: String)
+    suspend fun updateCategory(
+        @Body category: NewCategory,
+        @Path("objectId") code: String
+    ): UpdateObject
 
     /**
     DELETE
      */
     //1、删除商品
     @DELETE("/1/classes/Goods/{objectId}")
-    suspend fun deleteGoods(@Path("objectId") objectId: String)
+    suspend fun deleteGoods(@Path("objectId") objectId: String): DeleteObject
 
     //2、删除类别
     @DELETE("/1/classes/GoodsCategory/{objectId}")
-    suspend fun deleteCategory(@Path("objectId") objectId: String)
+    suspend fun deleteCategory(@Path("objectId") objectId: String): DeleteObject
 
     /**
     QUERY OR GET

@@ -6,7 +6,9 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.http.manager.goods_order.IGoodsServiceManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
 import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
@@ -26,9 +28,9 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 更新
      */
-    suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String)
+    suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String): UpdateObject
 
-    suspend fun updateCategoryToRemote(category: NewCategory, objectId: String)
+    suspend fun updateCategoryToRemote(category: NewCategory, objectId: String): UpdateObject
 
     /**
      * 获取
@@ -44,9 +46,9 @@ interface IRemoteGoodsDataSource : IRemoteDataSource {
     /**
      * 删除
      */
-    suspend fun deleteGoods(goods: Goods)
+    suspend fun deleteGoods(goods: Goods): DeleteObject
 
-    suspend fun deleteCategory(goodsCategory: GoodsCategory)
+    suspend fun deleteCategory(goodsCategory: GoodsCategory): DeleteObject
 
     /**
      * 获取某一天菜单
@@ -74,16 +76,17 @@ class RemoteGoodsDataSourceImpl(
     override suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
         return service.getAllOfGoods(skip)
     }
+
     /**
      * 删除
      */
-    override suspend fun deleteGoods(goods: Goods) {
+    override suspend fun deleteGoods(goods: Goods) =
         service.deleteGoods(goods)
-    }
 
-    override suspend fun deleteCategory(goodsCategory: GoodsCategory) {
+
+    override suspend fun deleteCategory(goodsCategory: GoodsCategory) =
         service.deleteCategory(goodsCategory)
-    }
+
 
     /**
      * 增加
@@ -99,13 +102,13 @@ class RemoteGoodsDataSourceImpl(
     /**
      * 更新
      */
-    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String) {
+    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String) =
         service.updateGoodsToRemote(goods, objectId)
-    }
 
-    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) {
+
+    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) =
         service.updateCategoryToRemote(category, objectId)
-    }
+
 
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return service.getCookBookOfDailyMeal(where)

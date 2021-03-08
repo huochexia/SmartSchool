@@ -38,7 +38,22 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
         import(queryordersactivitymodule)
     }
     val state = ObservableField<Int>()
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_goods_item,
+        dataBinding = { LayoutGoodsItemBinding.bind(it) },
+        dataSource = { goodsList },
+        callback = { goods, binding, _ ->
+            binding.goods = goods
+            binding.addSub.visibility = View.INVISIBLE
+            binding.cbGoods.visibility = View.INVISIBLE
+            binding.clickEvent = object : Consumer<Goods> {
+                override fun accept(t: Goods) {
+                    popUpNewPriceDialog(goods)
+                }
+            }
+        }
+    )
     private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
     var goodsList = mutableListOf<Goods>()
@@ -48,21 +63,6 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
         viewModel = getViewModel {
             QueryOrdersViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            dataSource = { goodsList },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.addSub.visibility = View.INVISIBLE
-                binding.cbGoods.visibility = View.INVISIBLE
-                binding.clickEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        popUpNewPriceDialog(goods)
-                    }
-                }
-            }
-        )
         getAllGoodsOfAdjustPrice()
     }
 
@@ -102,7 +102,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
                     .subscribe()
                 //修改订单中单价
                 updatePriceOfOrders(goods.goodsName, newPrice)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -135,7 +135,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
                 }
                 goodsList.clear()
                 goodsList.addAll(it)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             }, {
                 state.set(MultiStateView.VIEW_STATE_ERROR)
             }, {}, {

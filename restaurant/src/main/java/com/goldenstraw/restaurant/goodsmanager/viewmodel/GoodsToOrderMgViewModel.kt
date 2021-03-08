@@ -3,19 +3,20 @@ package com.goldenstraw.restaurant.goodsmanager.viewmodel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.ext.livedata.switchMap
-import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
-import com.owner.basemodule.util.toast
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -91,34 +92,38 @@ class GoodsToOrderMgViewModel(
      */
     fun deleteGoods(goods: Goods) {
         launchUI {
-            repository.deleteGoodsFromRemote(goods)
-            repository.deleteGoodsFromLocal(goods)
+            parserResponse(repository.deleteGoodsFromRemote(goods)) {
+                repository.deleteGoodsFromLocal(goods)
+            }
         }
 
     }
 
     fun deleteCategory(category: GoodsCategory) {
         launchUI {
-            repository.deleteCategoryFromRemote(category)
-            repository.deleteCategoryFromLocal(category)
+            parserResponse(repository.deleteCategoryFromRemote(category)) {
+                repository.deleteCategoryFromLocal(category)
+            }
         }
-
     }
 
     /*
      * 修改信息
      */
     fun updateGoods(goods: Goods) {
-        viewModelScope.launch {
-            repository.updateGoodsToRemote(goods)
-            repository.addOrUpdateGoodsToLocal(goods)
+        launchUI {
+            parserResponse(repository.updateGoodsToRemote(goods)) {
+                //远程数据操作成功后，才对本地数据进行操作
+                repository.addOrUpdateGoodsToLocal(goods)
+            }
         }
     }
 
     fun updateCategory(category: GoodsCategory) {
-        viewModelScope.launch {
-            repository.updateCategoryToRemote(category)
-            repository.addOrUpdateCategoryToLocal(category)
+        launchUI {
+            parserResponse(repository.updateCategoryToRemote(category)) {
+                repository.addOrUpdateCategoryToLocal(category)
+            }
         }
     }
 
@@ -128,20 +133,19 @@ class GoodsToOrderMgViewModel(
      */
     fun addCategory(categoryName: String) {
         val newCategory = NewCategory(categoryName)
-        viewModelScope.launch {
+        launchUI {
             val defferd = async {
                 repository.addCategoryToRemote(newCategory)
             }
             val result = defferd.await()
-            if (result.isSuccess()) {
+            parserResponse(result) {
                 repository.addOrUpdateCategoryToLocal(
                     GoodsCategory(
-                        result.objectId!!, categoryName
+                        it, categoryName
                     )
                 )
-            } else {
-                throw ApiException(result.code)
             }
+
         }
     }
 
@@ -149,20 +153,18 @@ class GoodsToOrderMgViewModel(
     保存新增加商品到数据库中,先保存到网络，成功后利用返回的objectId，形成新商品保存本地
      */
     fun addGoods(goods: NewGoods) {
-        viewModelScope.launch {
+        launchUI {
             val defferd = async { repository.addGoodsToRemote(goods) }
             val result = defferd.await()
-            if (result.isSuccess()) {
+            parserResponse(result) {
                 val newGoods = Goods(
-                    objectId = result.objectId!!,
+                    objectId = it,
                     goodsName = goods.goodsName,
                     unitOfMeasurement = goods.unitOfMeasurement,
                     categoryCode = goods.categoryCode,
                     unitPrice = goods.unitPrice
                 )
                 repository.addOrUpdateGoodsToLocal(newGoods)
-            } else {
-                throw ApiException(result.code)
             }
         }
     }
@@ -229,17 +231,9 @@ class GoodsToOrderMgViewModel(
     fun syncAllData() {
 
         launchUI {
-            try {
                 repository.clearLocalData()
                 repository.syncCategory()
                 repository.syncGoods()
-
-            } catch (e: ApiException) {
-                toast {
-                    e.message!!
-                }
-            }
-
         }
 
     }

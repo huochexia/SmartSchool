@@ -4,9 +4,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.http.service.GoodsApi
-import com.owner.basemodule.network.ApiException
-import com.owner.basemodule.network.CreateObject
-import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.*
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.GoodsCategory
 import com.owner.basemodule.room.entities.User
@@ -38,12 +36,12 @@ class GoodsServiceManagerImpl(
      * 删除
      */
 
-    override suspend fun deleteCategory(category: GoodsCategory) {
-        serverApi.deleteCategory(category.objectId)
+    override suspend fun deleteCategory(category: GoodsCategory):DeleteObject {
+       return serverApi.deleteCategory(category.objectId)
     }
 
-    override suspend fun deleteGoods(goods: Goods) {
-        serverApi.deleteGoods(goods.objectId)
+    override suspend fun deleteGoods(goods: Goods) :DeleteObject{
+        return serverApi.deleteGoods(goods.objectId)
     }
 
     override suspend fun getCookBookOfDailyMeal(where: String): ObjectList<DailyMeal> {
@@ -65,12 +63,12 @@ class GoodsServiceManagerImpl(
     /**
      * 更新
      */
-    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String) {
-        serverApi.updateGoods(goods, objectId)
+    override suspend fun updateGoodsToRemote(goods: NewGoods, objectId: String):UpdateObject {
+        return serverApi.updateGoods(goods, objectId)
     }
 
-    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) {
-        serverApi.updateCategory(category, objectId)
+    override suspend fun updateCategoryToRemote(category: NewCategory, objectId: String) :UpdateObject{
+       return serverApi.updateCategory(category, objectId)
     }
 
 

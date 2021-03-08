@@ -4,9 +4,10 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewCategory
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
-import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
 import kotlinx.coroutines.flow.Flow
 
@@ -41,29 +42,29 @@ class GoodsRepository(
      * 更新
      */
     //1、更新远程数据
-    suspend fun updateGoodsToRemote(goods: Goods) {
+    suspend fun updateGoodsToRemote(goods: Goods): UpdateObject {
         val updateGoods = NewGoods(
             goodsName = goods.goodsName,
             unitOfMeasurement = goods.unitOfMeasurement,
             categoryCode = goods.categoryCode,
             unitPrice = goods.unitPrice
         )
-        remote.updateGoodsToRemote(updateGoods, goods.objectId)
+        return remote.updateGoodsToRemote(updateGoods, goods.objectId)
 
     }
 
     //2、更新类别
-    suspend fun updateCategoryToRemote(category: GoodsCategory) {
+    suspend fun updateCategoryToRemote(category: GoodsCategory): UpdateObject {
         val updateCategory = NewCategory(
             categoryName = category.categoryName
         )
-        remote.updateCategoryToRemote(updateCategory, category.objectId)
+        return remote.updateCategoryToRemote(updateCategory, category.objectId)
     }
 
     /*
      * 获取远程数据
      */
-    suspend fun getAllCategoryFromNetwork(): ObjectList<GoodsCategory> {
+    private suspend fun getAllCategoryFromNetwork(): ObjectList<GoodsCategory> {
         return remote.getAllOfCategory()
     }
 
@@ -71,20 +72,20 @@ class GoodsRepository(
         return remote.getGoodsOfCategory(category)
     }
 
-    suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
+    private suspend fun getAllOfGoods(skip: Int): ObjectList<Goods> {
         return remote.getAllOfGoods(skip)
     }
 
     /*
      * 删除
      */
-    suspend fun deleteGoodsFromRemote(goods: Goods) {
+    suspend fun deleteGoodsFromRemote(goods: Goods) =
         remote.deleteGoods(goods)
-    }
 
-    suspend fun deleteCategoryFromRemote(category: GoodsCategory) {
+
+    suspend fun deleteCategoryFromRemote(category: GoodsCategory) =
         remote.deleteCategory(category)
-    }
+
 
     /*
      * 获取某日菜单
@@ -99,7 +100,7 @@ class GoodsRepository(
     /*
          将商品加入到本地
         */
-    suspend fun addGoodsListToLocal(list: List<Goods>) {
+    private suspend fun addGoodsListToLocal(list: List<Goods>) {
         local.addGoodsListToLocal(list)
     }
 
@@ -111,7 +112,7 @@ class GoodsRepository(
     /*
       将商品类别加入本地
      */
-    suspend fun addCategoryListToLocal(list: MutableList<GoodsCategory>) {
+    private suspend fun addCategoryListToLocal(list: MutableList<GoodsCategory>) {
         local.addCategoryListToLocal(list)
     }
 
@@ -160,11 +161,10 @@ class GoodsRepository(
 
     suspend fun syncCategory() {
         val result = getAllCategoryFromNetwork()
-        if (!result.isSuccess()) {
-            throw ApiException(result.code)
-        } else {
-            addCategoryListToLocal(result.results!!)
+        parserResponse(result) {
+            addCategoryListToLocal(it)
         }
+
     }
 
     suspend fun syncGoods() {
@@ -173,11 +173,9 @@ class GoodsRepository(
         var isContinue = true
         while (isContinue) {
             val result = getAllOfGoods(skip)
-            if (!result.isSuccess()) {
-                throw ApiException(result.code)
-            } else {
-                goodsList.addAll(result.results!!)
-                if (result.results!!.size == 400) {
+            parserResponse(result) {
+                goodsList.addAll(it)
+                if (it.size == 400) {
                     skip += 400
                 } else {
                     isContinue = false

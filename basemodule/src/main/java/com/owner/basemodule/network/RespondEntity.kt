@@ -1,7 +1,16 @@
 package com.owner.basemodule.network
 
-import com.owner.basemodule.base.error.HttpError
 
+
+/**
+ * 基本响应对象的接口
+ */
+interface IBaseResponse<T> {
+    fun code(): Int
+    fun error(): String?
+    fun data(): T?
+    fun isSuccess(): Boolean = code() == 0
+}
 
 /**
  * 创建对象响应体
@@ -11,8 +20,13 @@ data class CreateObject(
     val error: String?,
     val createdAt: String?,
     val objectId: String?
-) {
-    fun isSuccess(): Boolean = code == 0 && objectId.isNullOrEmpty().not()
+) : IBaseResponse<String> {
+
+    override fun code(): Int = code
+
+    override fun error(): String? = error
+
+    override fun data(): String? = objectId
 }
 
 /**
@@ -22,8 +36,14 @@ data class UpdateObject(
     val code: Int = 0,
     val error: String?,
     val updatedAt: String?
-) {
-    fun isSuccess(): Boolean = code == 0 && updatedAt.isNullOrEmpty().not()
+) : IBaseResponse<String> {
+
+
+    override fun code(): Int = code
+
+    override fun error(): String? = error
+
+    override fun data(): String? = updatedAt
 }
 
 /**
@@ -33,8 +53,14 @@ data class DeleteObject(
     val code: Int = 0,
     val error: String?,
     val msg: String?
-) {
-    fun isSuccess(): Boolean = code == 0 && msg == "ok"
+) : IBaseResponse<String> {
+
+
+    override fun code(): Int = code
+
+    override fun error(): String? = error
+
+    override fun data(): String? = msg
 }
 
 /**
@@ -44,29 +70,16 @@ class ObjectList<T>(
     val code: Int = 0,
     val error: String?,
     val results: MutableList<T>?
-) {
-    fun isSuccess(): Boolean = code == 0
+) : IBaseResponse<MutableList<T>> {
+
+    override fun code(): Int = code
+
+    override fun error(): String? = error
+
+    override fun data(): MutableList<T>? = results
 }
 
 
-/**
- * 网络访问失败产生的异常封装类，通过这个封装类对异常统一处理。
- */
-class ResponseThrowable : Exception {
-    var code: Int
-    var errMsg: String
 
-    constructor(HttpError: HttpError, e: Throwable? = null) : super(e) {
-        code = HttpError.getKey()
-        errMsg = HttpError.getValue()
-    }
-
-    constructor(code: Int, msg: String, e: Throwable? = null) : super(e) {
-        this.code = code
-        this.errMsg = msg
-
-    }
-
-}
 
 
