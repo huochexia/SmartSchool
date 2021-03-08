@@ -29,12 +29,13 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             app:cardBackgroundColor="#00F5F2F2"
-            android:onClick="@{()->checkEvent.accept(goods)}"
+            android:onClick="@{()->clickEvent.accept(goods)}"
             app:cardCornerRadius="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                >
 
             <com.jmf.addsubutils.AddSubUtils
                     android:id="@+id/add_sub"
@@ -98,7 +99,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
                         android:text="元"
                         android:textColor="@color/common_red" />
             </LinearLayout>

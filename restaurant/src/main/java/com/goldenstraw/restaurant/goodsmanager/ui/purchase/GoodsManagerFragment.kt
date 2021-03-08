@@ -66,6 +66,12 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     binding.cbGoods.isChecked = t.isChecked
                 }
             }
+            binding.clickEvent=object :Consumer<Goods>{
+                override fun accept(t: Goods) {
+                    t.isChecked = !t.isChecked
+                    binding.cbGoods.isChecked = t.isChecked
+                }
+            }
             binding.longClick = object : Consumer<Goods> {
                 override fun accept(t: Goods) {
                     managerDialog(t)
