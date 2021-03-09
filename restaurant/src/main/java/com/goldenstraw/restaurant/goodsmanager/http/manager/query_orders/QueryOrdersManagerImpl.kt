@@ -4,6 +4,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.QueryOrdersApi
 import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -57,13 +58,8 @@ class QueryOrdersManagerImpl(
     /**
      * 获取某类商品信息
      */
-    override fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
-        return service.getGoodsOfCategory(condition).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun getGoodsOfCategory(condition: String): ObjectList<Goods> {
+        return service.getGoodsOfCategory(condition)
     }
 
     override fun getGoodsFromObjectId(id: String): Observable<Goods> {
@@ -79,7 +75,7 @@ class QueryOrdersManagerImpl(
     }
 
     override fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
-        return service.getTotalGroupByName(condition=condition).map {
+        return service.getTotalGroupByName(condition = condition).map {
             if (!it.isSuccess()) {
                 throw  ApiException(it.code)
             }
@@ -87,30 +83,30 @@ class QueryOrdersManagerImpl(
         }
     }
 
-    override fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable {
-        return service.updateNewPriceOfGoods(newPrice, objectId)
-    }
+    override suspend fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) =
+        service.updateNewPriceOfGoods(newPrice, objectId)
+
 
     override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
         return service.getCookBookOfDailyMeal(where)
     }
 
-    override suspend fun deleteOrderItem(objectId: String) {
+    override suspend fun deleteOrderItem(objectId: String) =
         service.deleteOrderItem(objectId)
+
+
+    override suspend fun getOrdersList(where: String): ObjectList<OrderItem> {
+        return service.getOrdersList(where)
     }
 
-    override suspend fun getUnitPriceOfOrders(where: String): ObjectList<OrderItem> {
-        return service.getUnitPriceOfOrders(where)
-    }
-
-    override suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String) {
+    override suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String) =
         service.updateUnitPriceOfOrders(newPrice, objectId)
-    }
+
 
     override suspend fun updateOrderItemQuantityAndNote(
         newOrder: ObjectQuantityAndNote,
         objectId: String
-    ) {
-        service.updateOrderItem(newOrder, objectId)
+    ) :UpdateObject{
+        return service.updateOrderItem(newOrder, objectId)
     }
 }

@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.queryorders
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryRemote
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -29,21 +30,16 @@ class QueryOrdersRepository(
     /**
      * 使用协程的方式，按条件获取订单.
      */
-    suspend fun getUnitPriceOfOrders(where: String): MutableList<OrderItem>?{
-        val list = remote.getUnitPriceOfOrder(where)
-        return if (list.isSuccess())
-            list.results
-        else
-            null
+    suspend fun getOrdersList(where: String): ObjectList<OrderItem> =
+        remote.getOrdersList(where)
 
-    }
 
     /**
      * 修改订单的单价
      */
-    suspend fun updateUnitPriceOfOrders(newPrice: ObjectUnitPrice, objectId: String) {
+    suspend fun updateUnitPriceOfOrders(newPrice: ObjectUnitPrice, objectId: String): UpdateObject =
         remote.updateUnitPrice(newPrice, objectId)
-    }
+
 
     /**
      * 修改订单的供应商
@@ -55,13 +51,14 @@ class QueryOrdersRepository(
     /**
      * 获取商品信息
      */
-    fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>> {
-        return remote.getGoodsOfCategory(condition)
-    }
+    suspend fun getGoodsOfCategory(condition: String): ObjectList<Goods> =
+        remote.getGoodsOfCategory(condition)
 
-    fun getGoodsFromObjectId(id:String):Observable<Goods>{
+
+    fun getGoodsFromObjectId(id: String): Observable<Goods> {
         return remote.getGoodsFromObjectId(id)
     }
+
     /**
      * 求和
      */
@@ -79,11 +76,10 @@ class QueryOrdersRepository(
     /**
      * 更新数据库商品新单价
      */
-    fun updateNewPrice(newPrice: NewPrice, objectId: String): Completable {
+    suspend fun updateNewPrice(newPrice: NewPrice, objectId: String) =
 
-        return remote.updateNewPrice(newPrice, objectId)
+        remote.updateNewPrice(newPrice, objectId)
 
-    }
 
     /**
      * 获取每日菜单当中的菜谱
@@ -93,11 +89,11 @@ class QueryOrdersRepository(
         return remote.getCookBookOfDailyMeal(where)
     }
 
-    suspend fun deleteOrderItem(objectId: String) {
+    suspend fun deleteOrderItem(objectId: String) =
         remote.deleteOrderItem(objectId)
-    }
 
-    suspend fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
-        remote.updateOrderItem(newOrderItem, objectId)
+
+    suspend fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String):UpdateObject {
+        return remote.updateOrderItem(newOrderItem, objectId)
     }
 }

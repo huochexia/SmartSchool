@@ -13,15 +13,11 @@ import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewPrice
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -37,12 +33,11 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
         extend(parentKodein, copy = Copy.All)
         import(queryordersactivitymodule)
     }
-    val state = ObservableField<Int>()
 
     var adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_goods_item,
         dataBinding = { LayoutGoodsItemBinding.bind(it) },
-        dataSource = { goodsList },
+        dataSource = { viewModel!!.goodsList },
         callback = { goods, binding, _ ->
             binding.goods = goods
             binding.addSub.visibility = View.INVISIBLE
@@ -56,12 +51,14 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
     )
     private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
-    var goodsList = mutableListOf<Goods>()
 
     override fun initView() {
         super.initView()
         viewModel = getViewModel {
             QueryOrdersViewModel(repository)
+        }
+        viewModel!!.defUI.refreshEvent.observe(this) {
+            adapter.forceUpdate()
         }
         getAllGoodsOfAdjustPrice()
     }
@@ -84,8 +81,6 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
                 val newPrice = NewPrice(0.0f, goods.unitPrice)
                 goods.newPrice = 0.0f
                 viewModel!!.updateNewPriceOfGoods(newPrice, goods.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
                 dialog.dismiss()
             }
             .setPositiveButton("同意") { dialog, which ->
@@ -98,9 +93,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
                 goods.unitPrice = newPrice
                 //修改商品信息中的单价
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
-                //修改订单中单价
+                //确认修改价格时，有的商品已经形成订单，所以此时要把还没有记帐的订单中商品价格改为新价格
                 updatePriceOfOrders(goods.goodsName, newPrice)
                 adapter.forceUpdate()
                 dialog.dismiss()
@@ -111,6 +104,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
 
     /**
      * 修改订单中的单价。首先依据商品名称和状态不等于4为条件，找到订单，然后对这个订单进行修改
+     * 主要是因为下单后才发现价格发生变化。
      */
     private fun updatePriceOfOrders(goodsName: String, newPrice: Float) {
         val where = "{\"\$and\":[{\"goodsName\":\"$goodsName\"},{\"state\":{\"\$in\":[1,2,3]}}]}"
@@ -124,23 +118,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
         //where={"score":{"$ne":[1,3,5,7,9]}}' \
         val where = "{\"newPrice\":{\"\$gt\":0}}"
         viewModel!!.getAllGoodsOfCategory(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                if (it.isEmpty()) {
-                    state.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    state.set(MultiStateView.VIEW_STATE_CONTENT)
-                }
-                goodsList.clear()
-                goodsList.addAll(it)
-                adapter.forceUpdate()
-            }, {
-                state.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {}, {
-                state.set(MultiStateView.VIEW_STATE_LOADING)
-            })
+
     }
 
 }

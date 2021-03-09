@@ -1,7 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -31,7 +33,7 @@ interface QueryOrdersApi {
      * 使用协程获取某个商品订单
      */
     @GET("/1/classes/OrderItem")
-    suspend fun getUnitPriceOfOrders(
+    suspend fun getOrdersList(
         @Query("where") where: String,
         @Query("order") order: String = "-createdAt"
     ): ObjectList<OrderItem>
@@ -43,13 +45,13 @@ interface QueryOrdersApi {
     suspend fun updateUnitPriceOfOrders(
         @Body newPriceOfOrders: ObjectUnitPrice,
         @Path("ObjectId") objectId: String
-    )
+    ): UpdateObject
 
     /**
      * 删除尚未做任何处理的订单，主要是厨师提交订单后的删除
      */
     @DELETE("/1/classes/OrderItem/{ObjectId}")
-    suspend fun deleteOrderItem(@Path("ObjectId") objectId: String)
+    suspend fun deleteOrderItem(@Path("ObjectId") objectId: String):DeleteObject
 
     /**
      * 修改订单信息，如数量和备注
@@ -58,7 +60,7 @@ interface QueryOrdersApi {
     suspend fun updateOrderItem(
         @Body newOrderItem: ObjectQuantityAndNote,
         @Path("ObjectId") objectId: String
-    )
+    ):UpdateObject
 
     /**
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
@@ -73,7 +75,7 @@ interface QueryOrdersApi {
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
     fun getGoodsOfCategory(@Query("where") condition: String, @Query("limit") limit: Int = 500)
-            : Observable<ObjectList<Goods>>
+            : ObjectList<Goods>
 
     //根据objectId获取单个商品信息
     @GET("/1/classes/Goods/{objectId}")
@@ -104,7 +106,7 @@ interface QueryOrdersApi {
      */
     //提交新单价
     @PUT("/1/classes/Goods/{objectId}")
-    fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): Completable
+    fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): UpdateObject
 
     /**
      * 从每日菜单库中查找菜单当中的菜谱

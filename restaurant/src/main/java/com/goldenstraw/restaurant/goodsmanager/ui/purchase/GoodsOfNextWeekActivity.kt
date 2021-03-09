@@ -44,7 +44,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
 
     var viewModel: QueryOrdersViewModel? = null
 
-    //    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
+
     var vpAdapter: BaseDataBindingAdapter<String, ViewpageOfCookKindBinding>? = null
 
     var tabLayoutMediator: TabLayoutMediator? = null
@@ -113,11 +113,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
 
         }
         tabLayoutMediator?.attach()
-        /*
-         *默认是获取下周拟购商品信息
-         * 可以通过菜
-         */
-        viewModel!!.getAllCookBookOfDailyMeal()
+
     }
 
     /**
@@ -143,8 +139,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
                 goods.newPrice = newPrice
                 val newGoods = NewPrice(newPrice, goods.unitPrice)
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
+
                 vpAdapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()

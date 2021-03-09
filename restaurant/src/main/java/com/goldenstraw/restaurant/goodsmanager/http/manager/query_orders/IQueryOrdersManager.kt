@@ -1,7 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -28,27 +30,27 @@ interface IQueryOrdersManager {
     /**
      * 删除未处理订单
      */
-    suspend fun deleteOrderItem(objectId: String)
+    suspend fun deleteOrderItem(objectId: String):DeleteObject
 
     /**
      *  获取某个订单
      */
-    suspend fun getUnitPriceOfOrders(where: String): ObjectList<OrderItem>
+    suspend fun getOrdersList(where: String): ObjectList<OrderItem>
 
     /**
      * 修改订单的单价
      */
-    suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String)
+    suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String): UpdateObject
 
     /**
      * 修改订单数量和备注信息
      */
-    suspend fun updateOrderItemQuantityAndNote(newOrder: ObjectQuantityAndNote, objectId: String)
+    suspend fun updateOrderItemQuantityAndNote(newOrder: ObjectQuantityAndNote, objectId: String):UpdateObject
 
     /**
      * 查询商品信息
      */
-    fun getGoodsOfCategory(condition: String): Observable<MutableList<Goods>>
+    suspend fun getGoodsOfCategory(condition: String): ObjectList<Goods>
 
     /**
      *获取某个商品信息
@@ -68,7 +70,7 @@ interface IQueryOrdersManager {
     /**
      * 提交新单价
      */
-    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable
+    suspend fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): UpdateObject
 
     /**
      * 获取一周菜单当中菜谱

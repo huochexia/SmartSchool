@@ -21,7 +21,6 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_supplier_category_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -45,8 +44,22 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
     private val prefs by instance<PrefsHelper>()
     private val repository by instance<QueryOrdersRepository>()
     var viewModel: QueryOrdersViewModel? = null
-    var adapter: BaseDataBindingAdapter<Goods, LayoutGoodsItemBinding>? = null
-    var goodsList = mutableListOf<Goods>()
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_goods_item,
+        dataBinding = { LayoutGoodsItemBinding.bind(it) },
+        dataSource = { viewModel!!.goodsList },
+        callback = { goods, binding, position ->
+            binding.goods = goods
+            binding.addSub.visibility = View.INVISIBLE
+            binding.cbGoods.visibility = View.INVISIBLE
+            binding.clickEvent = object : Consumer<Goods> {
+                override fun accept(t: Goods) {
+                    popUpNewPriceDialog(goods)
+                }
+
+            }
+        }
+    )
     var state = ObservableField<Int>()
 
 
@@ -61,33 +74,14 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
             QueryOrdersViewModel(repository)
         }
 
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_goods_item,
-            dataBinding = { LayoutGoodsItemBinding.bind(it) },
-            dataSource = { viewModel!!.goodsList },
-            callback = { goods, binding, position ->
-                binding.goods = goods
-                binding.addSub.visibility = View.INVISIBLE
-                binding.cbGoods.visibility = View.INVISIBLE
-                binding.clickEvent = object : Consumer<Goods> {
-                    override fun accept(t: Goods) {
-                        popUpNewPriceDialog(goods)
-                    }
 
-                }
-            }
-        )
         /*
          观察各种事件，刷新，错误提示，加载等
          */
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
-            if (viewModel!!.goodsList.isEmpty()) {
-                state.set(MultiStateView.VIEW_STATE_EMPTY)
-            } else {
-                state.set(MultiStateView.VIEW_STATE_CONTENT)
-                adapter!!.forceUpdate()
-            }
+            adapter.forceUpdate()
         }
+
         viewModel!!.defUI.toastEvent.observe(viewLifecycleOwner) {
             state.set(MultiStateView.VIEW_STATE_ERROR)
             AlertDialog.Builder(context!!)
@@ -98,11 +92,8 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         viewModel!!.defUI.loadingEvent.observe(viewLifecycleOwner) {
             state.set(MultiStateView.VIEW_STATE_LOADING)
         }
-        /*
-         *默认是获取下周拟购商品信息
-         * 可以通过菜
-         */
-        viewModel!!.getCookBookOfDailyMeal(prefs.categoryCode)
+
+        viewModel!!.getGoodsOfCategory(prefs.categoryCode)
 
     }
 
@@ -118,10 +109,10 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
             .setTitle("申请调整\"${goods.goodsName}\"的单价")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 if (edit.text.isNullOrEmpty()) {
                     return@setPositiveButton
                 }
@@ -129,9 +120,6 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 goods.newPrice = newPrice
                 val newGoods = NewPrice(newPrice, goods.unitPrice)
                 viewModel!!.updateNewPriceOfGoods(newGoods, goods.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
-                adapter!!.forceUpdate()
                 dialog.dismiss()
             }.create()
         dialog.show()
@@ -149,7 +137,7 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 viewModel!!.getGoodsOfCategory(prefs.categoryCode)
             }
             R.id.next_week_goods -> {
-                viewModel!!.getCookBookOfDailyMeal(prefs.categoryCode)
+
             }
         }
         return true

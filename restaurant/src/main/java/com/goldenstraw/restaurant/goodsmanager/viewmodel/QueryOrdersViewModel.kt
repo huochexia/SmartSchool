@@ -1,24 +1,20 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.databinding.ObservableField
-import androidx.lifecycle.viewModelScope
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class QueryOrdersViewModel(
     private val repository: QueryOrdersRepository
@@ -84,128 +80,44 @@ class QueryOrdersViewModel(
     /**
      * 根据条件获取全部商品信息
      */
-    fun getAllGoodsOfCategory(where: String): Observable<MutableList<Goods>> {
-        return repository.getGoodsOfCategory(where)
+    fun getAllGoodsOfCategory(where: String) {
+        launchUI {
+            parserResponse(repository.getGoodsOfCategory(where)) {
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    goodsList.clear()
+                    goodsList.addAll(it)
+                    defUI.refreshEvent.call()
+                }
+            }
+        }
+
     }
 
     /**
      * 过滤类别，获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
      */
     fun getGoodsOfCategory(categoryId: String) {
-
-        val where = "{\"categoryCode\":\"$categoryId\"}"
-        repository.getGoodsOfCategory(where).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({ list ->
-                goodsList = list
-                goodsList.sortBy {
-                    it.objectId
+        launchUI {
+            val where = "{\"categoryCode\":\"$categoryId\"}"
+            parserResponse(repository.getGoodsOfCategory(where)) {
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    goodsList = it
+                    goodsList.sortBy { goods ->
+                        goods.objectId
+                    }
+                    defUI.refreshEvent.call()
                 }
-            }, {
-                defUI.toastEvent.value = it.message
-            }, {
-                defUI.refreshEvent.call()
-            }, {
-                defUI.loadingEvent.call()
-            })
+
+            }
+        }
     }
 
-    fun getGoodsFromObjectId(id: String): Observable<Goods> {
-        return repository.getGoodsFromObjectId(id)
-    }
-
-    /**
-     * 使用类别过滤，部分类别供货商需要了解下周学校可能使用的商品，以便对价格及时调整。
-     * 通过获取每日菜单当中的菜谱信息,最后得到商品信息
-     *
-     */
-    fun getCookBookOfDailyMeal(categoryId: String) {
-
-//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
-//            .flatMap { date ->
-//                val where = "{\"mealDate\":\"$date\"}"
-//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
-//            }.flatMap {
-//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
-//            }
-//            .map {
-//                it.cookBook.material //从菜谱中得到商品列表
-//            }
-//            .flatMap {
-//                Observable.fromIterable(it)
-//            }
-//            .filter {
-//                it.categoryCode == categoryId  //过滤类别
-//
-//            }
-//            .distinct() //去重复
-//            .flatMap {
-//                getGoodsFromObjectId(it.objectId)
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(this)
-//            .subscribe({ goods ->
-//                goodsList.add(goods)
-//            }, {
-//                defUI.toastEvent.value = it.message
-//            }, {
-//                defUI.refreshEvent.call()
-//            }, {
-//                goodsList.clear()
-//                defUI.loadingEvent.call()
-//            })
-    }
-
-    /**
-     *
-     *  不过滤,用于管理员查看下周可能需要的所有商品
-     */
-    @SuppressLint("AutoDispose")
-    fun getAllCookBookOfDailyMeal() {
-//        Observable.fromIterable(TimeConverter.getNextWeekToString(Date(System.currentTimeMillis())))
-//            .flatMap { date ->
-//                val where = "{\"mealDate\":\"$date\"}"
-//                repository.getCookBookOfDailyMeal(where)//从远程得到某日期菜单结果列表
-//            }.flatMap {
-//                Observable.fromIterable(it.results)//从远程数据结果当中得到菜单列表
-//            }
-//            .map {
-//                it.cookBook.material //从菜谱中得到商品列表
-//            }.flatMap {
-//                Observable.fromIterable(it)
-//            }
-//            .distinct() //去重复
-//            .flatMap {
-//                getGoodsFromObjectId(it.objectId)
-//            }
-//
-//            .groupBy {
-//                it.categoryCode
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(this)
-//            .subscribe({ goodsList ->
-//                goodsList.key?.let {
-//                    groupbyCategoryOfGoods[goodsList.key!!] = mutableListOf()
-//                    goodsList.subscribe({ goods ->
-//                        groupbyCategoryOfGoods[goodsList!!.key]!!.add(goods)
-//                    }, {
-//                        defUI.toastEvent.value = it.message
-//                    })
-//                }
-//
-//            }, {
-//                defUI.toastEvent.value = it.message
-//            }, {
-//                defUI.refreshEvent.call()
-//
-//            }, {
-//                defUI.loadingEvent.call()
-//            })
-    }
 
     /**
      * 求和
@@ -224,18 +136,23 @@ class QueryOrdersViewModel(
     /**
      * 提交新单价
      */
-    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String): Completable {
-        return repository.updateNewPrice(newPrice, objectId)
-
+    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) {
+        launchUI {
+            parserResponse(repository.updateNewPrice(newPrice, objectId)) {
+                defUI.refreshEvent.call()
+            }
+        }
     }
+
 
     /**
      * 删除订单
      */
     fun deleteOrderItem(objectId: String) {
         launchUI {
-            repository.deleteOrderItem(objectId)
-            defUI.refreshEvent.call()
+            parserResponse(repository.deleteOrderItem(objectId)) {
+                defUI.refreshEvent.call()
+            }
         }
     }
 
@@ -244,25 +161,26 @@ class QueryOrdersViewModel(
      */
     fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
         launchUI {
-            repository.updateOrderItem(newOrderItem, objectId)
-            defUI.refreshEvent.call()
+            parserResponse(repository.updateOrderItem(newOrderItem, objectId)) {
+                defUI.refreshEvent.call()
+            }
         }
     }
 
     /**
      * 查询到符合条件的订单，然后修改它的单价
      */
-    fun updateUnitPriceOfOrders(where: String, newPrice: Float) {
-        viewModelScope.launch {
+    fun updateUnitPriceOfOrders(where: String, price: Float) {
+        launchUI {
             withContext(Dispatchers.IO) {
-                val ordersItemList = repository.getUnitPriceOfOrders(where)
-                val newPrice = ObjectUnitPrice(newPrice)
-                ordersItemList?.let {//不为null说明成功
+                parserResponse(repository.getOrdersList(where)) {
                     if (it.isNotEmpty()) {//不是空列表，有内容才能执行修改
+                        val newPrice = ObjectUnitPrice(price)
                         repository.updateUnitPriceOfOrders(newPrice, it.first().objectId)
                     }
                 }
             }
+
         }
     }
 }
