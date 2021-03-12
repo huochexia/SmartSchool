@@ -67,4 +67,7 @@ class CookBookServiceManagerImpl(private val serviceApi: CookBookApi) : ICookBoo
         return serviceApi.getCountOfRemoteCookBook(where)
     }
 
+    override suspend fun getAllOfCookBook(skip: Int): ObjectList<RemoteCookBook> {
+        return serviceApi.getAllOfCookBook(skip)
+    }
 }

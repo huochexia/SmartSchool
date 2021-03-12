@@ -11,13 +11,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.R.color
 import com.goldenstraw.restaurant.databinding.FragmentDailyMealtimeBinding
 import com.goldenstraw.restaurant.databinding.LayoutMealItemBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
@@ -32,12 +30,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.android.synthetic.main.fragment_daily_mealtime.*
-import kotlinx.android.synthetic.main.layout_meal_item.*
-import kotlinx.android.synthetic.main.viewpage_of_daily_meal.*
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -87,14 +80,17 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             isShowAdd = true
         }
         arguments?.let {
-            dailyDate = it.getString("mealdate")
+            dailyDate = it.getString("mealdate")!!
         }
 
         toolbar_daily_meal.title = "${dailyDate}菜单"
         mealTime = MealTime.Breakfast.time
+//        考虑校区时
+//            where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
+//                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
 
         where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-                ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
+                ",{\"mealDate\":\"$dailyDate\"}]}"
 
         initEvent()
 
@@ -117,8 +113,13 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     mealTime = MealTime.Dinner.time
                 }
             }
+            //考虑校区时
+//            where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
+//                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
+
             where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
+                    ",{\"mealDate\":\"$dailyDate\"}]}"
+
             viewModel.getDailyMealOfDate(where)
         }
         //增加菜单，需要判断是增加哪类菜品
@@ -191,7 +192,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         snackAdapter = getAdapter(viewModel.snackList)
 
         //观察需要刷新哪类菜品列表
-        viewModel.refreshAdapter?.observe(viewLifecycleOwner) {
+        viewModel.refreshAdapter.observe(viewLifecycleOwner) {
             when (it) {
                 ColdFood.kindName -> {
                     (coldAdapter as BaseDataBindingAdapter).forceUpdate()
@@ -278,7 +279,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     override fun accept(t: DailyMeal) {
                         launch {
                             var text = ""
-                            var materialsList =
+                            val materialsList =
                                 respository.getCookBookWithMaterials(t.cookBook.objectId)
                             materialsList.materials.forEach {
                                 text = text + it.goodsName + ","
@@ -377,17 +378,17 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 // 绑定监听器(How the parent is notified that the date is set.)
                 // 此处得到选择的时间，可以进行你想要的操作
-                var month = if (monthOfYear + 1 < 10) {
+                val month = if (monthOfYear + 1 < 10) {
                     "0${monthOfYear + 1}"
                 } else {
                     "${monthOfYear + 1}"
                 }
-                var day = if (dayOfMonth < 10) {
+                val day = if (dayOfMonth < 10) {
                     "0${dayOfMonth}"
                 } else {
                     "$dayOfMonth"
                 }
-                var copyDate = "$year-$month-$day"
+                val copyDate = "$year-$month-$day"
                 viewModel.copyDailyMeal(dailyDate, copyDate)
 
             } // 设置初始日期

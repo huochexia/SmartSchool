@@ -20,6 +20,8 @@ suspend fun <T> parserResponse(
     }
 }
 
+
+
 /*
  * 网络信息常量类
  */
@@ -30,6 +32,8 @@ object ResponseCons {
     const val STATUS_101 = 101
     const val FAILURE_101 = "对象不存在"
 
+    const val STATUS_1007=10007
+    const val FAILURE_1007 ="应用超出限制"
     //TODO:补充响应错误码
 }
 
@@ -54,6 +58,7 @@ object StatusUtils {
                 isSuccess = true
             }
             ResponseCons.STATUS_101 -> desc = ResponseCons.FAILURE_101
+            ResponseCons.STATUS_1007->desc = ResponseCons.FAILURE_1007
         }
         mStatusResult.status = status
         mStatusResult.desc = desc

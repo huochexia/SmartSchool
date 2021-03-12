@@ -134,15 +134,20 @@ class CookBookRepository(
     }
 
 
+
+
     /*
-    清空本地某类别菜谱
+    清空本地数据
      */
-    suspend fun clearCookBookOfCategory(category: String) {
-        local.deleteCookBookOfCategory(category)
+    suspend fun clearLocalCookBook() {
+        local.clearCookBook()
     }
 
-    suspend fun getCountOfRemoteCookBook(where: String):Int{
-        return remote.getCountOfRemoteCookBook(where).count
-    }
+    /*
+    获取远程数据
+     */
+    suspend fun getAllOfRemoteCookBook(skip: Int): ObjectList<RemoteCookBook> {
 
+        return remote.getAllOfCookBook(skip)
+    }
 }

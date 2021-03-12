@@ -20,7 +20,6 @@ import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.viewModelScope
 import com.owner.basemodule.ext.livedata.SingleLiveEvent
 import com.owner.basemodule.network.ExceptionHandle
-import com.owner.basemodule.util.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -66,7 +65,7 @@ open class BaseViewModel : AutoDisposeViewModel(), Observable {
         try {
             block()
         } catch (e: Throwable) {
-            toast { ExceptionHandle.handleException(e).errMsg }
+            println(ExceptionHandle.handleException(e).errMsg)
         }
     }
 

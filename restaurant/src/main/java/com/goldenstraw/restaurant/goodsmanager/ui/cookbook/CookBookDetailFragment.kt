@@ -204,18 +204,18 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
         /**
          * 同步网络与本地数据
          */
-        launch {
-            try {
-                withContext(Dispatchers.Default) {
-                    viewModel.asyncCookBooks(cookCategory)
-                }
-            } catch (e: BmobException) {
-                toast {
-                    e.message.toString()
-                }
-            }
-
-        }
+//        launch {
+//            try {
+//                withContext(Dispatchers.Default) {
+//                    viewModel.asyncCookBooks(cookCategory)
+//                }
+//            } catch (e: BmobException) {
+//                toast {
+//                    e.message.toString()
+//                }
+//            }
+//
+//        }
 
 
     }

@@ -1,9 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.cookbok
 
-import com.goldenstraw.restaurant.goodsmanager.http.entities.*
-import com.owner.basemodule.network.*
 //import com.owner.basemodule.room.entities.CBGCrossRef
-import com.owner.basemodule.room.entities.LocalCookBook
+import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.CreateObject
+import com.owner.basemodule.network.DeleteObject
+import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 
 /**
  * 访问远程数据库，管理数据
@@ -35,5 +37,6 @@ interface ICookBookServiceManager {
     suspend fun getCookBooks(objectId: String):RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
 
-    suspend fun getCountOfRemoteCookBook(where:String):Count<RemoteCookBook>
+    suspend fun getCountOfRemoteCookBook(where: String): Count<RemoteCookBook>
+    suspend fun getAllOfCookBook( skip: Int): ObjectList<RemoteCookBook>
 }

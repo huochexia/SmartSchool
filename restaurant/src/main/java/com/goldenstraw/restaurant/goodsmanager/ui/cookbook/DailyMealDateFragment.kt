@@ -17,6 +17,9 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
+/**
+ * 显示一个日历，通过点击日期查看该日期的菜单
+ */
 class DailyMealDateFragment : BaseFragment<FragmentDailyMealSelectDateBinding>(),
     CalendarView.OnCalendarSelectListener {
 

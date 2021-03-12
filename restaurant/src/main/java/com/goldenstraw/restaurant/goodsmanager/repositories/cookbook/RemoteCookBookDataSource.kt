@@ -7,8 +7,6 @@ import com.owner.basemodule.network.CreateObject
 import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
-//import com.owner.basemodule.room.entities.CBGCrossRef
-import com.owner.basemodule.room.entities.LocalCookBook
 
 /**
  * 访问远程数据接口
@@ -37,9 +35,9 @@ interface IRemoteCookBookDataSource : IRemoteDataSource {
     查询
      */
     suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<RemoteCookBook>
-    suspend fun getCookBook(objectId: String):RemoteCookBook
+    suspend fun getCookBook(objectId: String): RemoteCookBook
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal>
-    suspend fun getCountOfRemoteCookBook(where:String):Count<RemoteCookBook>
+    suspend fun getAllOfCookBook(skip: Int): ObjectList<RemoteCookBook>
 
 }
 
@@ -51,8 +49,6 @@ class RemoteCookBookDataSourceImpl(
     override suspend fun createDailyMeal(newDailyMeal: NewDailyMeal): CreateObject {
         return manager.createDailyMeal(newDailyMeal)
     }
-
-
 
 
     override suspend fun deleteCookBook(objectId: String): DeleteObject {
@@ -97,13 +93,13 @@ class RemoteCookBookDataSourceImpl(
     override suspend fun getCookBook(objectId: String): RemoteCookBook {
         return manager.getCookBooks(objectId)
     }
+
     override suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return manager.getDailyMealOfDate(where)
     }
 
-    override suspend fun getCountOfRemoteCookBook(where: String): Count<RemoteCookBook> {
-        return manager.getCountOfRemoteCookBook(where)
+
+    override suspend fun getAllOfCookBook(skip: Int): ObjectList<RemoteCookBook> {
+        return manager.getAllOfCookBook(skip)
     }
-
-
 }

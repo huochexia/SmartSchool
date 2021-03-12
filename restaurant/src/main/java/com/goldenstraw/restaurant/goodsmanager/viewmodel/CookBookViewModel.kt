@@ -15,6 +15,7 @@ import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
@@ -149,7 +150,7 @@ class CookBookViewModel(
         //这个判断主要是用于初始使用，如果本地没有数据则从网络获取，然后，再次从本地查询。
 
         if (cookbookList.isNullOrEmpty()) {
-            asyncCookBooks(category)
+//            asyncCookBooks(category)
             cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
         }
         Observable.fromIterable(cookbookList)
@@ -507,13 +508,13 @@ class CookBookViewModel(
     fun createDailyMeal(newDailyMeal: NewDailyMeal) {
         launchUI {
             withContext(Dispatchers.IO) {
-                val result = repository.createDailyMeal(newDailyMeal)
-                if (result.isSuccess()) {
+                parserResponse(repository.createDailyMeal(newDailyMeal)) {
                     //获取最新菜谱使用数量，增加
                     val cookbook = repository.getCookbook(newDailyMeal.cookBook.objectId)
                     cookbook.usedNumber = cookbook.usedNumber + 1
                     updateNumberOfUsed(cookbook)
                 }
+
             }
         }
     }
@@ -576,27 +577,27 @@ class CookBookViewModel(
         val doc = HWPFDocument(file)
         val range = doc.range
         range.replaceText("\${cookbookDate}", date)
-        range.replaceText("\${breakfast_cold}", getCookBook(CookKind.ColdFood.kindName, breakfast))
-        range.replaceText("\${breakfast_hot}", getCookBook(CookKind.HotFood.kindName, breakfast))
+        range.replaceText("\${breakfast_cold}", getCookBook(ColdFood.kindName, breakfast))
+        range.replaceText("\${breakfast_hot}", getCookBook(HotFood.kindName, breakfast))
         range.replaceText(
             "\${breakfast_flour}",
-            getCookBook(CookKind.FlourFood.kindName, breakfast)
+            getCookBook(FlourFood.kindName, breakfast)
         )
-        range.replaceText("\${breakfast_soup}", getCookBook(CookKind.SoutPorri.kindName, breakfast))
+        range.replaceText("\${breakfast_soup}", getCookBook(SoutPorri.kindName, breakfast))
         range.replaceText(
             "\${breakfast_snack}",
-            getCookBook(CookKind.Snackdetail.kindName, breakfast)
+            getCookBook(Snackdetail.kindName, breakfast)
         )
-        range.replaceText("\${lunch_cold}", getCookBook(CookKind.ColdFood.kindName, lunch))
-        range.replaceText("\${lunch_hot}", getCookBook(CookKind.HotFood.kindName, lunch))
-        range.replaceText("\${lunch_flour}", getCookBook(CookKind.FlourFood.kindName, lunch))
-        range.replaceText("\${lunch_soup}", getCookBook(CookKind.SoutPorri.kindName, lunch))
-        range.replaceText("\${lunch_snack}", getCookBook(CookKind.Snackdetail.kindName, lunch))
-        range.replaceText("\${dinner_cold}", getCookBook(CookKind.ColdFood.kindName, dinner))
-        range.replaceText("\${dinner_hot}", getCookBook(CookKind.HotFood.kindName, dinner))
-        range.replaceText("\${dinner_flour}", getCookBook(CookKind.FlourFood.kindName, dinner))
-        range.replaceText("\${dinner_soup}", getCookBook(CookKind.SoutPorri.kindName, dinner))
-        range.replaceText("\${dinner_snack}", getCookBook(CookKind.Snackdetail.kindName, dinner))
+        range.replaceText("\${lunch_cold}", getCookBook(ColdFood.kindName, lunch))
+        range.replaceText("\${lunch_hot}", getCookBook(HotFood.kindName, lunch))
+        range.replaceText("\${lunch_flour}", getCookBook(FlourFood.kindName, lunch))
+        range.replaceText("\${lunch_soup}", getCookBook(SoutPorri.kindName, lunch))
+        range.replaceText("\${lunch_snack}", getCookBook(Snackdetail.kindName, lunch))
+        range.replaceText("\${dinner_cold}", getCookBook(ColdFood.kindName, dinner))
+        range.replaceText("\${dinner_hot}", getCookBook(HotFood.kindName, dinner))
+        range.replaceText("\${dinner_flour}", getCookBook(FlourFood.kindName, dinner))
+        range.replaceText("\${dinner_soup}", getCookBook(SoutPorri.kindName, dinner))
+        range.replaceText("\${dinner_snack}", getCookBook(Snackdetail.kindName, dinner))
         val outfile = File("/storage/emulated/0/$date.doc")
         val outFile = FileOutputStream(outfile)
         doc.write(outFile)
@@ -616,47 +617,47 @@ class CookBookViewModel(
     private fun getCookBook(cookkind: String, cookbooksList: MutableList<LocalCookBook>): String {
 
         return when (cookkind) {
-            CookKind.ColdFood.kindName -> {
+            ColdFood.kindName -> {
                 var coldfood = ""
                 cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.ColdFood.kindName) {
+                    if (it.foodCategory == ColdFood.kindName) {
                         coldfood += it.foodName + " "
 
                     }
                 }
                 return coldfood
             }
-            CookKind.HotFood.kindName -> {
+            HotFood.kindName -> {
                 var hotfood = ""
                 cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.HotFood.kindName) {
+                    if (it.foodCategory == HotFood.kindName) {
                         hotfood += it.foodName + " "
                     }
                 }
                 return hotfood
             }
-            CookKind.FlourFood.kindName -> {
+            FlourFood.kindName -> {
                 var flourfood = ""
                 cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.FlourFood.kindName) {
+                    if (it.foodCategory == FlourFood.kindName) {
                         flourfood += it.foodName + " "
                     }
                 }
                 return flourfood
             }
-            CookKind.SoutPorri.kindName -> {
+            SoutPorri.kindName -> {
                 var soutporri = ""
                 cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.SoutPorri.kindName) {
+                    if (it.foodCategory == SoutPorri.kindName) {
                         soutporri += it.foodName + " "
                     }
                 }
                 return soutporri
             }
-            CookKind.Snackdetail.kindName -> {
+            Snackdetail.kindName -> {
                 var snackdetail = ""
                 cookbooksList.forEach {
-                    if (it.foodCategory == CookKind.Snackdetail.kindName) {
+                    if (it.foodCategory == Snackdetail.kindName) {
                         snackdetail += it.foodName + " "
                     }
                 }
@@ -671,30 +672,34 @@ class CookBookViewModel(
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
      * 先读取本地数据，然后读取网络
      */
-    suspend fun asyncCookBooks(category: String) {
 
-        var skip = 0
-        val where = "{\"foodCategory\":\"$category\"}"
-        val count = repository.getCountOfRemoteCookBook(where)
-        val allcookbook: MutableList<RemoteCookBook> = mutableListOf()
-        for (a in 0..(count / 500)) {
-            allcookbook.addAll(
-                repository.getCookBookOfCategory(where, skip).results!!
-            )
-            skip += 500
+    fun syncCookbook() {
+        launchUI {
+            var skip = 0
+            val cookbooksList = mutableListOf<RemoteCookBook>()
+            var isCompleted = false
+            while (!isCompleted) {
+                parserResponse(repository.getAllOfRemoteCookBook(skip)) {
+                    cookbooksList.addAll(it)
+                    if (it.size == 200)//如果结果列表等于500，说明可能还有数据，则继续
+                        skip += 200
+                    else //如果列表数量小于500，说明已经是最后一页了。
+                        isCompleted = true
+
+                }
+            }
+            //清空本地数据
+            repository.clearLocalCookBook()
+            //远程数据转换为本地数据
+            val localCookBook = mutableListOf<LocalCookBook>()
+            val materials = mutableListOf<Material>()
+            cookbooksList.forEach {
+                localCookBook.add(remoteToLocalCookBook(it))
+                materials.addAll(it.material)
+            }
+            //保存本地数据
+            repository.addCookBooksToLocal(localCookBook)
+            repository.addMaterialOfCookBooks(materials)
         }
-        val localList = mutableListOf<LocalCookBook>()
-        val material = mutableListOf<Material>()
-        //将远程菜谱转换成本地菜谱
-        allcookbook.forEach {
-            localList.add(remoteToLocalCookBook(it))
-            material.addAll(it.material)
-        }
-        repository.clearCookBookOfCategory(category)
-        repository.addCookBooksToLocal(localList)
-        repository.addMaterialOfCookBooks(material)
-
-
     }
-
 }

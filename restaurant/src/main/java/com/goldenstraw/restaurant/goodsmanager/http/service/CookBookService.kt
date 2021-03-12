@@ -88,5 +88,12 @@ interface CookBookApi {
         @Query("where") where: String,
         @Query("count") count: Int = 1,
         @Query("limit") limit: Int = 0
-    ):Count<RemoteCookBook>
+    ): Count<RemoteCookBook>
+
+    //获取所有菜谱
+    @GET("/1/classes/RemoteCookBook/")
+    suspend fun getAllOfCookBook(
+        @Query("skip") skip: Int,
+        @Query("limit") limit: Int = 200
+    ): ObjectList<RemoteCookBook>
 }
