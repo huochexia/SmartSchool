@@ -101,9 +101,6 @@ class CookBookRepository(
         return local.getCookBookWithMaterials(objectId)
     }
 
-    suspend fun getCookBookOfCategory(where: String, skip: Int): ObjectList<RemoteCookBook> {
-        return remote.getCookBookOfCategory(where, skip)
-    }
 
     suspend fun getDailyMealOfDate(where: String): ObjectList<DailyMeal> {
         return remote.getDailyMealOfDate(where)

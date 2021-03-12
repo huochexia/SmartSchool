@@ -3,10 +3,10 @@ package com.goldenstraw.restaurant.goodsmanager.adapter
 import android.graphics.Color
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
 import com.owner.basemodule.room.entities.CookBookWithMaterials
-import com.owner.basemodule.room.entities.LocalCookBook
 import java.text.DecimalFormat
 
 @BindingAdapter("bind_state_text")
@@ -49,9 +49,9 @@ fun setCookBookColor(textView: TextView, isStandby: Boolean) {
 }
 
 @BindingAdapter("bind_dailymeal_text")
-fun setDailyMealText(textView: TextView, cookbook: LocalCookBook) {
-    textView.text = cookbook.foodName
-    when (cookbook.foodKind) {
+fun setDailyMealText(textView: TextView, dailyMeal: DailyMeal) {
+    textView.text = dailyMeal.cookBook.foodName
+    when (dailyMeal.cookBook.foodKind) {
         "小荤菜", "煮", "汤", "馅类" -> textView.setTextColor(Color.BLUE)
         "大荤菜", "杂粮", "煎炒" -> textView.setTextColor(Color.RED)
         else -> textView.setTextColor(Color.BLACK)

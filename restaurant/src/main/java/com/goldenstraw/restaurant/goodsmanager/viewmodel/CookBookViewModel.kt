@@ -11,7 +11,6 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
-import com.goldenstraw.restaurant.goodsmanager.utils.CookKind
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
@@ -105,11 +104,11 @@ class CookBookViewModel(
     fun deleteCookBook(cm: CookBookWithMaterials) {
 
         launchUI {
-            val result = repository.deleteRemoteCookBook(cm.cookbook.objectId)
-            if (result.isSuccess()) {
+            parserResponse(repository.deleteRemoteCookBook(cm.cookbook.objectId)) {
                 repository.deleteLocalCookBookWithMaterials(cm)
                 defUI.showDialog.value = "删除成功"
             }
+
         }
     }
 
@@ -147,12 +146,12 @@ class CookBookViewModel(
         groupbyKind.clear()
         cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
 
-        //这个判断主要是用于初始使用，如果本地没有数据则从网络获取，然后，再次从本地查询。
-
-        if (cookbookList.isNullOrEmpty()) {
-//            asyncCookBooks(category)
-            cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
-        }
+//        //这个判断主要是用于初始使用，如果本地没有数据则从网络获取，然后，再次从本地查询。
+//
+//        if (cookbookList.isNullOrEmpty()) {
+////            asyncCookBooks(category)
+//            cookbookList = repository.getCookBookWithMaterialOfCategory(category, isStandby)
+//        }
         Observable.fromIterable(cookbookList)
             .groupBy { cookBookWithMaterials ->
                 cookBookWithMaterials.cookbook.foodKind
@@ -209,8 +208,7 @@ class CookBookViewModel(
     private suspend fun updateNumberOfUsed(cookbook: RemoteCookBook) {
         val newNumber = UpdateUsedNumber(cookbook.usedNumber)
         cookbook.objectId?.let {
-            val result = repository.updateNumberOfUsed(newNumber, it)
-            if (result.isSuccess()) {
+            parserResponse(repository.updateNumberOfUsed(newNumber, it)) {
                 repository.addCookBookToLocal(remoteToLocalCookBook(cookbook))
             }
         }
@@ -229,7 +227,7 @@ class CookBookViewModel(
 
 
     //清空所有列表内容
-    fun clearAllList() {
+    private fun clearAllList() {
         coldList.clear()
         hotList.clear()
         flourList.clear()
@@ -298,9 +296,8 @@ class CookBookViewModel(
             allDailyMeal.clear()
             dateList.forEach { date ->
                 val where = "{\"mealDate\":\"$date\"}"
-                val objectList = repository.getDailyMealOfDate(where)
-                if (objectList.isSuccess()) {
-                    allDailyMeal.addAll(objectList.results!!)
+                parserResponse(repository.getDailyMealOfDate(where)) {
+                    allDailyMeal.addAll(it)
                 }
             }
             groupByKindForDailyMeal(allDailyMeal)
@@ -379,12 +376,8 @@ class CookBookViewModel(
 
         launchUI {
             withContext(Dispatchers.IO) {
-                val objectList = repository.getDailyMealOfDate(where)
-                if (objectList.isSuccess()) {
-                    groupByKindForDailyMeal(objectList.results!!)
-
-                } else {
-                    defUI.showDialog.value = objectList.error
+                parserResponse(repository.getDailyMealOfDate(where)) {
+                    groupByKindForDailyMeal(it)
                 }
             }
             _refreshAdapter.value = "All"
@@ -416,15 +409,14 @@ class CookBookViewModel(
     }
 
     /*
-    拷贝某一天菜单
+    拷贝某一天菜单,
      */
-    fun copyDailyMeal(newDate: String, oldDate: String) {
+    fun copyDailyMeal(newDate: String, oldDate: String, direct: Int) {
         launchUI {
             val where = "{\"mealDate\":\"$oldDate\"}"
-            val objectList = repository.getDailyMealOfDate(where)
-            withContext(Dispatchers.Default) {
-                if (objectList.isSuccess()) {
-                    Observable.fromIterable(objectList.results)
+            withContext(Dispatchers.IO) {
+                parserResponse(repository.getDailyMealOfDate(where)) {
+                    Observable.fromIterable(it)
                         .map { oldDailyMeal ->
                             //菜谱使用次数加1
                             oldDailyMeal.cookBook.usedNumber = +1
@@ -433,7 +425,8 @@ class CookBookViewModel(
                                 oldDailyMeal.mealTime,
                                 newDate,
                                 oldDailyMeal.cookBook,
-                                oldDailyMeal.isOfTeacher
+                                oldDailyMeal.isOfTeacher,
+                                direct
                             )
                             newDailyMeal
                         }
@@ -446,8 +439,6 @@ class CookBookViewModel(
                                         ",{\"mealDate\":\"$newDate\"}]}"
                             getDailyMealOfDate(where1)
                         })
-                } else {
-                    defUI.showDialog.value = objectList.error
                 }
             }
 
@@ -456,28 +447,23 @@ class CookBookViewModel(
 
     fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String) {
         launchUI {
-            repository.updateDailyMeal(newDailyMeal, objectId)
+            parserResponse(repository.updateDailyMeal(newDailyMeal, objectId))
         }
     }
 
     /*
      * 删除一日菜单
      */
-    fun deleteDailyMealOfDate(date: String) {
+    fun deleteDailyMealOfDate(date: String, direct: Int) {
         launchUI {
-
-            val where = "{\"mealDate\":\"$date\"}"
-            val objectList = repository.getDailyMealOfDate(where)
-            if (objectList.isSuccess()) {
-                objectList.results?.forEach { meal ->
+            val where = "{\"\$and\":[{\"mealDate\":\"$date\"},{\"direct\":$direct}]}"
+            parserResponse(repository.getDailyMealOfDate(where)) {
+                it.forEach { meal ->
                     deleteDailyMeal(meal)
                 }
-            } else {
-                defUI.showDialog.value = objectList.error
+                clearAllList()
+                _refreshAdapter.value = "All"
             }
-            clearAllList()
-            _refreshAdapter.value = "All"
-
         }
 
     }
@@ -490,9 +476,7 @@ class CookBookViewModel(
             val cookbook = repository.getCookbook(dailyMeal.cookBook.objectId)
             cookbook.usedNumber = cookbook.usedNumber - 1
             withContext(Dispatchers.IO) {
-                val result = repository.deleteDailyMeal(dailyMeal.objectId)
-                if (result.isSuccess()) {
-                    //获取最新菜谱使用数量，减量
+                parserResponse(repository.deleteDailyMeal(dailyMeal.objectId)) {
                     updateNumberOfUsed(cookbook)
                 }
             }
@@ -519,10 +503,10 @@ class CookBookViewModel(
         }
     }
 
-    /**
+    /***********************************************************
      *将每日菜单转换成Word表格
-     */
-//定义三个Map变量，分别对应早，中，晚三餐
+     ***********************************************************/
+    //定义三个Map变量，分别对应早，中，晚三餐
     private val breakfast = mutableListOf<LocalCookBook>()
     private val lunch = mutableListOf<LocalCookBook>()
     private val dinner = mutableListOf<LocalCookBook>()
@@ -532,11 +516,10 @@ class CookBookViewModel(
             breakfast.clear()
             lunch.clear()
             dinner.clear()
-            withContext(Dispatchers.Default) {
+            withContext(Dispatchers.IO) {
                 val where = "{\"mealDate\":\"$date\"}"
-                val objectList = repository.getDailyMealOfDate(where)
-                if (objectList.isSuccess()) {
-                    Observable.fromIterable(objectList.results)
+                parserResponse(repository.getDailyMealOfDate(where)) { list ->
+                    Observable.fromIterable(list)
                         .groupBy {
                             it.mealTime
                         }.subscribeOn(Schedulers.io())
@@ -559,8 +542,6 @@ class CookBookViewModel(
                                     }
                                 }
                         }
-                } else {
-                    defUI.showDialog.value = objectList.error
                 }
             }
             withContext(Dispatchers.IO) {
@@ -668,10 +649,10 @@ class CookBookViewModel(
     }
 
 
-    /**
+    /********************************************************************************
      * 同步数据，主要是因为网络数据可以被不同的人修改，所以在查看菜谱时需要将网络数据与本地数据进行同步。
      * 先读取本地数据，然后读取网络
-     */
+     ********************************************************************************/
 
     fun syncCookbook() {
         launchUI {

@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import cn.bmob.v3.exception.BmobException
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookDetailBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookbookItemBinding
 import com.goldenstraw.restaurant.databinding.ViewpageOfCookKindBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -25,13 +25,10 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.CookBookWithMaterials
-import com.owner.basemodule.util.toast
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_cookbook_detail.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -39,6 +36,8 @@ import kotlin.properties.Delegates
 
 class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
 
+
+    private val prefs by instance<PrefsHelper>()
     lateinit var cookCategory: String
     var isStandby = false
     var isSelected by Delegates.notNull<Boolean>() //判断是用于选择还是查看
@@ -80,7 +79,7 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
                         it.cookbook.isSelected
                     }
                     .map {
-                        NewDailyMeal(mealTime, mealDate, it.cookbook)
+                        NewDailyMeal(mealTime, mealDate, it.cookbook, direct = prefs.district)
                     }.subscribeOn(Schedulers.io())
                     .subscribe({
                         viewModel.createDailyMeal(it)
@@ -201,22 +200,6 @@ class CookBookDetailFragment : BaseFragment<FragmentCookbookDetailBinding>() {
             }
         }
         tabLayoutMediator?.attach()
-        /**
-         * 同步网络与本地数据
-         */
-//        launch {
-//            try {
-//                withContext(Dispatchers.Default) {
-//                    viewModel.asyncCookBooks(cookCategory)
-//                }
-//            } catch (e: BmobException) {
-//                toast {
-//                    e.message.toString()
-//                }
-//            }
-//
-//        }
-
 
     }
 

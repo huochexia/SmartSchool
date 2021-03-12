@@ -47,7 +47,7 @@
                                 android:text="@{CookKind.ColdFood.kindName}"
                                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
-                        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+                        <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rlw_cold_food"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

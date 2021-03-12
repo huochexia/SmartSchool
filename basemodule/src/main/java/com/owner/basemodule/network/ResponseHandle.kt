@@ -12,7 +12,7 @@ import kotlinx.coroutines.coroutineScope
   */
 suspend fun <T> parserResponse(
     response: IBaseResponse<T>,
-    success: suspend CoroutineScope.(T) -> Unit
+    success: suspend CoroutineScope.(T) -> Unit = {}
 ) {
     coroutineScope {
         if (response.isSuccess()) success(response.data()!!)

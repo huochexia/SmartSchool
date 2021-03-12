@@ -27,16 +27,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{dailymeal.direct==0?View.GONE:View.VISIBLE}"
+                android:src="@drawable/ic_sharp_xishan"
+
+                app:layout_constraintEnd_toStartOf="@+id/tv_meal_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
                 android:id="@+id/tv_meal_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin"
+                android:layout_margin="20dp"
                 android:onClick="@{()->clickEvent.accept(dailymeal)}"
-                android:text="@{dailymeal.cookBook.foodName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:textColor="@color/common_black"
                 android:textSize="16sp"
+                app:bind_dailymeal_text="@{dailymeal}"
                 app:bind_view_onLongClick="@{()->onLongClick.accept(dailymeal)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

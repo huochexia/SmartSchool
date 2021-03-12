@@ -17,6 +17,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewDailyMeal
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.None
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.CookBookViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
@@ -32,6 +33,8 @@ import org.kodein.di.generic.instance
  * 模糊查询菜谱
  */
 class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
+
+    private val prefs by instance<PrefsHelper>()
     var mealDate = ""
     var mealTime = ""
     var cookCategory = ""
@@ -51,9 +54,9 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
     var cookbookList = mutableListOf<CookBookWithMaterials>()
     override fun initView() {
         arguments?.let {
-            mealDate = it.getString("mealDate")
-            mealTime = it.getString("mealTime")
-            cookCategory = it.getString("cookcategory")
+            mealDate = it.getString("mealDate")!!
+            mealTime = it.getString("mealTime")!!
+            cookCategory = it.getString("cookcategory")!!
         }
 
     }
@@ -90,7 +93,7 @@ class SearchCookBookFragment : BaseFragment<FragmentSearchCookbookBinding>() {
                 binding.onClick = object : Consumer<CookBookWithMaterials> {
                     override fun accept(t: CookBookWithMaterials) {
                         with(viewModel!!) {
-                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookbook)
+                            val newDailyMeal = NewDailyMeal(mealTime, mealDate, t.cookbook,direct = prefs.district)
                             createDailyMeal(newDailyMeal)
                             defUI.refreshEvent.call()
                         }

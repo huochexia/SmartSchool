@@ -245,32 +245,45 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     binding.deleteAction.visibility = View.VISIBLE
                     binding.clickEvent = object : Consumer<DailyMeal> {
                         override fun accept(t: DailyMeal) {
-                            //点击是否选择
-                            AlertDialog.Builder(context)
-                                .setMessage("是否选择为教职工餐?")
-                                .setPositiveButton("是") { dialog, which ->
-                                    dailyMeal.isOfTeacher = true
-                                    viewModel.updateDailyMeal(
-                                        UpdateIsteacher(true),
-                                        dailyMeal.objectId
-                                    )
-                                    dialog.dismiss()
-                                    viewModel.setRefreshAdapter(dailyMeal)
-                                }
-                                .setNegativeButton("否") { dialog, which ->
-                                    dailyMeal.isOfTeacher = false
-                                    viewModel.updateDailyMeal(
-                                        UpdateIsteacher(false),
-                                        dailyMeal.objectId
-                                    )
-                                    dialog.dismiss()
-                                    viewModel.setRefreshAdapter(dailyMeal)
-                                }.create().show()
+                            //判断操作人员和菜单是否为同属于一人区域
+                            if (prefs.district == t.direct)
+                                AlertDialog.Builder(context)
+                                    .setMessage("是否选择为教职工餐?")
+                                    .setPositiveButton("是") { dialog, which ->
+                                        dailyMeal.isOfTeacher = true
+                                        viewModel.updateDailyMeal(
+                                            UpdateIsteacher(true),
+                                            dailyMeal.objectId
+                                        )
+                                        dialog.dismiss()
+                                        viewModel.setRefreshAdapter(dailyMeal)
+                                    }
+                                    .setNegativeButton("否") { dialog, which ->
+                                        dailyMeal.isOfTeacher = false
+                                        viewModel.updateDailyMeal(
+                                            UpdateIsteacher(false),
+                                            dailyMeal.objectId
+                                        )
+                                        dialog.dismiss()
+                                        viewModel.setRefreshAdapter(dailyMeal)
+                                    }.create().show()
+                            else
+                                AlertDialog.Builder(context)
+                                    .setMessage("对不起，你没有权限！")
+                                    .create()
+                                    .show()
                         }
                     }
                     binding.deleteEvent = object : Consumer<DailyMeal> {
                         override fun accept(t: DailyMeal) {
-                            deleteDialog(t)
+                            if (prefs.district == t.direct)//相同区域人员才允许删除
+                                deleteDialog(t)
+                            else
+
+                                AlertDialog.Builder(context)
+                                    .setMessage("对不起，你没有权限！")
+                                    .create()
+                                    .show()
                         }
 
                     }
@@ -353,7 +366,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     }
                     .setPositiveButton("是") { dialog, _ ->
 
-                        viewModel.deleteDailyMealOfDate(dailyDate)
+                        viewModel.deleteDailyMealOfDate(dailyDate,prefs.district)
 
                         dialog.dismiss()
                     }
@@ -389,7 +402,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     "$dayOfMonth"
                 }
                 val copyDate = "$year-$month-$day"
-                viewModel.copyDailyMeal(dailyDate, copyDate)
+                viewModel.copyDailyMeal(dailyDate, copyDate,prefs.district)
 
             } // 设置初始日期
             ,
