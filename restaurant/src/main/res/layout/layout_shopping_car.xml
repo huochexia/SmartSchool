@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View" />
         <variable
                 name="foodAndMaterial"
                 type="com.owner.basemodule.room.entities.FoodWithMaterialsOfShoppingCar" />
@@ -24,15 +24,27 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <TextView
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:text="@{foodAndMaterial.food.foodName}"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:bind_food_text_color="@{foodAndMaterial.food.foodTime}"
-                    tools:text="红烧肉" />
+                    android:orientation="horizontal">
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_sharp_xishan"
+                        android:visibility="@{foodAndMaterial.food.direct==0?View.GONE:View.VISIBLE}" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:text="@{foodAndMaterial.food.foodName}"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:bind_food_text_color="@{foodAndMaterial.food.foodTime}"
+                        tools:text="红烧肉" />
+            </LinearLayout>
 
 
             <androidx.recyclerview.widget.RecyclerView

@@ -179,14 +179,14 @@ class GoodsToOrderMgViewModel(
      * 将所选择商品转换成原材料，加入购物车后，从当前列表中清除已选择的商品，
      * 仅仅列表清除，为的是避免重复选择
      */
-    fun addGoodsToShoppingCar(list: MutableList<Goods>) {
+    fun addGoodsToShoppingCar(list: MutableList<Goods>, direct: Int) {
         val selectedGoods = mutableListOf<MaterialOfShoppingCar>()
         selectedGoods.addAll(list.map {
             goodsToShoppingCar(it)
         })
         launchUI {
             //创建一个通用的食物
-            val common = FoodOfShoppingCar("common", "", "通用", "")
+            val common = FoodOfShoppingCar("common", "", "通用", "", direct = direct)
             repository.addFoodAndMaterialsToShoppingCar(common, selectedGoods)
             goodsList.removeAll(list)
         }
@@ -200,16 +200,16 @@ class GoodsToOrderMgViewModel(
         launchUI {
             withContext(Dispatchers.IO) {
                 //第一步：获取每日菜单
-                val dailyMeal = repository.getDailyMealOfDate(where)
-                if (dailyMeal.isSuccess()) {
+                parserResponse(repository.getDailyMealOfDate(where)) {
                     //第二步：遍历每日菜单将其转换为购物车食物和原材料
-                    dailyMeal.results?.forEach { meal ->
+                    it.forEach { meal ->
                         val food = FoodOfShoppingCar(
                             foodId = meal.cookBook.objectId,
                             foodName = meal.cookBook.foodName,
                             foodCategory = meal.cookBook.foodCategory,
                             foodTime = meal.mealTime,
-                            isOfTearcher = meal.isOfTeacher
+                            isOfTearcher = meal.isOfTeacher,
+                            direct = meal.direct
                         )
 
                         val materials =

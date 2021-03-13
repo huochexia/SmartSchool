@@ -166,7 +166,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val quantity = goodsQuantity.text.toString().trim()
                 val note = goodsOfNote.text.toString().trim()
-                if (quantity.isNullOrEmpty()) {
+                if (quantity.isEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
                     material.quantity = quantity.toFloat()
@@ -231,7 +231,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
                 btn_commit_shopping_cart.visibility = View.VISIBLE
 
                 toolbar.subtitle = "汇总结果"
-                viewModel!!.collectAllOfFoodCategory()
+                viewModel!!.collectAllOfFoodCategory(prefs.district)
             }
             R.id.already_subscribe -> {
 
@@ -292,7 +292,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
                 val quantity = teachers.text.toString().trim()
-                if (quantity.isNullOrEmpty()) {
+                if (quantity.isEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
                     prefs.teachers = quantity.toInt()

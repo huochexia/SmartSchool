@@ -10,6 +10,7 @@ import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
@@ -22,6 +23,9 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
+
+    private val prefs by instance<PrefsHelper>()
+
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
         import(goodsDataSourceModule)
@@ -171,7 +175,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     selectedList.add(it)
                 }
             }
-            addGoodsToShoppingCar(selectedList)
+            addGoodsToShoppingCar(selectedList, prefs.district)
             searchGoodsResultList.removeAll(selectedList)
         }
 

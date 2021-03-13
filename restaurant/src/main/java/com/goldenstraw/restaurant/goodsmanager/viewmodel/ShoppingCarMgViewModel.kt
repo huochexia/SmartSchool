@@ -1,9 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.BatchOrdersRequest
 import com.goldenstraw.restaurant.goodsmanager.repositories.shoppingcar.ShoppingCarRepository
@@ -114,7 +111,7 @@ class ShoppingCarMgViewModel(
     /**
      * 将汇总所有拟购商品，合计重复商品数量，商品数量为0的删除
      */
-    fun collectAllOfFoodCategory() {
+    fun collectAllOfFoodCategory(direct: Int) {
         launchUI {
             val allList = repository.getAllOfMaterialShoppingCar()
             val collect = hashMapOf<String, MaterialOfShoppingCar>()
@@ -132,7 +129,7 @@ class ShoppingCarMgViewModel(
                         collect[it.goodsName] = it
                     }
                 }, {}, {
-                    collectAllMaterialOfShoppingCar(collect.values.toMutableList())
+                    collectAllMaterialOfShoppingCar(collect.values.toMutableList(), direct)
                 })
 
         }
@@ -141,9 +138,9 @@ class ShoppingCarMgViewModel(
     /**
      * 将汇总去重后的食物材料
      */
-    private fun collectAllMaterialOfShoppingCar(list: List<MaterialOfShoppingCar>) {
+    private fun collectAllMaterialOfShoppingCar(list: List<MaterialOfShoppingCar>, direct: Int) {
         categoryList.clear()
-        val food = FoodOfShoppingCar("collect", "共${list.size}种商品", "", "")
+        val food = FoodOfShoppingCar("collect", "共${list.size}种商品", "", "", direct = direct)
         list.forEach {
             it.materialOwnerId = "collect"
         }
@@ -207,9 +204,8 @@ class ShoppingCarMgViewModel(
                 newOrderList.forEach { order ->
                     val goods = repository.getPriceOfGoods(order.goodsId)
                     //因为从商品得到原材料后，商品有可能被删除。而原材料中依然保留商品Id
-                    goods?.let {
-                        order.unitPrice = it.unitPrice
-                    }
+                    order.unitPrice = goods.unitPrice
+
                 }
                 repository.createNewOrder(newOrderList)
             }

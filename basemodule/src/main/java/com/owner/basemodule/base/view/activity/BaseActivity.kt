@@ -21,6 +21,7 @@ import androidx.databinding.ViewDataBinding
 import com.owner.basemodule.BR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import org.kodein.di.generic.instance
 
 /**
  * 实现对Activity与布局绑定的基本内容，实现了CoroutineScope（协程），这里没有实现接口方法，交由子类完成。

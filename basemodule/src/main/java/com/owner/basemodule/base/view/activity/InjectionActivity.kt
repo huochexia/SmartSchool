@@ -37,4 +37,5 @@ abstract class InjectionActivity : AutoDisposeActivity(), KodeinAware {
     override val kodeinContext: KodeinContext<*>
         get() = kcontext<AppCompatActivity>(this)
 
+
 }

@@ -16,6 +16,7 @@ import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
@@ -35,6 +36,7 @@ import org.kodein.di.generic.instance
 
 class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
 
+    private val prefs by instance<PrefsHelper>()
     override val layoutId: Int
         get() = R.layout.fragment_goods_list
 
@@ -270,7 +272,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     selectedList.add(it)
                 }
             }
-            addGoodsToShoppingCar(selectedList)
+            addGoodsToShoppingCar(selectedList, prefs.district)
             goodsList.removeAll(selectedList)
         }
         adapter.forceUpdate()

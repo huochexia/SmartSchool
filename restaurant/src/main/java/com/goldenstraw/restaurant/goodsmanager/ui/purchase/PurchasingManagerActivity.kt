@@ -31,7 +31,6 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
 
     lateinit var viewModelGoodsTo: GoodsToOrderMgViewModel
 
-    private val prefs by instance<PrefsHelper>()
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
@@ -122,8 +121,8 @@ class PurchasingManagerActivity : BaseActivity<ActivityPurchasingManagerBinding>
                     "$dayOfMonth"
                 }
                 val copyDate = "$year-$month-$day"
-                val where =
-                    "{\"\$and\":[{\"mealDate\":\"$copyDate\"},{\"direct\":${prefs.district}}]}"
+
+                val where = "{\"mealDate\":\"$copyDate\"}"
                 viewModelGoodsTo.getFoodOfDailyToShoppingCar(where)
             } // 设置初始日期
             ,
