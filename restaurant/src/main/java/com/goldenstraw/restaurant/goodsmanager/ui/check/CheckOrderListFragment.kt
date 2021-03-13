@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.check
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -55,6 +56,11 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                         popUpCheckQuantityDialog(t)
                 }
             }
+            binding.longClick = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    managerDialog(t)
+                }
+            }
         }
 
     )
@@ -69,7 +75,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         orderDate = arguments!!.getString("orderDate")!!
         state = arguments!!.getInt("orderState")
         district = arguments!!.getInt("district")
-        initSwipeMenu()
+
         check_order_toolbar.title = supplier
         check_order_toolbar.subtitle = orderDate
     }
@@ -127,96 +133,67 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             .subscribe({
                 viewModel!!.ordersList.clear()
                 viewModel!!.ordersList.addAll(it)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             }, {}, {})
 
     }
 
     /**
-     * 初始化Item侧滑菜单
+    管理数据
      */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            if (state == 1) {
-                val deleteItem = SwipeMenuItem(context)
-                    .setBackground(R.color.colorAccent)
-                    .setText("退货")
-                    .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                    .setWidth(200)
-                leftMenu.addMenuItem(deleteItem)
-            }
-            if (state == 2) {
-                val againCheckItem = SwipeMenuItem(context)
-                    .setBackground(R.color.colorAccent)
-                    .setText("重验")
-                    .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                    .setWidth(200)
-                rightMenu.addMenuItem(againCheckItem)
-            }
-
+    private fun managerDialog(orders: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.text = "退货"
+        val update = view.findViewById<Button>(R.id.update_action)
+        update.text = "重验"
+        val managerDialog = android.app.AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
+            deleteDialog(orders)
+            managerDialog.dismiss()
         }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_check_order.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (direction) {
-                1 -> {
-                    when (menuBridge.position) {
-                        0 -> {
-                            val order = viewModel!!.ordersList[adapterPosition]
-                            val dialog = AlertDialog.Builder(context!!)
-                                .setTitle("确定\"${order.goodsName}\"退货吗？")
-                                .setIcon(R.mipmap.add_icon)
-                                .setNegativeButton("取消") { dialog, which ->
-                                    dialog.dismiss()
-                                }
-                                .setPositiveButton("确定") { dialog, which ->
-                                    returnedGoods(order)
-                                    dialog.dismiss()
-                                }.create()
-                            dialog.show()
-                        }
-                    }
-                }
-                -1 -> {
-                    when (menuBridge.position) {
-                        0 -> {
-                            if (viewModel!!.ordersList[adapterPosition].state == 3) {
-                                Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
-                                return@OnItemMenuClickListener
-                            } else {
-                                val dialog = AlertDialog.Builder(context!!)
-                                    .setTitle("确定对\"${viewModel!!.ordersList[adapterPosition].goodsName}\"重新验收吗？")
-                                    .setIcon(R.mipmap.add_icon)
-                                    .setNegativeButton("取消") { dialog, which ->
-                                        dialog.dismiss()
-                                    }
-                                    .setPositiveButton("确定") { dialog, which ->
-                                        cancelChecked(viewModel!!.ordersList[adapterPosition])
-                                        dialog.dismiss()
-                                    }.create()
-                                dialog.show()
-                            }
-                        }
-                    }
-                }
-            }
-
+        update.setOnClickListener {
+            updateDialog(orders)
+            managerDialog.dismiss()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_check_order.setOnItemMenuClickListener(mItemMenuClickListener)
     }
+
+    private fun deleteDialog(orders: OrderItem) {
+        val dialog = AlertDialog.Builder(context!!)
+            .setTitle("确定\"${orders.goodsName}\"退货吗？")
+            .setIcon(R.mipmap.add_icon)
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                returnedGoods(orders)
+                dialog.dismiss()
+            }.create()
+        dialog.show()
+    }
+
+    private fun updateDialog(orders: OrderItem) {
+        if (orders.state == 3) {
+            Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
+
+        } else {
+            val dialog = AlertDialog.Builder(context!!)
+                .setTitle("确定对\"${orders.goodsName}\"重新验收吗？")
+                .setIcon(R.mipmap.add_icon)
+                .setNegativeButton("取消") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton("确定") { dialog, _ ->
+                    cancelChecked(orders)
+                    dialog.dismiss()
+                }.create()
+            dialog.show()
+        }
+    }
+
 
     /**
      * 保存验货结果

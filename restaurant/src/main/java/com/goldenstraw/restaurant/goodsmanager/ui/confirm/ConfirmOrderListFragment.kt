@@ -1,7 +1,8 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.confirm
 
 import android.os.Bundle
-import android.view.ViewGroup
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.goldenstraw.restaurant.R
@@ -13,10 +14,8 @@ import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
 import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -24,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_confirm_order_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+
 
 class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>() {
 
@@ -42,6 +42,11 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         dataBinding = { LayoutOrderItemBinding.bind(it) },
         callback = { order, binding, position ->
             binding.orderitem = order
+            binding.longClick = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    managerDialog(t)
+                }
+            }
         }
 
     )
@@ -52,11 +57,10 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     var district = 0
     override fun initView() {
         super.initView()
-        supplier = arguments!!.getString("supplier")
-        orderDate = arguments!!.getString("orderDate")
+        supplier = arguments!!.getString("supplier")!!
+        orderDate = arguments!!.getString("orderDate")!!
         district = arguments!!.getInt("district")
         state = arguments!!.getInt("orderState")
-        initSwipeMenu()
         confirm_order_toolbar.title = supplier
         confirm_order_toolbar.subtitle = orderDate
     }
@@ -146,64 +150,41 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     }
 
     /**
-     * 初始化Item侧滑菜单
+    管理数据
      */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            if (state == 2) {
-                val againCheckItem = SwipeMenuItem(context)
-                    .setBackground(R.color.colorAccent)
-                    .setText("重验")
-                    .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                    .setWidth(200)
-                rightMenu.addMenuItem(againCheckItem)
-            }
-
+    private fun managerDialog(orders: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.visibility = View.GONE
+        val update = view.findViewById<Button>(R.id.update_action)
+        update.text = "重验"
+        val managerDialog = android.app.AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        update.setOnClickListener {
+            updateDialog(orders)
+            managerDialog.dismiss()
         }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_confirm_order.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (direction) {
+    }
 
-                -1 -> {
-                    when (menuBridge.position) {
-                        0 -> {
-                            if (orderList[adapterPosition].state == 3) {
-                                Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
-                                return@OnItemMenuClickListener
-                            } else {
-                                val dialog = AlertDialog.Builder(context!!)
-                                    .setTitle("确定对\"${orderList[adapterPosition].goodsName}\"重新验收吗？")
-                                    .setIcon(R.mipmap.add_icon)
-                                    .setNegativeButton("取消") { dialog, which ->
-                                        dialog.dismiss()
-                                    }
-                                    .setPositiveButton("确定") { dialog, which ->
-                                        cancelChecked(orderList[adapterPosition])
-                                        dialog.dismiss()
-                                    }.create()
-                                dialog.show()
-                            }
-                        }
-                    }
+    private fun updateDialog(orders: OrderItem) {
+        if (orders.state == 3) {
+            Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
+
+        } else {
+            val dialog = AlertDialog.Builder(context!!)
+                .setTitle("确定对\"${orders.goodsName}\"重新验收吗？")
+                .setIcon(R.mipmap.add_icon)
+                .setNegativeButton("取消") { dialog, _ ->
+                    dialog.dismiss()
                 }
-            }
-
+                .setPositiveButton("确定") { dialog, _ ->
+                    cancelChecked(orders)
+                    dialog.dismiss()
+                }.create()
+            dialog.show()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_confirm_order.setOnItemMenuClickListener(mItemMenuClickListener)
     }
 
 
@@ -216,12 +197,4 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
 
     }
 
-    /**
-     * 退货,状态改为-1。
-     */
-    private fun returnedGoods(orderItem: OrderItem) {
-        val returned = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, -1)
-        viewModel!!.setCheckQuantity(returned, orderItem)
-
-    }
 }

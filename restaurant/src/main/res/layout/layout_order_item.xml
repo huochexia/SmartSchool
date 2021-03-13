@@ -72,6 +72,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:text="@{orderitem.goodsName}"
                                 android:textSize="18sp"
+                                app:bind_view_onLongClick="@{()->longClick.accept(orderitem)}"
                                 app:bind_text_color="@{orderitem.district}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/cb_goods"
