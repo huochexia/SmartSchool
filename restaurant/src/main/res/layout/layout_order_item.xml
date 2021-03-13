@@ -19,6 +19,9 @@
         <variable
                 name="clickEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+        <variable
+                name="longClick"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <LinearLayout

@@ -37,19 +37,36 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository  by instance<VerifyAndPlaceOrderRepository>()
+    private val repository by instance<VerifyAndPlaceOrderRepository>()
 
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
-    var orderList = mutableListOf<OrderItem>()
+
+    var adapter = BaseDataBindingAdapter(
+
+        layoutId = R.layout.layout_order_item,
+        dataSource = { viewModel!!.ordersList },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, position ->
+            binding.orderitem = order
+            binding.clickEvent = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    //弹出修改数量的窗口
+                    if (t.state == 1)
+                        popUpCheckQuantityDialog(t)
+                }
+            }
+        }
+
+    )
+
     var supplier = ""
     var orderDate = ""
     var state = 0
     var district = 0
     override fun initView() {
         super.initView()
-        supplier = arguments!!.getString("supplier")
-        orderDate = arguments!!.getString("orderDate")
+        supplier = arguments!!.getString("supplier")!!
+        orderDate = arguments!!.getString("orderDate")!!
         state = arguments!!.getInt("orderState")
         district = arguments!!.getInt("district")
         initSwipeMenu()
@@ -62,23 +79,9 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
-            dataSource = { orderList },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-                binding.clickEvent = object : Consumer<OrderItem> {
-                    override fun accept(t: OrderItem) {
-                        //弹出修改数量的窗口
-                        if (t.state == 1)
-                            popUpCheckQuantityDialog(t)
-                    }
-
-                }
-            }
-
-        )
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter.forceUpdate()
+        }
         getOrderItemList()
     }
 
@@ -122,8 +125,8 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
-                orderList.clear()
-                orderList.addAll(it)
+                viewModel!!.ordersList.clear()
+                viewModel!!.ordersList.addAll(it)
                 adapter!!.forceUpdate()
             }, {}, {})
 
@@ -169,7 +172,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 1 -> {
                     when (menuBridge.position) {
                         0 -> {
-                            val order = orderList[adapterPosition]
+                            val order = viewModel!!.ordersList[adapterPosition]
                             val dialog = AlertDialog.Builder(context!!)
                                 .setTitle("确定\"${order.goodsName}\"退货吗？")
                                 .setIcon(R.mipmap.add_icon)
@@ -187,18 +190,18 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                 -1 -> {
                     when (menuBridge.position) {
                         0 -> {
-                            if (orderList[adapterPosition].state == 3) {
+                            if (viewModel!!.ordersList[adapterPosition].state == 3) {
                                 Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
                                 return@OnItemMenuClickListener
                             } else {
                                 val dialog = AlertDialog.Builder(context!!)
-                                    .setTitle("确定对\"${orderList[adapterPosition].goodsName}\"重新验收吗？")
+                                    .setTitle("确定对\"${viewModel!!.ordersList[adapterPosition].goodsName}\"重新验收吗？")
                                     .setIcon(R.mipmap.add_icon)
                                     .setNegativeButton("取消") { dialog, which ->
                                         dialog.dismiss()
                                     }
                                     .setPositiveButton("确定") { dialog, which ->
-                                        cancleChecked(orderList[adapterPosition])
+                                        cancelChecked(viewModel!!.ordersList[adapterPosition])
                                         dialog.dismiss()
                                     }.create()
                                 dialog.show()
@@ -231,28 +234,17 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             total = total,
             state = 2
         )
-        viewModel!!.setCheckQuantity(newQuantity, orderItem.objectId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.remove(orderItem)
-                adapter!!.forceUpdate()
-            }, {})
+        viewModel!!.setCheckQuantity(newQuantity, orderItem)
+
     }
+
     /**
      * 重验
      */
-    private fun cancleChecked(orderItem: OrderItem) {
+    private fun cancelChecked(orderItem: OrderItem) {
         val again = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, 1)
-        viewModel!!.setCheckQuantity(again, orderItem.objectId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.remove(orderItem)
-                adapter!!.forceUpdate()
-            }, {})
+        viewModel!!.setCheckQuantity(again, orderItem)
+
     }
 
     /**
@@ -260,14 +252,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      */
     private fun returnedGoods(orderItem: OrderItem) {
         val returned = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, -1)
-        viewModel!!.setCheckQuantity(returned, orderItem.objectId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.remove(orderItem)
-                adapter!!.forceUpdate()
-            }, {})
+        viewModel!!.setCheckQuantity(returned, orderItem)
 
     }
 }

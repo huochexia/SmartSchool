@@ -5,7 +5,9 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
  */
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -32,7 +34,7 @@ class VerifyAndPlaceOrderRepository(
     /**
      * 删除订单
      */
-    fun deleteOrderItem(objectId: String): Completable {
+    suspend fun deleteOrderItem(objectId: String): DeleteObject {
         return remote.deleteOrderItem(objectId)
     }
     /**
@@ -45,14 +47,14 @@ class VerifyAndPlaceOrderRepository(
     /**
      * 修改订单数量
      */
-    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable {
+    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): UpdateObject {
         return remote.updateOrderItemQuantity(newQuantity, objectId)
     }
 
     /**
      * 单量验货
      */
-    fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable {
+    suspend fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): UpdateObject {
         return remote.setCheckQuantity(newCheckGoods, objectId)
     }
 

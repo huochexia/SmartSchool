@@ -3,7 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.VerifyAndPlaceOrderApi
 import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -42,18 +44,18 @@ class VerifyAndPlaceOrderManageImpl(
 
     }
 
-    override fun deleteOrderItem(objectId: String): Completable {
+    override suspend fun deleteOrderItem(objectId: String): DeleteObject {
         return service.deleteOrderItem(objectId)
     }
 
-    override fun updateOrderItemQuantity(
+    override suspend fun updateOrderItemQuantity(
         newQuantity: ObjectQuantity,
         objectId: String
-    ): Completable {
+    ): UpdateObject {
         return service.updateOrderItem(newQuantity, objectId)
     }
 
-    override fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String): Completable {
+    override suspend fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String):UpdateObject {
         return service.setCheckQuantity(newQuantity, objectId)
     }
 

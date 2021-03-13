@@ -1,7 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.service
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -35,13 +37,19 @@ interface VerifyAndPlaceOrderApi {
      * 修改订单
      */
     @PUT("/1/classes/OrderItem/{objectId}")
-    fun updateOrderItem(@Body newOrder: ObjectQuantity, @Path("objectId") objectId: String): Completable
+    suspend fun updateOrderItem(
+        @Body newOrder: ObjectQuantity,
+        @Path("objectId") objectId: String
+    ): UpdateObject
 
     /**
      * 修改数量
      */
     @PUT("/1/classes/OrderItem/{objectId}")
-    fun setCheckQuantity(@Body newCheck: ObjectCheckGoods, @Path("objectId") objectId: String): Completable
+    suspend fun setCheckQuantity(
+        @Body newCheck: ObjectCheckGoods,
+        @Path("objectId") objectId: String
+    ): UpdateObject
 
 
 
@@ -52,11 +60,10 @@ interface VerifyAndPlaceOrderApi {
     fun batchCommitState(@Body orders: BatchOrdersRequest<ObjectState>): Completable
 
 
-
     /**
      * 删除订单
      */
     @DELETE("/1/classes/OrderItem/{objectId}")
-    fun deleteOrderItem(@Path("objectId") objectId: String): Completable
+    suspend fun deleteOrderItem(@Path("objectId") objectId: String): DeleteObject
 
 }

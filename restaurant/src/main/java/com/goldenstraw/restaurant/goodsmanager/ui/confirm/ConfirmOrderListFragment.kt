@@ -33,10 +33,18 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    private val repository  by instance<VerifyAndPlaceOrderRepository>()
+    private val repository by instance<VerifyAndPlaceOrderRepository>()
 
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_order_item,
+        dataSource = { viewModel!!.ordersList },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, position ->
+            binding.orderitem = order
+        }
+
+    )
     var orderList = mutableListOf<OrderItem>()
     var supplier = ""
     var orderDate = ""
@@ -58,15 +66,9 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
-            dataSource = { orderList },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-            }
-
-        )
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter.forceUpdate()
+        }
         getOrderItemList()
         confirm_btn.setOnClickListener {
             transRecordState(orderList)
@@ -81,7 +83,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
                             orderList.forEach { order ->
                                 order.state = 3
                             }
-                            adapter!!.forceUpdate()
+                            adapter.forceUpdate()
 
                         }
                 }
@@ -187,7 +189,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
                                         dialog.dismiss()
                                     }
                                     .setPositiveButton("确定") { dialog, which ->
-                                        cancleChecked(orderList[adapterPosition])
+                                        cancelChecked(orderList[adapterPosition])
                                         dialog.dismiss()
                                     }.create()
                                 dialog.show()
@@ -208,16 +210,10 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     /**
      * 重验
      */
-    private fun cancleChecked(orderItem: OrderItem) {
+    private fun cancelChecked(orderItem: OrderItem) {
         val again = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, 1)
-        viewModel!!.setCheckQuantity(again, orderItem.objectId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.remove(orderItem)
-                adapter!!.forceUpdate()
-            }, {})
+        viewModel!!.setCheckQuantity(again, orderItem)
+
     }
 
     /**
@@ -225,14 +221,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
      */
     private fun returnedGoods(orderItem: OrderItem) {
         val returned = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, -1)
-        viewModel!!.setCheckQuantity(returned, orderItem.objectId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.remove(orderItem)
-                adapter!!.forceUpdate()
-            }, {})
+        viewModel!!.setCheckQuantity(returned, orderItem)
 
     }
 }

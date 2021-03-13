@@ -3,7 +3,9 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.place_order.IVerifyAndPlaceOrderManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -25,11 +27,11 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
 
     suspend fun getSupplier(where: String): ObjectList<User>
 
-    fun deleteOrderItem(objectId: String): Completable
+    suspend fun deleteOrderItem(objectId: String): DeleteObject
 
-    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
+    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): UpdateObject
 
-    fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable
+    suspend fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): UpdateObject
 
     fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable
 
@@ -53,18 +55,21 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.getSupplier(where)
     }
 
-    override fun deleteOrderItem(objectId: String): Completable {
+    override suspend fun deleteOrderItem(objectId: String): DeleteObject {
         return manager.deleteOrderItem(objectId)
     }
 
-    override fun updateOrderItemQuantity(
+    override suspend fun updateOrderItemQuantity(
         newQuantity: ObjectQuantity,
         objectId: String
-    ): Completable {
+    ): UpdateObject {
         return manager.updateOrderItemQuantity(newQuantity, objectId)
     }
 
-    override fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): Completable {
+    override suspend fun setCheckQuantity(
+        newCheckGoods: ObjectCheckGoods,
+        objectId: String
+    ): UpdateObject {
         return manager.setCheckQuantity(newCheckGoods, objectId)
     }
 

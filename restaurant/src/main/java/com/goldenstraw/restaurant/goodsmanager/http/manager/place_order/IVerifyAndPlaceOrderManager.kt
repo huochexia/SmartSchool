@@ -1,7 +1,9 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -27,16 +29,16 @@ interface IVerifyAndPlaceOrderManager {
     /**
      * 删除订单
      */
-    fun deleteOrderItem(objectId: String): Completable
+    suspend fun deleteOrderItem(objectId: String): DeleteObject
     /**
      * 修改订单数量
      */
-    fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): Completable
+    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String):UpdateObject
 
     /**
      * 确定实际数量
      */
-    fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String): Completable
+    suspend fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String):UpdateObject
 
     /**
      * 确定实际数量

@@ -19,6 +19,8 @@ class VerifyAndPlaceOrderViewModel(
 
     var suppliers = mutableListOf<User>() //供应商列表
 
+    var ordersList = mutableListOf<OrderItem>()//订单列表
+
     var new = MutableLiveData<String>()
     var old = MutableLiveData<String>()
     var differ = MutableLiveData<String>()
@@ -51,8 +53,10 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 删除订单
      */
-    fun deleteOrderItem(objectId: String): Completable {
-        return repository.deleteOrderItem(objectId)
+    fun deleteOrderItem(objectId: String) {
+        launchUI {
+            parserResponse(repository.deleteOrderItem(objectId))
+        }
     }
 
     /**
@@ -91,19 +95,22 @@ class VerifyAndPlaceOrderViewModel(
      * 修改订单数量
      */
     fun updateOrderItemQuantity(order: OrderItem) {
-        val newQuantity = ObjectQuantity(order.quantity)
-        repository.updateOrderItemQuantity(newQuantity, order.objectId)
-            .subscribeOn(Schedulers.io())
-            .autoDisposable(this)
-            .subscribe({}, {})
+        launchUI {
+            val newQuantity = ObjectQuantity(order.quantity)
+            parserResponse(repository.updateOrderItemQuantity(newQuantity, order.objectId))
+        }
     }
 
     /**
      * 单个验货
      */
-    fun setCheckQuantity(newQuantity: ObjectCheckGoods, objectId: String): Completable {
-
-        return repository.setCheckQuantity(newQuantity, objectId)
+    fun setCheckQuantity(newQuantity: ObjectCheckGoods, orders: OrderItem) {
+        launchUI {
+            parserResponse(repository.setCheckQuantity(newQuantity, orders.objectId)) {
+                ordersList.remove(orders)
+                defUI.refreshEvent.call()
+            }
+        }
     }
 
     /**
