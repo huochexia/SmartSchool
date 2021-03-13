@@ -50,7 +50,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         }
 
     )
-    var orderList = mutableListOf<OrderItem>()
+
     var supplier = ""
     var orderDate = ""
     var state = 2
@@ -75,7 +75,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         }
         getOrderItemList()
         confirm_btn.setOnClickListener {
-            transRecordState(orderList)
+            transRecordState(viewModel!!.ordersList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .autoDisposable(scopeProvider)
@@ -84,11 +84,10 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
                         .observeOn(AndroidSchedulers.mainThread())
                         .autoDisposable(scopeProvider)
                         .subscribe {
-                            orderList.forEach { order ->
+                            viewModel!!.ordersList.forEach { order ->
                                 order.state = 3
                             }
                             adapter.forceUpdate()
-
                         }
                 }
         }
@@ -101,7 +100,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     fun transRecordState(orderList: MutableList<OrderItem>): Observable<BatchOrdersRequest<ObjectState>> {
         return Observable.fromIterable(orderList)
             .map {
-                var updateState = ObjectState(3)
+                val updateState = ObjectState(3)
                 val batch = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",
@@ -137,15 +136,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
             }
         }
 
-        viewModel!!.getAllOrderOfDate(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.clear()
-                orderList.addAll(it)
-                adapter!!.forceUpdate()
-            }, {}, {})
+        viewModel!!.getOrdersOfDate(where)
 
     }
 

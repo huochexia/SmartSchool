@@ -1,17 +1,15 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.User
-import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
 
 class VerifyAndPlaceOrderViewModel(
     private val repository: VerifyAndPlaceOrderRepository
@@ -25,6 +23,8 @@ class VerifyAndPlaceOrderViewModel(
     var old = MutableLiveData<String>()
     var differ = MutableLiveData<String>()
 
+    var viewState = ObservableField<Int>()
+
     init {
         getAllSupplier()
 
@@ -33,8 +33,19 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 获取某个条件订单
      */
-    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
-        return repository.getAllOrderOfDate(condition)
+    fun getOrdersOfDate(condition: String) {
+        launchUI {
+            parserResponse(repository.getOrdersOfDate(condition)) {
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    ordersList = it
+                }
+                defUI.refreshEvent.call()
+            }
+        }
+        return
     }
 
     /**
@@ -131,33 +142,33 @@ class VerifyAndPlaceOrderViewModel(
      * 得到所有数据并计算
      */
     fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
-        val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
-        val formate = DecimalFormat("0")
-        var newprice = 0.0f
-        var oldprice = 0.0f
-        getAllOrderOfDate(where)
-            .subscribeOn(Schedulers.computation())
-            .flatMap {
-                Observable.fromIterable(it)
-            }
-            .map {
-                val map = HashMap<Int, Float>()
-                oldprice += it.total
-                newprice += it.unitPrice * it.againCheckQuantity
-                map[0] = newprice
-                map[1] = oldprice
-                map
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                new.value = formate.format(it[0])
-                old.value = formate.format(it[1])
-                differ.value = formate.format(it[0]?.minus(it[1]!!))
-            }, {}, {
-
-            })
+//        val where =
+//            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
+//        val formate = DecimalFormat("0")
+//        var newprice = 0.0f
+//        var oldprice = 0.0f
+//        getAllOrderOfDate(where)
+//            .subscribeOn(Schedulers.computation())
+//            .flatMap {
+//                Observable.fromIterable(it)
+//            }
+//            .map {
+//                val map = HashMap<Int, Float>()
+//                oldprice += it.total
+//                newprice += it.unitPrice * it.againCheckQuantity
+//                map[0] = newprice
+//                map[1] = oldprice
+//                map
+//            }
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .autoDisposable(this)
+//            .subscribe({
+//                new.value = formate.format(it[0])
+//                old.value = formate.format(it[1])
+//                differ.value = formate.format(it[0]?.minus(it[1]!!))
+//            }, {}, {
+//
+//            })
 
     }
 }

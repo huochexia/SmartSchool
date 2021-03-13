@@ -2,7 +2,6 @@ package com.goldenstraw.restaurant.goodsmanager.ui.check
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -18,12 +17,6 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_check_order_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -126,16 +119,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
                     ",{\"state\":$state},{\"district\":$district}" +
                     ",{\"quantity\":{\"\$ne\":0}}]}"
-        viewModel!!.getAllOrderOfDate(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                viewModel!!.ordersList.clear()
-                viewModel!!.ordersList.addAll(it)
-                adapter.forceUpdate()
-            }, {}, {})
-
+        viewModel!!.getOrdersOfDate(where)
     }
 
     /**

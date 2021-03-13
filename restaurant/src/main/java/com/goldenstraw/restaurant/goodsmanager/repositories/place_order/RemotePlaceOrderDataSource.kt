@@ -8,7 +8,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 /**
  * 远程访问数据
@@ -18,7 +17,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
     /*
     获取某个日期的商品订单
      */
-    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>>
+    suspend fun getOrdersOfDate(condition: String): ObjectList<OrderItem>
 
     /*
     将订单发送给供应商
@@ -47,8 +46,8 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.sendOrdersToSupplier(orders)
     }
 
-    override fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
-        return manager.getAllOrderOfDate(condition)
+    override suspend fun getOrdersOfDate(condition: String): ObjectList<OrderItem> {
+        return manager.getOrdersOfDate(condition)
     }
 
     override suspend fun getSupplier(where: String): ObjectList<User> {

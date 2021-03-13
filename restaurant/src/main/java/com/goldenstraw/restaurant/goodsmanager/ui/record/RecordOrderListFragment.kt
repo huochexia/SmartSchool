@@ -77,12 +77,12 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
             layoutId = R.layout.page_of_record_orders,
             dataSource = { orderList },
             dataBinding = { PageOfRecordOrdersBinding.bind(it) },
-            callback = { orderList, binding, position ->
-                var orderAdapter = BaseDataBindingAdapter(
+            callback = { orderList, binding, _ ->
+                val orderAdapter = BaseDataBindingAdapter(
                     layoutId = R.layout.layout_order_item,
                     dataBinding = { LayoutOrderItemBinding.bind(it) },
                     dataSource = { orderList },
-                    callback = { order, bind, position ->
+                    callback = { order, bind, _ ->
                         bind.orderitem = order
                     }
                 )
@@ -149,10 +149,10 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
                     ",{\"orderDate\":\"$orderDate\"}" +
                     ",{\"state\":{\"\$gte\":3}}" +
                     ",{\"district\":$district}]}"
-        viewModel!!.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+        viewModel!!.getOrdersOfDate(where)
+
+        Observable.fromIterable(viewModel!!.ordersList)
+
             .buffer(showNumber)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -173,7 +173,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
     fun transRecordState(orderList: MutableList<OrderItem>): Observable<BatchOrdersRequest<ObjectState>> {
         return Observable.fromIterable(orderList)
             .map {
-                var updateState = ObjectState(4)
+                val updateState = ObjectState(4)
                 val batch = BatchOrderItem(
                     method = "PUT",
                     path = "/1/classes/OrderItem/${it.objectId}",

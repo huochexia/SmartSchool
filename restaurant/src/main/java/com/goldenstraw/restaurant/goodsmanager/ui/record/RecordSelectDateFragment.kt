@@ -44,7 +44,11 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        markDate()
+        val where = "{\"\$and\":[{\"state\":3},{\"district\":${prefs.district}}]}"
+        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            markDate()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -80,15 +84,15 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
         return calendar
     }
 
-    override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
+    override fun onCalendarSelect(calendar: Calendar, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
-        tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar!!.year.toString()
+        tv_month_day.text = calendar.month.toString() + "月" + calendar.day + "日"
+        tv_year.text = calendar.year.toString()
         tv_lunar.text = calendar.lunar
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
             bundle.putString("orderDate", date)
             bundle.putInt("district",prefs.district)
             findNavController().navigate(R.id.recordSelectSupplierFragment, bundle)
@@ -103,11 +107,9 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
      * 标记尚未记帐的日期
      */
     private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":3},{\"district\":${prefs.district}}]}"
-        viewModel!!.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }.map {
+
+        Observable.fromIterable(viewModel!!.ordersList)
+            .map {
                 it.orderDate
             }
             .distinct()
@@ -132,4 +134,8 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
             })
     }
 
+    override fun onResume() {
+        super.onResume()
+        markDate()
+    }
 }

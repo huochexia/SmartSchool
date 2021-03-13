@@ -45,7 +45,13 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        markDate()
+        val where =
+            "{\"\$and\":[{\"state\":2},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
+        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            markDate()
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -102,14 +108,11 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
     }
 
     /**
-     * 标记尚未记帐的日期
+     * 标记尚未确认的日期
      */
     private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":2},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
-        viewModel!!.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }.map {
+        Observable.fromIterable(viewModel!!.ordersList)
+            .map {
                 it.orderDate
             }
             .distinct()
@@ -134,5 +137,9 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
             })
     }
 
+    override fun onResume() {
+        super.onResume()
+        markDate()
+    }
 
 }

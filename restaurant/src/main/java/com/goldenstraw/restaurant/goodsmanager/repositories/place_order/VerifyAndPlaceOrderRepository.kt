@@ -10,7 +10,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 class VerifyAndPlaceOrderRepository(
     private val remote: IRemotePlaceOrderDataSource,
@@ -20,8 +19,8 @@ class VerifyAndPlaceOrderRepository(
     /**
      *获取某个日期商品订单
      */
-    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>> {
-        return remote.getAllOrderOfDate(condition)
+    suspend fun getOrdersOfDate(condition: String): ObjectList<OrderItem> {
+        return remote.getOrdersOfDate(condition)
     }
 
     /**

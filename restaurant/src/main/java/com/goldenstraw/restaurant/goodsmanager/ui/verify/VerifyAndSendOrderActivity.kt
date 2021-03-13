@@ -6,8 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.telephony.SmsManager
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
@@ -31,9 +31,6 @@ import com.owner.basemodule.room.entities.User
 import com.owner.basemodule.util.TimeConverter
 import com.owner.basemodule.util.toast
 import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_verify_place_orders.*
@@ -91,7 +88,11 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
                     }
                 }
                 binding.cbGoods.isChecked = order.isSelected
-
+                binding.longClick = object : Consumer<OrderItem> {
+                    override fun accept(t: OrderItem) {
+                        managerDialog(t)
+                    }
+                }
             }
         )
         getAllOrderOfDate(TimeConverter.getCurrentDateString(), 0)
@@ -100,9 +101,6 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
 
         initEvent()
 
-        initSwipeMenu()
-
-
     }
 
     private fun initEvent() {
@@ -110,17 +108,21 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             showList.clear()
             when (checkedId) {
                 R.id.rb_xishinan_district -> {
-                    showList.addAll(ordersOfXingShiNan)
+                    showList.addAll(viewModel!!.ordersList.filter {
+                        it.district == 0
+                    })
+
                 }
                 R.id.rb_xishan_district -> {
-                    showList.addAll(ordersOfXiShan)
+                    showList.addAll(viewModel!!.ordersList.filter {
+                        it.district == 1
+                    })
                 }
             }
             if (showList.isNotEmpty()) {
-                state.set(MultiStateView.VIEW_STATE_CONTENT)
                 fab_send_to_supplier.show()
             } else {
-                state.set(MultiStateView.VIEW_STATE_EMPTY)
+                viewModel!!.viewState.set(MultiStateView.VIEW_STATE_EMPTY)
                 fab_send_to_supplier.hide()
             }
             adapter!!.forceUpdate()
@@ -154,46 +156,26 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
         manager.sendTextMessage(address, null, content, sentIntent, null)
     }
 
-
     /**
-     * 初始化Item侧滑菜单,只有修改
+    管理数据
      */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
+    private fun managerDialog(orders: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.visibility = View.GONE
+        val update = view.findViewById<Button>(R.id.update_action)
 
-            val updateItem = SwipeMenuItem(this)
-                .setBackground(R.color.secondaryColor)
-                .setText("修改")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(updateItem)
+        val managerDialog = android.app.AlertDialog.Builder(this)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        update.setOnClickListener {
+            if (orders.state == 0)
+                updateDialog(orders)
+            else
+                toast { "该订单已生成不能修改！" }
+            managerDialog.dismiss()
         }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_orders_of_district.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    if (showList[adapterPosition].state == 0)
-                        updateDialog(showList[adapterPosition])
-                    else
-                        toast { "该订单已生成不能修改！" }
-                }
-            }
-        }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_orders_of_district.setOnItemMenuClickListener(mItemMenuClickListener)
     }
 
     private fun updateDialog(order: OrderItem) {
@@ -209,7 +191,7 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             }
             .setPositiveButton("确定") { dialog, _ ->
                 var newQuantity = quantity.text.toString()
-                if (newQuantity.isNullOrEmpty()) {
+                if (newQuantity.isEmpty()) {
                     newQuantity = "0.0f"
                 }
                 order.quantity = newQuantity.toFloat()
@@ -229,42 +211,16 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
     private fun getAllOrderOfDate(date: String, stauts: Int) {
         val condition =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}]}"
-        viewModel!!.getAllOrderOfDate(condition)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                groupByDistrictOrders(it)
-                state.set(MultiStateView.VIEW_STATE_CONTENT)
-            }, {
-                toast { it.message.toString() }
-                state.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {
+        viewModel!!.getOrdersOfDate(condition)
 
-            }, {
-                state.set(MultiStateView.VIEW_STATE_LOADING)
-            })
     }
 
-    /**
-     * 将所有订单进行分组
-     */
-    private fun groupByDistrictOrders(orderList: MutableList<OrderItem>) {
-        ordersOfXiShan.clear()
-        ordersOfXingShiNan.clear()
-        orderList.forEach {
-            when (it.district) {
-                0 -> ordersOfXingShiNan.add(it)
-                1 -> ordersOfXiShan.add(it)
-            }
-        }
-    }
 
     /**
      * 创建供应商单选对话框
      */
     fun popUpSelectSupplierDialog() {
-        var supplier = ""
+        val supplier = ""
         //1、创建一个已选择的列表
         val selectedList = mutableListOf<OrderItem>()
         showList.forEach {
@@ -305,10 +261,10 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             .setIcon(R.mipmap.add_icon)
             .setTitle("请选择供应商")
             .setView(view)
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 sendOrderToSupplier(supplier1, selectedList)
                 dialog.dismiss()
             }.create()
@@ -341,9 +297,8 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             }, { mess ->
                 toast { mess.message.toString() }
             }, {
+                viewModel!!.ordersList.removeAll(selectedList)
                 showList.removeAll(selectedList)
-                ordersOfXingShiNan.removeAll(selectedList)
-                ordersOfXiShan.removeAll(selectedList)
                 adapter!!.forceUpdate()
             })
 

@@ -111,10 +111,10 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
         }
         supplierList.clear()
 
-        viewModel.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+        viewModel.getOrdersOfDate(where)
+
+        Observable.fromIterable(viewModel.ordersList)
+
             .map {
                 it.supplier
             }

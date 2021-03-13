@@ -17,7 +17,6 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
-import com.owner.basemodule.util.TimeConverter
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_have_orders_of_supplier.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import java.util.*
 
 /**
  *
@@ -104,10 +102,9 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         val where =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}" +
                     ",{\"district\":$district},{\"quantity\":{\"\$ne\":0}}]}"
-        viewModel.getAllOrderOfDate(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }
+        viewModel.getOrdersOfDate(where)
+
+        Observable.fromIterable(viewModel.ordersList)
             .map {
                 it.supplier
             }

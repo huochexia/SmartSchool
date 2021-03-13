@@ -6,14 +6,13 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
-import io.reactivex.Observable
 
 interface IVerifyAndPlaceOrderManager {
 
     /**
      * 获取某个日期的拟购单
      */
-    fun getAllOrderOfDate(condition: String): Observable<MutableList<OrderItem>>
+    suspend fun getOrdersOfDate(condition: String): ObjectList<OrderItem>
 
     /**
      * 批量发送订单给供应商

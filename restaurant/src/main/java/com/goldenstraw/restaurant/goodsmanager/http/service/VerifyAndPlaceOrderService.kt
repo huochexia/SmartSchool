@@ -15,11 +15,11 @@ interface VerifyAndPlaceOrderApi {
      * 获取订单,查询某个日期的订单
      */
     @GET("/1/classes/OrderItem/")
-    fun getAllOrderOfDate(
+    suspend fun getOrdersOfDate(
         @Query("where") condition: String,
         @Query("order") name: String = "categoryCode",
         @Query("limit") limit: Int = 500
-    ): Observable<ObjectList<OrderItem>>
+    ):ObjectList<OrderItem>
 
     /**
      * 批量更新供应商
