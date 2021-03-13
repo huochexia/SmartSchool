@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.manager.place_order.IVerifyAndPlaceOrderManager
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -22,7 +23,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
      */
     fun sendOrdersToSupplier(orders: BatchOrdersRequest<ObjectSupplier>): Completable
 
-    fun getAllSupplier(): Observable<MutableList<User>>
+    suspend fun getSupplier(where: String): ObjectList<User>
 
     fun deleteOrderItem(objectId: String): Completable
 
@@ -48,8 +49,8 @@ class RemotePlaceOrderDataSourceImpl(
         return manager.getAllOrderOfDate(condition)
     }
 
-    override fun getAllSupplier(): Observable<MutableList<User>> {
-        return manager.getAllSupplier()
+    override suspend fun getSupplier(where: String): ObjectList<User> {
+        return manager.getSupplier(where)
     }
 
     override fun deleteOrderItem(objectId: String): Completable {

@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -21,11 +22,12 @@ interface IVerifyAndPlaceOrderManager {
      *  获取所有供应商
      */
 
-    fun getAllSupplier(): Observable<MutableList<User>>
+    suspend fun getSupplier(where:String): ObjectList<User>
+
     /**
      * 删除订单
      */
-    fun deleteOrderItem(objectId: String):Completable
+    fun deleteOrderItem(objectId: String): Completable
     /**
      * 修改订单数量
      */

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.User
 import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
@@ -16,7 +17,7 @@ class VerifyAndPlaceOrderViewModel(
     private val repository: VerifyAndPlaceOrderRepository
 ) : BaseViewModel() {
 
-    val suppliers = mutableListOf<User>() //供应商列表
+    var suppliers = mutableListOf<User>() //供应商列表
 
     var new = MutableLiveData<String>()
     var old = MutableLiveData<String>()
@@ -24,15 +25,7 @@ class VerifyAndPlaceOrderViewModel(
 
     init {
         getAllSupplier()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                suppliers.clear()
-                suppliers.addAll(it)
-            }, {}, {
 
-            })
     }
 
     /**
@@ -45,8 +38,14 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 获取所有供应商
      */
-    fun getAllSupplier(): Observable<MutableList<User>> {
-        return repository.getAllSupplier()
+    fun getAllSupplier() {
+        launchUI {
+            val where = "{\"role\":\"供应商\"}"
+            parserResponse(repository.getSupplier(where)){
+                suppliers = it
+            }
+        }
+        return
     }
 
     /**

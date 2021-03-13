@@ -5,6 +5,7 @@ package com.goldenstraw.restaurant.goodsmanager.repositories.place_order
  */
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -24,8 +25,8 @@ class VerifyAndPlaceOrderRepository(
     /**
      * 获取所有供应商
      */
-    fun getAllSupplier(): Observable<MutableList<User>> {
-        return remote.getAllSupplier()
+    suspend fun getSupplier(where:String): ObjectList<User> {
+        return remote.getSupplier(where)
     }
 
     /**

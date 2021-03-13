@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.place_order
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.VerifyAndPlaceOrderApi
 import com.owner.basemodule.network.ApiException
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -35,14 +36,10 @@ class VerifyAndPlaceOrderManageImpl(
             }
     }
 
-    override fun getAllSupplier(): Observable<MutableList<User>> {
-        val where = """{"role":"供应商"}"""
-        return service.getAllSupplier(where).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun getSupplier(where:String):ObjectList<User> {
+
+        return service.getSupplier(where)
+
     }
 
     override fun deleteOrderItem(objectId: String): Completable {
