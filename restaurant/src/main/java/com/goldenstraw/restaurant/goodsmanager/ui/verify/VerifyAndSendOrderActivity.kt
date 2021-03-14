@@ -100,8 +100,10 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
         viewModel!!.defUI.refreshEvent.observe(this) {
             //数据加载完成，默认选择
             rb_xishinan_district.isChecked = true
-
+            //数据加载成功了，获取供应商信息
+            viewModel!!.getAllSupplier()
         }
+
         getAllOrderOfDate(TimeConverter.getCurrentDateString())
 
         initEvent()

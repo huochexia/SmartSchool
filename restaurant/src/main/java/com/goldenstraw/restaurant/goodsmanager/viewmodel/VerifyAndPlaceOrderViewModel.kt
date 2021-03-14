@@ -24,10 +24,7 @@ class VerifyAndPlaceOrderViewModel(
 
     var viewState = ObservableField<Int>()
 
-    init {
-        getAllSupplier()
 
-    }
 
     /**
      * 获取某个条件订单
@@ -123,12 +120,6 @@ class VerifyAndPlaceOrderViewModel(
         }
     }
 
-    /**
-     * 批量验货
-     */
-    fun checkQuantityOfOrders(orders: BatchOrdersRequest<ObjectState>): Completable {
-        return repository.checkQuantityOfOrders(orders)
-    }
 
     /**
      * 提交记帐
