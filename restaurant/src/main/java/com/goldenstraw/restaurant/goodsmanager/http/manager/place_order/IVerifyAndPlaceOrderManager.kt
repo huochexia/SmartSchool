@@ -32,7 +32,7 @@ interface IVerifyAndPlaceOrderManager {
     /**
      * 修改订单数量
      */
-    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String):UpdateObject
+    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantityAndNote, objectId: String):UpdateObject
 
     /**
      * 确定实际数量

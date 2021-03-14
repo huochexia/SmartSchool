@@ -20,8 +20,7 @@ class VerifyAndPlaceOrderViewModel(
     var ordersList = mutableListOf<OrderItem>()//订单列表
 
     var new = MutableLiveData<String>()
-    var old = MutableLiveData<String>()
-    var differ = MutableLiveData<String>()
+
 
     var viewState = ObservableField<Int>()
 
@@ -105,10 +104,10 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 修改订单数量
      */
-    fun updateOrderItemQuantity(order: OrderItem) {
+    fun updateOrderItem(order: OrderItem) {
         launchUI {
-            val newQuantity = ObjectQuantity(order.quantity)
-            parserResponse(repository.updateOrderItemQuantity(newQuantity, order.objectId))
+            val newQuantity = ObjectQuantityAndNote(order.quantity,order.note)
+            parserResponse(repository.updateOrderItem(newQuantity, order.objectId))
         }
     }
 
@@ -138,10 +137,10 @@ class VerifyAndPlaceOrderViewModel(
         return repository.commitRecordState(orders)
     }
 
-    /**
-     * 得到所有数据并计算
-     */
-    fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
+//    /**
+//     * 得到所有数据并计算
+//     */
+//    fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
 //        val where =
 //            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
 //        val formate = DecimalFormat("0")
@@ -170,5 +169,5 @@ class VerifyAndPlaceOrderViewModel(
 //
 //            })
 
-    }
+//    }
 }

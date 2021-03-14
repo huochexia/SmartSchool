@@ -38,7 +38,7 @@ interface VerifyAndPlaceOrderApi {
      */
     @PUT("/1/classes/OrderItem/{objectId}")
     suspend fun updateOrderItem(
-        @Body newOrder: ObjectQuantity,
+        @Body newOrder: ObjectQuantityAndNote,
         @Path("objectId") objectId: String
     ): UpdateObject
 

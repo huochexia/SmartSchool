@@ -28,7 +28,7 @@ interface IRemotePlaceOrderDataSource : IRemoteDataSource {
 
     suspend fun deleteOrderItem(objectId: String): DeleteObject
 
-    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): UpdateObject
+    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantityAndNote, objectId: String): UpdateObject
 
     suspend fun setCheckQuantity(newCheckGoods: ObjectCheckGoods, objectId: String): UpdateObject
 
@@ -59,7 +59,7 @@ class RemotePlaceOrderDataSourceImpl(
     }
 
     override suspend fun updateOrderItemQuantity(
-        newQuantity: ObjectQuantity,
+        newQuantity: ObjectQuantityAndNote,
         objectId: String
     ): UpdateObject {
         return manager.updateOrderItemQuantity(newQuantity, objectId)

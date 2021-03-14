@@ -46,7 +46,7 @@ class VerifyAndPlaceOrderRepository(
     /**
      * 修改订单数量
      */
-    suspend fun updateOrderItemQuantity(newQuantity: ObjectQuantity, objectId: String): UpdateObject {
+    suspend fun updateOrderItem(newQuantity: ObjectQuantityAndNote, objectId: String): UpdateObject {
         return remote.updateOrderItemQuantity(newQuantity, objectId)
     }
 

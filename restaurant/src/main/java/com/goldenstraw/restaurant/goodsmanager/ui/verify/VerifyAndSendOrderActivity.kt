@@ -13,7 +13,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityVerifyPlaceOrdersBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -39,26 +38,49 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
- * 审核订单，并发送订单
+ * 审核报货单，并发送订单给供货商
  */
 
 class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding>() {
 
     override val layoutId: Int
         get() = R.layout.activity_verify_place_orders
+
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
         import(verifyandplaceorderdatasource)
     }
 
     val repository: VerifyAndPlaceOrderRepository by instance()
+
     var viewModel: VerifyAndPlaceOrderViewModel? = null
 
-    var showList = mutableListOf<OrderItem>() //用于显示的列表
-    private val ordersOfXingShiNan = mutableListOf<OrderItem>() //新石南路的订单
-    private val ordersOfXiShan = mutableListOf<OrderItem>()  //西山校区
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
-    val state = ObservableField<Int>()
+    private var showList = mutableListOf<OrderItem>() //用于显示的列表，两个校区分别通过这个变量显示
+
+    val adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_order_item,
+        dataSource = { showList },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, _ ->
+            binding.orderitem = order
+
+            binding.checkEvent = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    t.isSelected = !t.isSelected
+                    order.isSelected = t.isSelected
+                }
+            }
+
+            binding.cbGoods.isChecked = order.isSelected
+
+            binding.longClick = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    managerDialog(t)
+                }
+            }
+        }
+    )
+
 
     override fun initView() {
         super.initView()
@@ -75,57 +97,39 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
         viewModel = getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
-            dataSource = { showList },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-                binding.checkEvent = object : Consumer<OrderItem> {
-                    override fun accept(t: OrderItem) {
-                        t.isSelected = !t.isSelected
-                        order.isSelected = t.isSelected
-                    }
-                }
-                binding.cbGoods.isChecked = order.isSelected
-                binding.longClick = object : Consumer<OrderItem> {
-                    override fun accept(t: OrderItem) {
-                        managerDialog(t)
-                    }
-                }
-            }
-        )
-        getAllOrderOfDate(TimeConverter.getCurrentDateString(), 0)
+        viewModel!!.defUI.refreshEvent.observe(this) {
+            //数据加载完成，默认选择
+            rb_xishinan_district.isChecked = true
 
-        fab_send_to_supplier.hide()
+        }
+        getAllOrderOfDate(TimeConverter.getCurrentDateString())
 
         initEvent()
 
     }
 
     private fun initEvent() {
-        radio_district.setOnCheckedChangeListener { group, checkedId ->
-            showList.clear()
+        radio_district.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rb_xishinan_district -> {
-                    showList.addAll(viewModel!!.ordersList.filter {
+                    showList = (viewModel!!.ordersList.filter {
                         it.district == 0
-                    })
-
+                    }) as MutableList<OrderItem>
                 }
                 R.id.rb_xishan_district -> {
-                    showList.addAll(viewModel!!.ordersList.filter {
+                    showList = (viewModel!!.ordersList.filter {
                         it.district == 1
-                    })
+                    }) as MutableList<OrderItem>
                 }
             }
             if (showList.isNotEmpty()) {
+                viewModel!!.viewState.set(MultiStateView.VIEW_STATE_CONTENT)
                 fab_send_to_supplier.show()
             } else {
                 viewModel!!.viewState.set(MultiStateView.VIEW_STATE_EMPTY)
                 fab_send_to_supplier.hide()
             }
-            adapter!!.forceUpdate()
+            adapter.forceUpdate()
         }
 
     }
@@ -146,19 +150,20 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
         }
     }
 
-    fun sendOrderItemSMS(address: String, content: String) {
-        val manager = SmsManager.getDefault()
-        val intent = Intent("com.android.TinySMS.RESULT")
-        val sentIntent = PendingIntent.getBroadcast(
-            this, 0,
-            intent, PendingIntent.FLAG_ONE_SHOT
-        )
-        manager.sendTextMessage(address, null, content, sentIntent, null)
+    /************************************************************
+     * 获取订单信息，此时订单状态为0。
+     *
+     ***********************************************************/
+    private fun getAllOrderOfDate(date: String) {
+        val condition =
+            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":0}]}"
+        viewModel!!.getOrdersOfDate(condition)
+
     }
 
-    /**
-    管理数据
-     */
+    /***************************************************
+     * 长按事件：管理数据，对订单进行修改
+     ***************************************************/
     private fun managerDialog(orders: OrderItem) {
         val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
         val delete = view.findViewById<Button>(R.id.delete_action)
@@ -179,12 +184,14 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
     }
 
     private fun updateDialog(order: OrderItem) {
-        val view = layoutInflater.inflate(R.layout.only_input_number_dialog_view, null)
-        val quantity = view.findViewById<EditText>(R.id.number_edit)
+        val view = layoutInflater.inflate(R.layout.input_number_and_note_dialog_view, null)
+        val quantity = view.findViewById<EditText>(R.id.ed_number)
+        val note = view.findViewById<EditText>(R.id.ed_note)
         quantity.setText(order.quantity.toString())
+        note.setText(order.note)
         val dialog = android.app.AlertDialog.Builder(this)
             .setIcon(R.drawable.ic_update_name)
-            .setTitle("修改购买数量")
+            .setTitle("修改订单")
             .setView(view)
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
@@ -195,8 +202,9 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
                     newQuantity = "0.0f"
                 }
                 order.quantity = newQuantity.toFloat()
-                viewModel!!.updateOrderItemQuantity(order)
-                adapter!!.forceUpdate()
+                order.note = note.text.toString()
+                viewModel!!.updateOrderItem(order)
+                adapter.forceUpdate()
                 dialog.dismiss()
 
             }.create()
@@ -204,40 +212,27 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
     }
 
 
-    /**
-     * 获取订单信息
-     * 将来可以按类别进行分组
-     */
-    private fun getAllOrderOfDate(date: String, stauts: Int) {
-        val condition =
-            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":$stauts}]}"
-        viewModel!!.getOrdersOfDate(condition)
-
-    }
-
-
-    /**
-     * 创建供应商单选对话框
+    /*********************************************************
+     * 发送订单，也就是给订单添加供应商，状态设置为1的过程
+     *********************************************************/
+    /*
+    获取供应商
      */
     fun popUpSelectSupplierDialog() {
-        val supplier = ""
-        //1、创建一个已选择的列表
-        val selectedList = mutableListOf<OrderItem>()
-        showList.forEach {
-            if (it.isSelected) {
-                it.supplier = supplier
-                selectedList.add(it)
-            }
-        }
+
+        val selectedList =
+            showList.filter {
+                it.isSelected
+            } as MutableList<OrderItem>
         if (selectedList.isEmpty()) {
             toast { "请选择选择商品！！" }
             return
         }
-        showDialog(supplier, selectedList)
+        showDialog(selectedList)
 
     }
 
-    private fun showDialog(supplier: String, selectedList: MutableList<OrderItem>) {
+    private fun showDialog(selectedList: MutableList<OrderItem>) {
 
         var supplier1: User = viewModel!!.suppliers[0]
         val view = layoutInflater.inflate(R.layout.select_supplier_view, null)
@@ -271,7 +266,7 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
         dialog.show()
     }
 
-    /**
+    /*
      * 将订单发送给对应的供应商，刷新列表
      */
 
@@ -299,9 +294,21 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             }, {
                 viewModel!!.ordersList.removeAll(selectedList)
                 showList.removeAll(selectedList)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             })
 
     }
 
+    /*
+    发送短信
+     */
+    private fun sendOrderItemSMS(address: String, content: String) {
+        val manager = SmsManager.getDefault()
+        val intent = Intent("com.android.TinySMS.RESULT")
+        val sentIntent = PendingIntent.getBroadcast(
+            this, 0,
+            intent, PendingIntent.FLAG_ONE_SHOT
+        )
+        manager.sendTextMessage(address, null, content, sentIntent, null)
+    }
 }

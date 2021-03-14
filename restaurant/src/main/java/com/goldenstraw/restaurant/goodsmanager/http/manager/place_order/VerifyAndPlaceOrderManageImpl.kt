@@ -40,7 +40,7 @@ class VerifyAndPlaceOrderManageImpl(
     }
 
     override suspend fun updateOrderItemQuantity(
-        newQuantity: ObjectQuantity,
+        newQuantity: ObjectQuantityAndNote,
         objectId: String
     ): UpdateObject {
         return service.updateOrderItem(newQuantity, objectId)
