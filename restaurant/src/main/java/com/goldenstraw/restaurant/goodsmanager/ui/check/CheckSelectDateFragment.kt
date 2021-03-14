@@ -22,6 +22,8 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 /**
+ * 日历，用于选择要查看的日期。
+ * 主要功能是标识出有尚未验货的订单日期
  * Created by Administrator on 2019/10/29 0029
  */
 class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
@@ -45,9 +47,12 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
+        /*
+        获取所有状态为1即尚未验货的订单，目的是在日历上进行标识
+         */
         val where =
             "{\"\$and\":[{\"state\":1},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }
@@ -113,6 +118,7 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
     private fun markDate() {
 
         Observable.fromIterable(viewModel!!.ordersList)
+            .distinct()
             .map {
                 it.orderDate
             }
@@ -136,11 +142,6 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
             }, {}, {
                 calendarView.setSchemeDate(map)
             })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        markDate()
     }
 
 }

@@ -92,7 +92,7 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
         supplierList.clear()
         val where =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":{\"\$gte\":2}},{\"district\":$district}]}"
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
 
         Observable.fromIterable(viewModel!!.ordersList)
             .map {

@@ -159,7 +159,7 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
     private fun getAllOrderOfDate(date: String) {
         val condition =
             "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":0}]}"
-        viewModel!!.getOrdersOfDate(condition)
+        viewModel!!.getOrdersOfCondition(condition)
 
     }
 

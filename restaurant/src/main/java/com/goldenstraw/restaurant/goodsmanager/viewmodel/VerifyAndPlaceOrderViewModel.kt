@@ -1,7 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.kennyc.view.MultiStateView
@@ -17,21 +16,23 @@ class VerifyAndPlaceOrderViewModel(
 
     var suppliers = mutableListOf<User>() //供应商列表
 
-    var ordersList = mutableListOf<OrderItem>()//订单列表
-
-    var new = MutableLiveData<String>()
+    /*共享列表。
+     不同的Fragment创建自己的列表，从这里获取所需要的数据。对数据的修改要两者兼顾
+     */
+    var ordersList = mutableListOf<OrderItem>()
 
 
     var viewState = ObservableField<Int>()
 
-
+    var orderState = 1
 
     /**
      * 获取某个条件订单
      */
-    fun getOrdersOfDate(condition: String) {
+    fun getOrdersOfCondition(condition: String) {
         launchUI {
             parserResponse(repository.getOrdersOfDate(condition)) {
+
                 if (it.isEmpty()) {
                     viewState.set(MultiStateView.VIEW_STATE_EMPTY)
                 } else {

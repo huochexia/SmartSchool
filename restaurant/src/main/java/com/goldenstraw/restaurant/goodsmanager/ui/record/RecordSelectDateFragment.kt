@@ -45,7 +45,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
             VerifyAndPlaceOrderViewModel(repository)
         }
         val where = "{\"\$and\":[{\"state\":3},{\"district\":${prefs.district}}]}"
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }

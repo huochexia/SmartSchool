@@ -136,7 +136,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
             }
         }
 
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
 
     }
 

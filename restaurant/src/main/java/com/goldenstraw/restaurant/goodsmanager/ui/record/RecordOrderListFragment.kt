@@ -149,7 +149,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
                     ",{\"orderDate\":\"$orderDate\"}" +
                     ",{\"state\":{\"\$gte\":3}}" +
                     ",{\"district\":$district}]}"
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
 
         Observable.fromIterable(viewModel!!.ordersList)
 

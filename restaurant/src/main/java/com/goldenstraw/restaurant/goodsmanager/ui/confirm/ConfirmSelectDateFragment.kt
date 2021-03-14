@@ -47,7 +47,7 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
         }
         val where =
             "{\"\$and\":[{\"state\":2},{\"quantity\":{\"\$ne\":0}},{\"district\":${prefs.district}}]}"
-        viewModel!!.getOrdersOfDate(where)
+        viewModel!!.getOrdersOfCondition(where)
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }

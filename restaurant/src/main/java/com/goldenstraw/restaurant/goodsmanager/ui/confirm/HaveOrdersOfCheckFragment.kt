@@ -111,7 +111,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
         }
         supplierList.clear()
 
-        viewModel.getOrdersOfDate(where)
+        viewModel.getOrdersOfCondition(where)
 
         Observable.fromIterable(viewModel.ordersList)
 

@@ -33,15 +33,18 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     }
     private val repository by instance<VerifyAndPlaceOrderRepository>()
 
-    var viewModel: VerifyAndPlaceOrderViewModel? = null
+    lateinit var viewModel: VerifyAndPlaceOrderViewModel
+
 
     var adapter = BaseDataBindingAdapter(
 
         layoutId = R.layout.layout_order_item,
-        dataSource = { viewModel!!.ordersList },
+        dataSource = { showList },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
-        callback = { order, binding, position ->
+        callback = { order, binding, _ ->
+
             binding.orderitem = order
+
             binding.clickEvent = object : Consumer<OrderItem> {
                 override fun accept(t: OrderItem) {
                     //弹出修改数量的窗口
@@ -49,6 +52,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
                         popUpCheckQuantityDialog(t)
                 }
             }
+
             binding.longClick = object : Consumer<OrderItem> {
                 override fun accept(t: OrderItem) {
                     managerDialog(t)
@@ -60,13 +64,17 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
     var supplier = ""
     var orderDate = ""
-    var state = 0
+    var orderState = 0
     var district = 0
+
+    //需要显示的数据列表
+    var showList = mutableListOf<OrderItem>()
+
     override fun initView() {
         super.initView()
         supplier = arguments!!.getString("supplier")!!
         orderDate = arguments!!.getString("orderDate")!!
-        state = arguments!!.getInt("orderState")
+        orderState = arguments!!.getInt("orderState")
         district = arguments!!.getInt("district")
 
         check_order_toolbar.title = supplier
@@ -78,7 +86,8 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+        viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            getOrderItemList()
             adapter.forceUpdate()
         }
         getOrderItemList()
@@ -115,16 +124,25 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      * 查看状态由菜单控制，可以是1送货状态，也可以2已验状态。
      */
     private fun getOrderItemList() {
-        val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
-                    ",{\"state\":$state},{\"district\":$district}" +
-                    ",{\"quantity\":{\"\$ne\":0}}]}"
-        viewModel!!.getOrdersOfDate(where)
+
+        showList = when (orderState) {
+
+            1 -> viewModel.ordersList.filter {
+                it.supplier == supplier && it.state == orderState
+            } as MutableList
+
+            2 -> viewModel.ordersList.filter {
+                it.supplier == supplier && it.state != 1
+            } as MutableList
+            else -> mutableListOf()
+        }
+
+        adapter.forceUpdate()
     }
 
-    /**
-    管理数据
-     */
+    /****************************************************
+     *长按事件；管理数据。修改和删除功能
+     *****************************************************/
     private fun managerDialog(orders: OrderItem) {
         val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
         val delete = view.findViewById<Button>(R.id.delete_action)
@@ -179,7 +197,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     }
 
 
-    /**
+    /*
      * 保存验货结果
      */
     private fun saveCheckResult(
@@ -195,11 +213,11 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             total = total,
             state = 2
         )
-        viewModel!!.setCheckQuantity(newQuantity, orderItem)
+        viewModel.setCheckQuantity(newQuantity, orderItem)
 
     }
 
-    /**
+    /*
      * 重验
      */
     private fun cancelChecked(orderItem: OrderItem) {
@@ -208,7 +226,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
     }
 
-    /**
+    /*
      * 退货,状态改为-1。
      */
     private fun returnedGoods(orderItem: OrderItem) {
