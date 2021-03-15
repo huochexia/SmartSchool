@@ -51,7 +51,7 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }
-
+        viewModel!!.orderState = 2
     }
 
     @SuppressLint("SetTextI18n")
@@ -112,6 +112,9 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
      */
     private fun markDate() {
         Observable.fromIterable(viewModel!!.ordersList)
+            .filter {
+                it.state == 2
+            }
             .map {
                 it.orderDate
             }
@@ -137,9 +140,5 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
             })
     }
 
-    override fun onResume() {
-        super.onResume()
-        markDate()
-    }
 
 }

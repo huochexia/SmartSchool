@@ -53,14 +53,17 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
 
     var supplier = ""
     var orderDate = ""
-    var state = 2
+
     var district = 0
+
+    //需要显示的数据列表
+    var showList = mutableListOf<OrderItem>()
+
     override fun initView() {
         super.initView()
         supplier = arguments!!.getString("supplier")!!
         orderDate = arguments!!.getString("orderDate")!!
         district = arguments!!.getInt("district")
-        state = arguments!!.getInt("orderState")
         confirm_order_toolbar.title = supplier
         confirm_order_toolbar.subtitle = orderDate
     }
@@ -119,24 +122,19 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
      * 查看状态由菜单控制，2状态已验，3状态已确认，4状态已记帐
      */
      fun getOrderItemList() {
-        //状态为2是只显示状态2的（已验未定），状态为3是显示状态大于等于3的，即已定或已记
-        var where =""
-        when (state) {
-            2 -> {
-                where =
-                    "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
-                            ",{\"state\":$state},{\"district\":$district}" +
-                            ",{\"quantity\":{\"\$ne\":0}}]}"
-            }
-            3 -> {
-                where =
-                    "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$orderDate\"}" +
-                            ",{\"state\":{\"\$gte\":$state}},{\"district\":$district}" +
-                            ",{\"quantity\":{\"\$ne\":0}}]}"
-            }
+        showList = when (viewModel!!.orderState) {
+
+            2 -> viewModel!!.ordersList.filter {
+                it.supplier == supplier && it.state == 2
+            } as MutableList
+
+            3 -> viewModel!!.ordersList.filter {
+                it.supplier == supplier && it.state > 2
+            } as MutableList
+            else -> mutableListOf()
         }
 
-        viewModel!!.getOrdersOfCondition(where)
+        adapter.forceUpdate()
 
     }
 
@@ -160,8 +158,8 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     }
 
     private fun updateDialog(orders: OrderItem) {
-        if (orders.state == 3) {
-            Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
+        if (orders.state == 4) {
+            Toast.makeText(context, "已经记帐不能重新验收！！", Toast.LENGTH_SHORT).show()
 
         } else {
             val dialog = AlertDialog.Builder(context!!)
