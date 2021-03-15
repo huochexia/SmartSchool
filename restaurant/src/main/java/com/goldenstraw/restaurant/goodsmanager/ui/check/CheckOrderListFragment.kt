@@ -64,7 +64,6 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
     var supplier = ""
     var orderDate = ""
-    var orderState = 0
     var district = 0
 
     //需要显示的数据列表
@@ -74,7 +73,6 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
         super.initView()
         supplier = arguments!!.getString("supplier")!!
         orderDate = arguments!!.getString("orderDate")!!
-        orderState = arguments!!.getInt("orderState")
         district = arguments!!.getInt("district")
 
         check_order_toolbar.title = supplier
@@ -104,10 +102,10 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             .setTitle("确定\"${orderItem.goodsName}\"的数量")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 if (edit.text.isNullOrEmpty()) {
                     return@setPositiveButton
                 }
@@ -121,14 +119,14 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
 
 
     /**
-     * 查看状态由菜单控制，可以是1送货状态，也可以2已验状态。
+     * 查看状态由菜单控制，可以是1送货状态，也可以其他状态。
      */
     private fun getOrderItemList() {
 
-        showList = when (orderState) {
+        showList = when (viewModel.orderState) {
 
             1 -> viewModel.ordersList.filter {
-                it.supplier == supplier && it.state == orderState
+                it.supplier == supplier && it.state == 1
             } as MutableList
 
             2 -> viewModel.ordersList.filter {
@@ -164,21 +162,27 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     }
 
     private fun deleteDialog(orders: OrderItem) {
-        val dialog = AlertDialog.Builder(context!!)
-            .setTitle("确定\"${orders.goodsName}\"退货吗？")
-            .setIcon(R.mipmap.add_icon)
-            .setNegativeButton("取消") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton("确定") { dialog, _ ->
-                returnedGoods(orders)
-                dialog.dismiss()
-            }.create()
-        dialog.show()
+        if (orders.state ==4){
+            Toast.makeText(context, "已经记帐不能退货！！", Toast.LENGTH_SHORT).show()
+        }else{
+
+            val dialog = AlertDialog.Builder(context!!)
+                .setTitle("确定\"${orders.goodsName}\"退货吗？")
+                .setIcon(R.mipmap.add_icon)
+                .setNegativeButton("取消") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton("确定") { dialog, _ ->
+                    returnedGoods(orders)
+                    dialog.dismiss()
+                }.create()
+            dialog.show()
+        }
+
     }
 
     private fun updateDialog(orders: OrderItem) {
-        if (orders.state == 3) {
+        if (orders.state >= 3) {
             Toast.makeText(context, "已经确认不能重新验收！！", Toast.LENGTH_SHORT).show()
 
         } else {
@@ -222,7 +226,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      */
     private fun cancelChecked(orderItem: OrderItem) {
         val again = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, 1)
-        viewModel!!.setCheckQuantity(again, orderItem)
+        viewModel.setCheckQuantity(again, orderItem)
 
     }
 
@@ -231,7 +235,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
      */
     private fun returnedGoods(orderItem: OrderItem) {
         val returned = ObjectCheckGoods(orderItem.quantity, 0.0f, 0.0f, 0.0f, -1)
-        viewModel!!.setCheckQuantity(returned, orderItem)
+        viewModel.setCheckQuantity(returned, orderItem)
 
     }
 }

@@ -23,7 +23,7 @@ class VerifyAndPlaceOrderViewModel(
 
 
     var viewState = ObservableField<Int>()
-
+     //共享变量，主要是为在不同Fragment中统一使用它，来保证前后的一致性。
     var orderState = 1
 
     /**

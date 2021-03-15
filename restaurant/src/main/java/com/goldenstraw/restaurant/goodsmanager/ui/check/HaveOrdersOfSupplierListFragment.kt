@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
@@ -92,8 +93,14 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         viewModel.getOrdersOfCondition(where)
 
         viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
-            val list =
-                viewModel.ordersList.filter { it.state == viewModel.orderState } as MutableList
+            val list = when (viewModel.orderState) {
+                1 -> viewModel.ordersList.filter {
+                    it.state == viewModel.orderState
+                } as MutableList
+                else -> viewModel.ordersList.filter {
+                    it.state != viewModel.orderState
+                } as MutableList
+            }
             getSupplierListFromWhere(list)
         }
 
@@ -158,5 +165,7 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         getSupplierListFromWhere(filter)
         return true
     }
+
+
 
 }

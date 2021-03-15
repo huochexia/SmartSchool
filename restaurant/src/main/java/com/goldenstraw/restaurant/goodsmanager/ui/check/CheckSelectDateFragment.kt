@@ -56,7 +56,8 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }
-
+        //因为主要是为了获取未验订单，所以将下面这个共享变量初始化
+        viewModel!!.orderState = 1
     }
 
     @SuppressLint("SetTextI18n")
@@ -118,7 +119,9 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
     private fun markDate() {
 
         Observable.fromIterable(viewModel!!.ordersList)
-            .distinct()
+            .filter {
+                it.state == 1
+            }
             .map {
                 it.orderDate
             }
