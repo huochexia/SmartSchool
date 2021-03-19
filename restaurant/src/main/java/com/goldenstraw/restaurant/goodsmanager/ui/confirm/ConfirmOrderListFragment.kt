@@ -40,7 +40,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         layoutId = R.layout.layout_order_item,
         dataSource = { viewModel!!.ordersList },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
-        callback = { order, binding, position ->
+        callback = { order, binding, _ ->
             binding.orderitem = order
             binding.longClick = object : Consumer<OrderItem> {
                 override fun accept(t: OrderItem) {

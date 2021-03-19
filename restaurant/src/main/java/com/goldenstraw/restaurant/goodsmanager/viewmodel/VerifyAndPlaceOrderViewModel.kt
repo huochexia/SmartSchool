@@ -31,10 +31,11 @@ class VerifyAndPlaceOrderViewModel(
      */
     fun getOrdersOfCondition(condition: String) {
         launchUI {
-            parserResponse(repository.getOrdersOfDate(condition)) {
 
+            parserResponse(repository.getOrdersOfDate(condition)) {
                 if (it.isEmpty()) {
                     viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                    ordersList.clear()
                 } else {
                     viewState.set(MultiStateView.VIEW_STATE_CONTENT)
                     ordersList = it

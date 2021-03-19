@@ -49,6 +49,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }
+        viewModel!!.orderState=3
     }
 
     @SuppressLint("SetTextI18n")
@@ -109,6 +110,9 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
     private fun markDate() {
 
         Observable.fromIterable(viewModel!!.ordersList)
+            .filter{
+                it.state ==3
+            }
             .map {
                 it.orderDate
             }
@@ -134,8 +138,5 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
             })
     }
 
-    override fun onResume() {
-        super.onResume()
-        markDate()
-    }
+
 }

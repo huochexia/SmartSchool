@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordSelectSupplierBinding
 import com.goldenstraw.restaurant.databinding.LayoutSupplierNameItemBinding
+import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.VerifyAndPlaceOrderViewModel
 import com.kennyc.view.MultiStateView
@@ -37,8 +38,26 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
     }
 
     private val repository: VerifyAndPlaceOrderRepository by instance()
+
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
+
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_supplier_name_item,
+        dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
+        dataSource = { supplierList },
+        callback = { supplier, binding, position ->
+            binding.supplier = supplier
+            binding.clickEvent = object : Consumer<String> {
+                override fun accept(t: String) {
+                    val bundle = Bundle()
+                    bundle.putString("supplier", supplier)
+                    bundle.putString("orderDate", orderDate)
+                    bundle.putInt("district", district)
+                    findNavController().navigate(R.id.recordOrderListFragment, bundle)
+                }
+            }
+        }
+    )
     var district = 0
     var supplierState = ObservableField<Int>()
 
@@ -65,36 +84,25 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
         viewModel = activity!!.getViewModel {
             VerifyAndPlaceOrderViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_supplier_name_item,
-            dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
-            dataSource = { supplierList },
-            callback = { supplier, binding, position ->
-                binding.supplier = supplier
-                binding.clickEvent = object : Consumer<String> {
-                    override fun accept(t: String) {
-                        val bundle = Bundle()
-                        bundle.putString("supplier", supplier)
-                        bundle.putString("orderDate", orderDate)
-                        bundle.putInt("district", district)
-                        findNavController().navigate(R.id.recordOrderListFragment, bundle)
-                    }
-                }
-            }
-        )
-        getSupplierListFromWhere(orderDate, district)
+        val where =
+            "{\"\$and\":[{\"orderDate\":\"${orderDate}\"},{\"district\":${district}}]}"
+        viewModel!!.getOrdersOfCondition(where)
+
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            val list = viewModel!!.ordersList.filter {
+                it.state >= 3
+            } as MutableList
+            getSupplierListFromWhere(list)
+        }
+
     }
 
     /**
-     *  获取有订单的供应商名单,状态大于等于2（即验货或记帐），区域0或1
+     *  获取有订单的供应商名单,状态大于等于3（即确认或记帐），区域0或1
      */
-    private fun getSupplierListFromWhere(date: String, district: Int) {
+    private fun getSupplierListFromWhere(list: MutableList<OrderItem>) {
         supplierList.clear()
-        val where =
-            "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":{\"\$gte\":2}},{\"district\":$district}]}"
-        viewModel!!.getOrdersOfCondition(where)
-
-        Observable.fromIterable(viewModel!!.ordersList)
+        Observable.fromIterable(list)
             .map {
                 it.supplier
             }
@@ -113,7 +121,7 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
                     supplierState.set(MultiStateView.VIEW_STATE_CONTENT)
                 else
                     supplierState.set(MultiStateView.VIEW_STATE_EMPTY)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             })
     }
 

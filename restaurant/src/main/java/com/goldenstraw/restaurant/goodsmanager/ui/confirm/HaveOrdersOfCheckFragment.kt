@@ -41,7 +41,24 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
 
     private val repository by instance<VerifyAndPlaceOrderRepository>()
     lateinit var viewModel: VerifyAndPlaceOrderViewModel
-    var adapter: BaseDataBindingAdapter<String, LayoutSupplierNameItemBinding>? = null
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_supplier_name_item,
+        dataSource = { supplierList },
+        dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
+        callback = { supplier, binding, position ->
+            binding.supplier = supplier
+            binding.clickEvent = object : Consumer<String> {
+                override fun accept(t: String) {
+                    val bundle = Bundle()
+                    bundle.putString("supplier", supplier)
+                    bundle.putString("orderDate", orderDate)
+                    bundle.putInt("orderState", viewModel.orderState)
+                    bundle.putInt("district", district)
+                    findNavController().navigate(R.id.confirmOrderListFragment, bundle)
+                }
+            }
+        }
+    )
 
     lateinit var orderDate: String
     var district: Int = -1
@@ -66,24 +83,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
             VerifyAndPlaceOrderViewModel(repository)
         }
 
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_supplier_name_item,
-            dataSource = { supplierList },
-            dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
-            callback = { supplier, binding, position ->
-                binding.supplier = supplier
-                binding.clickEvent = object : Consumer<String> {
-                    override fun accept(t: String) {
-                        val bundle = Bundle()
-                        bundle.putString("supplier", supplier)
-                        bundle.putString("orderDate", orderDate)
-                        bundle.putInt("orderState", viewModel.orderState)
-                        bundle.putInt("district", district)
-                        findNavController().navigate(R.id.confirmOrderListFragment, bundle)
-                    }
-                }
-            }
-        )
+
         /*
          *获取某日订单数据，需要结合区域
          */
@@ -133,7 +133,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
                     supplierState.set(MultiStateView.VIEW_STATE_CONTENT)
                 else
                     supplierState.set(MultiStateView.VIEW_STATE_EMPTY)
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             })
     }
 

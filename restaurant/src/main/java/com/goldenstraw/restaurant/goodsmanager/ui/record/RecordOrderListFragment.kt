@@ -46,7 +46,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
 
     private val repository  by instance<VerifyAndPlaceOrderRepository>()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
-    var orderList = mutableListOf<MutableList<OrderItem>>()
+    var showList = mutableListOf<MutableList<OrderItem>>()
     var vpAdapter: BaseDataBindingAdapter<MutableList<OrderItem>, PageOfRecordOrdersBinding>? = null
     val prefs by instance<PrefsHelper>()
     var showNumber = 10
@@ -75,7 +75,7 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
         }
         vpAdapter = BaseDataBindingAdapter(
             layoutId = R.layout.page_of_record_orders,
-            dataSource = { orderList },
+            dataSource = { showList },
             dataBinding = { PageOfRecordOrdersBinding.bind(it) },
             callback = { orderList, binding, _ ->
                 val orderAdapter = BaseDataBindingAdapter(
@@ -143,22 +143,18 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
      * 查询条件：供应商，日期，状态2或3，区域（0或1）
      */
     private fun getOrderItemList() {
-        orderList.clear()
-        val where =
-            "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
-                    ",{\"orderDate\":\"$orderDate\"}" +
-                    ",{\"state\":{\"\$gte\":3}}" +
-                    ",{\"district\":$district}]}"
-        viewModel!!.getOrdersOfCondition(where)
+        showList.clear()
 
         Observable.fromIterable(viewModel!!.ordersList)
-
+            .filter {
+                it.state >= 3 && it.supplier == supplier
+            }
             .buffer(showNumber)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe({
-                orderList.add(it)
+                showList.add(it)
             }, {
 
             }, {
