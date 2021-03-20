@@ -15,8 +15,6 @@ import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.network.parserResponse
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.*
 import kotlinx.coroutines.launch
@@ -54,6 +52,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
         initEvent()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initEvent() {
         calendarView.setOnMonthChangeListener { _, month ->
             tv_month.text = month.toString() + "月"
@@ -141,7 +140,7 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
      * 计算区间日期订单总额,已经记帐
      *
      */
-    fun accountOrders() {
+    private fun accountOrders() {
         tv_account_detail.visibility = View.VISIBLE
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +

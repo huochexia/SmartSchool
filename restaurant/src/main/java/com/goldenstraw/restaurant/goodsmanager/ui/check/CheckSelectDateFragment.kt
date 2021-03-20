@@ -143,7 +143,8 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
                 )
 
             }, {}, {
-                calendarView.setSchemeDate(map)
+                if (viewModel!!.ordersList.isNotEmpty())
+                    calendarView.setSchemeDate(map)
             })
     }
 

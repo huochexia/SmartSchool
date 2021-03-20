@@ -85,6 +85,7 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
         return calendar
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
@@ -134,7 +135,8 @@ class RecordSelectDateFragment : BaseFragment<FragmentRecordSelectDateBinding>()
                 )
 
             }, {}, {
-                calendarView.setSchemeDate(map)
+                if (viewModel!!.ordersList.isNotEmpty())
+                    calendarView.setSchemeDate(map)
             })
     }
 

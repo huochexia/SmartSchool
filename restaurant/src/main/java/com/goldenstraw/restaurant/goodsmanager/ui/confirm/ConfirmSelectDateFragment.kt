@@ -136,7 +136,8 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
                 )
 
             }, {}, {
-                calendarView.setSchemeDate(map)
+                if (viewModel!!.ordersList.isNotEmpty())
+                    calendarView.setSchemeDate(map)
             })
     }
 
