@@ -2,12 +2,10 @@ package com.goldenstraw.restaurant.goodsmanager.http.manager.query_orders
 
 import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.http.service.QueryOrdersApi
-import com.owner.basemodule.network.ApiException
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
 
 class QueryOrdersManagerImpl(
@@ -55,17 +53,13 @@ class QueryOrdersManagerImpl(
     override fun getGoodsFromObjectId(id: String): Observable<Goods> {
         return service.getGoodsFromObjectId(id)
     }
+
     override suspend fun getTotalOfSupplier(condition: String): ObjectList<SumResult> {
-        return service.getTotalOfSupplier(condition=condition)
+        return service.getTotalOfSupplier(condition = condition)
     }
 
-    override fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
-        return service.getTotalGroupByName(condition = condition).map {
-            if (!it.isSuccess()) {
-                throw  ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup> {
+        return service.getTotalGroupByName(condition = condition)
     }
 
     override suspend fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) =

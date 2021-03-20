@@ -28,8 +28,10 @@ import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
-class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>()
-    , CalendarView.OnCalendarSelectListener {
+/**
+ * 供应商查看订单的日历
+ */
+class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>(), CalendarView.OnCalendarSelectListener {
 
     override val layoutId: Int
         get() = R.layout.fragment_supplier_date_select
@@ -54,7 +56,9 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
             findNavController().navigate(R.id.supplierAccount)
         }
 
+        //先查找所有状态为1的订单，目的是为了标记出需要送货的日期
         val where = "{\"\$and\":[{\"state\":1},{\"supplier\":\"${prefs.username}\"}]}"
+
         viewModel!!.getAllOfOrders(where)
 
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
@@ -120,6 +124,7 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         return calendar
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
@@ -142,9 +147,9 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    /**
+    /*********************************************************
      * 标记有订单的日期，状态等于
-     */
+     *********************************************************/
     private fun markDate() {
         Observable.fromIterable(viewModel!!.ordersList)
             .filter {

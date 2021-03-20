@@ -69,7 +69,7 @@ class QueryOrdersRepository(
     /**
      * 分组求和
      */
-    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
+    suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup> {
         return remote.getTotalGroupByName(condition)
     }
 

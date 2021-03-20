@@ -28,7 +28,7 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
 
     suspend fun getTotalOfSupplier(condition: String): ObjectList<SumResult>
 
-    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>>
+    suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup>
 
     suspend fun updateNewPrice(newPrice: NewPrice, objectId: String):UpdateObject
 
@@ -82,7 +82,7 @@ class RemoteQueryOrdersDataSourceImpl(
         return manager.getTotalOfSupplier(condition)
     }
 
-    override fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
+    override suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup> {
         return manager.getTotalGroupByName(condition)
     }
 

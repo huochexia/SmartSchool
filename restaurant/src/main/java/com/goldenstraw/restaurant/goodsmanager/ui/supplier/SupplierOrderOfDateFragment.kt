@@ -36,11 +36,11 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
 
     var viewModel: QueryOrdersViewModel? = null
 
-    var adapter = BaseDataBindingAdapter(
+    val adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_order_item,
         dataSource = { viewModel!!.ordersList },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
-        callback = { order, binding, position ->
+        callback = { order, binding, _ ->
             binding.orderitem = order
         })
 
@@ -56,6 +56,7 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
@@ -98,7 +99,7 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
         val format = DecimalFormat(".00")
         Observable.fromIterable(orders)
             .filter {
-                it.state == 3
+                it.state >= 3
             }
             .scan(sum) { sum1, orderItem ->
                 sum1 + orderItem.total

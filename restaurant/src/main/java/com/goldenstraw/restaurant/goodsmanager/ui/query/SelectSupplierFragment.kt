@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
@@ -57,6 +58,7 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
         }
     )
 
+    @SuppressLint("SetTextI18n")
     override fun initView() {
         super.initView()
         date = arguments?.getString("date")!!

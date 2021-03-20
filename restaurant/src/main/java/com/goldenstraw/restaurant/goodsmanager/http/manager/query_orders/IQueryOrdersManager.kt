@@ -6,7 +6,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
 
 interface IQueryOrdersManager {
@@ -65,7 +64,7 @@ interface IQueryOrdersManager {
     /**
      * 分组求和
      */
-    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>>
+    suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup>
 
     /**
      * 提交新单价

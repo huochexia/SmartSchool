@@ -9,7 +9,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,6 +26,9 @@ class QueryOrdersViewModel(
 
     //订单列表
     var ordersList = mutableListOf<OrderItem>()
+
+    //分组计算订单合计金额列表
+    var details = mutableListOf<SumByGroup>()
 
     //按商品类别进行分类的映射表
     var groupbyCategoryOfGoods = hashMapOf<String, MutableList<Goods>>()
@@ -140,8 +142,22 @@ class QueryOrdersViewModel(
     /**
      * 分组求和
      */
-    fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {
-        return repository.getTotalGroupByName(condition)
+    fun getTotalGroupByName(condition: String) {
+        launchUI {
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            parserResponse(repository.getTotalGroupByName(condition)) {
+
+                if (it.isEmpty()) {
+                    details.clear()
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    details=it
+                }
+                defUI.refreshEvent.call()
+            }
+        }
+
     }
 
     /**
