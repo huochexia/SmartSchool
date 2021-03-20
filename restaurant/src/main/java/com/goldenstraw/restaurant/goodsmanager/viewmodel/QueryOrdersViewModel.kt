@@ -114,19 +114,21 @@ class QueryOrdersViewModel(
      */
     fun getGoodsOfCategory(categoryId: String) {
         launchUI {
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+
             val where = "{\"categoryCode\":\"$categoryId\"}"
             parserResponse(repository.getGoodsOfCategory(where)) {
                 if (it.isEmpty()) {
                     viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                    goodsList.clear()
                 } else {
                     viewState.set(MultiStateView.VIEW_STATE_CONTENT)
                     goodsList = it
                     goodsList.sortBy { goods ->
                         goods.objectId
                     }
-                    defUI.refreshEvent.call()
                 }
-
+                defUI.refreshEvent.call()
             }
         }
     }

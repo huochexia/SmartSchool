@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.ActivityAdjustPirceOfGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -114,8 +113,7 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
     /**
      * 获取所有需要调整价格的商品信息,新价格不等于0的，即为供应商申请调整价格的商品
      */
-    fun getAllGoodsOfAdjustPrice() {
-        //where={"score":{"$ne":[1,3,5,7,9]}}' \
+    private fun getAllGoodsOfAdjustPrice() {
         val where = "{\"newPrice\":{\"\$gt\":0}}"
         viewModel!!.getAllGoodsOfCategory(where)
 

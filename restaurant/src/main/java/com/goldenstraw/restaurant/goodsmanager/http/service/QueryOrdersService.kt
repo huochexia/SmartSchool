@@ -66,7 +66,7 @@ interface QueryOrdersApi {
     //得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    fun getGoodsOfCategory(@Query("where") condition: String, @Query("limit") limit: Int = 500)
+    suspend fun getGoodsOfCategory(@Query("where") condition: String, @Query("limit") limit: Int = 500)
             : ObjectList<Goods>
 
     //根据objectId获取单个商品信息
@@ -98,7 +98,7 @@ interface QueryOrdersApi {
      */
     //提交新单价
     @PUT("/1/classes/Goods/{objectId}")
-    fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): UpdateObject
+    suspend fun updateNewPriceOfGoods(@Body newPrice: NewPrice, @Path("objectId") code: String): UpdateObject
 
     /**
      * 从每日菜单库中查找菜单当中的菜谱

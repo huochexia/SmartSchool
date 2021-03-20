@@ -7,7 +7,6 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
-import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierCategoryGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -48,7 +47,7 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         layoutId = R.layout.layout_goods_item,
         dataBinding = { LayoutGoodsItemBinding.bind(it) },
         dataSource = { viewModel!!.goodsList },
-        callback = { goods, binding, position ->
+        callback = { goods, binding, _ ->
             binding.goods = goods
             binding.addSub.visibility = View.INVISIBLE
             binding.cbGoods.visibility = View.INVISIBLE
@@ -56,11 +55,9 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 override fun accept(t: Goods) {
                     popUpNewPriceDialog(goods)
                 }
-
             }
         }
     )
-    var state = ObservableField<Int>()
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,23 +71,11 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
             QueryOrdersViewModel(repository)
         }
 
-
         /*
          观察各种事件，刷新，错误提示，加载等
          */
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
-        }
-
-        viewModel!!.defUI.toastEvent.observe(viewLifecycleOwner) {
-            state.set(MultiStateView.VIEW_STATE_ERROR)
-            AlertDialog.Builder(context!!)
-                .setMessage(it)
-                .create().show()
-        }
-
-        viewModel!!.defUI.loadingEvent.observe(viewLifecycleOwner) {
-            state.set(MultiStateView.VIEW_STATE_LOADING)
         }
 
         viewModel!!.getGoodsOfCategory(prefs.categoryCode)
