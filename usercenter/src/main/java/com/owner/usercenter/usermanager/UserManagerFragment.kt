@@ -1,7 +1,7 @@
 package com.owner.usercenter.usermanager
 
 import android.os.Bundle
-import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import com.alibaba.android.arouter.launcher.ARouter
@@ -15,9 +15,6 @@ import com.owner.usercenter.R
 import com.owner.usercenter.databinding.FragmentManageUserBinding
 import com.owner.usercenter.databinding.LayoutUserItemBinding
 import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_manage_user.*
@@ -49,6 +46,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             dataBinding = { LayoutUserItemBinding.bind(it) },
             callback = { user, binding, _ ->
                 binding.user = user
+
             }
 
         )
@@ -71,54 +69,31 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
                 })
 
             }
-        initSwipeMenu()
         add_user_fab.setOnClickListener {
             ARouter.getInstance().build(RouterPath.UserCenter.PATH_REGISTER).navigation()
         }
     }
-    /**
-     * 初始化Item侧滑菜单
-     */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, _, _ ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(com.goldenstraw.restaurant.R.color.common_yellow)
-                .setText("删除")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(150)
-           leftMenu.addMenuItem(deleteItem)
-            val updateItem = SwipeMenuItem(context)
-                .setBackground(com.goldenstraw.restaurant.R.color.colorAccent)
-                .setText("修改")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(150)
-            leftMenu.addMenuItem(updateItem)
-        }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_user_list.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, _ ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
+    /****************************************************
+     *长按事件；管理数据。修改和删除功能
+     *****************************************************/
+    private fun managerDialog(user: User) {
+        val view = layoutInflater.inflate(com.goldenstraw.restaurant.R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(com.goldenstraw.restaurant.R.id.delete_action)
+        delete.text = "删除"
+        val update = view.findViewById<Button>(com.goldenstraw.restaurant.R.id.update_action)
+        update.text = "修改"
+        val managerDialog = android.app.AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
 
-                }
-                1 -> {
-
-                }
-            }
+            managerDialog.dismiss()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_user_list.setOnItemMenuClickListener(mItemMenuClickListener)
+        update.setOnClickListener {
+
+            managerDialog.dismiss()
+        }
     }
+
 }

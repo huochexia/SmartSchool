@@ -1,11 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
-import android.app.ActionBar.LayoutParams
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
@@ -22,9 +22,6 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.NewOrder
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.android.synthetic.main.fragment_neworder_list.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -70,10 +67,10 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
                 binding.newOrder = order
                 binding.clickEvent = object : Consumer<NewOrder> {
                     override fun accept(t: NewOrder) {
-                        updateDialog(t)
+                       managerDialog(t)
                     }
-
                 }
+
             }
 
         )
@@ -92,47 +89,35 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
             }
         }
 
-        initSwipeMenu()
+    }
+    /****************************************************
+     *长按事件；管理数据。修改和删除功能
+     *****************************************************/
+    private fun managerDialog(orders: NewOrder) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.text = "删除"
+        val update = view.findViewById<Button>(R.id.update_action)
+        update.text="修改"
+        val managerDialog = android.app.AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
+            deleteDialog(orders)
+            managerDialog.dismiss()
+        }
+        update.setOnClickListener {
+            updateDialog(orders)
+            managerDialog.dismiss()
+        }
     }
 
-    private fun initSwipeMenu() {
-        /*
-      1、生成子菜单，这里将子菜单设置在右侧
-       */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(R.color.colorAccent)
-                .setText("删除")
-                .setHeight(LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(deleteItem)
-        }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_new_order.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    popUPDeleteDialog(viewModel!!.newOrderList[adapterPosition])
-                }
-            }
-        }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_new_order.setOnItemMenuClickListener(mItemMenuClickListener)
-    }
 
     /**
      * 弹出删除对话框
      */
-    private fun popUPDeleteDialog(newOrder: NewOrder) {
+    private fun deleteDialog(newOrder: NewOrder) {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
             .setTitle("确定要删除-${newOrder.goodsName}吗！！")
@@ -166,7 +151,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val quantity = goodsQuantity.text.toString().trim()
                 val note = goodsOfNote.text.toString().trim()
-                if (quantity.isNullOrEmpty()) {
+                if (quantity.isEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
                     newOrder.quantity = quantity.toFloat()

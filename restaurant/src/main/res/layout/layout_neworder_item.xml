@@ -19,6 +19,9 @@
         <variable
                 name="clickEvent"
                 type="com.owner.basemodule.functional.Consumer" />
+        <variable
+                name="longClick"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
 
     <LinearLayout
@@ -69,6 +72,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:text="@{newOrder.goodsName}"
                                 android:textSize="18sp"
+                                app:bind_view_onLongClick="@{()->longClick.accept(newOrder)}"
                                 app:bind_text_color="@{newOrder.district}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/cb_goods"
