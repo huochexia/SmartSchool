@@ -15,7 +15,7 @@ interface IQueryOrdersManager {
      *  获取所有供应商
      */
 
-    fun getAllSupplier(): Observable<MutableList<User>>
+    suspend fun getAllSupplier(): ObjectList<User>
 
     /**
      * 按日期查询供应商的订单

@@ -16,7 +16,7 @@ class QueryOrdersRepository(
     /**
      * 获取所有供应商
      */
-    fun getAllSupplier(): Observable<MutableList<User>> {
+    suspend fun getAllSupplier(): ObjectList<User> {
         return remote.getAllSupplier()
     }
 

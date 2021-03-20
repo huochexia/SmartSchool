@@ -17,14 +17,9 @@ class QueryOrdersManagerImpl(
      * 单一条件查询
      * 'where={"score":{"$gte":1000,"$lte":3000}}'
      */
-    override fun getAllSupplier(): Observable<MutableList<User>> {
-        val where = """{"role":"供应商"}"""
-        return service.getAllSupplier(where).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun getAllSupplier(): ObjectList<User> {
+        val where = "{\"role\":\"供应商\"}"
+        return service.getAllSupplier(where)
     }
 
     /**

@@ -41,6 +41,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         import(queryordersactivitymodule)
     }
 
+
     private val repository by instance<QueryOrdersRepository>()
 
     var viewModel: QueryOrdersViewModel? = null

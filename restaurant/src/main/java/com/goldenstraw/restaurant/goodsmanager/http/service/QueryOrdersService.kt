@@ -18,7 +18,7 @@ interface QueryOrdersApi {
      * 从用户表中获取供应商信息
      */
     @GET("/1/users")
-    fun getAllSupplier(@Query("where") condition: String): Observable<ObjectList<User>>
+   suspend fun getAllSupplier(@Query("where") condition: String): ObjectList<User>
 
     /**
      * 按日期和供应商查询订单

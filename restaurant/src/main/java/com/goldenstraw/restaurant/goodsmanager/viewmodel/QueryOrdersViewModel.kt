@@ -9,11 +9,8 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import com.uber.autodispose.autoDisposable
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,7 +18,7 @@ class QueryOrdersViewModel(
     private val repository: QueryOrdersRepository
 ) : BaseViewModel() {
     //所有供应商列表
-    val suppliers = mutableListOf<User>() //供应商列表
+    var suppliers = mutableListOf<User>() //供应商列表
 
     //用于查询某个供应商订单
     var supplier: String = ""
@@ -29,38 +26,35 @@ class QueryOrdersViewModel(
     //商品列表
     var goodsList = mutableListOf<Goods>()
 
+    //订单列表
+    var ordersList = mutableListOf<OrderItem>()
+
     //按商品类别进行分类的映射表
     var groupbyCategoryOfGoods = hashMapOf<String, MutableList<Goods>>()
 
     var viewState = ObservableField<Int>()
 
+
     init {
         getAllSupplier()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(this)
-            .subscribe({
-                suppliers.clear()
-                suppliers.addAll(it)
-                if (suppliers.isEmpty()) {
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                }
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {
-
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_LOADING)
-            })
     }
 
     /**
      * 获取所有供应商
      */
-    fun getAllSupplier(): Observable<MutableList<User>> {
-        return repository.getAllSupplier()
+    fun getAllSupplier() {
+        launchUI {
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            parserResponse(repository.getAllSupplier()) {
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                    suppliers.clear()
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    suppliers = it
+                }
+            }
+        }
     }
 
     /**
