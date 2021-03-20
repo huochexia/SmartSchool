@@ -25,7 +25,7 @@ interface IQueryOrdersManager {
     /**
      * 修改订单
      */
-    fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
+    suspend fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): UpdateObject
 
     /**
      * 删除未处理订单

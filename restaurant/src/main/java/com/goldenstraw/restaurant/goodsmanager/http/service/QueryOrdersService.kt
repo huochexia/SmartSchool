@@ -21,20 +21,12 @@ interface QueryOrdersApi {
    suspend fun getAllSupplier(@Query("where") condition: String): ObjectList<User>
 
     /**
-     * 按日期和供应商查询订单
-     */
-    @GET("/1/classes/OrderItem")
-    suspend fun getAllOfOrders(
-        @Query("where") condition: String,
-        @Query("limit") limit: Int = 500
-    ): ObjectList<OrderItem>
-
-    /**
      * 使用协程获取某个商品订单
      */
     @GET("/1/classes/OrderItem")
     suspend fun getOrdersList(
         @Query("where") where: String,
+        @Query("limit") limit:Int =400,
         @Query("order") order: String = "-createdAt"
     ): ObjectList<OrderItem>
 
@@ -66,10 +58,10 @@ interface QueryOrdersApi {
      * 修改订单,用于将发送错的订单还原为新订单，删除供应商名称
      */
     @PUT("/1/classes/OrderItem/{objectId}")
-    fun updateOrderOfSupplier(
+    suspend fun updateOrderOfSupplier(
         @Body newOrder: ObjectSupplier,
         @Path("objectId") objectId: String
-    ): Completable
+    ): UpdateObject
 
     //得到某个类别的所有商品
     //where = {"categoryCode":"  "}

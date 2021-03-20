@@ -8,7 +8,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
 
 interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
@@ -21,7 +20,7 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
 
     suspend fun updateUnitPrice(newPrice: ObjectUnitPrice, objectId: String): UpdateObject
 
-    fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable
+    suspend fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): UpdateObject
 
     suspend fun getGoodsOfCategory(condition: String): ObjectList<Goods>
 
@@ -64,7 +63,10 @@ class RemoteQueryOrdersDataSourceImpl(
         return manager.getAllSupplier()
     }
 
-    override fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
+    override suspend fun updateOrderOfSupplier(
+        newOrder: ObjectSupplier,
+        objectId: String
+    ): UpdateObject {
         return manager.updateOrderOfSupplier(newOrder, objectId)
     }
 

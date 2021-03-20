@@ -14,8 +14,6 @@ import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.User
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_select_supplier.*
 import kotlinx.coroutines.launch
 import org.kodein.di.Copy
@@ -36,39 +34,43 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
     }
 
 
-    val repository  by instance<QueryOrdersRepository>()
+    val repository by instance<QueryOrdersRepository>()
 
     var viewModel: QueryOrdersViewModel? = null
 
-    var adapter: BaseDataBindingAdapter<User, LayoutSupplierItemBinding>? = null
+    var date = ""
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_supplier_item,
+        dataBinding = { LayoutSupplierItemBinding.bind(it) },
+        dataSource = { viewModel!!.suppliers },
+        callback = { user, binding, position ->
+            binding.supplier = user
+            binding.clickEvent = object : Consumer<User> {
+                override fun accept(t: User) {
+                    val bundle = Bundle()
+                    bundle.putString("date", date)
+                    bundle.putString("supplier", user.username)
+                    findNavController().navigate(R.id.ordersOfDateFragment, bundle)
+                }
+
+            }
+        }
+    )
 
     override fun initView() {
         super.initView()
-        val date = arguments?.getString("date")
+        date = arguments?.getString("date")!!
         total_of_current_date.text = "${date}的记帐总额："
 
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_supplier_item,
-            dataBinding = { LayoutSupplierItemBinding.bind(it) },
-            dataSource = { viewModel!!.suppliers },
-            callback = { user, binding, position ->
-                binding.supplier = user
-                binding.clickEvent = object : Consumer<User> {
-                    override fun accept(t: User) {
-                        val bundle = Bundle()
-                        bundle.putString("date", date)
-                        bundle.putString("supplier", user.username)
-                        findNavController().navigate(R.id.ordersOfDateFragment, bundle)
-                    }
 
-                }
-            }
-        )
-        val where = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":4}]}"
         launch {
+
+            viewModel!!.getAllSupplier()
+
+            val where = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":4}]}"
             parserResponse(viewModel!!.getTotalOfSupplier(where)) {
                 if (it.isNotEmpty()) {
                     val format = DecimalFormat(".00")

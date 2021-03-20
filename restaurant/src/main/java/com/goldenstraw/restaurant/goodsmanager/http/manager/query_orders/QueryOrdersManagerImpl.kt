@@ -34,14 +34,14 @@ class QueryOrdersManagerImpl(
         where: String
     ): ObjectList<OrderItem> {
 
-        return service.getAllOfOrders(where)
+        return service.getOrdersList(where)
 
     }
 
     /**
      * 修改订单的供应商为空
      */
-    override fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
+    override suspend fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): UpdateObject {
         return service.updateOrderOfSupplier(newOrder, objectId)
     }
 

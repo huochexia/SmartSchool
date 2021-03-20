@@ -44,7 +44,7 @@ class QueryOrdersRepository(
     /**
      * 修改订单的供应商
      */
-    fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
+    suspend fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): UpdateObject {
         return remote.updateOrderOfSupplier(newOrder, objectId)
     }
 

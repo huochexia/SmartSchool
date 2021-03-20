@@ -9,7 +9,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,14 +34,10 @@ class QueryOrdersViewModel(
     var viewState = ObservableField<Int>()
 
 
-    init {
-        getAllSupplier()
-    }
-
     /**
      * 获取所有供应商
      */
-    private fun getAllSupplier() {
+    fun getAllSupplier() {
         launchUI {
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
             parserResponse(repository.getAllSupplier()) {
@@ -81,8 +76,16 @@ class QueryOrdersViewModel(
     /**
      *  发送到供应商
      */
-    fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String): Completable {
-        return repository.updateOrderOfSupplier(newOrder, objectId)
+    fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String) {
+        launchUI {
+            parserResponse(repository.updateOrderOfSupplier(newOrder, objectId)) {
+                ordersList.removeIf {
+                    it.objectId == objectId
+                }
+                defUI.refreshEvent.call()
+            }
+        }
+        return
     }
 
     /**

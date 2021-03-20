@@ -17,9 +17,6 @@ import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.network.parserResponse
-import com.uber.autodispose.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_orders_of_date_list.*
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
@@ -74,6 +71,10 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
             QueryOrdersViewModel(repository)
         }
 
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            adapter.forceUpdate()
+        }
+
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
 
         viewModel!!.getAllOfOrders(where)
@@ -125,7 +126,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
     private fun deleteDialog(order: OrderItem) {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
-            .setTitle("确定删除")
+            .setTitle("确定重新发送")
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
@@ -133,13 +134,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                 //将商品信息中的供应商清空，同时state设定为0，则该商品为订货最初状态
                 val newOrder = ObjectSupplier("", 0)
                 viewModel!!.updateOrderOfSupplier(newOrder, order.objectId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(scopeProvider)
-                    .subscribe({
-                        viewModel!!.ordersList.remove(order)
-                        adapter.forceUpdate()
-                    }, {})
+
                 dialog.dismiss()
             }.create()
         dialog.show()
