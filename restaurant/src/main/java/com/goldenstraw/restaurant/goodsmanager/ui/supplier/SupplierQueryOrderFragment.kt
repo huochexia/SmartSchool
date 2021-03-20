@@ -38,9 +38,13 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         extend(parentKodein, copy = Copy.All)
     }
     private val repository  by instance<QueryOrdersRepository>()
+
     var viewModel: QueryOrdersViewModel? = null
+
     val map = HashMap<String, Calendar>()
+
     val prefs  by instance<PrefsHelper>()
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = activity!!.getViewModel {
@@ -50,7 +54,13 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
             findNavController().navigate(R.id.supplierAccount)
         }
 
-        markDate()
+        val where = "{\"\$and\":[{\"state\":1},{\"supplier\":\"${prefs.username}\"}]}"
+        viewModel!!.getAllOfOrders(where)
+
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+            markDate()
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -68,9 +78,9 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
 
     }
 
-    /**
+    /****************************************************************
      * 留着学习用
-     */
+     ****************************************************************/
 
 //    private fun initData() {
 //        val year = calendarView.curYear
@@ -114,13 +124,13 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar!!.year.toString()
+        tv_year.text = calendar.year.toString()
         tv_lunar.text = calendar.lunar
         //因为每次初始化视图时都会执行这个方法，所以只有是点击事件时才进行跳转。如果不加上这个判断，
         //当回退到这个视图时就会调用跳转方法，这样形成一个死循环。
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
             bundle.putString("date", date)
             val supplier = viewModel!!.supplier
             bundle.putString("supplier", supplier)
@@ -136,11 +146,11 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
      * 标记有订单的日期，状态等于
      */
     private fun markDate() {
-        val where = "{\"\$and\":[{\"state\":1},{\"supplier\":\"${prefs.username}\"}]}"
-        viewModel!!.getAllOfOrders(where)
-            .flatMap {
-                Observable.fromIterable(it)
-            }.map {
+        Observable.fromIterable(viewModel!!.ordersList)
+            .filter {
+                it.state == 1
+            }
+            .map {
                 it.orderDate
             }
             .distinct()

@@ -42,7 +42,7 @@ class QueryOrdersViewModel(
     /**
      * 获取所有供应商
      */
-    fun getAllSupplier() {
+    private fun getAllSupplier() {
         launchUI {
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
             parserResponse(repository.getAllSupplier()) {
@@ -61,8 +61,21 @@ class QueryOrdersViewModel(
      * 按日期获取供应商订单
      */
 
-    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>> {
-        return repository.getAllOfOrders(where)
+    fun getAllOfOrders(where: String) {
+        launchUI {
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            parserResponse(repository.getAllOfOrders(where)) {
+                if (it.isEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                    ordersList.clear()
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    ordersList = it
+                }
+                defUI.refreshEvent.call()
+            }
+        }
+
     }
 
     /**

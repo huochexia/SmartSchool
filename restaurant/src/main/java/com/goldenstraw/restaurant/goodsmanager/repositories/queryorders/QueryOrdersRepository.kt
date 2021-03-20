@@ -23,7 +23,7 @@ class QueryOrdersRepository(
     /**
      *按条件获取供应商订单
      */
-    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>> {
+    suspend fun getAllOfOrders(where: String): ObjectList<OrderItem> {
         return remote.getAllOfOrders(where)
     }
 

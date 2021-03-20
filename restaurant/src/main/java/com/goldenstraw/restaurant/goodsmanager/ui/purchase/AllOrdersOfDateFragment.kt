@@ -2,12 +2,12 @@ package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
 import android.app.AlertDialog.Builder
 import android.os.Bundle
-import android.view.ViewGroup.LayoutParams
+import android.widget.Button
 import android.widget.EditText
 import androidx.databinding.ObservableField
-import androidx.lifecycle.observe
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.R.*
+import com.goldenstraw.restaurant.R.drawable
+import com.goldenstraw.restaurant.R.layout
 import com.goldenstraw.restaurant.databinding.FragmentAllOrdersOfDateBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
@@ -15,18 +15,11 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectQuantityAndNo
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.util.toast
-import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_all_orders_of_date.*
 import org.kodein.di.Copy.All
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -46,13 +39,28 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
 
     var viewModel: QueryOrdersViewModel? = null
 
-    var viewState = ObservableField<Int>()
 
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
+    var adapter = BaseDataBindingAdapter(
+        layoutId = layout.layout_order_item,
+        dataSource = {
+            viewModel!!.ordersList
+        },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, position ->
+            binding.orderitem = order
 
-    var orderList = mutableListOf<OrderItem>()
+            binding.longClick = object :Consumer<OrderItem>{
+                override fun accept(t: OrderItem) {
+                    managerDialog(t)
+                }
+            }
+        }
+
+    )
+
 
     var orderDate = ""
+
     override fun initView() {
         super.initView()
 
@@ -68,96 +76,43 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
             QueryOrdersViewModel(repository)
         }
 
-        adapter = BaseDataBindingAdapter(
-            layoutId = layout.layout_order_item,
-            dataSource = {
-                orderList
-            },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-            }
-
-        )
 
         val where = "{\"orderDate\":\"$orderDate\"}"
         viewModel!!.getAllOfOrders(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                if (it.isEmpty()) {
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                    orderList = it
-                    adapter!!.forceUpdate()
-                }
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {
-
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_LOADING)
-            })
 
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
-
-            adapter!!.forceUpdate()
+            adapter.forceUpdate()
         }
 
-        initSwipeMenu()
     }
 
-    private fun initSwipeMenu() {
-        /*
-      1、生成子菜单，这里将子菜单设置在右侧
-       */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(color.colorAccent)
-                .setText("删除")
-                .setHeight(LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(deleteItem)
-            val updateItem = SwipeMenuItem(context)
-                .setBackground(color.secondaryColor)
-                .setText("修改")
-                .setHeight(LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(updateItem)
+    /****************************************************
+     *长按事件；管理数据。修改和删除功能
+     *****************************************************/
+    private fun managerDialog(orders: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.text = "删除"
+        val update = view.findViewById<Button>(R.id.update_action)
+        update.text = "修改"
+        val managerDialog = Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
+            deleteDialog(orders)
+            managerDialog.dismiss()
         }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_order_of_all.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    if (orderList[adapterPosition].state == 0)
-                        popUPDeleteDialog(orderList[adapterPosition])
-                }
-                1 -> {
-                    if (orderList[adapterPosition].state == 0)
-                        updateDialog(orderList[adapterPosition])
-                }
-            }
+        update.setOnClickListener {
+            updateDialog(orders)
+            managerDialog.dismiss()
         }
-        /*
-        4、给RecyclerView添加监听器
-         */
-        rlw_order_of_all.setOnItemMenuClickListener(mItemMenuClickListener)
     }
 
     /**
      * 弹出删除对话框
      */
-    private fun popUPDeleteDialog(orders: OrderItem) {
+    private fun deleteDialog(orders: OrderItem) {
         val dialog = Builder(context)
             .setIcon(drawable.ic_alert_name)
             .setTitle("确定要删除吗！！")
@@ -191,7 +146,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
             .setPositiveButton("确定") { dialog, _ ->
                 val quantity = goodsQuantity.text.toString().trim()
                 val note = goodsOfNote.text.toString().trim()
-                if (quantity.isNullOrEmpty()) {
+                if (quantity.isEmpty()) {
                     toast { "请填写必须内容！！" }
                 } else {
                     val newOrderItem = ObjectQuantityAndNote(quantity.toFloat(), note)
@@ -207,7 +162,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
     //删除订单
     private fun deleteOrders(orders: OrderItem) {
         viewModel!!.deleteOrderItem(orders.objectId)
-        orderList.remove(orders)
+        viewModel!!.ordersList.remove(orders)
     }
 
 

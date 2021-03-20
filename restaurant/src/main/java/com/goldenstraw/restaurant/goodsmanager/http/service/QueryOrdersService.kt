@@ -24,10 +24,10 @@ interface QueryOrdersApi {
      * 按日期和供应商查询订单
      */
     @GET("/1/classes/OrderItem")
-    fun getAllofOrders(
+    suspend fun getAllOfOrders(
         @Query("where") condition: String,
         @Query("limit") limit: Int = 500
-    ): Observable<ObjectList<OrderItem>>
+    ): ObjectList<OrderItem>
 
     /**
      * 使用协程获取某个商品订单

@@ -30,16 +30,11 @@ class QueryOrdersManagerImpl(
      *  表达式：
      *    val where1 = "{\"orderDate\":{\"\$lt\":\"$date\"}}"
      */
-    override fun getAllOfOrders(
+    override suspend fun getAllOfOrders(
         where: String
-    ): Observable<MutableList<OrderItem>> {
+    ): ObjectList<OrderItem> {
 
-        return service.getAllofOrders(where).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+        return service.getAllOfOrders(where)
 
     }
 

@@ -1,14 +1,12 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.os.Bundle
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentOrdersOfDateListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -23,21 +21,32 @@ import org.kodein.di.generic.instance
 import java.text.DecimalFormat
 
 /**
- * 供应商某日订单
+ * 供应商查看其某日订单情况
  */
 class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
+
     override val layoutId: Int
         get() = R.layout.fragment_supplier_of_order_list
+
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
+
     private val repository by instance<QueryOrdersRepository>()
+
     var viewModel: QueryOrdersViewModel? = null
-    private val orderList = mutableListOf<OrderItem>()
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
+
+    var adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_order_item,
+        dataSource = { viewModel!!.ordersList },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, position ->
+            binding.orderitem = order
+        })
+
     lateinit var supplier: String
+
     lateinit var date: String
-    val ordersState = ObservableField<Int>()
 
     override fun initView() {
         super.initView()
@@ -50,63 +59,55 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
-            dataSource = { orderList },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-            })
+
+        viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
+
+            viewModel!!.ordersList.let {
+                if (it.size != 0) {
+                    when (it[0].district) {
+                        0 -> toolbar.title = date + "订单----新石南路校区"
+                        1 -> toolbar.title = date + "订单----西山校区"
+                    }
+                    summation(it)
+                }
+
+            }
+            adapter.forceUpdate()
+        }
 
         getOrderOfAll()
     }
 
     /**
-     *
+     * 获取某个供应商某日的，数量不为0的所有订单
      */
     private fun getOrderOfAll() {
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                 ",{\"orderDate\":\"$date\"}" +
                 ",{\"quantity\":{\"\$ne\":0}}]}"
+
         viewModel!!.getAllOfOrders(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe(
-                {
-                    orderList.clear()
-                    orderList.addAll(it)
-                    if (orderList.size != 0) {
-                        ordersState.set(MultiStateView.VIEW_STATE_CONTENT)
-                        when (orderList[0].district) {
-                            0 -> toolbar.title = date + "订单----新石南路校区"
-                            1 -> toolbar.title = date + "订单----西山校区"
-                        }
-                        summation(orderList)
-                        adapter!!.forceUpdate()
-                    } else {
-                        ordersState.set(MultiStateView.VIEW_STATE_EMPTY)
-                    }
-                }, {
-                    ordersState.set(MultiStateView.VIEW_STATE_ERROR)
-                }, {}, { ordersState.set(MultiStateView.VIEW_STATE_LOADING) })
+
     }
 
     /**
-     * 计算已记帐订单的合计金额
+     * 计算已确认订单的合计金额
      */
     private fun summation(orders: MutableList<OrderItem>) {
         val sum = 0.0f
         val format = DecimalFormat(".00")
         Observable.fromIterable(orders)
-            .scan(sum) { sum, orderItem ->
-                sum + orderItem.total
+            .filter {
+                it.state == 3
+            }
+            .scan(sum) { sum1, orderItem ->
+                sum1 + orderItem.total
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe {
-                toolbar.subtitle = "共${orders.size}项    记帐 ${format.format(it)}元"
+                toolbar.subtitle = "共${orders.size}项   确认 ${format.format(it)}元"
             }
     }
 }

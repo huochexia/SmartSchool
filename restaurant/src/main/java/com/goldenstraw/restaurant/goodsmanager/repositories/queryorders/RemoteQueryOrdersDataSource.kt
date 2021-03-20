@@ -15,7 +15,7 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
 
     suspend fun getAllSupplier(): ObjectList<User>
 
-    fun getAllOfOrders(where: String): Observable<MutableList<OrderItem>>
+    suspend fun getAllOfOrders(where: String): ObjectList<OrderItem>
 
     suspend fun getOrdersList(where: String): ObjectList<OrderItem>
 
@@ -46,9 +46,9 @@ class RemoteQueryOrdersDataSourceImpl(
     /**
      *
      */
-    override fun getAllOfOrders(
+    override suspend fun getAllOfOrders(
         where: String
-    ): Observable<MutableList<OrderItem>> {
+    ): ObjectList<OrderItem> {
         return manager.getAllOfOrders(where)
     }
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentOrdersOfDateListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -13,7 +12,6 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.ObjectSupplier
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -41,7 +39,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
 
     val adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_order_item,
-        dataSource = { orderList },
+        dataSource = { viewModel!!.ordersList },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
         callback = { order, binding, position ->
             binding.orderitem = order
@@ -54,14 +52,9 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
 
     )
 
-    var orderList = mutableListOf<OrderItem>()
-
-    var viewState = ObservableField<Int>()
-
     lateinit var supplier: String
 
     lateinit var date: String
-
 
     override fun initView() {
         super.initView()
@@ -84,25 +77,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
 
         viewModel!!.getAllOfOrders(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
-                orderList.clear()
-                orderList.addAll(it)
-                if (orderList.isEmpty()) {
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                }
-                adapter.forceUpdate()
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_ERROR)
-            }, {
 
-            }, {
-                viewState.set(MultiStateView.VIEW_STATE_LOADING)
-            })
         launch {
             parserResponse(viewModel!!.getTotalOfSupplier(where)) {
                 if (it.isNotEmpty()) {
@@ -162,7 +137,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .autoDisposable(scopeProvider)
                     .subscribe({
-                        orderList.remove(order)
+                        viewModel!!.ordersList.remove(order)
                         adapter.forceUpdate()
                     }, {})
                 dialog.dismiss()
