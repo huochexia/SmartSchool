@@ -65,13 +65,8 @@ class QueryOrdersManagerImpl(
     override fun getGoodsFromObjectId(id: String): Observable<Goods> {
         return service.getGoodsFromObjectId(id)
     }
-    override fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
-        return service.getTotalOfSupplier(condition=condition).map {
-            if (!it.isSuccess()) {
-                throw ApiException(it.code)
-            }
-            it.results
-        }
+    override suspend fun getTotalOfSupplier(condition: String): ObjectList<SumResult> {
+        return service.getTotalOfSupplier(condition=condition)
     }
 
     override fun getTotalGroupByName(condition: String): Observable<MutableList<SumByGroup>> {

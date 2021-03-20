@@ -2,7 +2,8 @@ package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.ViewGroup
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
@@ -16,13 +17,13 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.network.parserResponse
 import com.uber.autodispose.autoDisposable
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_orders_of_date_list.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 import java.text.DecimalFormat
@@ -34,13 +35,34 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         extend(parentKodein)
     }
 
-    val repository  by instance<QueryOrdersRepository>()
+    val repository by instance<QueryOrdersRepository>()
+
     var viewModel: QueryOrdersViewModel? = null
-    var adapter: BaseDataBindingAdapter<OrderItem, LayoutOrderItemBinding>? = null
+
+    val adapter = BaseDataBindingAdapter(
+        layoutId = R.layout.layout_order_item,
+        dataSource = { orderList },
+        dataBinding = { LayoutOrderItemBinding.bind(it) },
+        callback = { order, binding, position ->
+            binding.orderitem = order
+            binding.longClick = object : Consumer<OrderItem> {
+                override fun accept(t: OrderItem) {
+                    managerDialog(t)
+                }
+            }
+        }
+
+    )
+
     var orderList = mutableListOf<OrderItem>()
+
     var viewState = ObservableField<Int>()
+
     lateinit var supplier: String
+
     lateinit var date: String
+
+
     override fun initView() {
         super.initView()
         supplier = arguments?.getString("supplier")!!
@@ -49,7 +71,6 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         toolbar.title = supplier
         toolbar.subtitle = date
 
-        initSwipeMenu()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -59,15 +80,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
-        adapter = BaseDataBindingAdapter(
-            layoutId = R.layout.layout_order_item,
-            dataSource = { orderList },
-            dataBinding = { LayoutOrderItemBinding.bind(it) },
-            callback = { order, binding, position ->
-                binding.orderitem = order
-            }
 
-        )
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
 
         viewModel!!.getAllOfOrders(where)
@@ -82,7 +95,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                 } else {
                     viewState.set(MultiStateView.VIEW_STATE_CONTENT)
                 }
-                adapter!!.forceUpdate()
+                adapter.forceUpdate()
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_ERROR)
             }, {
@@ -90,64 +103,45 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })
-        viewModel!!.getTotalOfSupplier(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe {
+        launch {
+            parserResponse(viewModel!!.getTotalOfSupplier(where)) {
                 if (it.isNotEmpty()) {
                     val format = DecimalFormat(".00")
                     val sum = format.format(it[0]._sumTotal)
                     price_total_of_day_supplier.text = "${sum}元"
-                }else{
-                    price_total_of_day_supplier.text ="0.0元"
-                }
-
-            }
-
-    }
-
-    /**
-     * 初始化Item侧滑菜单
-     */
-    private fun initSwipeMenu() {
-        /*
-        1、生成子菜单，这里将子菜单设置在右侧
-         */
-        val mSwipeMenuCreator = SwipeMenuCreator { leftMenu, rightMenu, position ->
-            val deleteItem = SwipeMenuItem(context)
-                .setBackground(R.color.colorAccent)
-                .setText("删除")
-                .setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
-                .setWidth(200)
-            rightMenu.addMenuItem(deleteItem)
-        }
-        /*
-         2、关联RecyclerView，设置侧滑菜单
-         */
-        rlw_order_of_supplier.setSwipeMenuCreator(mSwipeMenuCreator)
-        /*
-        3、定义子菜单点击事件
-         */
-        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, adapterPosition ->
-            menuBridge.closeMenu()
-            val direction = menuBridge.direction  //用于得到是左侧还是右侧菜单，主要用于当两侧均有菜单时的判断
-            when (menuBridge.position) {
-                0 -> {
-                    //当state=1时，属于送货阶段，可以进行供应商调整。
-                    if (orderList[adapterPosition].state == 1)
-                        deleteDialog(orderList[adapterPosition])
-                    else
-                        Toast.makeText(context, "该商品已验收，不能删除！！", Toast.LENGTH_SHORT).show()
+                } else {
+                    price_total_of_day_supplier.text = "0.0元"
                 }
 
             }
         }
-        /*
-       4、给RecyclerView添加监听器
-        */
-        rlw_order_of_supplier.setOnItemMenuClickListener(mItemMenuClickListener)
+
     }
+
+    /****************************************************
+     *长按事件；管理数据。修改和删除功能
+     *****************************************************/
+    private fun managerDialog(orders: OrderItem) {
+        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val delete = view.findViewById<Button>(R.id.delete_action)
+        delete.text = "重新发送订单"
+        val update = view.findViewById<Button>(R.id.update_action)
+        update.visibility = View.GONE
+        val managerDialog = AlertDialog.Builder(context)
+            .setView(view)
+            .create()
+        managerDialog.show()
+        delete.setOnClickListener {
+            if (orders.state != 1) {
+                Toast.makeText(context, "该商品已验收，不能删除！！", Toast.LENGTH_SHORT).show()
+            } else {
+                deleteDialog(orders)
+            }
+            managerDialog.dismiss()
+        }
+
+    }
+
 
     /**
      * 删除对话框
@@ -169,7 +163,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
                     .autoDisposable(scopeProvider)
                     .subscribe({
                         orderList.remove(order)
-                        adapter!!.forceUpdate()
+                        adapter.forceUpdate()
                     }, {})
                 dialog.dismiss()
             }.create()

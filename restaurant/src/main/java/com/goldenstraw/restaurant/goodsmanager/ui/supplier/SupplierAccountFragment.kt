@@ -14,10 +14,12 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.CalendarView
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.network.parserResponse
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_supplier_account_select.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -141,36 +143,16 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
      */
     fun accountOrders() {
         tv_account_detail.visibility = View.VISIBLE
-        val sum = 0.0f
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"createdAt\":{\"\$gte\":{\"__type\":\"Date\",\"iso\":\"$start\"}}}" +
                     ",{\"createdAt\":{\"\$lte\":{\"__type\":\"Date\",\"iso\":\"$end\"}}}" +
                     ",{\"state\":4}]}"
-//        viewModel!!.getOrdersOfSupplier(where)
-//            .flatMap {
-//                Observable.fromIterable(it)
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .scan(sum) { sum, order ->
-//                sum + order.total
-//            }
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(scopeProvider)
-//            .subscribe({ sum ->
-//                val format = DecimalFormat(".00")
-//                tv_account_price.text = format.format(sum)
-//
-//            }, {}, {
-//                tv_account_detail.visibility = View.VISIBLE
-//            }, {
-//                tv_account_price.text = "正在计算中....."
-//            })
-        viewModel!!.getTotalOfSupplier(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe({
+
+        launch {
+            tv_account_detail.visibility = View.VISIBLE
+            tv_account_price.text = "正在计算中......"
+            parserResponse(viewModel!!.getTotalOfSupplier(where)){
                 val format = DecimalFormat(".00")
                 if (it.isNotEmpty()) {
                     val sum = it[0]._sumTotal
@@ -178,12 +160,8 @@ class SupplierAccountFragment : BaseFragment<FragmentSupplierAccountSelectBindin
                 }else{
                     tv_account_price.text = "没有值"
                 }
-            }, {
+            }
+        }
 
-            }, {
-                tv_account_detail.visibility = View.VISIBLE
-            },{
-                tv_account_price.text = "正在计算中......"
-            })
     }
 }

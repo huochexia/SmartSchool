@@ -12,11 +12,12 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
+import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.User
-import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_select_supplier.*
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -67,11 +68,8 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
             }
         )
         val where = "{\"\$and\":[{\"orderDate\":\"$date\"},{\"state\":4}]}"
-        viewModel!!.getTotalOfSupplier(where)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(scopeProvider)
-            .subscribe {
+        launch {
+            parserResponse(viewModel!!.getTotalOfSupplier(where)) {
                 if (it.isNotEmpty()) {
                     val format = DecimalFormat(".00")
                     val sum = format.format(it[0]._sumTotal)
@@ -80,5 +78,7 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
                     price_total_of_day.text = "0.00元"
                 }
             }
+        }
+
     }
 }

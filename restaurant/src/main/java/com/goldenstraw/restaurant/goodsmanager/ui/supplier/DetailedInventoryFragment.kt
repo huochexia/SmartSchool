@@ -14,9 +14,11 @@ import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.network.parserResponse
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -74,7 +76,6 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
      */
     fun getAllOfOrderAndSum() {
         details.clear()
-        val map = HashMap<String, OrderItem>()
         val where =
             "{\"\$and\":[{\"supplier\":\"$supplier\"}" +
                     ",{\"createdAt\":{\"\$gte\":{\"__type\":\"Date\",\"iso\":\"$start\"}}}" +
@@ -95,17 +96,15 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_ERROR)
             }, {
-                viewModel!!.getTotalOfSupplier(where)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDisposable(scopeProvider)
-                    .subscribe {
+                launch {
+                    parserResponse(viewModel!!.getTotalOfSupplier(where)){
                         val format = DecimalFormat(".00")
                         if (it.isNotEmpty()) {
                             val sum = it[0]._sumTotal
                             totalAllOrder.value = format.format(sum).toFloat()
                         }
                     }
+                }
             }, {
                 viewState.set(MultiStateView.VIEW_STATE_LOADING)
             })

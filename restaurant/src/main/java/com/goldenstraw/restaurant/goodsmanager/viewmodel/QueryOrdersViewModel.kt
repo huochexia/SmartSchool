@@ -5,6 +5,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
@@ -120,9 +121,9 @@ class QueryOrdersViewModel(
 
 
     /**
-     * 求和
+     * 求和，计算当天购货总额
      */
-    fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
+    suspend fun getTotalOfSupplier(condition: String):ObjectList<SumResult> {
         return repository.getTotalOfSupplier(condition)
     }
 

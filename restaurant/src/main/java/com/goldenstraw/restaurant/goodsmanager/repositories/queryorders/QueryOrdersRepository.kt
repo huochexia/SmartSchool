@@ -62,7 +62,7 @@ class QueryOrdersRepository(
     /**
      * 求和
      */
-    fun getTotalOfSupplier(condition: String): Observable<MutableList<SumResult>> {
+    suspend fun getTotalOfSupplier(condition: String): ObjectList<SumResult> {
         return remote.getTotalOfSupplier(condition)
     }
 

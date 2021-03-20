@@ -96,10 +96,10 @@ interface QueryOrdersApi {
      * 求和
      */
     @GET("/1/classes/OrderItem")
-    fun getTotalOfSupplier(
+   suspend fun getTotalOfSupplier(
         @Query("sum") total: String = "total",
         @Query("where") condition: String
-    ): Observable<ObjectList<SumResult>>
+    ): ObjectList<SumResult>
 
     /**
     UPDATE
