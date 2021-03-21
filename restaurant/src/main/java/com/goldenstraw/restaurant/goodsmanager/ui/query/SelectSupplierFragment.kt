@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.query
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSelectSupplierBinding
@@ -67,7 +68,12 @@ class SelectSupplierFragment : BaseFragment<FragmentSelectSupplierBinding>() {
         viewModel = activity!!.getViewModel {
             QueryOrdersViewModel(repository)
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         launch {
 
             viewModel!!.getAllSupplier()

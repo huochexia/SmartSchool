@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCookbookNumberListBinding
 import com.goldenstraw.restaurant.databinding.LayoutCookbookAndNumberItemBinding
@@ -69,6 +70,12 @@ class StatisticsCookBookNumFragment : BaseFragment<FragmentCookbookNumberListBin
 
         viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter!!.forceUpdate()
+        }
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
         }
     }
 }

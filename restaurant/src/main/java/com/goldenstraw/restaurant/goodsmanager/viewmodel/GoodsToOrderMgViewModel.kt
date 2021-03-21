@@ -91,40 +91,49 @@ class GoodsToOrderMgViewModel(
      * 删除商品信息或类别
      */
     fun deleteGoods(goods: Goods) {
-        launchUI {
+        launchUI ({
             parserResponse(repository.deleteGoodsFromRemote(goods)) {
                 repository.deleteGoodsFromLocal(goods)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 
     fun deleteCategory(category: GoodsCategory) {
-        launchUI {
+        launchUI ({
             parserResponse(repository.deleteCategoryFromRemote(category)) {
                 repository.deleteCategoryFromLocal(category)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
      * 修改信息
      */
     fun updateGoods(goods: Goods) {
-        launchUI {
+        launchUI( {
             parserResponse(repository.updateGoodsToRemote(goods)) {
                 //远程数据操作成功后，才对本地数据进行操作
                 repository.addOrUpdateGoodsToLocal(goods)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     fun updateCategory(category: GoodsCategory) {
-        launchUI {
+        launchUI( {
             parserResponse(repository.updateCategoryToRemote(category)) {
                 repository.addOrUpdateCategoryToLocal(category)
             }
+        },{
+            defUI.showDialog.value = it.message
         }
+        )
     }
 
 
@@ -133,7 +142,7 @@ class GoodsToOrderMgViewModel(
      */
     fun addCategory(categoryName: String) {
         val newCategory = NewCategory(categoryName)
-        launchUI {
+        launchUI( {
             val defferd = async {
                 repository.addCategoryToRemote(newCategory)
             }
@@ -146,14 +155,16 @@ class GoodsToOrderMgViewModel(
                 )
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
     保存新增加商品到数据库中,先保存到网络，成功后利用返回的objectId，形成新商品保存本地
      */
     fun addGoods(goods: NewGoods) {
-        launchUI {
+        launchUI ({
             val defferd = async { repository.addGoodsToRemote(goods) }
             val result = defferd.await()
             parserResponse(result) {
@@ -166,7 +177,9 @@ class GoodsToOrderMgViewModel(
                 )
                 repository.addOrUpdateGoodsToLocal(newGoods)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
 
@@ -184,12 +197,14 @@ class GoodsToOrderMgViewModel(
         selectedGoods.addAll(list.map {
             goodsToShoppingCar(it)
         })
-        launchUI {
+        launchUI( {
             //创建一个通用的食物
             val common = FoodOfShoppingCar("common", "", "通用", "", direct = direct)
             repository.addFoodAndMaterialsToShoppingCar(common, selectedGoods)
             goodsList.removeAll(list)
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 
@@ -197,7 +212,7 @@ class GoodsToOrderMgViewModel(
      * 从每日菜单当中获取的原材料，将其加入购物车
      */
     fun getFoodOfDailyToShoppingCar(where: String) {
-        launchUI {
+        launchUI( {
             withContext(Dispatchers.IO) {
                 //第一步：获取每日菜单
                 parserResponse(repository.getDailyMealOfDate(where)) {
@@ -222,7 +237,9 @@ class GoodsToOrderMgViewModel(
                     }
                 }
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /****************************************************
@@ -230,11 +247,13 @@ class GoodsToOrderMgViewModel(
      ***************************************************/
     fun syncAllData() {
 
-        launchUI {
+        launchUI ({
                 repository.clearLocalData()
                 repository.syncCategory()
                 repository.syncGoods()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 

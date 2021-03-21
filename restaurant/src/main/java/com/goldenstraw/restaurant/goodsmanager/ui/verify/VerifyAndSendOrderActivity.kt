@@ -103,7 +103,12 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
             //数据加载成功了，获取供应商信息
             viewModel!!.getAllSupplier()
         }
-
+        viewModel!!.defUI.showDialog.observe(this) {
+            AlertDialog.Builder(this)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         getAllOrderOfDate(TimeConverter.getCurrentDateString())
 
         initEvent()

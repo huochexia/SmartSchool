@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.check
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentCheckSelectDateBinding
@@ -55,6 +56,12 @@ class CheckSelectDateFragment : BaseFragment<FragmentCheckSelectDateBinding>(),
         viewModel!!.getOrdersOfCondition(where)
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
+        }
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
         }
         //因为主要是为了获取未验订单，所以将下面这个共享变量初始化
         viewModel!!.orderState = 1

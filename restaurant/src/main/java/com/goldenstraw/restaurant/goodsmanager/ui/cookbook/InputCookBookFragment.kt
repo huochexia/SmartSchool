@@ -2,8 +2,9 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 
 import android.os.Bundle
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
-import androidx.lifecycle.observe
+
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentInputCookBookBinding
@@ -197,7 +198,12 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
         viewModel.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter!!.forceUpdate()
         }
-
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
+            Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
     /**
@@ -217,7 +223,7 @@ class InputCookBookFragment : BaseFragment<FragmentInputCookBookBinding>() {
             }
             .setPositiveButton("确定") { dialog, _ ->
                 val quantity = ration.text.toString().trim()
-                if (quantity.isNullOrEmpty()) {
+                if (quantity.isEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }
                 } else {
                     material.ration = quantity.toFloat()

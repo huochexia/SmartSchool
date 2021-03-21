@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.confirm
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentConfirmSelectDateBinding
@@ -50,6 +51,12 @@ class ConfirmSelectDateFragment : BaseFragment<FragmentConfirmSelectDateBinding>
         viewModel!!.getOrdersOfCondition(where)
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
+        }
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
         }
         viewModel!!.orderState = 2
     }

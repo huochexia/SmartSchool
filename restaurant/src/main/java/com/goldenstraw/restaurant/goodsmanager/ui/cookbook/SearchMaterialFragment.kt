@@ -7,9 +7,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.observe
+
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSearchMaterialBinding
@@ -95,7 +96,12 @@ class SearchMaterialFragment : BaseFragment<FragmentSearchMaterialBinding>() {
                 }
             }
         )
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
     override fun onResume() {

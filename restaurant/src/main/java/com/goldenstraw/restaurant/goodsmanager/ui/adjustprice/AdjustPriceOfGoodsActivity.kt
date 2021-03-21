@@ -59,6 +59,12 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
         viewModel!!.defUI.refreshEvent.observe(this) {
             adapter.forceUpdate()
         }
+        viewModel!!.defUI.showDialog.observe(this) {
+            AlertDialog.Builder(this)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         getAllGoodsOfAdjustPrice()
     }
 

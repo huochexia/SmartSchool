@@ -3,6 +3,8 @@ package com.goldenstraw.restaurant.goodsmanager.ui.cookbook
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentMealAnalyzeResultBindingImpl
@@ -57,6 +59,12 @@ class DailyMealAnalyzeResultFragment : BaseFragment<FragmentMealAnalyzeResultBin
         }
 
         viewModel.statistcsDailyMeal(dateRange.toMutableList())
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
 
     }
 

@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.query
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
@@ -63,6 +64,7 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -74,7 +76,12 @@ class OrdersOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding>() {
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            androidx.appcompat.app.AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         val where = "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":\"$date\"}]}"
 
         viewModel!!.getAllOfOrders(where)

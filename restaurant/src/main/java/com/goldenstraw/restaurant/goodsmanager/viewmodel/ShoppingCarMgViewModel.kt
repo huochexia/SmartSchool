@@ -32,7 +32,7 @@ class ShoppingCarMgViewModel(
 
 
     init {
-        launchUI {
+        launchUI({
             foodList =
                 repository.getFoodOfShoppingCar() as MutableList<FoodWithMaterialsOfShoppingCar>
             categoryList.addAll(foodList)
@@ -42,7 +42,11 @@ class ShoppingCarMgViewModel(
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
             }
             defUI.refreshEvent.call()
-        }
+        }, {
+            state.set(MultiStateView.VIEW_STATE_ERROR)
+            defUI.showDialog.value = it.message
+
+        })
     }
 
     /**
@@ -69,7 +73,7 @@ class ShoppingCarMgViewModel(
 
         val formate = DecimalFormat("0.0") //浮点数格式
 
-        launchUI {
+        launchUI ({
             withContext(Dispatchers.Default) {
                 foodList.forEach {
                     var teacherNum = 0
@@ -104,7 +108,9 @@ class ShoppingCarMgViewModel(
                 }
             }
             defUI.refreshEvent.call()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 
@@ -112,7 +118,7 @@ class ShoppingCarMgViewModel(
      * 将汇总所有拟购商品，合计重复商品数量，商品数量为0的删除
      */
     fun collectAllOfFoodCategory(direct: Int) {
-        launchUI {
+        launchUI( {
             val allList = repository.getAllOfMaterialShoppingCar()
             val collect = hashMapOf<String, MaterialOfShoppingCar>()
             Observable.fromIterable(allList)
@@ -132,7 +138,9 @@ class ShoppingCarMgViewModel(
                     collectAllMaterialOfShoppingCar(collect.values.toMutableList(), direct)
                 })
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
@@ -153,52 +161,60 @@ class ShoppingCarMgViewModel(
      * 生成订单
      */
     fun createNewOrder(list: List<NewOrder>) {
-        launchUI {
+        launchUI( {
             repository.createNewOrder(list)
             clear()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 修改订单
      */
     fun updateNewOrder(newOrder: NewOrder) {
-        launchUI {
+        launchUI( {
             repository.updateLocalNewOrder(newOrder)
             defUI.refreshEvent.call()
-        }
+        },{
+
+        })
     }
 
     /**
      * 删除订单
      */
     fun deleteNewOrder(newOrder: NewOrder) {
-        launchUI {
+        launchUI ({
             repository.deleteLocalNewOrder(newOrder)
             newOrderList.remove(newOrder)
             defUI.refreshEvent.call()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 清空本地订单
      */
     fun clearAllNewOrder() {
-        launchUI {
+        launchUI( {
             repository.clearLocalNewOrder()
             withContext(Dispatchers.Main) {
                 newOrderList.clear()
                 defUI.refreshEvent.call()
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 获取本地保存的新订单
      */
     fun getLocalNewOrder() {
-        launchUI {
+        launchUI( {
             newOrderList = repository.getLocalNewOrder() as MutableList<NewOrder>
             withContext(Dispatchers.Default) {
                 newOrderList.forEach { order ->
@@ -210,16 +226,20 @@ class ShoppingCarMgViewModel(
                 repository.createNewOrder(newOrderList)
             }
             defUI.refreshEvent.call()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 新版本清空购物车
      */
     fun clearShopping() {
-        launchUI {
+        launchUI ({
             clear()
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     suspend fun clear() = coroutineScope {
@@ -233,25 +253,29 @@ class ShoppingCarMgViewModel(
      * 删除购物车商品
      */
     fun deleteMaterialOfShoppingCar(material: MaterialOfShoppingCar) {
-        launchUI {
+        launchUI( {
             repository.deleteMaterialOfShoppingCar(material)
             categoryList.forEach {
                 (it.materials as MutableList).remove(material)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 修改购物车商品
      */
     fun updateMaterialOfShoppingCar(material: MaterialOfShoppingCar) {
-        launchUI {
+        launchUI( {
             repository.updateQuantityOfMaterial(material)
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     fun commitNewOrderToRemote() {
-        launchUI {
+        launchUI ({
             withContext(Dispatchers.IO) {
                 transGoodsOfShoppingCartToNewOrderItem(newOrderList)
                     .subscribeOn(Schedulers.io())
@@ -267,7 +291,9 @@ class ShoppingCarMgViewModel(
                     })
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 

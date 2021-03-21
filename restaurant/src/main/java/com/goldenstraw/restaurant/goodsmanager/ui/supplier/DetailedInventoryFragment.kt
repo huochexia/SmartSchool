@@ -2,6 +2,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierOfDetailInventoryBinding
@@ -86,7 +87,12 @@ class DetailedInventoryFragment : BaseFragment<FragmentSupplierOfDetailInventory
                 }
             }
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
 }

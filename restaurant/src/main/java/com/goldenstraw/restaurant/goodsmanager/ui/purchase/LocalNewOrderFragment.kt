@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
-import androidx.lifecycle.observe
+
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentNeworderListBinding
 import com.goldenstraw.restaurant.databinding.LayoutNeworderItemBinding
@@ -88,7 +88,12 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
                 viewState.set(MultiStateView.VIEW_STATE_CONTENT)
             }
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            androidx.appcompat.app.AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
     /****************************************************
      *长按事件；管理数据。修改和删除功能
@@ -99,7 +104,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
         delete.text = "删除"
         val update = view.findViewById<Button>(R.id.update_action)
         update.text="修改"
-        val managerDialog = android.app.AlertDialog.Builder(context)
+        val managerDialog = AlertDialog.Builder(context)
             .setView(view)
             .create()
         managerDialog.show()

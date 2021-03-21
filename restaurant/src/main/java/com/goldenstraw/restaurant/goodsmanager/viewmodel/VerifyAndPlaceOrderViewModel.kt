@@ -30,7 +30,7 @@ class VerifyAndPlaceOrderViewModel(
      * 获取某个条件订单
      */
     fun getOrdersOfCondition(condition: String) {
-        launchUI {
+        launchUI ({
 
             parserResponse(repository.getOrdersOfDate(condition)) {
                 if (it.isEmpty()) {
@@ -42,30 +42,36 @@ class VerifyAndPlaceOrderViewModel(
                 }
                 defUI.refreshEvent.call()
             }
-        }
-        return
+        },{
+            defUI.showDialog.value = it.message
+        })
+
     }
 
     /**
      * 获取所有供应商
      */
     fun getAllSupplier() {
-        launchUI {
+        launchUI( {
             val where = "{\"role\":\"供应商\"}"
             parserResponse(repository.getSupplier(where)){
                 suppliers = it
             }
-        }
-        return
+        },{
+            defUI.showDialog.value = it.message
+        })
+
     }
 
     /**
      * 删除订单
      */
     fun deleteOrderItem(objectId: String) {
-        launchUI {
+        launchUI( {
             parserResponse(repository.deleteOrderItem(objectId))
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
@@ -104,22 +110,26 @@ class VerifyAndPlaceOrderViewModel(
      * 修改订单数量
      */
     fun updateOrderItem(order: OrderItem) {
-        launchUI {
+        launchUI( {
             val newQuantity = ObjectQuantityAndNote(order.quantity,order.note)
             parserResponse(repository.updateOrderItem(newQuantity, order.objectId))
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /**
      * 单个验货
      */
     fun setCheckQuantity(newQuantity: ObjectCheckGoods, orders: OrderItem) {
-        launchUI {
+        launchUI( {
             parserResponse(repository.setCheckQuantity(newQuantity, orders.objectId)) {
                 ordersList.remove(orders)
                 defUI.refreshEvent.call()
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
 
@@ -130,37 +140,4 @@ class VerifyAndPlaceOrderViewModel(
         return repository.commitRecordState(orders)
     }
 
-//    /**
-//     * 得到所有数据并计算
-//     */
-//    fun computeNewAndOldOfDiffer(supplier: String, start: String, end: String) {
-//        val where =
-//            "{\"\$and\":[{\"supplier\":\"$supplier\"},{\"orderDate\":{\"\$gte\":\"$start\",\"\$lte\":\"$end\"}}]}"
-//        val formate = DecimalFormat("0")
-//        var newprice = 0.0f
-//        var oldprice = 0.0f
-//        getAllOrderOfDate(where)
-//            .subscribeOn(Schedulers.computation())
-//            .flatMap {
-//                Observable.fromIterable(it)
-//            }
-//            .map {
-//                val map = HashMap<Int, Float>()
-//                oldprice += it.total
-//                newprice += it.unitPrice * it.againCheckQuantity
-//                map[0] = newprice
-//                map[1] = oldprice
-//                map
-//            }
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .autoDisposable(this)
-//            .subscribe({
-//                new.value = formate.format(it[0])
-//                old.value = formate.format(it[1])
-//                differ.value = formate.format(it[0]?.minus(it[1]!!))
-//            }, {}, {
-//
-//            })
-
-//    }
 }

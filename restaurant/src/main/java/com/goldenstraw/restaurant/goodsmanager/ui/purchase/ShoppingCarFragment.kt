@@ -95,6 +95,12 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             foodAdapter!!.forceUpdate()
         }
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            androidx.appcompat.app.AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
     fun onClick(view: View) {

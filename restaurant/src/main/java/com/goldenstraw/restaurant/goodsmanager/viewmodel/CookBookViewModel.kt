@@ -63,7 +63,7 @@ class CookBookViewModel(
      就会影响显示结果。
      */
     fun createCookBook(newCookBook: RemoteCookBook) {
-        launchUI {
+        launchUI( {
             newCookBook.save(object : SaveListener<String>() {
                 override fun done(id: String?, e: BmobException?) {
                     if (e == null) {
@@ -93,7 +93,9 @@ class CookBookViewModel(
                     }
                 }
             })
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
 
     }
@@ -103,13 +105,15 @@ class CookBookViewModel(
      */
     fun deleteCookBook(cm: CookBookWithMaterials) {
 
-        launchUI {
+        launchUI ({
             parserResponse(repository.deleteRemoteCookBook(cm.cookbook.objectId)) {
                 repository.deleteLocalCookBookWithMaterials(cm)
                 defUI.showDialog.value = "删除成功"
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     suspend fun deleteMaterialOfCookBook(material: MutableList<Material>) {
@@ -175,14 +179,16 @@ class CookBookViewModel(
     启动一个协程，在这个协程里调用挂起函数对数据库进行访问，并返回结果
      */
     fun searchMaterial(name: String) {
-        launchUI {
+        launchUI ({
             val goods = repository.searchMaterial(name)
             if (goods.isEmpty()) {
                 searchedGoodsStatusLiveData.value = None
             } else {
                 searchedGoodsStatusLiveData.value = Success(goods)
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
@@ -190,7 +196,7 @@ class CookBookViewModel(
      */
     fun searchCookBookWithMaterials(name: String, category: String) {
 
-        launchUI {
+        launchUI( {
             val list = repository.searchCookBook(name, category)
             if (list.isEmpty()) {
                 searchCookbookStatusLiveDate.value = None
@@ -198,7 +204,9 @@ class CookBookViewModel(
                 searchCookbookStatusLiveDate.value = Success(list)
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
@@ -244,7 +252,7 @@ class CookBookViewModel(
 //并统计小类的数量
     fun statistcsDailyMeal(list: MutableList<String>) {
 
-        launchUI {
+        launchUI ({
             getRangeOfDateFromDailyMeal(list)
 
             val cold_sucai = async {
@@ -271,7 +279,9 @@ class CookBookViewModel(
                 snack_zhu.await(), snack_jianchao.await(), snack_youzha.await()
             )
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     private fun getNumber(list: MutableList<DailyMeal>, kind: String): Int {
@@ -288,7 +298,7 @@ class CookBookViewModel(
     获取日期范围的菜单，并分组到大类列表对象中
     @list为日期列表
      */
-    suspend fun getRangeOfDateFromDailyMeal(dateList: MutableList<String>) {
+    private suspend fun getRangeOfDateFromDailyMeal(dateList: MutableList<String>) {
 
         val allDailyMeal = mutableListOf<DailyMeal>()
 
@@ -312,7 +322,7 @@ class CookBookViewModel(
       @kind:小类
      */
     fun getCookBooksOfDailyMeal(category: String, kind: String) {
-        launchUI {
+        launchUI( {
             when (category) {
                 ColdFood.kindName -> {
                     getMapOfCookBook(coldList, kind)
@@ -332,7 +342,9 @@ class CookBookViewModel(
 
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     private fun getMapOfCookBook(list: MutableList<DailyMeal>, kind: String) {
@@ -374,7 +386,7 @@ class CookBookViewModel(
     //获取某日菜单，将结果分组存入不同的列表
     fun getDailyMealOfDate(where: String) {
 
-        launchUI {
+        launchUI( {
             withContext(Dispatchers.IO) {
                 parserResponse(repository.getDailyMealOfDate(where)) {
                     groupByKindForDailyMeal(it)
@@ -382,7 +394,9 @@ class CookBookViewModel(
             }
             _refreshAdapter.value = "All"
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
 
@@ -412,7 +426,7 @@ class CookBookViewModel(
     拷贝某一天菜单,
      */
     fun copyDailyMeal(newDate: String, oldDate: String, direct: Int) {
-        launchUI {
+        launchUI ({
             val where = "{\"mealDate\":\"$oldDate\"}"
             withContext(Dispatchers.IO) {
                 parserResponse(repository.getDailyMealOfDate(where)) {
@@ -442,20 +456,24 @@ class CookBookViewModel(
                 }
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     fun updateDailyMeal(newDailyMeal: UpdateIsteacher, objectId: String) {
-        launchUI {
+        launchUI ({
             parserResponse(repository.updateDailyMeal(newDailyMeal, objectId))
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
      * 删除一日菜单
      */
     fun deleteDailyMealOfDate(date: String, direct: Int) {
-        launchUI {
+        launchUI( {
             val where = "{\"\$and\":[{\"mealDate\":\"$date\"},{\"direct\":$direct}]}"
             parserResponse(repository.getDailyMealOfDate(where)) {
                 it.forEach { meal ->
@@ -464,7 +482,9 @@ class CookBookViewModel(
                 clearAllList()
                 _refreshAdapter.value = "All"
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 
@@ -472,7 +492,7 @@ class CookBookViewModel(
      * 删除某项菜单,同时将菜谱使用次数减1
      */
     fun deleteDailyMeal(dailyMeal: DailyMeal) {
-        launchUI {
+        launchUI ({
             val cookbook = repository.getCookbook(dailyMeal.cookBook.objectId)
             cookbook.usedNumber = cookbook.usedNumber - 1
             withContext(Dispatchers.IO) {
@@ -481,7 +501,9 @@ class CookBookViewModel(
                 }
             }
 
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
@@ -490,7 +512,7 @@ class CookBookViewModel(
       所以需要从菜谱库中获取最近的菜谱，然后修改数量。
      */
     fun createDailyMeal(newDailyMeal: NewDailyMeal) {
-        launchUI {
+        launchUI ({
             withContext(Dispatchers.IO) {
                 parserResponse(repository.createDailyMeal(newDailyMeal)) {
                     //获取最新菜谱使用数量，增加
@@ -500,7 +522,9 @@ class CookBookViewModel(
                 }
 
             }
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 
     /***********************************************************
@@ -512,7 +536,7 @@ class CookBookViewModel(
     private val dinner = mutableListOf<LocalCookBook>()
 
     fun createStyledTable(date: String, file: InputStream) {
-        launchUI {
+        launchUI( {
             breakfast.clear()
             lunch.clear()
             dinner.clear()
@@ -548,7 +572,9 @@ class CookBookViewModel(
                 createOutFileOfWord(date, file)
             }
             defUI.showDialog.value = "文件生成完毕！！"
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
 
     }
 
@@ -655,7 +681,7 @@ class CookBookViewModel(
      ********************************************************************************/
 
     fun syncCookbook() {
-        launchUI {
+        launchUI ({
             var skip = 0
             val cookbooksList = mutableListOf<RemoteCookBook>()
             var isCompleted = false
@@ -681,6 +707,8 @@ class CookBookViewModel(
             //保存本地数据
             repository.addCookBooksToLocal(localCookBook)
             repository.addMaterialOfCookBooks(materials)
-        }
+        },{
+            defUI.showDialog.value = it.message
+        })
     }
 }

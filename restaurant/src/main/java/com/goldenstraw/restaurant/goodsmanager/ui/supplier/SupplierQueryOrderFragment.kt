@@ -3,6 +3,7 @@ package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSingleDateSelectBinding
@@ -64,7 +65,12 @@ class SupplierQueryOrderFragment : BaseFragment<FragmentSingleDateSelectBinding>
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             markDate()
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
     @SuppressLint("SetTextI18n")

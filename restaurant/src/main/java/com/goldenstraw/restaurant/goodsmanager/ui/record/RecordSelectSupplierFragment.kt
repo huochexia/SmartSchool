@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.record
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
@@ -94,7 +95,12 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
             } as MutableList
             getSupplierListFromWhere(list)
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
     /**

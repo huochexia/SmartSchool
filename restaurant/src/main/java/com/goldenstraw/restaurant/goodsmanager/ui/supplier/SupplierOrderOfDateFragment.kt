@@ -1,6 +1,7 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.supplier
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentOrdersOfDateListBinding
 import com.goldenstraw.restaurant.databinding.LayoutOrderItemBinding
@@ -75,7 +76,12 @@ class SupplierOrderOfDateFragment : BaseFragment<FragmentOrdersOfDateListBinding
             }
             adapter.forceUpdate()
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         getOrderOfAll()
     }
 

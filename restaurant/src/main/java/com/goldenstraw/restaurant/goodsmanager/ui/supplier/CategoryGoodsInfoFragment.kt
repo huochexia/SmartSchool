@@ -77,7 +77,12 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         viewModel!!.getGoodsOfCategory(prefs.categoryCode)
 
     }

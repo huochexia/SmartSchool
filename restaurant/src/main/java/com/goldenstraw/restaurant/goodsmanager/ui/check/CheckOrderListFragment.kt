@@ -88,6 +88,12 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
             getOrderItemList()
             adapter.forceUpdate()
         }
+        viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         getOrderItemList()
     }
 

@@ -76,6 +76,12 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         getOrderItemList()
         confirm_btn.setOnClickListener {
             transRecordState(viewModel!!.ordersList)

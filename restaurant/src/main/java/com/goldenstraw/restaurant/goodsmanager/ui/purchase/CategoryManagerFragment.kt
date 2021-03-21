@@ -108,6 +108,12 @@ class CategoryManagerFragment : BaseFragment<FragmentCategoryListBinding>() {
         viewModelGoodsTo!!.isRefresh.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
+        viewModelGoodsTo!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            androidx.appcompat.app.AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
     }
 
 

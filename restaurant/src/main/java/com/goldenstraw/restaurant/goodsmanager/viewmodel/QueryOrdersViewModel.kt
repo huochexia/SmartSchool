@@ -43,7 +43,7 @@ class QueryOrdersViewModel(
      * 获取所有供应商
      */
     fun getAllSupplier() {
-        launchUI {
+        launchUI({
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
             parserResponse(repository.getAllSupplier()) {
                 if (it.isEmpty()) {
@@ -54,7 +54,11 @@ class QueryOrdersViewModel(
                     suppliers = it
                 }
             }
+        }, {
+            viewState.set(MultiStateView.VIEW_STATE_ERROR)
+            defUI.showDialog.value = it.message
         }
+        )
     }
 
     /*******************************************************************
@@ -65,7 +69,7 @@ class QueryOrdersViewModel(
      */
 
     fun getAllOfOrders(where: String) {
-        launchUI {
+        launchUI({
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
             parserResponse(repository.getAllOfOrders(where)) {
                 if (it.isEmpty()) {
@@ -77,7 +81,10 @@ class QueryOrdersViewModel(
                 }
                 defUI.refreshEvent.call()
             }
-        }
+        }, {
+            defUI.showDialog.value = it.message
+            viewState.set(MultiStateView.VIEW_STATE_ERROR)
+        })
 
     }
 
@@ -85,37 +92,43 @@ class QueryOrdersViewModel(
      * 删除订单
      */
     fun deleteOrderItem(objectId: String) {
-        launchUI {
+        launchUI({
             parserResponse(repository.deleteOrderItem(objectId)) {
                 defUI.refreshEvent.call()
             }
-        }
+        }, {
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
      * 修改订单数量和备注
      */
     fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
-        launchUI {
+        launchUI({
             parserResponse(repository.updateOrderItem(newOrderItem, objectId)) {
                 defUI.refreshEvent.call()
             }
-        }
+        }, {
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
      *  发送订单到供应商
      */
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String) {
-        launchUI {
+        launchUI({
             parserResponse(repository.updateOrderOfSupplier(newOrder, objectId)) {
                 ordersList.removeIf {
                     it.objectId == objectId
                 }
                 defUI.refreshEvent.call()
             }
-        }
-        return
+        }, {
+            defUI.showDialog.value = it.message
+        })
+
     }
 
     /**********************************************************************
@@ -126,7 +139,7 @@ class QueryOrdersViewModel(
      *
      */
     fun getAllGoodsOfCategory(where: String) {
-        launchUI {
+        launchUI({
             parserResponse(repository.getGoodsOfCategory(where)) {
                 if (it.isEmpty()) {
                     viewState.set(MultiStateView.VIEW_STATE_EMPTY)
@@ -137,7 +150,7 @@ class QueryOrdersViewModel(
                     defUI.refreshEvent.call()
                 }
             }
-        }
+        }, { defUI.showDialog.value = it.message })
 
     }
 
@@ -146,7 +159,7 @@ class QueryOrdersViewModel(
      * 豆乳品等类别价格变化不大供货商了解全部商品信息
      */
     fun getGoodsOfCategory(categoryId: String) {
-        launchUI {
+        launchUI({
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
 
             val where = "{\"categoryCode\":\"$categoryId\"}"
@@ -163,35 +176,40 @@ class QueryOrdersViewModel(
                 }
                 defUI.refreshEvent.call()
             }
+        }, {
+            defUI.showDialog.value = it.message
         }
+        )
     }
 
     /*
      * 查询到符合条件的订单，然后修改它的单价
      */
     fun updateUnitPriceOfOrders(where: String, price: Float) {
-        launchUI {
-            withContext(Dispatchers.IO) {
-                parserResponse(repository.getOrdersList(where)) {
-                    if (it.isNotEmpty()) {//不是空列表，有内容才能执行修改
-                        val newPrice = ObjectUnitPrice(price)
-                        repository.updateUnitPriceOfOrders(newPrice, it.first().objectId)
-                    }
+        launchUI({
+
+            parserResponse(repository.getOrdersList(where)) {
+                if (it.isNotEmpty()) {//不是空列表，有内容才能执行修改
+                    val newPrice = ObjectUnitPrice(price)
+                    repository.updateUnitPriceOfOrders(newPrice, it.first().objectId)
                 }
             }
-
-        }
+        }, {
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
      * 提交新单价
      */
     fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) {
-        launchUI {
+        launchUI({
             parserResponse(repository.updateNewPrice(newPrice, objectId)) {
                 defUI.refreshEvent.call()
             }
-        }
+        }, {
+            defUI.showDialog.value = it.message
+        })
     }
 
     /*
@@ -201,7 +219,7 @@ class QueryOrdersViewModel(
     fun getGoodsOfFutureNeed(categoryId: String = "") {
 
         viewState.set(MultiStateView.VIEW_STATE_LOADING)
-        launchUI {
+        launchUI({
             //1.获取当天日期及其后5天日期的字符串列表
             val afterDateList = TimeConverter.getFromCurrentToAfter(5)
             val dailyMeals = mutableListOf<DailyMeal>()
@@ -232,7 +250,9 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
 
-        }
+        }, {
+            defUI.showDialog.value = it.message
+        }, {})
     }
 
 
@@ -285,7 +305,7 @@ class QueryOrdersViewModel(
      * 分组求和
      */
     fun getTotalGroupByName(condition: String) {
-        launchUI {
+        launchUI({
             viewState.set(MultiStateView.VIEW_STATE_LOADING)
             parserResponse(repository.getTotalGroupByName(condition)) {
 
@@ -298,7 +318,9 @@ class QueryOrdersViewModel(
                 }
                 defUI.refreshEvent.call()
             }
-        }
+        }, {
+            viewState.set(MultiStateView.VIEW_STATE_ERROR)
+        })
 
     }
 

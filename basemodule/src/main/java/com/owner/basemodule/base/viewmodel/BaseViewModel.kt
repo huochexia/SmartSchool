@@ -19,8 +19,8 @@ import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.viewModelScope
 import com.owner.basemodule.ext.livedata.SingleLiveEvent
-import com.owner.basemodule.network.ExceptionHandle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -61,11 +61,17 @@ open class BaseViewModel : AutoDisposeViewModel(), Observable {
     /*
       所有网络请求协程都在viewModelScope域中启动，当页面销毁时会自动调用ViewModel的#onCleared方法取消所有协程
      */
-    fun launchUI(block: suspend CoroutineScope.() -> Unit) = viewModelScope.launch {
+    fun launchUI(
+        block: suspend CoroutineScope.() -> Unit,
+        catch: suspend CoroutineScope.(Throwable) -> Unit = {},
+        finally: suspend CoroutineScope.() -> Unit = {}
+    ) = viewModelScope.launch {
         try {
             block()
         } catch (e: Throwable) {
-            println(ExceptionHandle.handleException(e).errMsg)
+            catch(e)
+        } finally {
+            finally()
         }
     }
 
@@ -76,6 +82,11 @@ open class BaseViewModel : AutoDisposeViewModel(), Observable {
         return flow {
             emit(block())
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 
     /**

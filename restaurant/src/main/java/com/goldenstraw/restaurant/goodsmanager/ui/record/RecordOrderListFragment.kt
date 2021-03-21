@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentRecordOrderListBinding
@@ -109,7 +110,12 @@ class RecordOrderListFragment : BaseFragment<FragmentRecordOrderListBinding>() {
             }
         )
         vp_record_order.adapter = vpAdapter
-
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context!!)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         TabLayoutMediator(tab_layout, vp_record_order) { tab, position ->
             val p = position + 1
             tab.text = "第  $p  组"
