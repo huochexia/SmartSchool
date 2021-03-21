@@ -11,8 +11,6 @@ import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.Material
 import com.owner.basemodule.room.entities.User
 import com.owner.basemodule.util.TimeConverter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class QueryOrdersViewModel(
     private val repository: QueryOrdersRepository
@@ -224,31 +222,30 @@ class QueryOrdersViewModel(
             val afterDateList = TimeConverter.getFromCurrentToAfter(5)
             val dailyMeals = mutableListOf<DailyMeal>()
 
-            withContext(Dispatchers.IO) {
-                //2.获取所有日期的菜单
-                afterDateList.forEach {
-                    val where = "{\"mealDate\":\"$it\"}"
-                    dailyMeals.addAll(getDailyMealOfGreatOrEqual(where))
-                }
-                //3.从获取菜单中得到菜谱中的材料列表
-                val materialsList = getAllOfMaterialFromDailyMeal(dailyMeals)
-
-                if (materialsList.isNotEmpty()) {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                    goodsList = materialsList.distinct()
-                        .filter {
-                            if (categoryId.isNotEmpty()) {
-                                it.categoryCode == categoryId
-                            } else {
-                                true
-                            }
-                        } as MutableList
-                } else {
-                    goodsList.clear()
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                }
-                defUI.refreshEvent.call()
+            //2.获取所有日期的菜单
+            afterDateList.forEach {
+                val where = "{\"mealDate\":\"$it\"}"
+                dailyMeals.addAll(getDailyMealOfGreatOrEqual(where))
             }
+            //3.从获取菜单中得到菜谱中的材料列表
+            val materialsList = getAllOfMaterialFromDailyMeal(dailyMeals)
+
+            if (materialsList.isNotEmpty()) {
+                viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                goodsList = materialsList.distinct()
+                    .filter {
+                        if (categoryId.isNotEmpty()) {
+                            it.categoryCode == categoryId
+                        } else {
+                            true
+                        }
+                    } as MutableList
+            } else {
+                goodsList.clear()
+                viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+            }
+            defUI.refreshEvent.call()
+
 
         }, {
             defUI.showDialog.value = it.message
