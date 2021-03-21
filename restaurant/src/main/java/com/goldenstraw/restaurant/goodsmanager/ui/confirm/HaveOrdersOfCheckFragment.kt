@@ -65,7 +65,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
     var district: Int = -1
     val supplierList = mutableListOf<String>()
     var supplierState = ObservableField<Int>() //显示状态
-    var orderState = 2
+
 
     override fun initView() {
         super.initView()

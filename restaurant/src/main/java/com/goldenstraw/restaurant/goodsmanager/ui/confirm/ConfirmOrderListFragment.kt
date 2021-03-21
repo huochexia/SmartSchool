@@ -38,7 +38,7 @@ class ConfirmOrderListFragment : BaseFragment<FragmentConfirmOrderListBinding>()
     var viewModel: VerifyAndPlaceOrderViewModel? = null
     var adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_order_item,
-        dataSource = { viewModel!!.ordersList },
+        dataSource = { showList },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
         callback = { order, binding, _ ->
             binding.orderitem = order
