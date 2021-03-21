@@ -1,5 +1,6 @@
 package com.owner.basemodule.util
 
+import android.annotation.SuppressLint
 import android.text.format.DateUtils
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -33,6 +34,7 @@ object TimeConverter {
     /**
      * 获取系统当前日期字符串
      */
+    @SuppressLint("SimpleDateFormat")
     fun getCurrentDateString(): String {
         val formatter = SimpleDateFormat("yyyy-M-d")
         val curDate = Date(System.currentTimeMillis())//获取当日期
@@ -42,6 +44,7 @@ object TimeConverter {
     /**
      * 将日期转换成字符串形式
      */
+    @SuppressLint("SimpleDateFormat")
     fun getDateString(date: Date): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return formatter.format(date)
@@ -50,9 +53,10 @@ object TimeConverter {
     /**
      * 将字符串转换成日期
      */
+    @SuppressLint("SimpleDateFormat")
     fun strToDate(str: String): Date {
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        var date = try {
+        val date = try {
             format.parse("$str 00:00:00")
         } catch (e: ParseException) {
             e.printStackTrace()
@@ -73,7 +77,7 @@ object TimeConverter {
 
     /**
      * 获取当前时间的后天时间
-     * @param cl
+     * @param
      * *
      * @return
      */
@@ -142,5 +146,21 @@ object TimeConverter {
             nextWeekString.add(getDateString(date))
         }
         return nextWeekString
+    }
+
+    /**
+     * 获取从当前日期开始的以后几天的日期字符串
+     */
+    fun getFromCurrentToAfter(number: Int): List<String> {
+
+        val afterDateList = mutableListOf<String>()
+
+        for (day in 1..number) {
+            val currentDate = GregorianCalendar()
+            currentDate.add(GregorianCalendar.DATE, day)
+            val date = currentDate.time
+            afterDateList.add(getDateString(date))
+        }
+        return afterDateList
     }
 }

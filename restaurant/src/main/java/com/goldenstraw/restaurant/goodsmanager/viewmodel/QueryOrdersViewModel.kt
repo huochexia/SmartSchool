@@ -8,7 +8,9 @@ import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
+import com.owner.basemodule.room.entities.Material
 import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.util.TimeConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,7 +23,8 @@ class QueryOrdersViewModel(
     //用于查询某个供应商订单
     var supplier: String = ""
 
-    //商品列表
+    //商品列表,主要用于让供应商调整价格。
+    //它有可能列示的是全部商品，也有可能列示的是即将要提供的商品
     var goodsList = mutableListOf<Goods>()
 
     //订单列表
@@ -54,7 +57,10 @@ class QueryOrdersViewModel(
         }
     }
 
-    /**
+    /*******************************************************************
+     * 订单操作
+     *******************************************************************/
+    /*
      * 按日期获取供应商订单
      */
 
@@ -75,8 +81,30 @@ class QueryOrdersViewModel(
 
     }
 
-    /**
-     *  发送到供应商
+    /*
+     * 删除订单
+     */
+    fun deleteOrderItem(objectId: String) {
+        launchUI {
+            parserResponse(repository.deleteOrderItem(objectId)) {
+                defUI.refreshEvent.call()
+            }
+        }
+    }
+
+    /*
+     * 修改订单数量和备注
+     */
+    fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
+        launchUI {
+            parserResponse(repository.updateOrderItem(newOrderItem, objectId)) {
+                defUI.refreshEvent.call()
+            }
+        }
+    }
+
+    /*
+     *  发送订单到供应商
      */
     fun updateOrderOfSupplier(newOrder: ObjectSupplier, objectId: String) {
         launchUI {
@@ -90,8 +118,12 @@ class QueryOrdersViewModel(
         return
     }
 
-    /**
+    /**********************************************************************
+     * 调整价格部分
+     *********************************************************************/
+    /*
      * 根据条件获取全部商品信息
+     *
      */
     fun getAllGoodsOfCategory(where: String) {
         launchUI {
@@ -109,8 +141,9 @@ class QueryOrdersViewModel(
 
     }
 
-    /**
-     * 过滤类别，获取商品信息,主要是针对调料，粮油，豆乳品等类别价格变化不大供货商了解全部商品信息
+    /*
+     * 按类别，获取某类全部商品信息,主要是针对调料，粮油。
+     * 豆乳品等类别价格变化不大供货商了解全部商品信息
      */
     fun getGoodsOfCategory(categoryId: String) {
         launchUI {
@@ -133,70 +166,7 @@ class QueryOrdersViewModel(
         }
     }
 
-
-    /**
-     * 求和，计算当天购货总额
-     */
-    suspend fun getTotalOfSupplier(condition: String):ObjectList<SumResult> {
-        return repository.getTotalOfSupplier(condition)
-    }
-
-    /**
-     * 分组求和
-     */
-    fun getTotalGroupByName(condition: String) {
-        launchUI {
-            viewState.set(MultiStateView.VIEW_STATE_LOADING)
-            parserResponse(repository.getTotalGroupByName(condition)) {
-
-                if (it.isEmpty()) {
-                    details.clear()
-                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
-                } else {
-                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
-                    details=it
-                }
-                defUI.refreshEvent.call()
-            }
-        }
-
-    }
-
-    /**
-     * 提交新单价
-     */
-    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) {
-        launchUI {
-            parserResponse(repository.updateNewPrice(newPrice, objectId)) {
-                defUI.refreshEvent.call()
-            }
-        }
-    }
-
-
-    /**
-     * 删除订单
-     */
-    fun deleteOrderItem(objectId: String) {
-        launchUI {
-            parserResponse(repository.deleteOrderItem(objectId)) {
-                defUI.refreshEvent.call()
-            }
-        }
-    }
-
-    /**
-     * 修改订单数量和备注
-     */
-    fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String) {
-        launchUI {
-            parserResponse(repository.updateOrderItem(newOrderItem, objectId)) {
-                defUI.refreshEvent.call()
-            }
-        }
-    }
-
-    /**
+    /*
      * 查询到符合条件的订单，然后修改它的单价
      */
     fun updateUnitPriceOfOrders(where: String, price: Float) {
@@ -212,4 +182,124 @@ class QueryOrdersViewModel(
 
         }
     }
+
+    /*
+     * 提交新单价
+     */
+    fun updateNewPriceOfGoods(newPrice: NewPrice, objectId: String) {
+        launchUI {
+            parserResponse(repository.updateNewPrice(newPrice, objectId)) {
+                defUI.refreshEvent.call()
+            }
+        }
+    }
+
+    /*
+      获取某日及以后5天内可能需要的商品列表
+      @categoryId ：类别号，如果类别号为空，则显示全部商品，否则显示指定类别的商品
+     */
+    fun getGoodsOfFutureNeed(categoryId: String = "") {
+
+        viewState.set(MultiStateView.VIEW_STATE_LOADING)
+        launchUI {
+            //1.获取当天日期及其后5天日期的字符串列表
+            val afterDateList = TimeConverter.getFromCurrentToAfter(5)
+            val dailyMeals = mutableListOf<DailyMeal>()
+
+            withContext(Dispatchers.IO) {
+                //2.获取所有日期的菜单
+                afterDateList.forEach {
+                    val where = "{\"mealDate\":\"$it\"}"
+                    dailyMeals.addAll(getDailyMealOfGreatOrEqual(where))
+                }
+                //3.从获取菜单中得到菜谱中的材料列表
+                val materialsList = getAllOfMaterialFromDailyMeal(dailyMeals)
+
+                if (materialsList.isNotEmpty()) {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    goodsList = materialsList.distinct()
+                        .filter {
+                            if (categoryId.isNotEmpty()) {
+                                it.categoryCode == categoryId
+                            } else {
+                                true
+                            }
+                        } as MutableList
+                } else {
+                    goodsList.clear()
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                }
+                defUI.refreshEvent.call()
+            }
+
+        }
+    }
+
+
+    /*
+    获取每日菜单列表
+     */
+    private suspend fun getDailyMealOfGreatOrEqual(where: String): MutableList<DailyMeal> {
+        var list = mutableListOf<DailyMeal>()
+        parserResponse(repository.getDailyMeals(where)) {
+            list = it
+        }
+        return list
+    }
+
+    /*
+      获取每日菜单当中的菜谱
+     */
+    private suspend fun getAllOfMaterialFromDailyMeal(dailyMeals: List<DailyMeal>): MutableList<Goods> {
+        val goodsList = mutableListOf<Goods>()
+        dailyMeals.forEach {
+            val remoteCookBook = repository.getCookBook(it.cookBook.objectId)
+            remoteCookBook.material.forEach { material ->
+                goodsList.add(getMaterialToGoods(material))
+            }
+        }
+        return goodsList
+    }
+
+    /*
+      根据菜谱中的材料，获取对应的商品
+     */
+    private suspend fun getMaterialToGoods(material: Material): Goods {
+
+        return repository.getGoods(material.goodsId)
+
+    }
+
+
+    /*******************************************************************
+     * 汇总进行计算求和
+     *******************************************************************/
+/*
+ * 求和，计算当天购货总额
+ */
+    suspend fun getTotalOfSupplier(condition: String): ObjectList<SumResult> {
+        return repository.getTotalOfSupplier(condition)
+    }
+
+    /*
+     * 分组求和
+     */
+    fun getTotalGroupByName(condition: String) {
+        launchUI {
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            parserResponse(repository.getTotalGroupByName(condition)) {
+
+                if (it.isEmpty()) {
+                    details.clear()
+                    viewState.set(MultiStateView.VIEW_STATE_EMPTY)
+                } else {
+                    viewState.set(MultiStateView.VIEW_STATE_CONTENT)
+                    details = it
+                }
+                defUI.refreshEvent.call()
+            }
+        }
+
+    }
+
 }

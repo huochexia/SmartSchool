@@ -64,7 +64,11 @@ interface GoodsApi {
     //2、得到某个类别的所有商品
     //where = {"categoryCode":"  "}
     @GET("/1/classes/Goods")
-    suspend fun getGoodsList(@Query("where") condition: String, @Query("limit") limit: Int = 500)
+    suspend fun getGoodsList(
+        @Query("where") condition: String,
+        @Query("limit") limit: Int = 500,
+        @Query("skip") skip: Int = 0
+    )
             : ObjectList<Goods>
 
     //3、分页获取全部商品,一次获取200

@@ -79,4 +79,5 @@ fun goodsToMaterial(goods: Goods): Material {
         unitOfMeasurement = goods.unitOfMeasurement,
         categoryCode = goods.categoryCode,
     )
+
 }

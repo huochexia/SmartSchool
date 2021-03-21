@@ -74,5 +74,15 @@ interface IQueryOrdersManager {
     /**
      * 获取一周菜单当中菜谱
      */
-     fun getCookBookOfDailyMeal(where:String):Observable<ObjectList<DailyMeal>>
+    suspend fun getDailyMeals(where: String): ObjectList<DailyMeal>
+
+    /**
+     * 获取菜单当中的菜谱
+     */
+    suspend fun getCookBook(objectId: String): RemoteCookBook
+
+    /**
+     * 获取与材料对应的商品
+     */
+    suspend fun getGoods(objectId: String):Goods
 }

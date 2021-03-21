@@ -6,7 +6,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
-import io.reactivex.Observable
 import retrofit2.http.*
 
 interface VerifyAndPlaceOrderApi {
@@ -18,7 +17,8 @@ interface VerifyAndPlaceOrderApi {
     suspend fun getOrdersOfDate(
         @Query("where") condition: String,
         @Query("order") name: String = "categoryCode",
-        @Query("limit") limit: Int = 500
+        @Query("limit") limit: Int = 500,
+        @Query("skip") skip: Int = 0
     ):ObjectList<OrderItem>
 
     /**

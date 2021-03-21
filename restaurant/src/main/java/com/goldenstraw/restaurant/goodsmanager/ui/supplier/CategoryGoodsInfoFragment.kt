@@ -6,7 +6,6 @@ import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentSupplierCategoryGoodsBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
@@ -14,7 +13,6 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.NewPrice
 import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrdersRepository
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.QueryOrdersViewModel
-import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
@@ -33,17 +31,22 @@ import org.kodein.di.generic.instance
  * 注：管理员确认申请后会将申请调价清零。
  */
 class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBinding>() {
+
     override val layoutId: Int
         get() = R.layout.fragment_supplier_category_goods
+
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
 
     }
 
     private val prefs by instance<PrefsHelper>()
+
     private val repository by instance<QueryOrdersRepository>()
+
     var viewModel: QueryOrdersViewModel? = null
-    var adapter = BaseDataBindingAdapter(
+
+    val adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_goods_item,
         dataBinding = { LayoutGoodsItemBinding.bind(it) },
         dataSource = { viewModel!!.goodsList },
@@ -71,9 +74,6 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
             QueryOrdersViewModel(repository)
         }
 
-        /*
-         观察各种事件，刷新，错误提示，加载等
-         */
         viewModel!!.defUI.refreshEvent.observe(viewLifecycleOwner) {
             adapter.forceUpdate()
         }
@@ -122,7 +122,7 @@ class CategoryGoodsInfoFragment : BaseFragment<FragmentSupplierCategoryGoodsBind
                 viewModel!!.getGoodsOfCategory(prefs.categoryCode)
             }
             R.id.next_week_goods -> {
-
+                viewModel!!.getGoodsOfFutureNeed(prefs.categoryCode)
             }
         }
         return true

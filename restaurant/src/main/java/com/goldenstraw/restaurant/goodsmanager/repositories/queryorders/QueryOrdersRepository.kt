@@ -6,8 +6,6 @@ import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.network.UpdateObject
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.User
-import io.reactivex.Completable
-import io.reactivex.Observable
 
 class QueryOrdersRepository(
     private val remote: IRemoteQueryOrdersDataSource
@@ -55,9 +53,6 @@ class QueryOrdersRepository(
         remote.getGoodsOfCategory(condition)
 
 
-    fun getGoodsFromObjectId(id: String): Observable<Goods> {
-        return remote.getGoodsFromObjectId(id)
-    }
 
     /**
      * 求和
@@ -82,18 +77,36 @@ class QueryOrdersRepository(
 
 
     /**
-     * 获取每日菜单当中的菜谱
+     * 获取每日菜单
      */
-    fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
+    suspend fun getDailyMeals(where: String): ObjectList<DailyMeal> {
+        return remote.getDailyMeals(where)
+    }
 
-        return remote.getCookBookOfDailyMeal(where)
+    /**
+     * 获取每日菜单对应的菜谱
+     */
+    suspend fun getCookBook(objectId: String): RemoteCookBook {
+
+        return remote.getCookBook(objectId)
+
+    }
+
+    /**
+     * 获取材料对应的菜谱
+     */
+    suspend fun getGoods(objectId: String): Goods {
+        return remote.getGoods(objectId)
     }
 
     suspend fun deleteOrderItem(objectId: String) =
         remote.deleteOrderItem(objectId)
 
 
-    suspend fun updateOrderItem(newOrderItem: ObjectQuantityAndNote, objectId: String):UpdateObject {
+    suspend fun updateOrderItem(
+        newOrderItem: ObjectQuantityAndNote,
+        objectId: String
+    ): UpdateObject {
         return remote.updateOrderItem(newOrderItem, objectId)
     }
 }

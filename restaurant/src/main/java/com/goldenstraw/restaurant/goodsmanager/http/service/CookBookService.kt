@@ -94,6 +94,6 @@ interface CookBookApi {
     @GET("/1/classes/RemoteCookBook/")
     suspend fun getAllOfCookBook(
         @Query("skip") skip: Int,
-        @Query("limit") limit: Int = 200
+        @Query("limit") limit: Int = 200,
     ): ObjectList<RemoteCookBook>
 }

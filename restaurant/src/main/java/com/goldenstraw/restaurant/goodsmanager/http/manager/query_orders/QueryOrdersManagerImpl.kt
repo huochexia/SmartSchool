@@ -66,8 +66,8 @@ class QueryOrdersManagerImpl(
         service.updateNewPriceOfGoods(newPrice, objectId)
 
 
-    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
-        return service.getCookBookOfDailyMeal(where)
+    override suspend fun getDailyMeals(where: String): ObjectList<DailyMeal> {
+        return service.geDailyMeals(where)
     }
 
     override suspend fun deleteOrderItem(objectId: String) =
@@ -85,7 +85,15 @@ class QueryOrdersManagerImpl(
     override suspend fun updateOrderItemQuantityAndNote(
         newOrder: ObjectQuantityAndNote,
         objectId: String
-    ) :UpdateObject{
+    ): UpdateObject {
         return service.updateOrderItem(newOrder, objectId)
+    }
+
+    override suspend fun getCookBook(objectId: String): RemoteCookBook {
+        return service.getCookBook(objectId)
+    }
+
+    override suspend fun getGoods(objectId: String): Goods {
+        return service.getGoods(objectId)
     }
 }

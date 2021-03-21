@@ -30,13 +30,17 @@ interface IRemoteQueryOrdersDataSource : IRemoteDataSource {
 
     suspend fun getTotalGroupByName(condition: String): ObjectList<SumByGroup>
 
-    suspend fun updateNewPrice(newPrice: NewPrice, objectId: String):UpdateObject
+    suspend fun updateNewPrice(newPrice: NewPrice, objectId: String): UpdateObject
 
-    fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>>
+    suspend fun getDailyMeals(where: String): ObjectList<DailyMeal>
 
-    suspend fun deleteOrderItem(objectId: String):DeleteObject
+    suspend fun deleteOrderItem(objectId: String): DeleteObject
 
-    suspend fun updateOrderItem(newOrder:ObjectQuantityAndNote,objectId: String):UpdateObject
+    suspend fun updateOrderItem(newOrder: ObjectQuantityAndNote, objectId: String): UpdateObject
+
+    suspend fun getCookBook(objectId: String): RemoteCookBook
+
+    suspend fun getGoods(objectId: String):Goods
 }
 
 class RemoteQueryOrdersDataSourceImpl(
@@ -86,12 +90,20 @@ class RemoteQueryOrdersDataSourceImpl(
         return manager.getTotalGroupByName(condition)
     }
 
-    override suspend fun updateNewPrice(newPrice: NewPrice, objectId: String)=
-         manager.updateNewPriceOfGoods(newPrice, objectId)
+    override suspend fun updateNewPrice(newPrice: NewPrice, objectId: String) =
+        manager.updateNewPriceOfGoods(newPrice, objectId)
 
 
-    override fun getCookBookOfDailyMeal(where: String): Observable<ObjectList<DailyMeal>> {
-        return manager.getCookBookOfDailyMeal(where)
+    override suspend fun getDailyMeals(where: String): ObjectList<DailyMeal> {
+        return manager.getDailyMeals(where)
+    }
+
+    override suspend fun getCookBook(objectId: String): RemoteCookBook {
+        return manager.getCookBook(objectId)
+    }
+
+    override suspend fun getGoods(objectId: String): Goods {
+        return manager.getGoods(objectId)
     }
 
     override suspend fun deleteOrderItem(objectId: String) =
@@ -99,6 +111,6 @@ class RemoteQueryOrdersDataSourceImpl(
 
 
     override suspend fun updateOrderItem(newOrder: ObjectQuantityAndNote, objectId: String) =
-        manager.updateOrderItemQuantityAndNote(newOrder,objectId)
+        manager.updateOrderItemQuantityAndNote(newOrder, objectId)
 
 }
