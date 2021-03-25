@@ -24,7 +24,6 @@ import org.kodein.di.generic.instance
 
 class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
 
-    private val prefs by instance<PrefsHelper>()
 
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
@@ -180,7 +179,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
                     selectedList.add(it)
                 }
             }
-            addGoodsToShoppingCar(selectedList, prefs.district)
+            addGoodsToShoppingCar(selectedList)
             searchGoodsResultList.removeAll(selectedList)
         }
 

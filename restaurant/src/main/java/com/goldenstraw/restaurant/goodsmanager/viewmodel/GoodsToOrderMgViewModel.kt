@@ -192,14 +192,14 @@ class GoodsToOrderMgViewModel(
      * 将所选择商品转换成原材料，加入购物车后，从当前列表中清除已选择的商品，
      * 仅仅列表清除，为的是避免重复选择
      */
-    fun addGoodsToShoppingCar(list: MutableList<Goods>, direct: Int) {
+    fun addGoodsToShoppingCar(list: MutableList<Goods>) {
         val selectedGoods = mutableListOf<MaterialOfShoppingCar>()
         selectedGoods.addAll(list.map {
             goodsToShoppingCar(it)
         })
         launchUI( {
             //创建一个通用的食物
-            val common = FoodOfShoppingCar("common", "", "通用", "", direct = direct)
+            val common = FoodOfShoppingCar("common", "", "通用", "", direct = -1)
             repository.addFoodAndMaterialsToShoppingCar(common, selectedGoods)
             goodsList.removeAll(list)
         },{

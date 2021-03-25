@@ -37,6 +37,7 @@ import org.kodein.di.generic.instance
 
 class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
 
+
     override val layoutId: Int
         get() = R.layout.fragment_goods_list
 
@@ -276,7 +277,7 @@ class GoodsManagerFragment : BaseFragment<FragmentGoodsListBinding>() {
                     selectedList.add(it)
                 }
             }
-            addGoodsToShoppingCar(selectedList, 0)
+            addGoodsToShoppingCar(selectedList)
             goodsList.removeAll(selectedList)
         }
         adapter.forceUpdate()
