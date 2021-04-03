@@ -9,13 +9,14 @@ import android.util.TypedValue
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.owner.usercenter.http.entities.LoginResp
+import com.owner.basemodule.room.entities.User
 
 /**
  * 有分类title的 ItemDecoration
  */
 
-class TitleItemDecoration(context: Context, private val mData: List<LoginResp>) : RecyclerView.ItemDecoration() {
+class TitleItemDecoration(context: Context, private val mData: List<User>) :
+    RecyclerView.ItemDecoration() {
     private val mPaint: Paint
     private val mBounds: Rect
 
@@ -95,7 +96,7 @@ class TitleItemDecoration(context: Context, private val mData: List<LoginResp>) 
         var flag = false
         if (position + 1 < mData.size) {
             //当前第一个可见的Item的字母索引，不等于其后一个item的字母索引，说明悬浮的View要切换了
-            if (null != tag && tag != mData[position + 1].letters) {
+            if ( tag != mData[position + 1].letters) {
                 //当第一个可见的item在屏幕中剩下的高度小于title的高度时，开始悬浮Title的动画
                 if (child.height + child.top < mTitleHeight) {
                     c.save()
@@ -121,8 +122,8 @@ class TitleItemDecoration(context: Context, private val mData: List<LoginResp>) 
                 (parent.right - parent.paddingRight).toFloat(),
                 (parent.paddingTop + mTitleHeight).toFloat(), mPaint)
         mPaint.color = TITLE_TEXT_COLOR
-        mPaint.getTextBounds(tag, 0, tag!!.length, mBounds)
-        c.drawText(tag!!, child.paddingLeft.toFloat(),
+        mPaint.getTextBounds(tag, 0, tag.length, mBounds)
+        c.drawText(tag, child.paddingLeft.toFloat(),
                 (parent.paddingTop + mTitleHeight - (mTitleHeight / 2 - mBounds.height() / 2)).toFloat(),
                 mPaint)
         if (flag)
@@ -138,7 +139,7 @@ class TitleItemDecoration(context: Context, private val mData: List<LoginResp>) 
             if (position == 0) {
                 outRect.set(0, mTitleHeight, 0, 0)
             } else {
-                if (null != mData[position].letters && mData[position].letters != mData[position - 1].letters) {
+                if ( mData[position].letters != mData[position - 1].letters) {
                     //字母不为空，并且不等于前一个，绘制title
                     outRect.set(0, mTitleHeight, 0, 0)
                 } else {

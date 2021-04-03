@@ -11,9 +11,11 @@ import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.room.entities.User
+import com.owner.basemodule.widgets.charsidebar.WaveSideBar
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.FragmentManageUserBinding
 import com.owner.usercenter.databinding.LayoutUserItemBinding
+import com.owner.usercenter.util.TitleItemDecoration
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -63,15 +65,28 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
                     } else {
                         userList.clear()
                         userList.addAll(it)
+                        userList.sortBy { user ->
+                            user.letters
+                        }
                         adapter!!.forceUpdate()
                         state.set(MultiStateView.VIEW_STATE_CONTENT)
                     }
                 })
 
             }
+        //列表分隔线
+        rlw_user_list.addItemDecoration(TitleItemDecoration(context!!, userList))
+
         add_user_fab.setOnClickListener {
             ARouter.getInstance().build(RouterPath.UserCenter.PATH_REGISTER).navigation()
         }
+        char_side_bar.setOnTouchLetterChangeListener(object :
+            WaveSideBar.OnTouchLetterChangeListener {
+            override fun onLetterChange(letter: String) {
+
+            }
+
+        })
     }
     /****************************************************
      *长按事件；管理数据。修改和删除功能

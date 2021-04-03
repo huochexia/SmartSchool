@@ -129,8 +129,10 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                 AlertDialog.Builder(this@RegisterActivity)
                     .setMessage("是否继续注册新用户！")
                     .setPositiveButton("是") { _, _ ->
-                        tvUserActor.setText("")
+                        tvPhoneNumber.setText("")
                         tvNewUsername.setText("")
+                        district = 0
+                        categoryCode = "-1"
                     }
                     .setNegativeButton("否") { _, _ ->
                         finish()
@@ -145,7 +147,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             .map {
                 RegisterIntent.ClickRegisterIntent(
                     username = tvNewUsername.text.toString(),
-                    mobilephone = tvUserActor.text.toString(),
+                    mobilephone = tvPhoneNumber.text.toString(),
                     letters = firstLetters(tvNewUsername.text.toString()),
                     role = role,
                     district = district,
@@ -159,28 +161,21 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             role = when (checkedId) {
                 R.id.rd_manager_right -> {
                     district_layout.visibility = View.GONE
-                    district = 0
                     category_layout.visibility = View.GONE
-                    categoryCode = "-1"
                     "管理员"
                 }
                 R.id.rd_chef_right -> {
-                    district_layout.visibility =View.GONE
-                    district =0
+                    district_layout.visibility = View.VISIBLE
                     category_layout.visibility = View.GONE
-                    categoryCode="-1"
                     "厨师"
                 }
                 R.id.rd_account_right -> {
                     district_layout.visibility = View.VISIBLE
                     category_layout.visibility = View.GONE
-                    categoryCode = "-1"
                     "库管员"
                 }
                 R.id.rd_supplier_right -> {
-
                     district_layout.visibility = View.GONE
-                    district = 0
                     category_layout.visibility = View.VISIBLE
                     "供应商"
                 }

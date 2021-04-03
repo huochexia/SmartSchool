@@ -106,7 +106,7 @@
                             app:counterMaxLength="11">
 
                         <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/tvUserActor"
+                                android:id="@+id/tvPhoneNumber"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:drawableLeft="@mipmap/icon_phone"
