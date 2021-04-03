@@ -71,7 +71,11 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             }
 
         )
-        viewModel!!.getAllUsers().subscribeOn(Schedulers.io())
+        viewModel!!.getAllUsers()
+            .doOnSubscribe{
+                state.set(MultiStateView.VIEW_STATE_LOADING)
+            }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .autoDisposable(scopeProvider)
             .subscribe { either ->
