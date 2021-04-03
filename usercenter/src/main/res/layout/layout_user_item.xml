@@ -10,6 +10,9 @@
         <variable
                 name="longClick"
                 type="com.owner.basemodule.functional.Consumer" />
+        <variable
+                name="onClick"
+                type="com.owner.basemodule.functional.Consumer" />
     </data>
     <FrameLayout
             android:layout_width="match_parent"
@@ -22,7 +25,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:paddingLeft="10dp">
+                android:paddingStart="10dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -58,6 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{user.mobilePhoneNumber}"
+                        android:onClick="@{()->onClick.accept(user)}"
                         tools:text="手机号码"
                         android:textSize="14sp"
                         android:textColor="@color/common_blue_light"

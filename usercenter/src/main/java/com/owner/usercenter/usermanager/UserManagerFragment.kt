@@ -1,5 +1,7 @@
 package com.owner.usercenter.usermanager
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -10,6 +12,7 @@ import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.arouter.RouterPath
 import com.owner.basemodule.base.view.fragment.BaseFragment
 import com.owner.basemodule.base.viewmodel.getViewModel
+import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.User
 import com.owner.basemodule.widgets.charsidebar.WaveSideBar
 import com.owner.usercenter.R
@@ -48,7 +51,12 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             dataBinding = { LayoutUserItemBinding.bind(it) },
             callback = { user, binding, _ ->
                 binding.user = user
+                binding.onClick = object : Consumer<User> {
+                    override fun accept(t: User) {
+                        callPhone(t.mobilePhoneNumber!!)
+                    }
 
+                }
             }
 
         )
@@ -111,4 +119,13 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
         }
     }
 
+    /******************************************************
+     * 调用拨号界面
+     ******************************************************/
+    fun callPhone(phoneNum: String) {
+        val intent = Intent(Intent.ACTION_DIAL)
+        val data = Uri.parse("tel:$phoneNum")
+        intent.data = data
+        startActivity(intent)
+    }
 }
