@@ -47,6 +47,7 @@ interface UserServiceManager {
     fun registerManager(
         username: String,
         mobilephone: String,
+        letters:String,
         role: String,
         district: Int,
         categoryCode: String

@@ -73,6 +73,7 @@ class UserServiceManagerImpl(
     override fun registerManager(
         username: String,
         mobilephone: String,
+        letters:String,
         role:String,
         district:Int,
         categoryCode:String
@@ -80,6 +81,7 @@ class UserServiceManagerImpl(
         val newUser = RegisterUserReq(
             username = username,
             mobilePhoneNumber = mobilephone,
+            letters=letters,
             role = role,
             district = district,
             categoryCode = categoryCode

@@ -21,6 +21,7 @@ import android.widget.Toast
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.jakewharton.rxbinding3.view.clicks
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.util.firstLetters
 import com.owner.usercenter.R
 import com.owner.usercenter.databinding.ActivityRegisterBinding
 import com.owner.usercenter.http.entities.CategoryResp
@@ -145,6 +146,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                 RegisterIntent.ClickRegisterIntent(
                     username = tvNewUsername.text.toString(),
                     mobilephone = tvUserActor.text.toString(),
+                    letters = firstLetters(tvNewUsername.text.toString()),
                     role = role,
                     district = district,
                     categoryCode = categoryCode

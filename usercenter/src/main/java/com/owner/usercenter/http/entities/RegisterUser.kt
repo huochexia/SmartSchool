@@ -25,6 +25,7 @@ data class RegisterUserReq(
     val username: String,
     val mobilePhoneNumber: String,
     val password: String = "111111",
+    val letters:String,
     val role:String,
     val district:Int = 0,
     val categoryCode:String ="-1"

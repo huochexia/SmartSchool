@@ -69,7 +69,6 @@ dependencies {
     implementation libs.take_photo
     implementation libs.avatar_image
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-
     //ARouter
     kapt 'com.alibaba:arouter-compiler:1.2.2'
 

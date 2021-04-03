@@ -38,6 +38,7 @@ interface IRegisterRemoteDataSource : IRemoteDataSource {
     fun register(
         username: String,
         mobilephone: String,
+        letters:String,
         role: String,
         district: Int,
         categoryCode: String
@@ -55,11 +56,12 @@ class RegisterRemoteDataSourec(
     override fun register(
         username: String,
         mobilephone: String,
+        letters: String,
         role: String,
         district: Int,
         categoryCode: String
     ): Flowable<Either<Errors, RegisterUserResp>> {
-        return serviceManager.registerManager(username, mobilephone,role,district,categoryCode)
+        return serviceManager.registerManager(username, mobilephone,letters,role,district,categoryCode)
     }
 
     override fun getAllCategory(): Observable<MutableList<CategoryResp>> {
@@ -77,11 +79,12 @@ class RegisterDataSourceRepository(
     fun register(
         username: String,
         mobilephone: String,
+        letters: String,
         role: String,
         district: Int,
         categoryCode: String
     ): Flowable<Either<Errors, RegisterUserResp>> =
-        remoteDataSource.register(username, mobilephone, role, district, categoryCode)
+        remoteDataSource.register(username, mobilephone,letters, role, district, categoryCode)
 
     fun getAllCategory(): Observable<MutableList<CategoryResp>> {
         return remoteDataSource.getAllCategory()

@@ -32,8 +32,12 @@ sealed class RegisterAction : IAction {
       点击注册事件
      */
     data class ClickRegisterAction(
-        val username: String?, val mobilephone: String?,
-        val role: String?, val district: Int, val categoryCode: String
+        val username: String?,
+        val mobilephone: String?,
+        val letters:String,
+        val role: String?,
+        val district: Int,
+        val categoryCode: String
 
     ) : RegisterAction()
 }
