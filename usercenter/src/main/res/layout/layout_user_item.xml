@@ -62,6 +62,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{user.mobilePhoneNumber}"
                         android:onClick="@{()->onClick.accept(user)}"
+                        android:drawableStart="@drawable/ic_baseline_call_24"
                         tools:text="手机号码"
                         android:textSize="14sp"
                         android:textColor="@color/common_blue_light"

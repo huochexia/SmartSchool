@@ -14,6 +14,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
 import com.uber.autodispose.autoDisposable
@@ -112,7 +113,7 @@ class CookBookViewModel(
             }
 
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value = (it as ResponseThrowable).errMsg
         })
     }
 
@@ -457,7 +458,7 @@ class CookBookViewModel(
             }
 
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value = (it as ResponseThrowable).errMsg
         })
     }
 
@@ -465,7 +466,7 @@ class CookBookViewModel(
         launchUI ({
             parserResponse(repository.updateDailyMeal(newDailyMeal, objectId))
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -483,7 +484,7 @@ class CookBookViewModel(
                 _refreshAdapter.value = "All"
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -502,7 +503,7 @@ class CookBookViewModel(
             }
 
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -523,7 +524,7 @@ class CookBookViewModel(
 
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -573,7 +574,7 @@ class CookBookViewModel(
             }
             defUI.showDialog.value = "文件生成完毕！！"
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -708,7 +709,7 @@ class CookBookViewModel(
             repository.addCookBooksToLocal(localCookBook)
             repository.addMaterialOfCookBooks(materials)
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 }

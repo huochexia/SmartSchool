@@ -1,5 +1,6 @@
 package com.owner.usercenter.usermanager
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import com.alibaba.android.arouter.launcher.ARouter
+import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.arouter.RouterPath
@@ -28,15 +30,20 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
 
 class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
+
+    val prefs by instance<PrefsHelper>()
+
     override val layoutId: Int
         get() = R.layout.fragment_manage_user
     override val kodein: Kodein = Kodein.lazy {
+
         extend(parentKodein, copy = Copy.All)
+        import(prefsModule)
     }
     val state = ObservableField<Int>()
     private val userList = mutableListOf<User>()
     private val repository by instance<UserManagerRepository>()
-    private var viewModel: UserManagerViewModel?=null
+    private var viewModel: UserManagerViewModel? = null
 
     var adapter: BaseDataBindingAdapter<User, LayoutUserItemBinding>? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -55,7 +62,11 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
                     override fun accept(t: User) {
                         callPhone(t.mobilePhoneNumber!!)
                     }
-
+                }
+                binding.longClick = object : Consumer<User> {
+                    override fun accept(t: User) {
+                        managerDialog(t)
+                    }
                 }
             }
 
@@ -82,6 +93,13 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
                 })
 
             }
+
+        viewModel!!.defUI.showDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(context)
+                .setMessage(it)
+                .create()
+                .show()
+        }
         //列表分隔线
         rlw_user_list.addItemDecoration(TitleItemDecoration(context!!, userList))
 
@@ -105,18 +123,32 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
         delete.text = "删除"
         val update = view.findViewById<Button>(com.goldenstraw.restaurant.R.id.update_action)
         update.text = "修改"
-        val managerDialog = android.app.AlertDialog.Builder(context)
+        val managerDialog = AlertDialog.Builder(context)
             .setView(view)
             .create()
         managerDialog.show()
         delete.setOnClickListener {
-
+            deleteUsr("8a44cc1cae9df7257911bb7f7f949b34", user)
             managerDialog.dismiss()
         }
         update.setOnClickListener {
 
             managerDialog.dismiss()
         }
+    }
+
+    private fun deleteUsr(token: String, user: User) {
+        val dialog = AlertDialog.Builder(context)
+            .setMessage("确定要删除${user.username}吗?")
+            .setPositiveButton("是") { dialog, _ ->
+                viewModel!!.deleteUser(token, user.objectId)
+                dialog.dismiss()
+            }
+            .setNegativeButton("否") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+        dialog.show()
     }
 
     /******************************************************

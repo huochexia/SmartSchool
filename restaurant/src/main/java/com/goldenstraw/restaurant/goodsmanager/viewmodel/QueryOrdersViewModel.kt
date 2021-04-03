@@ -6,6 +6,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.queryorders.QueryOrd
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.network.ObjectList
+import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.Goods
 import com.owner.basemodule.room.entities.Material
@@ -54,7 +55,7 @@ class QueryOrdersViewModel(
             }
         }, {
             viewState.set(MultiStateView.VIEW_STATE_ERROR)
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         }
         )
     }
@@ -80,7 +81,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
             viewState.set(MultiStateView.VIEW_STATE_ERROR)
         })
 
@@ -95,7 +96,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -108,7 +109,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -124,7 +125,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -148,7 +149,7 @@ class QueryOrdersViewModel(
                     defUI.refreshEvent.call()
                 }
             }
-        }, { defUI.showDialog.value = it.message })
+        }, { defUI.showDialog.value =  (it as ResponseThrowable).errMsg })
 
     }
 
@@ -175,7 +176,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         }
         )
     }
@@ -193,7 +194,7 @@ class QueryOrdersViewModel(
                 }
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -206,7 +207,7 @@ class QueryOrdersViewModel(
                 defUI.refreshEvent.call()
             }
         }, {
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -317,6 +318,7 @@ class QueryOrdersViewModel(
             }
         }, {
             viewState.set(MultiStateView.VIEW_STATE_ERROR)
+            defUI.showDialog.value= (it as ResponseThrowable).errMsg
         })
 
     }

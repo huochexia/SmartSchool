@@ -23,4 +23,6 @@ class PrefsHelper(prefs: SharedPreferences) {
     var autoLogin by prefs.boolean("autoLogin", false)
 
     var teachers by prefs.int("teachers", 0)
+
+    var sessionToken by prefs.string("sessionToken","")
 }

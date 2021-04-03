@@ -9,6 +9,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRep
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.ext.livedata.switchMap
+import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +97,7 @@ class GoodsToOrderMgViewModel(
                 repository.deleteGoodsFromLocal(goods)
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -107,7 +108,7 @@ class GoodsToOrderMgViewModel(
                 repository.deleteCategoryFromLocal(category)
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -131,7 +132,7 @@ class GoodsToOrderMgViewModel(
                 repository.addOrUpdateCategoryToLocal(category)
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         }
         )
     }
@@ -156,7 +157,7 @@ class GoodsToOrderMgViewModel(
             }
 
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -178,7 +179,7 @@ class GoodsToOrderMgViewModel(
                 repository.addOrUpdateGoodsToLocal(newGoods)
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -203,7 +204,7 @@ class GoodsToOrderMgViewModel(
             repository.addFoodAndMaterialsToShoppingCar(common, selectedGoods)
             goodsList.removeAll(list)
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -238,7 +239,7 @@ class GoodsToOrderMgViewModel(
                 }
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -252,7 +253,7 @@ class GoodsToOrderMgViewModel(
                 repository.syncCategory()
                 repository.syncGoods()
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value = (it as ResponseThrowable).errMsg
         })
 
     }

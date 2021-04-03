@@ -15,6 +15,7 @@
  */
 package com.owner.usercenter.http.service
 
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.network.ObjectList
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
@@ -61,6 +62,7 @@ interface UserApi {
         @Body newPwd: ChangePwdReq
     ): Flowable<ChangePwdResp>
 
+
     /*
      * 请求短信验证码
      */
@@ -90,5 +92,15 @@ interface UserApi {
      */
     @GET("/1/classes/GoodsCategory")
     fun getAllCategory(): Observable<ObjectList<CategoryResp>>
+
+    /*
+     * 删除用户
+     */
+    @DELETE("/1/users/{objectId}")
+    suspend fun deleteUser(
+        @Header("X-Bmob-Master-Key") token: String,
+        @Path("objectId") objectId: String
+    ): DeleteObject
+
 }
 

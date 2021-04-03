@@ -20,6 +20,7 @@ import com.owner.basemodule.base.error.Errors
 import com.owner.basemodule.base.repository.BaseRepositoryBoth
 import com.owner.basemodule.base.repository.ILocalDataSource
 import com.owner.basemodule.base.repository.IRemoteDataSource
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.room.AppDatabase
 import com.owner.basemodule.room.entities.User
 import com.owner.usercenter.http.manager.UserServiceManager
@@ -83,6 +84,7 @@ interface IRemoteUserManagerDataSource : IRemoteDataSource {
     //从远程得到用户列表
     fun getAllUserFromRemote(): Flowable<Either<Errors, List<User>>>
 
+    suspend fun deleteUser(token: String, objectId: String): DeleteObject
 }
 
 class RemoteUserManagerDataSourceImpl(
@@ -99,6 +101,9 @@ class RemoteUserManagerDataSourceImpl(
                 }
             }
 
+    override suspend fun deleteUser(token: String, objectId: String): DeleteObject {
+        return service.deleteUser(token, objectId)
+    }
 }
 
 /**
@@ -122,6 +127,11 @@ class UserManagerRepository(
 
         return localDataSource.search(username)
 
+    }
+
+    //删除用户
+    suspend fun deleteUser(token: String, objectId: String): DeleteObject {
+        return remoteDataSource.deleteUser(token, objectId)
     }
 }
 

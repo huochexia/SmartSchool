@@ -5,6 +5,7 @@ import com.goldenstraw.restaurant.goodsmanager.http.entities.*
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
+import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.User
 import io.reactivex.Completable
@@ -43,7 +44,7 @@ class VerifyAndPlaceOrderViewModel(
                 defUI.refreshEvent.call()
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -58,7 +59,7 @@ class VerifyAndPlaceOrderViewModel(
                 suppliers = it
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
 
     }
@@ -70,7 +71,7 @@ class VerifyAndPlaceOrderViewModel(
         launchUI( {
             parserResponse(repository.deleteOrderItem(objectId))
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -114,7 +115,7 @@ class VerifyAndPlaceOrderViewModel(
             val newQuantity = ObjectQuantityAndNote(order.quantity,order.note)
             parserResponse(repository.updateOrderItem(newQuantity, order.objectId))
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 
@@ -128,7 +129,7 @@ class VerifyAndPlaceOrderViewModel(
                 defUI.refreshEvent.call()
             }
         },{
-            defUI.showDialog.value = it.message
+            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
         })
     }
 

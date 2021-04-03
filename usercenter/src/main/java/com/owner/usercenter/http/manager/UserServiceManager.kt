@@ -17,6 +17,7 @@ package com.owner.usercenter.http.manager
 
 import arrow.core.Either
 import com.owner.basemodule.base.error.Errors
+import com.owner.basemodule.network.DeleteObject
 import com.owner.basemodule.room.entities.AllUserResp
 import com.owner.usercenter.http.entities.*
 import io.reactivex.Flowable
@@ -80,4 +81,9 @@ interface UserServiceManager {
      * 获取所有商品类别
      */
     fun getAllCategory(): Observable<MutableList<CategoryResp>>
+
+    /**
+     * 删除用户
+     */
+    suspend fun deleteUser(token:String,objectId: String): DeleteObject
 }
