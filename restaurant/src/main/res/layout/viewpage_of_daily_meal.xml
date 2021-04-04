@@ -53,7 +53,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 app:bind_recyclerView_adapter="@{fragment.coldAdapter}"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager="com.owner.basemodule.adapter.RecyclerViewNoBugLinearLayoutManager"
                                 tools:listitem="@layout/layout_meal_item" />
 
                         <RelativeLayout
@@ -97,7 +97,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 app:bind_recyclerView_adapter="@{fragment.hotAdapter}"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager="com.owner.basemodule.adapter.RecyclerViewNoBugLinearLayoutManager"
                                 tools:listitem="@layout/layout_meal_item" />
 
                         <RelativeLayout
@@ -141,7 +141,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 app:bind_recyclerView_adapter="@{fragment.flourAdapter}"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager="com.owner.basemodule.adapter.RecyclerViewNoBugLinearLayoutManager"
                                 tools:listitem="@layout/layout_meal_item" />
 
                         <RelativeLayout
@@ -185,7 +185,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 app:bind_recyclerView_adapter="@{fragment.soupAdapter}"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager="com.owner.basemodule.adapter.RecyclerViewNoBugLinearLayoutManager"
                                 tools:listitem="@layout/layout_meal_item" />
 
                         <RelativeLayout
@@ -229,7 +229,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 app:bind_recyclerView_adapter="@{fragment.snackAdapter}"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager="com.owner.basemodule.adapter.RecyclerViewNoBugLinearLayoutManager"
                                 tools:listitem="@layout/layout_meal_item" />
 
                         <RelativeLayout

@@ -4,11 +4,15 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import com.alibaba.android.arouter.launcher.ARouter
 import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
+import com.google.android.material.textfield.TextInputEditText
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.arouter.RouterPath
@@ -136,7 +140,7 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             managerDialog.dismiss()
         }
         update.setOnClickListener {
-
+            updateUser("8a44cc1cae9df7257911bb7f7f949b34", user)
             managerDialog.dismiss()
         }
     }
@@ -153,6 +157,80 @@ class UserManagerFragment : BaseFragment<FragmentManageUserBinding>() {
             }
             .create()
         dialog.show()
+    }
+
+    private fun updateUser(token: String, user: User) {
+        val view = layoutInflater.inflate(R.layout.layout_user_info, null)
+        val userName = view.findViewById<TextInputEditText>(R.id.tvNewUsername)
+        userName.setText(user.username)
+        val phoneNum = view.findViewById<TextInputEditText>(R.id.tvPhoneNumber)
+        phoneNum.setText(user.mobilePhoneNumber)
+//        val role = view.findViewById<RadioGroup>(R.id.rg_role)
+//        val manager = view.findViewById<*>(R.id.manager_layout)
+//        val chef = view.findViewById<*>(R.id.chefs_layout)
+//        val direct = view.findViewById<*>(R.id.rg_district)
+//        val category = view.findViewById<TextView>(R.id.tv_spinner_category)
+//        when (user.role) {
+//            "供应商" -> {
+//                manager.visibility = View.GONE
+//                chef.visibility = View.GONE
+//                direct.visibility = View.GONE
+//                category.visibility = View.VISIBLE
+//            }
+//            "管理员" -> {
+//                manager.visibility = View.VISIBLE
+//                chef.visibility = View.GONE
+//                direct.visibility = View.GONE
+//                category.visibility = View.GONE
+//            }
+//            "复核员" -> {
+//                manager.visibility = View.VISIBLE
+//                chef.visibility = View.GONE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//            "库管员" -> {
+//                manager.visibility = View.VISIBLE
+//                chef.visibility = View.GONE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//            "厨师" -> {
+//                manager.visibility = View.GONE
+//                chef.visibility = View.VISIBLE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//            "热菜主管" -> {
+//                manager.visibility = View.GONE
+//                chef.visibility = View.VISIBLE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//            "凉菜主管" -> {
+//                manager.visibility = View.GONE
+//                chef.visibility = View.VISIBLE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//            "主食主管" -> {
+//                manager.visibility = View.GONE
+//                chef.visibility = View.VISIBLE
+//                direct.visibility = View.VISIBLE
+//                category.visibility = View.GONE
+//            }
+//        }
+        val updateView = AlertDialog.Builder(context)
+            .setView(view)
+            .setTitle("修改用户信息")
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+        updateView.show()
     }
 
     /******************************************************

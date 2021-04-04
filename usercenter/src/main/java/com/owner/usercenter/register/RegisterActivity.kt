@@ -32,6 +32,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.layout_user_info.*
 import org.jetbrains.anko.selector
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -131,6 +132,7 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
                     .setPositiveButton("是") { _, _ ->
                         tvPhoneNumber.setText("")
                         tvNewUsername.setText("")
+                        role = ""
                         district = 0
                         categoryCode = "-1"
                     }
@@ -160,25 +162,51 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
         rg_role.setOnCheckedChangeListener { _, checkedId ->
             role = when (checkedId) {
                 R.id.rd_manager_right -> {
-                    district_layout.visibility = View.GONE
-                    category_layout.visibility = View.GONE
-                    "管理员"
+                    clearRoleView()
+                    manager_layout.visibility = View.VISIBLE
+                    ""
                 }
                 R.id.rd_chef_right -> {
+                    clearRoleView()
+                    chefs_layout.visibility = View.VISIBLE
                     district_layout.visibility = View.VISIBLE
-                    category_layout.visibility = View.GONE
-                    "厨师"
+                    ""
                 }
-                R.id.rd_account_right -> {
-                    district_layout.visibility = View.VISIBLE
-                    category_layout.visibility = View.GONE
-                    "库管员"
-                }
+
                 R.id.rd_supplier_right -> {
-                    district_layout.visibility = View.GONE
+                    clearRoleView()
                     category_layout.visibility = View.VISIBLE
                     "供应商"
                 }
+                else -> ""
+            }
+
+        }
+        rg_manager.setOnCheckedChangeListener { _, checkId ->
+            role = when (checkId) {
+                R.id.rd_manager -> {
+                    district_layout.visibility = View.GONE
+                    "管理员"
+                }
+                R.id.rd_checker -> {
+                    district_layout.visibility = View.VISIBLE
+                    "复核员"
+                }
+
+                R.id.rd_storekeeper -> {
+                    district_layout.visibility = View.VISIBLE
+                    "库管员"
+                }
+                else -> ""
+            }
+        }
+        rg_chefs.setOnCheckedChangeListener { _, checkId ->
+
+            role = when (checkId) {
+                R.id.rd_chef_manager -> "厨师"
+                R.id.rd_hot_chef -> "热菜主管"
+                R.id.rd_cold_chef -> "凉菜主管"
+                R.id.rd_staple_chef -> "主食主管"
                 else -> ""
             }
 
@@ -192,6 +220,12 @@ class RegisterActivity : MVIActivity<ActivityRegisterBinding, RegisterIntent, Re
             }
         }
 
+    }
 
+    private fun clearRoleView() {
+        manager_layout.visibility = View.GONE
+        chefs_layout.visibility = View.GONE
+        district_layout.visibility = View.GONE
+        category_layout.visibility = View.GONE
     }
 }

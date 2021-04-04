@@ -61,7 +61,8 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintRight_toLeftOf="@+id/tvTips"
-                                app:layout_constraintTop_toTopOf="parent"/>
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:contentDescription="TODO" />
 
                         <TextView
                                 android:id="@+id/tvTips"
@@ -74,180 +75,15 @@
                                 app:layout_constraintBottom_toBottomOf="@+id/icGithub"
                                 app:layout_constraintLeft_toRightOf="@+id/icGithub"
                                 app:layout_constraintRight_toRightOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/icGithub"/>
+                                app:layout_constraintTop_toTopOf="@+id/icGithub" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="24dp"
-                            android:paddingLeft="@dimen/activity_horizontal_margin"
-                            android:paddingRight="@dimen/activity_horizontal_margin">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/tvNewUsername"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:drawableLeft="@mipmap/icon_user_name"
-                                android:hint="@string/register_hint_username"
-                                android:maxLines="1"
-                                android:singleLine="true"/>
+                    <include
+                            android:id="@+id/user_info"
+                            layout="@layout/layout_user_info" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:paddingLeft="@dimen/activity_horizontal_margin"
-                            android:paddingRight="@dimen/activity_horizontal_margin"
-                            app:counterEnabled="true"
-                            app:counterMaxLength="11">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/tvPhoneNumber"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:drawableLeft="@mipmap/icon_phone"
-                                android:hint="@string/register_hint_mobliephone"
-                                android:inputType="phone"
-                                android:maxLines="1"
-                                android:singleLine="true"/>
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                        <TextView
-                                android:id="@+id/tv_role"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginBottom="3dp"
-                                android:text="角色:"
-                                android:textColor="@color/primaryTextColor"
-                                android:textSize="18sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        <RadioGroup
-                                android:id="@+id/rg_role"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginBottom="6dp"
-                                android:orientation="horizontal"
-
-                                app:layout_constraintStart_toEndOf="@+id/tv_role"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            <RadioButton
-                                    android:id="@+id/rd_manager_right"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="管理者" />
-                            <RadioButton
-                                    android:id="@+id/rd_chef_right"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="厨师" />
-
-
-                            <RadioButton
-                                    android:id="@+id/rd_account_right"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="库管员" />
-
-                            <RadioButton
-                                    android:id="@+id/rd_supplier_right"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="供应商" />
-                        </RadioGroup>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/district_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone">
-
-                        <TextView
-                                android:id="@+id/tv_district"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:text="属地："
-                                android:textColor="@color/primaryTextColor"
-                                android:textSize="18sp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                 />
-
-                        <RadioGroup
-                                android:id="@+id/rg_district"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:orientation="horizontal"
-                               app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/tv_district"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            <RadioButton
-                                    android:id="@+id/rd_xinshinan_district"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="新石校区" />
-
-                            <RadioButton
-                                    android:id="@+id/rd_xishan_district"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="西山校区" />
-
-                        </RadioGroup>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/category_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone">
-
-                        <TextView
-                                android:id="@+id/tv_category"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:text="供应类别："
-                                android:textColor="@color/primaryTextColor"
-                                android:textSize="18sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                                android:id="@+id/tv_spinner_category"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginEnd="100dp"
-                                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                                android:gravity="center"
-                                android:textColor="@color/primaryTextColor"
-                                android:textSize="17sp"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/tv_category"
-                                app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
                     <Button
                             android:id="@+id/btnRegister"
                             android:layout_width="match_parent"

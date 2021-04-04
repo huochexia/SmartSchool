@@ -77,7 +77,7 @@ class Main2Activity : BaseActivity<ActivityMain2Binding>() {
                 confirm.visibility = View.VISIBLE
                 cookbook.visibility = View.VISIBLE
             }
-            "厨师" -> {
+            "厨师","热菜主管","凉菜主管","主食主管" -> {
                 order.visibility = View.VISIBLE
                 cookbook.visibility = View.VISIBLE
             }
