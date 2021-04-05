@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
@@ -13,7 +12,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-
 import androidx.navigation.fragment.findNavController
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentDailyMealtimeBinding
@@ -44,6 +42,7 @@ import java.util.*
 class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
 
     private val prefs by instance<PrefsHelper>()
+
     var isShowAdd = false //用于对除厨师之外的管理员隐藏每日菜单的添加功能
 
     private val respository by instance<CookBookRepository>()
@@ -63,7 +62,6 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
     查询条件语句
      */
     lateinit var dailyDate: String
-    private lateinit var mealTime: String
     lateinit var where: String
 
     override val layoutId: Int
@@ -84,13 +82,6 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         }
 
         toolbar_daily_meal.title = "${dailyDate}菜单"
-        mealTime = MealTime.Breakfast.time
-//        考虑校区时
-//            where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-//                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
-
-        where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
-                ",{\"mealDate\":\"$dailyDate\"}]}"
 
         initEvent()
 
@@ -100,24 +91,25 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
      * 单选按钮事件：选择就餐时段
      */
     fun initEvent() {
-        rg_meal_time.setOnCheckedChangeListener { group, checkedId ->
+
+        rg_meal_time.setOnCheckedChangeListener { _, checkedId ->
 
             when (checkedId) {
                 R.id.rb_breakfast_time -> {
-                    mealTime = MealTime.Breakfast.time
+                    viewModel.mealTime = MealTime.Breakfast.time
                 }
                 R.id.rb_lunch_time -> {
-                    mealTime = MealTime.Lunch.time
+                    viewModel.mealTime = MealTime.Lunch.time
                 }
                 R.id.rb_dinner_time -> {
-                    mealTime = MealTime.Dinner.time
+                    viewModel.mealTime = MealTime.Dinner.time
                 }
             }
             //考虑校区时
 //            where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
 //                    ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
 
-            where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
+            where = "{\"\$and\":[{\"mealTime\":\"${viewModel.mealTime}\"}" +
                     ",{\"mealDate\":\"$dailyDate\"}]}"
 
             viewModel.getDailyMealOfDate(where)
@@ -129,7 +121,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                 val bundle = Bundle()
                 bundle.putBoolean("isSelected", true)
                 bundle.putString("mealDate", "$dailyDate")
-                bundle.putString("mealTime", "$mealTime")
+                bundle.putString("mealTime", "${viewModel.mealTime}")
                 when (t) {
                     ColdFood -> {
                         bundle.putString("cookcategory", ColdFood.kindName)
@@ -153,8 +145,12 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         }
     }
 
+    /****************************
+     * 生成订单文件，保存本地
+     ****************************/
     private val REQUEST_EXTERNAL_STORAGE = 1
-    private val PERMISSIONS_STORAGE = arrayOf<String>(
+
+    private val PERMISSIONS_STORAGE = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
@@ -220,10 +216,31 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
             }
         }
 
+
+        //根据viewModel中的mealTime设置显示选项,目的是屏幕重新回到该处时，保持原有选项。
+        when (viewModel.mealTime) {
+            MealTime.Breakfast.time -> {
+                rb_breakfast_time.isChecked = true
+            }
+            MealTime.Lunch.time -> {
+                rb_lunch_time.isChecked = true
+            }
+            MealTime.Dinner.time -> {
+                rb_dinner_time.isChecked = true
+            }
+
+        }
+        //初始显示内容
+        //   考虑校区时
+        //    where = "{\"\$and\":[{\"mealTime\":\"$mealTime\"}" +
+        //            ",{\"mealDate\":\"$dailyDate\"},{\"direct\":${prefs.district}}]}"
+        where = "{\"\$and\":[{\"mealTime\":\"${viewModel.mealTime}\"}" +
+                ",{\"mealDate\":\"$dailyDate\"}]}"
+
         viewModel.getDailyMealOfDate(where)
 
         viewModel.defUI.showDialog.observe(viewLifecycleOwner) {
-            androidx.appcompat.app.AlertDialog.Builder(context!!)
+            AlertDialog.Builder(context!!)
                 .setMessage(it)
                 .create()
                 .show()
@@ -388,7 +405,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
         // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
         DatePickerDialog(activity,
             themeResId,
-            OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            { _, year, monthOfYear, dayOfMonth ->
                 // 绑定监听器(How the parent is notified that the date is set.)
                 // 此处得到选择的时间，可以进行你想要的操作
                 val month = if (monthOfYear + 1 < 10) {
@@ -402,7 +419,7 @@ class DailyMealTimeFragment : BaseFragment<FragmentDailyMealtimeBinding>() {
                     "$dayOfMonth"
                 }
                 val copyDate = "$year-$month-$day"
-                viewModel.copyDailyMeal(dailyDate, copyDate,prefs.district)
+                viewModel.copyDailyMeal(dailyDate, copyDate, prefs.district)
 
             } // 设置初始日期
             ,

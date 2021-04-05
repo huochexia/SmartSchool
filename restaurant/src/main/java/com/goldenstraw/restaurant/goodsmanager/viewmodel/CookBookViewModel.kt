@@ -1,5 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.viewmodel
 
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRep
 import com.goldenstraw.restaurant.goodsmanager.repositories.cookbook.CookBookRepository.SearchedStatus.Success
 import com.goldenstraw.restaurant.goodsmanager.utils.CookKind.*
 import com.goldenstraw.restaurant.goodsmanager.utils.MealTime
+import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
@@ -35,6 +37,11 @@ import java.io.InputStream
 class CookBookViewModel(
     private val repository: CookBookRepository
 ) : BaseViewModel() {
+
+
+    val viewState = ObservableField<Int>()
+
+    var mealTime = MealTime.Breakfast.time
 
     /**
      * 对菜谱的管理部分
@@ -387,15 +394,16 @@ class CookBookViewModel(
     //获取某日菜单，将结果分组存入不同的列表
     fun getDailyMealOfDate(where: String) {
 
-        launchUI( {
-            withContext(Dispatchers.IO) {
-                parserResponse(repository.getDailyMealOfDate(where)) {
-                    groupByKindForDailyMeal(it)
-                }
+        launchUI({
+            viewState.set(MultiStateView.VIEW_STATE_LOADING)
+            parserResponse(repository.getDailyMealOfDate(where)) {
+                groupByKindForDailyMeal(it)
             }
             _refreshAdapter.value = "All"
+            viewState.set(MultiStateView.VIEW_STATE_CONTENT)
 
-        },{
+        }, {
+            viewState.set(MultiStateView.VIEW_STATE_ERROR)
             defUI.showDialog.value = it.message
         })
     }

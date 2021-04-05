@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:bind="http://schemas.android.com/apk/res-auto">
+        xmlns:bind="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
                 name="fragment"
@@ -61,9 +62,18 @@
                 android:layout_height="1dp"
                 android:background="@color/secondaryColor" />
 
-        <include
-                android:id="@+id/daily_meal"
-                layout="@layout/viewpage_of_daily_meal"
-                bind:fragment="@{fragment}"/>
+        <com.kennyc.view.MultiStateView
+                android:id="@+id/mMultiStateCategoryView"
+                style="@style/MultiStateStyle"
+                app:msv_viewState="@{fragment.viewModel.viewState}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            <include
+                    android:id="@+id/daily_meal"
+                    layout="@layout/viewpage_of_daily_meal"
+                    bind:fragment="@{fragment}" />
+        </com.kennyc.view.MultiStateView>
     </LinearLayout>
 </layout>
