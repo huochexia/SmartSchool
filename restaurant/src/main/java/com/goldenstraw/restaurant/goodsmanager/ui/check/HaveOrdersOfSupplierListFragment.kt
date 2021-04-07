@@ -121,6 +121,9 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         //从共享数据中过滤自己需要的数据
         //从过滤的订单列表中，对供应商信息提取
         Observable.fromIterable(list)
+            .filter {
+                !it.supplier.isNullOrEmpty()
+            }
             .map {
                 it.supplier
             }
@@ -134,6 +137,10 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
                 }
             }, {
                 supplierState.set(MultiStateView.VIEW_STATE_ERROR)
+                AlertDialog.Builder(context!!)
+                    .setMessage(it.message)
+                    .create()
+                    .show()
             }, {
                 if (supplierList.isNotEmpty())
                     supplierState.set(MultiStateView.VIEW_STATE_CONTENT)
@@ -171,7 +178,6 @@ class HaveOrdersOfSupplierListFragment : BaseFragment<FragmentHaveOrdersOfSuppli
         getSupplierListFromWhere(filter)
         return true
     }
-
 
 
 }

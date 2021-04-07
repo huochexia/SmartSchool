@@ -100,7 +100,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
                 3 -> viewModel.ordersList.filter {
                     it.state != viewModel.orderState
                 } as MutableList
-                else-> mutableListOf()
+                else -> mutableListOf()
             }
             getSupplierListFromWhere(list)
         }
@@ -121,6 +121,9 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
         //从共享数据中过滤自己需要的数据
         //从过滤的订单列表中，对供应商信息提取
         Observable.fromIterable(list)
+            .filter {
+                !it.supplier.isNullOrEmpty()
+            }
             .map {
                 it.supplier
             }
@@ -134,6 +137,10 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
                 }
             }, {
                 supplierState.set(MultiStateView.VIEW_STATE_ERROR)
+                AlertDialog.Builder(context!!)
+                    .setMessage(it.message)
+                    .create()
+                    .show()
             }, {
                 if (supplierList.isNotEmpty())
                     supplierState.set(MultiStateView.VIEW_STATE_CONTENT)
@@ -150,7 +157,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-       val filter = when (item.itemId) {
+        val filter = when (item.itemId) {
             R.id.menu_confirmed_order -> {
                 confirm_toolbar.title = "供应商--已定"
                 viewModel.orderState = 3
@@ -165,7 +172,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
                     it.state == 2
                 } as MutableList
             }
-           else-> mutableListOf()
+            else -> mutableListOf()
         }
         getSupplierListFromWhere(filter)
         return true

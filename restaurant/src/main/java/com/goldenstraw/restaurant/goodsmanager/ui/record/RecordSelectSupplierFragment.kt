@@ -109,6 +109,9 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
     private fun getSupplierListFromWhere(list: MutableList<OrderItem>) {
         supplierList.clear()
         Observable.fromIterable(list)
+            .filter {
+                !it.supplier.isNullOrEmpty()
+            }
             .map {
                 it.supplier
             }
@@ -122,6 +125,10 @@ class RecordSelectSupplierFragment : BaseFragment<FragmentRecordSelectSupplierBi
                 }
             }, {
                 supplierState.set(MultiStateView.VIEW_STATE_ERROR)
+                AlertDialog.Builder(context!!)
+                    .setMessage(it.message)
+                    .create()
+                    .show()
             }, {
                 if (supplierList.isNotEmpty())
                     supplierState.set(MultiStateView.VIEW_STATE_CONTENT)
