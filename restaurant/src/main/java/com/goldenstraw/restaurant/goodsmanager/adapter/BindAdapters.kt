@@ -64,6 +64,7 @@ fun setDailyMealText(textView: TextView, dailyMeal: DailyMeal) {
 @BindingAdapter("bind_food_time_image")
 fun setFoodTimeImage(imageView: ImageView, mealTime: String) {
     when (mealTime) {
+        "早餐"->imageView.load(R.drawable.ic_brightness_1_24)
         "午餐" -> imageView.load(R.drawable.ic_sun_24)
         "晚餐" -> imageView.load(R.drawable.ic_bedtime_24)
     }
