@@ -122,9 +122,6 @@ dependencies {
     //coil
     api libs.coil
 
-    // glide
-    api libs.glide
-    kapt libs.glide_compiler
     api libs.multi_state_view
 
     // logger

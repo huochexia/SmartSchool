@@ -17,8 +17,8 @@ package com.owner.basemodule.binding.view
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.request.RequestOptions
-import com.owner.basemodule.image.GlideApp
+import coil.load
+import coil.transform.CircleCropTransformation
 
 /**
  *对ImageView的自定义属性与设置方法进行绑定
@@ -30,10 +30,9 @@ import com.owner.basemodule.image.GlideApp
  */
 @BindingAdapter("bind_imageView_url")
 fun loadImage(imageView: ImageView, url: String?) {
-    //GlideApp是@GlideModule注释经编译后形成的类
-    GlideApp.with(imageView.context)
-        .load(url)
-        .into(imageView)
+    url?.let {
+        imageView.load(url)
+    }
 }
 
 /**
@@ -41,8 +40,12 @@ fun loadImage(imageView: ImageView, url: String?) {
  */
 @BindingAdapter("bind_imageView_url_circle")
 fun loadImageCircle(imageView: ImageView, url: String?) {
-    GlideApp.with(imageView.context)
-        .load(url)
-        .apply(RequestOptions().circleCrop())
-        .into(imageView)
+    url?.let {
+        imageView.load(url) {
+//            crossfade(true)
+//            placeholder(R.drawable.image)
+            transformations(CircleCropTransformation())
+        }
+    }
+
 }
