@@ -1,5 +1,8 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.purchase
 
+/**
+ *获取某日期所有订单
+ */
 import android.app.AlertDialog.Builder
 import android.os.Bundle
 import android.widget.Button

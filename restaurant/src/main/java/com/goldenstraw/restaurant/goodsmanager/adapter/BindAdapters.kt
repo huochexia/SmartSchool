@@ -1,8 +1,11 @@
 package com.goldenstraw.restaurant.goodsmanager.adapter
 
 import android.graphics.Color
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import coil.load
+import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.goodsmanager.http.entities.DailyMeal
 import com.goldenstraw.restaurant.goodsmanager.http.entities.OrderItem
 import com.goldenstraw.restaurant.goodsmanager.http.entities.SumByGroup
@@ -58,12 +61,11 @@ fun setDailyMealText(textView: TextView, dailyMeal: DailyMeal) {
     }
 }
 
-@BindingAdapter("bind_food_text_color")
-fun setFoodTextColor(textView: TextView, mealTime: String) {
+@BindingAdapter("bind_food_time_image")
+fun setFoodTimeImage(imageView: ImageView, mealTime: String) {
     when (mealTime) {
-        "早餐" -> textView.setTextColor(Color.GRAY)
-        "午餐" -> textView.setTextColor(Color.RED)
-        "晚餐" -> textView.setTextColor(Color.BLACK)
+        "午餐" -> imageView.load(R.drawable.ic_sun_24)
+        "晚餐" -> imageView.load(R.drawable.ic_bedtime_24)
     }
 }
 

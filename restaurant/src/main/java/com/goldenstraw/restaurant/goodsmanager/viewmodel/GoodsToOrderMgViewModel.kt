@@ -9,6 +9,7 @@ import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRep
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.base.viewmodel.BaseViewModel
 import com.owner.basemodule.ext.livedata.switchMap
+import com.owner.basemodule.network.ExceptionHandle
 import com.owner.basemodule.network.ResponseThrowable
 import com.owner.basemodule.network.parserResponse
 import com.owner.basemodule.room.entities.*
@@ -213,7 +214,7 @@ class GoodsToOrderMgViewModel(
      * 从每日菜单当中获取的原材料，将其加入购物车
      */
     fun getFoodOfDailyToShoppingCar(where: String) {
-        launchUI( {
+        launchUI({
             withContext(Dispatchers.IO) {
                 //第一步：获取每日菜单
                 parserResponse(repository.getDailyMealOfDate(where)) {
@@ -238,8 +239,8 @@ class GoodsToOrderMgViewModel(
                     }
                 }
             }
-        },{
-            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
+        }, {
+            defUI.showDialog.value = ExceptionHandle.handleException(it).errMsg
         })
     }
 
@@ -253,7 +254,7 @@ class GoodsToOrderMgViewModel(
                 repository.syncCategory()
                 repository.syncGoods()
         },{
-            defUI.showDialog.value = (it as ResponseThrowable).errMsg
+            defUI.showDialog.value = ExceptionHandle.handleException(it).errMsg
         })
 
     }

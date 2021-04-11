@@ -119,6 +119,8 @@ dependencies {
     // okhttp
     api libs.okhttp
     api libs.okhttp_logging
+    //coil
+    api libs.coil
 
     // glide
     api libs.glide

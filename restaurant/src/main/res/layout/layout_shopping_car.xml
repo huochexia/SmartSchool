@@ -42,8 +42,20 @@
                         android:text="@{foodAndMaterial.food.foodName}"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        app:bind_food_text_color="@{foodAndMaterial.food.foodTime}"
                         tools:text="红烧肉" />
+
+                <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_gravity="center_vertical"
+                        app:bind_food_time_image="@{foodAndMaterial.food.foodTime}" />
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_check_black_24dp"
+                        android:visibility="@{foodAndMaterial.food.isOfTearcher?View.VISIBLE:View.GONE}" />
             </LinearLayout>
 
 
