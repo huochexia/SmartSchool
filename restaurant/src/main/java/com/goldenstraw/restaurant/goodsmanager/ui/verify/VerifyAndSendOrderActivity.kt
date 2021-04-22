@@ -174,13 +174,17 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
     private fun managerDialog(orders: OrderItem) {
         val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
         val delete = view.findViewById<Button>(R.id.delete_action)
-        delete.visibility = View.GONE
+
         val update = view.findViewById<Button>(R.id.update_action)
 
         val managerDialog = android.app.AlertDialog.Builder(this)
             .setView(view)
             .create()
         managerDialog.show()
+        delete.setOnClickListener {
+            deleteDialog(orders)
+            managerDialog.dismiss()
+        }
         update.setOnClickListener {
             if (orders.state == 0)
                 updateDialog(orders)
@@ -188,6 +192,21 @@ class VerifyAndSendOrderActivity : BaseActivity<ActivityVerifyPlaceOrdersBinding
                 toast { "该订单已生成不能修改！" }
             managerDialog.dismiss()
         }
+    }
+
+    private fun deleteDialog(orders: OrderItem) {
+        val dialog = AlertDialog.Builder(this)
+            .setMessage("确定要删除此订单吗？")
+            .setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("确定") { dialog, _ ->
+                viewModel!!.deleteOrderItem(orders)
+                showList.remove(orders)
+                adapter.forceUpdate()
+                dialog.dismiss()
+            }.create()
+        dialog.show()
     }
 
     private fun updateDialog(order: OrderItem) {

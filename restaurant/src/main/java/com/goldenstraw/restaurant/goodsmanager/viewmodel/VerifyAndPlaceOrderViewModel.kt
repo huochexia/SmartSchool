@@ -67,11 +67,13 @@ class VerifyAndPlaceOrderViewModel(
     /**
      * 删除订单
      */
-    fun deleteOrderItem(objectId: String) {
-        launchUI( {
-            parserResponse(repository.deleteOrderItem(objectId))
-        },{
-            defUI.showDialog.value =  (it as ResponseThrowable).errMsg
+    fun deleteOrderItem(orders: OrderItem) {
+        launchUI({
+            parserResponse(repository.deleteOrderItem(orders.objectId)) {
+                ordersList.remove(orders)
+            }
+        }, {
+            defUI.showDialog.value = (it as ResponseThrowable).errMsg
         })
     }
 
