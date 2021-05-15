@@ -18,7 +18,7 @@ import org.kodein.di.Kodein
  * 核查申购订单结果
  *
  */
-class CheckSubscribOfDateFragment : BaseFragment<FragmentCheckSubscribDateBinding>(),
+class CheckSubscribeOfDateFragment : BaseFragment<FragmentCheckSubscribDateBinding>(),
     CalendarView.OnCalendarSelectListener {
 
     override val layoutId: Int
@@ -40,17 +40,18 @@ class CheckSubscribOfDateFragment : BaseFragment<FragmentCheckSubscribDateBindin
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         tv_month_day.visibility = View.VISIBLE
         tv_year.visibility = View.VISIBLE
         tv_month_day.text = calendar!!.month.toString() + "月" + calendar.day + "日"
-        tv_year.text = calendar!!.year.toString()
+        tv_year.text = calendar.year.toString()
         tv_lunar.text = calendar.lunar
         //因为每次初始化视图时都会执行这个方法，所以只有是点击事件时才进行跳转。如果不加上这个判断，
         //当回退到这个视图时就会调用跳转方法，这样形成一个死循环。
         if (isClick) {
             val bundle = Bundle()
-            val date = calendar!!.year.toString() + "-" + calendar!!.month + "-" + calendar!!.day
+            val date = calendar.year.toString() + "-" + calendar.month + "-" + calendar.day
             bundle.putString("orderDate", date)
             findNavController().navigate(R.id.allOrdersOfDateFragment, bundle)
         }

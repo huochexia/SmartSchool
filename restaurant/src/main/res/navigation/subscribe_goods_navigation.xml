@@ -19,7 +19,7 @@
     </fragment>
     <fragment
             android:id="@+id/checkSubscribFragment"
-            android:name="com.goldenstraw.restaurant.goodsmanager.ui.purchase.CheckSubscribOfDateFragment"
+            android:name="com.goldenstraw.restaurant.goodsmanager.ui.purchase.CheckSubscribeOfDateFragment"
             android:label="CheckSubscribFragment"
             tools:layout="@layout/fragment_check_subscrib_date" >
         <action

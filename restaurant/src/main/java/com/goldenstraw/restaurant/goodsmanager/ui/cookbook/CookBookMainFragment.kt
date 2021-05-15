@@ -18,7 +18,7 @@ class CookBookMainFragment : BaseFragment<FragmentCookBookBinding>() {
 
     override fun initView() {
         super.initView()
-        var bundle= Bundle()
+        val bundle= Bundle()
         btn_classical_cookbook.setOnClickListener{
             bundle.putBoolean("isSelected",false)//用于查看菜谱
             findNavController().navigate(R.id.classicalCookBookFragment,bundle)

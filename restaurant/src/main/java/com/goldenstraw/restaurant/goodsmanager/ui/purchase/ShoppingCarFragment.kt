@@ -139,10 +139,10 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
             .setTitle("确定要删除--${material.goodsName}?")
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 launch {
                     viewModel!!.deleteMaterialOfShoppingCar(material)
                     foodAdapter!!.forceUpdate()
@@ -271,7 +271,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             .setNegativeButton("放弃") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("计算") { dialog, _ ->
+            .setPositiveButton("计算") { _, _ ->
                 viewModel!!.computeQuantityFromPerson(
                     breakfast.text.toString().toInt(),
                     lunch.text.toString().toInt(),
@@ -296,7 +296,7 @@ class ShoppingCarFragment : BaseFragment<FragmentShoppingCarBinding>() {
             .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, _ ->
+            .setPositiveButton("确定") { _, _ ->
                 val quantity = teachers.text.toString().trim()
                 if (quantity.isEmpty()) {
                     com.owner.basemodule.util.toast { "请填写必须内容！！" }

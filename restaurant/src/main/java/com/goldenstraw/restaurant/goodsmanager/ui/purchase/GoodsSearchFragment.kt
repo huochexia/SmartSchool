@@ -10,7 +10,6 @@ import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.adapter.BaseDataBindingAdapter
 import com.owner.basemodule.base.view.fragment.BaseFragment
@@ -32,7 +31,7 @@ class GoodsSearchFragment : BaseFragment<FragmentGoodsListBinding>() {
     override val layoutId: Int
         get() = R.layout.fragment_search_goods
     private val repository by instance<GoodsRepository>()
-    var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
+    private var viewModelGoodsTo: GoodsToOrderMgViewModel? = null
     var adapter = BaseDataBindingAdapter(
         layoutId = R.layout.layout_goods_item,
         dataSource = { viewModelGoodsTo!!.searchGoodsResultList },

@@ -81,14 +81,14 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
             .setTitle("申请调整\"${goods.goodsName}\"的单价")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
-            .setNegativeButton("不同意") { dialog, which ->
+            .setNegativeButton("不同意") { dialog, _ ->
                 //申请清零,原价格不变
                 val newPrice = NewPrice(0.0f, goods.unitPrice)
                 goods.newPrice = 0.0f
                 viewModel!!.updateNewPriceOfGoods(newPrice, goods.objectId)
                 dialog.dismiss()
             }
-            .setPositiveButton("同意") { dialog, which ->
+            .setPositiveButton("同意") { dialog, _ ->
                 if (edit.text.isNullOrEmpty()) {
                     return@setPositiveButton
                 }

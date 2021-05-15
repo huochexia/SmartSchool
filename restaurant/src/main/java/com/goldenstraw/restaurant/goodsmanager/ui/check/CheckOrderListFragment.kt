@@ -67,7 +67,7 @@ class CheckOrderListFragment : BaseFragment<FragmentCheckOrderListBinding>() {
     var district = 0
 
     //需要显示的数据列表
-    var showList = mutableListOf<OrderItem>()
+    private var showList = mutableListOf<OrderItem>()
 
     override fun initView() {
         super.initView()

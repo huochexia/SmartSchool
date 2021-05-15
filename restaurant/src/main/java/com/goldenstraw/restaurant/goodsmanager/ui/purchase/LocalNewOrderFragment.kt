@@ -63,7 +63,7 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
                 viewModel!!.newOrderList
             },
             dataBinding = { LayoutNeworderItemBinding.bind(it) },
-            callback = { order, binding, position ->
+            callback = { order, binding, _ ->
                 binding.newOrder = order
                 binding.clickEvent = object : Consumer<NewOrder> {
                     override fun accept(t: NewOrder) {
@@ -126,10 +126,10 @@ class LocalNewOrderFragment : BaseFragment<FragmentNeworderListBinding>() {
         val dialog = AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert_name)
             .setTitle("确定要删除-${newOrder.goodsName}吗！！")
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 viewModel!!.deleteNewOrder(newOrder)
                 dialog.dismiss()
             }.create()

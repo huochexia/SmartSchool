@@ -7,7 +7,6 @@ import android.app.AlertDialog.Builder
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import androidx.databinding.ObservableField
 import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.R.drawable
 import com.goldenstraw.restaurant.R.layout
@@ -49,7 +48,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
             viewModel!!.ordersList
         },
         dataBinding = { LayoutOrderItemBinding.bind(it) },
-        callback = { order, binding, position ->
+        callback = { order, binding, _ ->
             binding.orderitem = order
 
             binding.longClick = object :Consumer<OrderItem>{
@@ -68,7 +67,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         super.initView()
 
         arguments?.let {
-            orderDate = it.getString("orderDate")
+            orderDate = it.getString("orderDate")!!
         }
     }
 
@@ -93,7 +92,7 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
      *长按事件；管理数据。修改和删除功能
      *****************************************************/
     private fun managerDialog(orders: OrderItem) {
-        val view = layoutInflater.inflate(R.layout.delete_or_update_dialog_view, null)
+        val view = layoutInflater.inflate(layout.delete_or_update_dialog_view, null)
         val delete = view.findViewById<Button>(R.id.delete_action)
         delete.text = "删除"
         val update = view.findViewById<Button>(R.id.update_action)
@@ -119,10 +118,10 @@ class AllOrdersOfDateFragment : BaseFragment<FragmentAllOrdersOfDateBinding>() {
         val dialog = Builder(context)
             .setIcon(drawable.ic_alert_name)
             .setTitle("确定要删除吗！！")
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 deleteOrders(orders)
                 dialog.dismiss()
             }.create()

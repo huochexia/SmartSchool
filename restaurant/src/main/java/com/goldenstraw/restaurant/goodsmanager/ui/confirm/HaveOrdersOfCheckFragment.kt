@@ -46,7 +46,7 @@ class HaveOrdersOfCheckFragment : BaseFragment<FragmentHaveOrdersOfConfirmBindin
         layoutId = R.layout.layout_supplier_name_item,
         dataSource = { supplierList },
         dataBinding = { LayoutSupplierNameItemBinding.bind(it) },
-        callback = { supplier, binding, position ->
+        callback = { supplier, binding, _ ->
             binding.supplier = supplier
             binding.clickEvent = object : Consumer<String> {
                 override fun accept(t: String) {

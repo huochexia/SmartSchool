@@ -23,7 +23,6 @@ import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel
 import com.owner.basemodule.functional.Consumer
 import com.owner.basemodule.room.entities.Goods
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_next_week_goods.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
@@ -45,9 +44,9 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
     var viewModel: QueryOrdersViewModel? = null
 
 
-    var vpAdapter: BaseDataBindingAdapter<String, ViewpageOfCookKindBinding>? = null
+    private var vpAdapter: BaseDataBindingAdapter<String, ViewpageOfCookKindBinding>? = null
 
-    var tabLayoutMediator: TabLayoutMediator? = null
+    private var tabLayoutMediator: TabLayoutMediator? = null
 
     var state = ObservableField<Int>()
 
@@ -67,7 +66,7 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
                     dataSource = {
                         viewModel!!.groupbyCategoryOfGoods[category]!!
                     },
-                    callback = { goods, bind, position ->
+                    callback = { goods, bind, _ ->
                         bind.goods = goods
                         bind.addSub.visibility = View.INVISIBLE
                         bind.cbGoods.visibility = View.INVISIBLE
@@ -88,13 +87,11 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
          观察各种事件，刷新，错误提示，加载等
          */
         viewModel!!.defUI.refreshEvent.observe(this) {
-            if (viewModel!!.groupbyCategoryOfGoods == null) {
-                state.set(MultiStateView.VIEW_STATE_EMPTY)
-            } else {
+
                 state.set(MultiStateView.VIEW_STATE_CONTENT)
                 category_goods_toolbar.title = "下周拟购商品"
                 vpAdapter!!.forceUpdate()
-            }
+
         }
         viewModel!!.defUI.toastEvent.observe(this) {
             state.set(MultiStateView.VIEW_STATE_ERROR)
@@ -128,10 +125,10 @@ class GoodsOfNextWeekActivity : BaseActivity<ActivityNextWeekGoodsBinding>() {
             .setTitle("申请调整\"${goods.goodsName}\"的单价")
             .setIcon(R.mipmap.add_icon)
             .setView(view)
-            .setNegativeButton("取消") { dialog, which ->
+            .setNegativeButton("取消") { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveButton("确定") { dialog, which ->
+            .setPositiveButton("确定") { dialog, _ ->
                 if (edit.text.isNullOrEmpty()) {
                     return@setPositiveButton
                 }

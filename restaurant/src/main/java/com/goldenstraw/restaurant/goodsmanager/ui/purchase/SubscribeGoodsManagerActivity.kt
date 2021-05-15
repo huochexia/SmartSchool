@@ -33,7 +33,7 @@ class SubscribeGoodsManagerActivity:BaseActivity<ActivitySubscribeGoodsBinding>(
      * 返回当前购物车内数量
      */
     override fun onBackPressed() {
-        var intent = Intent()
+        val intent = Intent()
         this.setResult(1, intent)
         super.onBackPressed()
     }

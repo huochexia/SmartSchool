@@ -43,6 +43,8 @@ interface GoodsDao {
 
     @Query("SELECT * FROM Goods WHERE categoryCode = :categoryId  ORDER BY goodsName")
     fun getGoodsOfCategoryFlow(categoryId: String): Flow<List<Goods>>
+
+    @Transaction
     @Query("SELECT * FROM LocalCookBook WHERE cb_id = :objectId")
     fun getCookBookWithMaterials(objectId: String):CookBookWithMaterials
     /*

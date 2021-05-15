@@ -111,8 +111,7 @@ fun setTextColor(textView: TextView, distinct: Int) {
 fun setListContent(textView: TextView, cookbooks: CookBookWithMaterials) {
     var text = ""
     cookbooks.materials.forEach {
-        text = "$text${it.goodsName},"
-//        text = "$text${it.goodsName}[${it.ration}],"
+        text = "$text${it.goodsName}[${it.ration}],"
 
     }
     textView.text = text

@@ -38,7 +38,8 @@ import com.owner.basemodule.room.entities.*
         MaterialOfShoppingCar::class,
         NewOrder::class,
         Material::class
-    ]
+    ],
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

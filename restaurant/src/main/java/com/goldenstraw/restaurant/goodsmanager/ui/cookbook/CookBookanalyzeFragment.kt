@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_analyes_meal_select_date.*
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 
-class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBinding>()
+class CookBookanalyzeFragment : BaseFragment<FragmentAnalyesMealSelectDateBinding>()
     , CalendarView.OnCalendarRangeSelectListener {
     override val layoutId: Int
         get() = R.layout.fragment_analyes_meal_select_date
@@ -21,10 +21,11 @@ class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBindin
     override val kodein: Kodein = Kodein.lazy {
         extend(parentKodein, copy = Copy.All)
     }
-    lateinit var start: String
+    private lateinit var start: String
     lateinit var end: String
     private val dateRange = arrayListOf<String>()
 
+    @SuppressLint("SetTextI18n")
     override fun initView() {
         calendarView.setOnCalendarRangeSelectListener(this)
 
@@ -35,6 +36,7 @@ class CookBookanalyesFragment : BaseFragment<FragmentAnalyesMealSelectDateBindin
         initEvent()
     }
 
+    @SuppressLint("SetTextI18n")
     fun initEvent() {
         calendarView.setOnMonthChangeListener { _, month ->
             tv_month.text = month.toString() + "月"

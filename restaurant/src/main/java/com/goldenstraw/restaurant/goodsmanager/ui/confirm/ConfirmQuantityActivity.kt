@@ -1,7 +1,6 @@
 package com.goldenstraw.restaurant.goodsmanager.ui.confirm
 
 import com.goldenstraw.restaurant.R
-import com.goldenstraw.restaurant.databinding.ActivityCheckOrdersBinding
 import com.goldenstraw.restaurant.databinding.ActivityConfirmOrdersBinding
 import com.goldenstraw.restaurant.goodsmanager.di.verifyandplaceorderdatasource
 import com.goldenstraw.restaurant.goodsmanager.repositories.place_order.VerifyAndPlaceOrderRepository

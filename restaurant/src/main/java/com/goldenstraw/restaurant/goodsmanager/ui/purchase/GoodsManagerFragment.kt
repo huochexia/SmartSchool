@@ -14,10 +14,8 @@ import com.goldenstraw.restaurant.R
 import com.goldenstraw.restaurant.databinding.FragmentGoodsListBinding
 import com.goldenstraw.restaurant.databinding.LayoutGoodsItemBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
-import com.goldenstraw.restaurant.goodsmanager.di.prefsModule
 import com.goldenstraw.restaurant.goodsmanager.http.entities.NewGoods
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.kennyc.view.MultiStateView
 import com.owner.basemodule.adapter.BaseDataBindingAdapter

@@ -14,7 +14,6 @@ import com.goldenstraw.restaurant.databinding.ActivityPurchasingManagerBinding
 import com.goldenstraw.restaurant.goodsmanager.di.goodsDataSourceModule
 import com.goldenstraw.restaurant.goodsmanager.di.queryordersactivitymodule
 import com.goldenstraw.restaurant.goodsmanager.repositories.goods_order.GoodsRepository
-import com.goldenstraw.restaurant.goodsmanager.utils.PrefsHelper
 import com.goldenstraw.restaurant.goodsmanager.viewmodel.GoodsToOrderMgViewModel
 import com.owner.basemodule.base.view.activity.BaseActivity
 import com.owner.basemodule.base.viewmodel.getViewModel

@@ -71,7 +71,7 @@ class ShoppingCarMgViewModel(
      */
     fun computeQuantityFromPerson(breakfast: Int, lunch: Int, dinner: Int, teachers: Int) {
 
-        val formate = DecimalFormat("0.0") //浮点数格式
+        val format = DecimalFormat("0.0") //浮点数格式
 
         launchUI ({
             withContext(Dispatchers.Default) {
@@ -84,7 +84,7 @@ class ShoppingCarMgViewModel(
                         "早餐" -> {
                             it.materials.forEach { mOfb ->
                                 mOfb.quantity =
-                                    formate.format(mOfb.ration * (breakfast + teacherNum) / 60)
+                                    format.format(mOfb.ration * (breakfast + teacherNum) / 100)
                                         .toFloat()
 
                                 updateMaterialOfShoppingCar(mOfb)
@@ -93,14 +93,14 @@ class ShoppingCarMgViewModel(
                         "午餐" -> {
                             it.materials.forEach { lOfb ->
                                 lOfb.quantity =
-                                    formate.format(lOfb.ration * (lunch + teacherNum) / 60)
+                                    format.format(lOfb.ration * (lunch + teacherNum) / 100)
                                         .toFloat()
                                 updateMaterialOfShoppingCar(lOfb)
                             }
                         }
                         "晚餐" -> {
                             it.materials.forEach { dOfb ->
-                                dOfb.quantity = formate.format(dOfb.ration * dinner / 60).toFloat()
+                                dOfb.quantity = format.format(dOfb.ration * dinner / 100).toFloat()
                                 updateMaterialOfShoppingCar(dOfb)
                             }
                         }

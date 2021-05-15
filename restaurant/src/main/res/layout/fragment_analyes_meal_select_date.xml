@@ -7,7 +7,7 @@
 
         <variable
                 name="fragment"
-                type="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookanalyesFragment" />
+                type="com.goldenstraw.restaurant.goodsmanager.ui.cookbook.CookBookanalyzeFragment" />
     </data>
 
     <LinearLayout
@@ -52,7 +52,7 @@
                         android:contentDescription="@string/app_name"
                         android:scaleType="centerInside"
                         android:src="@mipmap/ic_calendar"
-                        android:tint="#000000" />
+                        app:tint="#000000" />
 
                 <TextView
                         android:id="@+id/tv_current_day"
