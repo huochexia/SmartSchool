@@ -108,11 +108,12 @@ class AdjustPriceOfGoodsActivity : BaseActivity<ActivityAdjustPirceOfGoodsBindin
     }
 
     /**
-     * 修改订单中的单价。首先依据商品名称和状态不等于4为条件，找到订单，然后对这个订单进行修改
-     * 主要是因为下单后才发现价格发生变化。
+     * 修改订单中的单价。首先依据商品名称和状态等于1为条件，找到订单，然后对这个订单进行修改
+     * 主要是因为下单后才发现价格发生变化。因为一旦验货后，商品小计即可生成，所以再更改单价
+     * 将出现数量与单价积不等于小计值的现象。
      */
     private fun updatePriceOfOrders(goodsName: String, newPrice: Float) {
-        val where = "{\"\$and\":[{\"goodsName\":\"$goodsName\"},{\"state\":{\"\$in\":[1,2,3]}}]}"
+        val where = "{\"\$and\":[{\"goodsName\":\"$goodsName\"},{\"state\":{\"\$in\":[0,1]}}]}"
         viewModel!!.updateUnitPriceOfOrders(where, newPrice)
     }
 
